@@ -22,7 +22,7 @@
 
 body {
   color: var(--foreground);
-  background: var(--background);
+  background: #F5F7FA;
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
