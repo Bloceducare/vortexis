@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -7,6 +6,7 @@ import Link from "next/link";
 import { Button } from "../components/ui/Button";
 import web3logo from "@/public/assets/web3logo.svg";
 import SearchForm from "@/components/Search-form";
+import { useSession } from "next-auth/react";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,6 +15,9 @@ export const Header: React.FC = () => {
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
+
+  const { data: session } = useSession();
+  const user = session?.user?.name;
 
   return (
     <header className="bg-white shadow-sm">
@@ -60,15 +63,29 @@ export const Header: React.FC = () => {
             </nav>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              variant="outline"
-              className="text-[#009AFF] border-[#009AFF]"
-            >
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button variant="primary">
-              <Link href="/signup">Sign up</Link>
-            </Button>
+            {!user ? (
+              <>
+                <Link href="/auth/login">
+                  <Button
+                    variant="outline"
+                    className="w-full  border-[#009AFF]"
+                  >
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/auth/signup">
+                  <Button variant="primary" className="w-full">
+                    Sign up
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/api/auth/signout?callbackUrl=/">
+                <Button variant="primary" className="w-full">
+                  Logout
+                </Button>
+              </Link>
+            )}
           </div>
           <div className="flex items-center md:hidden">
             <button
@@ -114,10 +131,10 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-    {/* Search container that shows when search is toggled */}
-  {showSearch && (
+      {/* Search container that shows when search is toggled */}
+      {showSearch && (
         <div>
-            <SearchForm />
+          <SearchForm />
         </div>
       )}
 
@@ -150,16 +167,30 @@ export const Header: React.FC = () => {
               Search
             </button>
           </div>
-  
 
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="px-4 space-y-3">
-              <Button variant="outline" className="w-full border-[#009AFF]">
-                <Link href="/login">Log in</Link>
-              </Button>
-              <Button variant="primary" className="w-full">
-                <Link href="/signup">Sign up</Link>
-              </Button>
+              {!user ? (
+                <div className="space-y-3">
+                  <Link href="/auth/login" className="block">
+                    <Button
+                      variant="outline"
+                      className="w-full  border-[#009AFF]"
+                    >
+                      Log in
+                    </Button>
+                  </Link>
+                  <Link href="/auth/signup">
+                    <Button variant="primary" className="w-full">
+                      Sign up
+                    </Button>
+                  </Link>
+                </div>
+              ) : (
+                <Button variant="primary" className="w-full">
+                  Logout
+                </Button>
+              )}
             </div>
           </div>
         </div>
