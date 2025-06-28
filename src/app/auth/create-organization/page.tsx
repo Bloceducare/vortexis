@@ -8,6 +8,7 @@ import {
   type OrganizationFormData,
 } from "@/lib/validator";
 import LogoUploadField from "@/components/ui/LogoUpload";
+import {toast} from "react-toastify";
 
 const formFields = [
   {
@@ -23,7 +24,7 @@ const formFields = [
     placeholder: "https://example.com",
     type: "text",
     description: "Optional - Enter a valid URL",
-    max: 0,
+    max: 128,
     key: "organizationWebsite" as keyof OrganizationFormData,
   },
   {
@@ -70,10 +71,7 @@ const formFields = [
 
 export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
+  const [error, setError] = useState(false);
 
   const {
     register,
@@ -87,8 +85,7 @@ export default function Page() {
 
   const onSubmit = async (data: OrganizationFormData) => {
     setIsSubmitting(true);
-    setSubmitMessage(null);
-
+    setError(false);
     try {
       const formData = new FormData();
 
@@ -114,17 +111,15 @@ export default function Page() {
       const result = await response.json();
 
       if (result.success) {
-        setSubmitMessage({ type: "success", text: result.message });
-        reset(); // Reset form on success
+        toast.success("Form submitted successfully!");
+        reset();
       } else {
-        setSubmitMessage({ type: "error", text: result.message });
+        toast.error("Failed to submit form. Please try again.");
       }
     } catch (error) {
       console.error("Submit error:", error);
-      setSubmitMessage({
-        type: "error",
-        text: "Failed to submit form. Please try again.",
-      });
+      setError(true);
+      toast.error("Failed to submit form. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -135,18 +130,6 @@ export default function Page() {
       <div className="w-[1208px] mx-auto bg-white shadow p-2 text-[#212121]">
         <div className="max-w-[945px] mx-auto">
           <h1 className="font-[500] text-2xl">Create a new organization</h1>
-
-          {submitMessage && (
-            <div
-              className={`mt-4 p-3 rounded ${
-                submitMessage.type === "success"
-                  ? "bg-green-100 text-green-700 border border-green-300"
-                  : "bg-red-100 text-red-700 border border-red-300"
-              }`}
-            >
-              {submitMessage.text}
-            </div>
-          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="relative pb-10">
             <div className="m-5 space-y-4">

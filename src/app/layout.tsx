@@ -5,6 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import  {Footer}  from "@/components/Footer";
 import { usePathname } from "next/navigation";
+import { ToastContainer } from "react-toastify";
 
 // export const metadata: Metadata = {
 //   title: "VORTEXIS",
@@ -23,10 +24,11 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className="no-scrollbar ">
+      <body>
         {!isJudgesRoute && !isOrganizerRoute && <Header />}
 
         {children}
+        <ToastContainer/>
         {!isOrganizerRoute && !isJudgesRoute && <Footer />}
       </body>
     </html>
