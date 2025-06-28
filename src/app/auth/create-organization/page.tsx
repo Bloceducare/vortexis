@@ -127,9 +127,9 @@ export default function Page() {
 
   return (
     <div>
-      <div className="w-[950px] mx-auto bg-white shadow p-2 text-[#212121]">
-          <h1 className="font-[500] text-2xl ml-49 mt-3 py-4">Create a new organization</h1>
-        <div className="max-w-[945px] mx-auto flex flex-col items-center">
+      <div className="w-[1208px] mx-auto bg-white shadow p-2 text-[#212121]">
+        <div className="max-w-[945px] mx-auto">
+          <h1 className="font-[500] text-2xl">Create a new organization</h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className="relative pb-10">
             <div className="m-5 space-y-4">

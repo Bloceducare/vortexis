@@ -13,6 +13,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.80.10",
     "@hookform/resolvers": "^5.1.1",
     "@tanstack/react-query": "^5.80.10",
     "@hookform/resolvers": "^5.1.1",
