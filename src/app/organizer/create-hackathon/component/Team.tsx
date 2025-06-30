@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
+import { NavigationProps } from '@/components/Interface';
+import { toast } from 'react-toastify';
+import { useHackathonStore } from '@/store/useHackathonStore';
+import { useShallow } from 'zustand/shallow';
 
-interface TeamProps {
-  onNext: () => void;
-  onPrev: () => void;
-}
 
-function Team({onNext, onPrev} : TeamProps ) {
+
+
+function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
+    
+      const hackathonSelector = useShallow((state: any) => ({
+        min_team_size: state.min_team_size,
+        max_team_size: state.max_team_size,
+        setField: state.setField,
+      }));
+
+      const { min_team_size, max_team_size, setField } = useHackathonStore(hackathonSelector);
+  
   const dropdownMinimumIndividual = [
     "1 individual",
     "2 Members",
@@ -41,13 +52,36 @@ function Team({onNext, onPrev} : TeamProps ) {
 
       const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        onNext();
+
+          if (!min_team_size) {
+              toast.error("Please enter a minimum team size", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored",
+              });
+              return;
+            }
+
+            if (!max_team_size) {
+              toast.error("Please enter a maximum team size", {
+                position: "top-right",
+                autoClose: 3000,
+                theme: "colored",
+              });
+              return;
+            }
+
+        if (onNext) {
+          onNext();
+        }
         // Handle form submission logic here
         console.log("Form submitted");
       }
     
       const previousButton = () => {
-        onPrev();
+        if (onPrev) {
+          onPrev();
+        }
         console.log("Going to previous step");
       }
     
@@ -68,7 +102,9 @@ function Team({onNext, onPrev} : TeamProps ) {
             <label className="block mb-2 text-[#2F3036] font-bold">Minimum Team Members</label>
             <select
               className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none"
-              name="minimum_members"
+              name="min_team_size"
+              value={min_team_size}
+              onChange={(e) => setField('min_team_size', e.target.value)}
             >
               {dropdownMinimumIndividual.map((item, index) => (
                 <option key={index} value={item}>
@@ -83,7 +119,9 @@ function Team({onNext, onPrev} : TeamProps ) {
             <label className="block mb-2 text-[#2F3036] font-bold">Maximum Team Members</label>
             <select
               className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none"
-              name="maximum_members"
+              name="max_team_size"
+              value={max_team_size}
+              onChange={(e) => setField('max_team_size', e.target.value)}
             >
               {dropdownMaximum.map((item, index) => (
                 <option key={index} value={item}>
@@ -98,7 +136,7 @@ function Team({onNext, onPrev} : TeamProps ) {
         <div className="mt-10">
         <div className="space-y-4">
           {notifications.map((notif, idx) => (
-            <div key={idx} className="flex items-center justify-between w-[25%] pb-3">
+            <div key={idx} className="flex items-center justify-between w-2/5 xl:w-[25%] pb-3">
               <span className="text-gray-800">{notif.label}</span>
               <button
                 onClick={() => handleToggle(idx)}

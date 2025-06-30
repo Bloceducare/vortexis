@@ -146,7 +146,7 @@ export const Hero: React.FC = () => {
               shadow-lg hover:shadow-xl
             "
           >
-            <Link href="/organizers">For Organizers</Link>
+            <Link href="/organizer">For Organizers</Link>
           </Button>
         </div>
       </div>

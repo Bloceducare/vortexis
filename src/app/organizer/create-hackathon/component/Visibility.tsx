@@ -7,6 +7,11 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
     ]
 
     const [notifications, setNotifications] = useState(initialNotifications);
+    const [selected, setSelected] = useState<'public' | 'private' | null>('public');
+
+    const toggleSelection = (value: 'public' | 'private') => {
+      setSelected(prev => (prev === value ? null : value));
+    };
     
       const handleToggle = (idx: number) => {
         setNotifications((prev) =>
@@ -44,23 +49,28 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
       <form onSubmit={handleSubmit}>
 
         <div className='flex justify-between'>
-        <div className='space-y-3 shadow-2xl px-10 py-5 rounded-2xl border border-[#E4E4E4] w-[45%]'>
-                <div className='flex items-center gap-3'>
-                    <input
-                    type='checkbox'
-                    id='public-checkbox'
-                    className="peer hidden"
-                    />
-                    
-                    <label
-                    htmlFor='public-checkbox'
-                    className="w-5 h-5 inline-block rounded-full border border-gray-400 peer-checked:bg-blue-600 peer-checked:border-blue-600 relative cursor-pointer"
-                    >
-                    <span className="hidden peer-checked:block w-[10px] h-[10px] bg-white rounded-full absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"></span>
-                    </label>
-
-                    <label htmlFor='public-checkbox' className="cursor-pointer select-none text-sm text-[#2F4883]">Public</label>
-                </div>
+        <div className='space-y-3 shadow-2xl px-5 xl:px-10 py-5 rounded-2xl border border-[#E4E4E4] w-[45%]'>
+        <div className="flex items-center gap-5">
+      {/* Public Checkbox */}
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          id="public-checkbox"
+          checked={selected === 'public'}
+          onChange={() => toggleSelection('public')}
+          className="peer hidden"
+        />
+        <label
+          htmlFor="public-checkbox"
+          className="w-5 h-5 inline-block rounded-full border border-gray-400 peer-checked:bg-blue-600 peer-checked:border-blue-600 relative cursor-pointer"
+        >
+          <span className="hidden peer-checked:block w-[10px] h-[10px] bg-white rounded-full absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"></span>
+        </label>
+        <label htmlFor="public-checkbox" className="cursor-pointer select-none text-sm text-[#2F4883]">
+          Public
+        </label>
+      </div>
+    </div>
 
                 <div>
                     <p>Anyone can discover and participate in your hackathon</p>
@@ -68,13 +78,15 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
         </div>
 
 
-        <div className='space-y-3 shadow-2xl px-10 py-5 rounded-2xl border border-[#E4E4E4] w-[45%]'>
+        <div className='space-y-3 shadow-2xl px-5 xl:px-10 py-5 rounded-2xl border border-[#E4E4E4] w-[45%]'>
                 <div className='flex items-center gap-3'>
-                    <input
-                    type='checkbox'
-                    id='private-checkbox'
-                    className="peer hidden"
-                    />
+                <input
+          type="checkbox"
+          id="private-checkbox"
+          checked={selected === 'private'}
+          onChange={() => toggleSelection('private')}
+          className="peer hidden"
+        />
                     
                     <label
                     htmlFor='private-checkbox'
@@ -94,18 +106,21 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
         </div>
 
         <div className="mt-10 flex flex-col">
-          <label className="text-lg text-[#2F3036]">Access Code (For Private Hackathons)</label>
-          <textarea
-            className="outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3"
-            placeholder="Create an access code"
-            name="aditional"
-          />
-        </div>
+        <label className="text-lg text-[#2F3036]">Access Code (For Private Hackathons)</label>
+        <textarea
+          className={`outline-none resize-none h-52 border-2 w-full mt-3 rounded-2xl px-3 py-3 ${
+            selected === 'private' ? 'border-[#C5C6CC]' : 'border-gray-200 bg-gray-100 cursor-not-allowed'
+          }`}
+          placeholder="Create an access code"
+          name="access_code"
+          disabled={selected !== 'private'}
+        />
+      </div>
 
         <div className="mt-10">
         <div className="space-y-4">
           {notifications.map((notif, idx) => (
-            <div key={idx} className="flex items-center justify-between w-[25%] pb-3">
+            <div key={idx} className="flex items-center justify-between w-1/2 xl:w-[25%] pb-3">
               <span className="text-gray-800">{notif.label}</span>
               <button
                 onClick={() => handleToggle(idx)}

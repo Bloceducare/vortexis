@@ -6,11 +6,21 @@ import Visibility from './component/Visibility';
 import Invitation from './component/Invitation';
 import Submission from './component/Submission';
 import Team from './component/Team';
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 function Hackathon() {
   const [activeButton, setActiveButton] = useState("Hackathon Details");
 
   const [currentStep, setCurrentStep] = useState(0)
+  const [formData, setFormData] = useState({
+    details: {},
+    submission: {},
+    team: {},
+    visibility: {},
+    invitation: {},
+  });
+  
 
   const goToStep = (index: number) => {
     setCurrentStep(index);
@@ -35,27 +45,37 @@ function Hackathon() {
     "Invite judges"
   ];
 
+  const handleSubmit = async () => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
   const renderComponent = () => {
     if (Buttons[currentStep] === "Hackathon Details") {
-      return <Details onNext={handleNext}  />;
+      return <Details onNext={handleNext} data={formData.details} />;
     }
     if (Buttons[currentStep] === "Submission") {
-      return <Submission onNext={handleNext} onPrev={handlePrev} />;
+      return <Submission onNext={handleNext} onPrev={handlePrev} data={formData.submission} setData={(data: any) => setFormData(prev => ({ ...prev, submission: data }))}  />;
     }
     if (Buttons[currentStep] === "Team Configuration") {
-      return <Team onNext={handleNext} onPrev={handlePrev} />;
+      return <Team onNext={handleNext} onPrev={handlePrev} data={formData.team} setData={(data: any) => setFormData(prev => ({ ...prev, team: data }))} />;
     }
     if (Buttons[currentStep] === "Visibility") {
-      return <Visibility onNext={handleNext} onPrev={handlePrev} />;
+      return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} />;
     }
     if (Buttons[currentStep] === "Invite judges") {
-      return <Invitation  onPrev={handlePrev} />;
+      return <Invitation onPrev={handlePrev} data={formData.invitation} setData={(data: any) => setFormData(prev => ({ ...prev, invitation: data }))} onSubmit={handleSubmit} />;
     }
     return null;
   };
+  
 
   return (
     <section className="bg-white px-10 rounded-2xl py-5">
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <div className='space-y-3'>
         <h1 className='text-3xl font-bold text-[#605DEC]'>{activeButton}</h1>

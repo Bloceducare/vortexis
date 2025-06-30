@@ -41,3 +41,15 @@
 - Sidebar updated
 - Ui bugs fixed
 - Framer motion added
+
+
+### Zustand setup 
+
+-I added the useAuthStore with three functions. getToken, SetToken and clearToken. (With the feature where by when you call the function you have to pass a time in millisecons of when the token will expire as it have an expiry date; I don't know if we want this as a feature)
+- I added the useHackathon store to use two function: 
+   - setField(Key, Value) → This is to update the field by just calling this function
+   - getHackathonData() → to get all saved data for submission
+   - clearHackathon() → to reset state
+   - persist → to save data across page refresh 
+
+
