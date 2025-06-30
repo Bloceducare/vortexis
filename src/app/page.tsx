@@ -7,10 +7,10 @@ export default function Home() {
   return (
     <div className="">
       <Hero />
-      <PlatformOverview/>
-      <ExploreActiveHackathons/>
-      <HowItWorks/>
-      <HackathonCTA/>
+      <PlatformOverview />
+      <ExploreActiveHackathons />
+      <HowItWorks />
+      <HackathonCTA />
     </div>
   );
 }

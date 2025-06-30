@@ -3,8 +3,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
-import  {Footer}  from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 import { usePathname } from "next/navigation";
+import { Toaster } from "react-hot-toast";
 
 // export const metadata: Metadata = {
 //   title: "VORTEXIS",
@@ -28,6 +29,7 @@ export default function RootLayout({
 
         {children}
         {!isOrganizerRoute && !isJudgesRoute && <Footer />}
+        <Toaster position="top-right" />
       </body>
     </html>
   );
