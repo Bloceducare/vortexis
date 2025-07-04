@@ -1,4 +1,5 @@
 import { signInGoogleAction } from "@/lib/actions";
+import { signInGithubAction } from "@/lib/actions";
 import Divider from "./Divider";
 import Button from "./AuthButton";
 import Link from "next/link";
@@ -17,7 +18,7 @@ function AuthLogin({ type }: SignUpFormProps) {
           {type === "organizers" ? "Organizer Login" : "Participant Login"}
         </h1>
       </div> */}
-      <div className="w-[798px] h-[483px] mt-[75px] gap-[24px]">
+      <div className="w-[798px] h-[555px] gap-[24px] mt-7 mx-auto flex flex-col justify-center items-center">
         <form className="flex flex-col pt-5 text-[#2F3036] px-4">
           <label htmlFor="email" className="font-medium block">
             Email Address
@@ -45,19 +46,19 @@ function AuthLogin({ type }: SignUpFormProps) {
             <span className="text-[#2E0BF4]"> Forgotten Password?</span>
           </span>
 
-          <button className="bg-[#2E0BF4] w-[690px] h-[45px] text-white py-2 rounded-[3px]">
+          <button className="bg-[#2E0BF4] w-[690px] h-[45px] text-white py-2 rounded-[3px] mx-auto">
             Log In to {type === "organizers" ? "Organization" : "Participation"}{" "}
             Dashboard
           </button>
         </form>
 
         <div className="w-[655.0309448242188px] h-[27px] mx-auto">
-          <Divider>or</Divider>
+          <Divider>Or</Divider>
         </div>
         <Button
           onClick={signInGoogleAction}
           type="secondary"
-          className="relative flex w-[50%] mx-auto items-center justify-center"
+          className="relative flex w-[400px] rounded-[100px] mx-auto items-center justify-center"
         >
           <img
             src="https://authjs.dev/img/providers/google.svg"
@@ -66,7 +67,22 @@ function AuthLogin({ type }: SignUpFormProps) {
             height="24"
             width="24"
           />
-          Sign in with Google
+          Log in with Google
+        </Button>
+
+        <Button
+          onClick={signInGithubAction}
+          type="secondary"
+          className="relative flex w-[400px] rounded-[100px] mx-auto items-center justify-center"
+        >
+          <img
+            src="https://authjs.dev/img/providers/github.svg"
+            className="absolute left-3 h-5 w-5"
+            alt="google logo"
+            height="24"
+            width="24"
+          />
+          Log in with GitHub
         </Button>
 
         <p className="text-center font-[600] mt-3 text-[#2F3036]">
