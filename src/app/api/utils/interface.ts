@@ -12,6 +12,7 @@ export default interface Hackathon_details {
     organization?: number | null; 
     skills?: string[];
     judges?: string[]; 
-    banner?: File | null; 
+    rules?: string[];
+    banner_image?: File | null; 
   }
   

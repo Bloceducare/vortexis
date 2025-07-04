@@ -20,12 +20,16 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <Provider>
+
       <body>
         {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && <Header />}
 
         {children}
         {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && <Footer />}
       </body>
+      </Provider>
+
     </html>
   );
 }

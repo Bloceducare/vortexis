@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { NavigationProps } from '@/components/Interface';
 import EmailInput from '@/components/EmailInput';
 import { useHackathonStore } from '@/store/useHackathonStore';
@@ -14,8 +14,9 @@ function Invitation({ onPrev, data, setData, onSubmit }: InvitationProps) {
   const [emails, setEmails] = useState<string[]>([]);
   const inviteLimit = 3; 
   const { createHackathonMutation, updateHackathonMutation, inviteJudgesMutation } = useOrganizer();
-  const hackathon = useHackathonStore((state) => state.getHackathonData());
-
+  const getHackathonData = useHackathonStore((state) => state.getHackathonData);
+  const hackathon = useMemo(() => getHackathonData(), [getHackathonData]);
+  
 
 
     const role = [
