@@ -1,16 +1,26 @@
 import React, { useState } from 'react'
 import { NavigationProps } from '@/components/Interface';
+import { useHackathonStore } from '@/store/useHackathonStore';
+import { useShallow } from 'zustand/shallow';
 
 function Visibility( {onNext, onPrev} : NavigationProps ) {
     const initialNotifications = [
         { label: "Feature this hackathon on the homepage", checked: true },
     ]
 
+     const hackathonSelector = useShallow((state: any) => ({
+        visibility: state.visibility,
+        setField: state.setField,
+      }));
+    
+      const { visibility, setField } = useHackathonStore(hackathonSelector);
+
     const [notifications, setNotifications] = useState(initialNotifications);
-    const [selected, setSelected] = useState<'public' | 'private' | null>('public');
+    const [selected, setSelected] = useState<'public' | 'private' | null>(visibility ? 'public' : null);
 
     const toggleSelection = (value: 'public' | 'private') => {
       setSelected(prev => (prev === value ? null : value));
+      setField('visibility', value === 'public');
     };
     
       const handleToggle = (idx: number) => {
@@ -26,7 +36,7 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
         if (onNext) {
           onNext();
         }
-        // Handle form submission logic here
+      
         console.log("Form submitted");
       }
     

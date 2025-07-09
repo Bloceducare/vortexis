@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { NavigationProps } from '@/components/Interface';
 import EmailInput from '@/components/EmailInput';
 import { useHackathonStore } from '@/store/useHackathonStore';
-import useOrganizer from '@/app/api/utils/useOrganizer';
+import useOrganizer from '@/hooks/useOrganizer';
 
 interface InvitationProps extends NavigationProps {
   data: any;
@@ -28,6 +28,13 @@ function Invitation({ onPrev, data, setData, onSubmit }: InvitationProps) {
           const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             try {
+
+              const response = await inviteJudgesMutation.mutateAsync({
+                emails: emails,
+                hackathonId: "1",
+              });
+
+
                await createHackathonMutation.mutateAsync(hackathon)
             } catch (error) {
               
