@@ -20,6 +20,7 @@ export const useHackathonStore = create<HackathonState>()(
       skills: [],
       judges: [],
       rules: [],
+      visibility: false,
       banner_image: null,
 
       setField: (key, value) => set({ [key]: value }),
