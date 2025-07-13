@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Details from './component/Details';
 import Visibility from './component/Visibility';
-import Invitation from './component/Invitation';
 import Submission from './component/Submission';
 import Team from './component/Team';
 import { ToastContainer } from "react-toastify";
@@ -42,7 +41,6 @@ function Hackathon() {
     "Submission",
     "Team Configuration",
     "Visibility",
-    "Invite judges"
   ];
 
   const handleSubmit = async () => {
@@ -64,10 +62,7 @@ function Hackathon() {
       return <Team onNext={handleNext} onPrev={handlePrev} data={formData.team} setData={(data: any) => setFormData(prev => ({ ...prev, team: data }))} />;
     }
     if (Buttons[currentStep] === "Visibility") {
-      return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} />;
-    }
-    if (Buttons[currentStep] === "Invite judges") {
-      return <Invitation onPrev={handlePrev} data={formData.invitation} setData={(data: any) => setFormData(prev => ({ ...prev, invitation: data }))} onSubmit={handleSubmit} />;
+      return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} onSubmit={handleSubmit} />;
     }
     return null;
   };

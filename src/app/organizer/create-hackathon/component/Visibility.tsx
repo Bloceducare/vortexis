@@ -1,9 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { NavigationProps } from '@/components/Interface';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
+import useOrganizer from '@/hooks/useOrganizer';
 
-function Visibility( {onNext, onPrev} : NavigationProps ) {
+interface VisibilityProps extends NavigationProps {
+  data: any;
+  setData: (data: any) => void;
+  onSubmit: () => void;
+}
+
+function Visibility( {onNext, onPrev} : VisibilityProps ) {
     const initialNotifications = [
         { label: "Feature this hackathon on the homepage", checked: true },
     ]
@@ -31,13 +38,18 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
         );
       };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+        const { createHackathonMutation, updateHackathonMutation, inviteJudgesMutation } = useOrganizer();
+        const getHackathonData = useHackathonStore((state) => state.getHackathonData);
+        const hackathon = useMemo(() => getHackathonData(), [getHackathonData]);
+
+    const handleSubmit =  async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (onNext) {
-          onNext();
+        try {
+           await createHackathonMutation.mutateAsync(hackathon)
+        } catch (error) {
+          
         }
-      
-        console.log("Form submitted");
       }
     
       const previousButton = () => {
@@ -156,7 +168,7 @@ function Visibility( {onNext, onPrev} : NavigationProps ) {
         </button>
 
         <button className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer" type='submit'>
-          Next
+          Submit
         </button>
       </div>
 
