@@ -17,10 +17,11 @@ function Visibility( {onNext, onPrev} : VisibilityProps ) {
 
      const hackathonSelector = useShallow((state: any) => ({
         visibility: state.visibility,
+        venue: state.venue,
         setField: state.setField,
       }));
     
-      const { visibility, setField } = useHackathonStore(hackathonSelector);
+      const { visibility, venue, setField } = useHackathonStore(hackathonSelector);
 
     const [notifications, setNotifications] = useState(initialNotifications);
     const [selected, setSelected] = useState<'public' | 'private' | null>(visibility ? 'public' : null);
@@ -127,6 +128,15 @@ function Visibility( {onNext, onPrev} : VisibilityProps ) {
 
         </div>
 
+        <div className='mt-10 flex-col'>
+          <label  className='text-2xl text-[#2F3036]'>Venue</label>
+          <input type='text' placeholder='Input Venue'
+            onChange={(e) => setField('venue', e.target.value)}
+            className='w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3'
+          />
+
+        </div>
+
         <div className="mt-10 flex flex-col">
         <label className="text-lg text-[#2F3036]">Access Code (For Private Hackathons)</label>
         <textarea
@@ -168,7 +178,7 @@ function Visibility( {onNext, onPrev} : VisibilityProps ) {
         </button>
 
         <button className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer" type='submit'>
-          Submit
+          {createHackathonMutation.isPending ? "loading...." : "Submit"}
         </button>
       </div>
 

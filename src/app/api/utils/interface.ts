@@ -4,6 +4,8 @@ export default interface Hackathon_details {
     venue?: string | undefined; 
     details?: string | null;
     grand_prize?: number; 
+    prizes?: Prize[];
+    submission_deadline?: string | undefined;
     start_date?: string | undefined;
     end_date?: string | undefined;
     visibility?: boolean;
@@ -14,5 +16,9 @@ export default interface Hackathon_details {
     judges?: string[]; 
     rules?: string[];
     banner_image?: File | null; 
+  }
+  export interface Prize {
+    name: string;
+    amount: number;
   }
   

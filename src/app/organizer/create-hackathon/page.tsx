@@ -5,6 +5,7 @@ import Details from './component/Details';
 import Visibility from './component/Visibility';
 import Submission from './component/Submission';
 import Team from './component/Team';
+import Prizes from './component/Prizes';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -40,6 +41,7 @@ function Hackathon() {
     "Hackathon Details",
     "Submission",
     "Team Configuration",
+    "Prizes",
     "Visibility",
   ];
 
@@ -60,6 +62,9 @@ function Hackathon() {
     }
     if (Buttons[currentStep] === "Team Configuration") {
       return <Team onNext={handleNext} onPrev={handlePrev} data={formData.team} setData={(data: any) => setFormData(prev => ({ ...prev, team: data }))} />;
+    }
+    if(Buttons[currentStep] === "Prizes") {
+      return <Prizes onNext={handleNext} onPrev={handlePrev} data={formData.team} setData={(data: any) => setFormData(prev => ({ ...prev, team: data }))} />;
     }
     if (Buttons[currentStep] === "Visibility") {
       return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} onSubmit={handleSubmit} />;
