@@ -68,7 +68,7 @@ function Page() {
       </motion.div>
 
       <motion.div
-        className="flex justify-between flex-wrap gap-4 mt-5"
+        className="md:flex hidden justify-between flex-wrap gap-4 mt-5"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -131,7 +131,7 @@ function Page() {
           {hackathonsJudged.map((judge, i) => (
             <motion.div
               key={`${judge.name}-${i}`}
-              className="shadow-md border border-[#E4E4E4] rounded-lg bg-white py-8 px-4 space-y-1.5"
+              className="shadow-md border border-[#E4E4E4] rounded-lg bg-white py-8 md:px-4 px-2 space-y-1.5"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{
@@ -145,7 +145,10 @@ function Page() {
                 <h2 className="text-xl font-semibold">
                   Welcome, {judge.name}!
                 </h2>
-                <Link href={`/judges/submission-review/${i}`}>
+                <Link
+                  href={`/judges/submission-review/${i}`}
+                  className="hidden md:block"
+                >
                   <p className="bg-[#605DEC] text-sm cursor-pointer rounded-md text-center px-2 py-1 text-white">
                     Review submission
                   </p>
@@ -169,6 +172,14 @@ function Page() {
                   {judge.reviews_completed}
                 </span>
               </p>
+              <Link
+                href={`/judges/submission-review/${i}`}
+                className="md:hidden block w-3/4 mx-auto mt-3"
+              >
+                <p className="bg-[#605DEC] text-sm cursor-pointer rounded-md text-center px-2 py-1 text-white">
+                  Review submission
+                </p>
+              </Link>
             </motion.div>
           ))}
         </div>

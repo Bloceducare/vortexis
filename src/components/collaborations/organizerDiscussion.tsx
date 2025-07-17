@@ -42,7 +42,7 @@ const judgesRoom = [
 function OrganizerDiscussion() {
   return (
     <div>
-      <div className="bg-[#DAE0DE3D] w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
+      <div className="bg-[#DAE0DE3D] md:w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
         <div className="flex justify-between mb-3 px-2">
           <div className="flex items-center gap-2">
             <Pin className="text-[#212121] h-6" />

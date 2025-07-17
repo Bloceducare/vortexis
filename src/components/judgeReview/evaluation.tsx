@@ -28,7 +28,7 @@ const evaluations = [
 
 function Evaluation() {
   return (
-    <div className="flex items-stretch">
+    <div className="flex md:items-stretch">
       <div className="space-y-6 w-full">
         {evaluations.map((evaluation, index) => {
           return (
@@ -66,10 +66,10 @@ function Evaluation() {
         </div>
 
         <div className="flex justify-between">
-          <p className="border-1 font-[400] border-[#605DEC] text-[#605DEC] text-center p-2 w-40 rounded-sm cursor-pointer">
+          <p className="border-1 font-[400] border-[#605DEC] text-[#605DEC] text-center md:p-2 p-1.5 text-sm md:w-40 w-36 rounded-sm cursor-pointer">
             Flag for Discussion
           </p>
-          <p className="border-1 font-[400] border-[#605DEC] text-[#605DEC] text-center p-2 w-40 rounded-sm cursor-pointer">
+          <p className="border-1 font-[400] border-[#605DEC] text-[#605DEC] text-center md:p-2 p-1.5 text-sm md:w-40 w-36 rounded-sm cursor-pointer">
             Discuss{" "}
           </p>
         </div>

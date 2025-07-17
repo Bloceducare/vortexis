@@ -42,7 +42,7 @@ const judgesRoom = [
 function JudgeOnlyRoom() {
   return (
     <div>
-      <div className="bg-[#DAE0DE3D] w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
+      <div className="bg-[#DAE0DE3D] md:w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
         <div className="flex justify-between mb-3 px-2">
           <div className="flex items-center gap-2">
             <Pin className="text-[#212121] h-6" />
@@ -53,7 +53,7 @@ function JudgeOnlyRoom() {
         <p>Reminder: All reviews must be completed by May 15th, 5:00 PM EST.</p>
       </div>
 
-      <div className="space-y-7 w-[1083px]">
+      <div className="space-y-7 md:w-[1083px]">
         {judgesRoom.map((room, i) => {
           return (
             <div key={i} className="flex gap-6 px-2">

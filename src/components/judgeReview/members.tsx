@@ -29,7 +29,7 @@ function Members() {
     <div>
       <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
 
-      <div className="flex flex-col w-[770px] gap-3 mt-4">
+      <div className="flex flex-col md:w-[770px] gap-3 mt-4">
         {members.map((member, index) => {
           return (
             <div

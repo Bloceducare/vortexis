@@ -3,7 +3,7 @@ import { Pin } from "lucide-react";
 function FinalDecision() {
   return (
     <div>
-      <div className="bg-[#DAE0DE3D] w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
+      <div className="bg-[#DAE0DE3D] md:w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
         <div className="flex justify-between mb-3 px-2">
           <div className="flex items-center gap-2">
             <Pin className="text-[#212121] h-6" />
@@ -18,7 +18,7 @@ function FinalDecision() {
         </p>
       </div>
 
-      <div className="w-[1083px] space-y-6">
+      <div className="md:w-[1083px] space-y-6">
         <div className=" border border-[#E4E4E4] rounded-lg bg-white py-8 px-4 space-y-1.5">
           <div className="border-b-2 flex justify-between border-[#535353] pb-4">
             <div className="flex gap-4 items-center">

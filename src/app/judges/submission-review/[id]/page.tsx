@@ -11,7 +11,7 @@ export default function SubmissionReviewPage() {
       </div>
 
       <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
-        <div className="md:w-[1114px] px-3 py-8">
+        <div className="md:w-[1114px] w-full px-3 py-8">
           <Tabscontent />
         </div>
       </div>

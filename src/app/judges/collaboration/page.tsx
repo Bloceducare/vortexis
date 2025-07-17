@@ -45,7 +45,7 @@ function CollaborationPageContent() {
         <p>Collaborate with other judges and discuss submissions</p>
       </div>
 
-      <div className="bg-[#FFFFFF] my-3 shadow-md rounded-md border p-3 w-[1114px] border-[#E4E4E4]">
+      <div className="bg-[#FFFFFF] my-3 shadow-md rounded-md border p-3 md:w-[1114px] border-[#E4E4E4]">
         <div>
           <div className="flex my-6 mt-1.5 w-[645px] cursor-pointer gap-4">
             {tabs.map((tab, i) => (
