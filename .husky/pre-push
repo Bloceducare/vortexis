@@ -1,6 +1,6 @@
 # Pull from the remote repository (development branch)
 echo "Pulling from remote repository (development branch)..."
-git pull git@github.com:Bloceducare/blockeducare.git development --no-rebase
+git pull https://github.com/Bloceducare/blockeducare.git development --no-rebase
 if [ $? -ne 0 ]; then
   echo "Error: Failed to pull from remote repository."
   exit 1
