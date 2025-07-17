@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface SubmissionStatusItem {
   number: number;
   status: string;
@@ -43,7 +45,7 @@ const hackathonsJudged: HackathonJudged[] = [
 
 function Page() {
   return (
-    <div>
+    <div className="">
       <div>
         <h1 className="font-bold text-2xl text-[#605DEC]">
           Welcome, Judge Sharon!
@@ -53,16 +55,18 @@ function Page() {
           hackathons and pending reviews.
         </p>
 
-        <div className="flex flex-wrap gap-4 mt-5 shadow-xl">
+        <div className="flex flex-wrap gap-4 mt-5">
           {SubmissionStatus.map((status, i) => {
             return (
               <div
                 key={i}
-                className="w-1/4 my-5 pl-5 bg-white h-40 flex flex-col justify-center rounded-lg shadow"
+                className="w-60 my-5 bg-[#FFFFFF] h-40 flex flex-col border border-[#E4E4E4] justify-center pl-8 rounded-lg shadow-md"
               >
                 <div>
                   <p className="text-[#00AC4F] font-bold">{status.number}</p>
-                  <p>{status.status}</p>
+                  <p className="text-[#605DEC] font-semibold">
+                    {status.status}
+                  </p>
                 </div>
               </div>
             );
@@ -77,7 +81,7 @@ function Page() {
             <span className="text-sm">8 of 20 reviews completed</span>
             <span className="text-sm">40%</span>
           </p>
-          <div className="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden">
+          <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden">
             <div
               className="absolute top-0 left-0 h-full bg-[#605DEC] rounded-full transition-all duration-500 ease-in-out"
               style={{ width: `40%` }}
@@ -95,20 +99,21 @@ function Page() {
               return (
                 <div
                   key={i}
-                  className="shadow-xl rounded-lg bg-white py-8 px-4 space-y-3"
+                  className="shadow-md border border-[#E4E4E4] rounded-lg bg-white py-8 px-4 space-y-1.5"
                 >
                   <div className="flex justify-between">
                     <h2 className="text-xl font-semibold">
                       Welcome,{judge.name}!{" "}
                     </h2>
-                    <p className="bg-[#605DEC] text-sm cursor-pointer rounded-lg text-center p-2 text-white">
-                      Review submission
-                    </p>
+                    <Link href={`/judges/submission-review/${i}`}>
+                      <p className="bg-[#605DEC] text-sm cursor-pointer rounded-md text-center px-2 py-1 text-white">
+                        Review submission
+                      </p>
+                    </Link>
                   </div>
-                  <p className="bg-[#164E04] -mt-2 rounded-full text-white w-14 items-center gap-1 flex justify-center ">
-                    {" "}
-                    <span className="w-2 h-2 bg-white rounded-full inline-block"></span>
-                    <span className="text-xs pb-1">{judge.status}</span>
+                  <p className="bg-[#164E04] pb-0.5 rounded-full text-white w-15 h-5 flex items-center justify-center gap-1">
+                    <span className="w-2 h-2 bg-white rounded-full mt-0.5 inline-block"></span>
+                    <span className="text-xs">{judge.status}</span>
                   </p>
 
                   <p>
