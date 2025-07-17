@@ -107,7 +107,7 @@ export default function LoginForm({ type }: LoginFormProps) {
       {type === "login" && (
         <div className="mb-8 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <input type="checkbox" />
+            <input title="remember me" type="checkbox" />
             <label
               htmlFor="remember"
               className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

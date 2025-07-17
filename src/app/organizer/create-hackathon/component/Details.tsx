@@ -4,11 +4,7 @@ import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
-
-
-
-
-
+import RuleInput from './RuleInput';
 
 
 function Details({ onNext, data }: NavigationProps) {
@@ -20,10 +16,11 @@ function Details({ onNext, data }: NavigationProps) {
     description: state.description,
     start_date: state.start_date,
     end_date: state.end_date,
+    rules: state.rules,
     setField: state.setField,
   }));
 
-  const { title, description, start_date, end_date, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, setField } = useHackathonStore(hackathonSelector);
   const handleContinue = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -199,10 +196,14 @@ function Details({ onNext, data }: NavigationProps) {
         ></textarea>
         </div>
 
-        <div className='mt-10 flex flex-col'>
-        <label className='text-2xl text-[#2F3036]'>Rules & Guidelines</label>
-        <textarea className='outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3' placeholder='Enter rules & guidelines for participants' name='rules'></textarea>
-        </div>
+        <div className="mt-10">
+      <label className="text-2xl text-[#2F3036] mb-2 block">Rules & Guidelines</label>
+      <RuleInput
+        rules={rules}
+        setRules={(newRules) => setField('rules', newRules)}
+      />
+    </div>
+
 
 
         <div className='mt-10'>

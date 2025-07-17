@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import All from './component/All';
 import Pending from './component/Pending';
 import Reviewed from './component/Reviewed';
 import Rejected from './component/Rejected';
+import useOrganizer from '@/hooks/useOrganizer';
 
 function SubmitProject() {
   const [activeButton, setActiveButton] = useState("All Submission");
@@ -13,6 +14,10 @@ function SubmitProject() {
     "Reviewed",
     "Rejected",
   ];
+
+  const { useSubmissionById } = useOrganizer();
+  const hackathon_id = '1';
+  const { data, isLoading, error } = useSubmissionById(hackathon_id); 
 
   const renderComponent = () => {
     switch (activeButton) {

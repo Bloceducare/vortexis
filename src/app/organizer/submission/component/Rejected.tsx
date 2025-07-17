@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Input } from '@/components/ui/Input'
+// import { Input } from '@/components/ui/Input'
 import { Submission } from '../../utils'
 
-function Rejected() { 
+function Rejected() {
     const SubmissionPerPage = 8;
       const [searchTerm, setSearchTerm] = useState('')
    const [sortOrder, setSortOrder] = useState('newest')
@@ -16,50 +16,50 @@ function Rejected() {
    status: string
    date: string
  }[]>([])
- 
+
     const rejectedSubmissions = Submission.filter(item => item.status === "Rejected");
-  
+
      const totalPages = Math.ceil(
        rejectedSubmissions.filter(sub =>
          sub.title.toLowerCase().includes(searchTerm.toLowerCase())
        ).length / SubmissionPerPage
      )
-     
+
        const [currentPage, setCurrentPage] = useState(1);
-   
+
       useEffect(() => {
         const filtered = rejectedSubmissions.filter(sub =>
           sub.title.toLowerCase().includes(searchTerm.toLowerCase())
         )
-    
+
         const sorted = filtered.sort((a, b) => {
           const dateA = new Date(a.date).getTime()
           const dateB = new Date(b.date).getTime()
           return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
         })
-    
+
         const startIndex = (currentPage - 1) * SubmissionPerPage
         const endIndex = startIndex + SubmissionPerPage
         setFilteredSubmissions(sorted.slice(startIndex, endIndex))
       }, [searchTerm, sortOrder, currentPage])
-    
-     
+
+
       const handlePageChange = (page: number) => {
        setCurrentPage(page)
      }
-  
+
     const handleNext = () => {
       if (currentPage < totalPages) {
         handlePageChange(currentPage + 1);
       }
     };
-  
+
     const handlePrev = () => {
       if (currentPage > 1) {
         handlePageChange(currentPage - 1);
       }
     };
-  
+
     const start = (currentPage - 1) * SubmissionPerPage + 1;
     const end = Math.min(currentPage * SubmissionPerPage, filteredSubmissions.length);
   return (
@@ -119,6 +119,7 @@ function Rejected() {
                 setCurrentPage(1)
               }}
               className="font-semibold text-sm cursor-pointer outline-none"
+              aria-label="Sort submissions"
             >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -185,7 +186,7 @@ function Rejected() {
     </nav>
    </div>
 
-   
+
 
     </section>
 

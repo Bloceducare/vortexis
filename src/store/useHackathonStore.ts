@@ -19,7 +19,9 @@ export const useHackathonStore = create<HackathonState>()(
       end_date: '',
       skills: [],
       judges: [],
-      banner: null,
+      rules: [],
+      visibility: false,
+      banner_image: null,
 
       setField: (key, value) => set({ [key]: value }),
 
@@ -38,7 +40,8 @@ export const useHackathonStore = create<HackathonState>()(
           organization: null,
           skills: [],
           judges: [],
-          banner: null,
+          rules: [],
+          banner_image: null,
         }),
 
       getHackathonData: () => {
@@ -50,7 +53,7 @@ export const useHackathonStore = create<HackathonState>()(
     {
       name: 'hackathon-storage',
       partialize: (state) => {
-        const { banner, ...persistable } = state;
+        const { banner_image, ...persistable } = state;
         return persistable;
       },
     }

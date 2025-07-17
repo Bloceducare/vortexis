@@ -6,60 +6,40 @@ import { usePathname } from "next/navigation";
 import DesktopSidebar from "@/components/layouts/DesktopSidebar";
 import Header from "@/components/layouts/Header";
 import MobileSidebar from "@/components/layouts/MobileSidebar";
-
 import Team from "@/public/assets/icon/team.svg";
-// import Dashboard from "@/public/assets/icon/community.svg";
+import Dashboard from "@/public/assets/icon/community.svg";
 import Community from "@/public/assets/icon/community.svg";
 import Resourcess from "@/public/assets/icon/resource.svg";
 import Submit from "@/public/assets/icon/iconoir_submit-document.svg";
-import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
-import Champ from "@/public/assets/icon/judges_trophy.svg";
-import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
-
-import { Nunito, Nunito_Sans } from "next/font/google";
-
-// import Hackathon_Navbar from "@/components/Navbar/hackathon-navbar";
-import "../globals.css";
-
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-});
-
-const nunitoSan = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-});
+import Champs from "@/public/assets/icon/tabler_flag-filled.svg";
 
 const sidebarItems = [
-  { icon: Dashboard, text: "Dashboard", href: "/judges" },
-
+  { icon: Dashboard, text: "Dashboard", href: "/dashboard" },
   {
-    icon: Champ,
-    text: "Assigned Hackathons",
-    href: "/",
+    icon: Champs,
+    text: "My Hackathons",
+    href: "/dashboard/hackathon",
   },
-
   {
     icon: Team,
-    text: "Submissions To Review",
-    href: "/judges",
+    text: "Team Workspace",
+    href: "/dashboard/workspace",
   },
 
   {
     icon: Resourcess,
-    text: "Evaluation Criteria",
-    href: "",
+    text: "Resources",
+    href: "/dashboard/resources",
   },
   {
     icon: Submit,
-    text: "Judge Notes",
-    href: "",
+    text: "Submit Project",
+    href: "/dashboard/project",
   },
   {
-    icon: Trophy,
-    text: "Discussions",
-    href: "judges/collaboration",
+    icon: Community,
+    text: "Community",
+    href: "/dashboard/community",
   },
 ];
 
@@ -96,15 +76,23 @@ export default function DashboardLayout({
     }
   };
 
+  const isAuthPage = pathname?.includes("/admin/auth/");
+
+  if (isAuthPage) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#f5f5f5]">
+        {children}
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={`flex h-full min-h-screen max-w-full gap-6 bg-[#f5f5f5] ${nunito.variable} ${nunitoSan.variable} antialiased`}
-    >
+    <div className="flex h-full min-h-screen gap-6 bg-[#f5f5f5]">
       <DesktopSidebar
         sidebarExpanded={sidebarExpanded}
         sidebarItems={sidebarItems}
         toggleSidebar={toggleSidebar}
-        settingPage=""
+        settingPage="/dashboard/settings"
         pathname={pathname}
       />
 
@@ -118,13 +106,11 @@ export default function DashboardLayout({
       <div
         className={`flex-1 ${
           !sidebarExpanded ? "lg:ml-[120px]" : "lg:ml-[280px]"
-        }  transition-all duration-400 ease-in-out `}
+        } transition-all duration-400 ease-in-out`}
       >
-        <div className="bg-white mb-2">
-          <Header toggleSidebar={toggleSidebar} />
-        </div>
+        <Header toggleSidebar={toggleSidebar} />
 
-        <main className="min-h-[calc(100vh-64px)] w-[98%] rounded-lg shadow bg-white overflow-y-auto p-4 mt-4  ">
+        <main className="min-h-[calc(100vh-64px)] py-5 pr-5 w-full overflow-y-auto">
           {children}
         </main>
       </div>

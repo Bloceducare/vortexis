@@ -16,17 +16,22 @@ export default function RootLayout({
 
   const isOrganizerRoute = pathname.includes("/organizer");
   const isJudgesRoute = pathname.includes("/judges");
+  const isDashboardRoute = pathname.includes("/dashboard");
 
   return (
     <html lang="en">
-      <body>
-        <Provider>
-          {!isJudgesRoute && !isOrganizerRoute && <Header />}
+      <Provider>
+        <body>
+          {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
+            <Header />
+          )}
 
           {children}
-          {!isOrganizerRoute && !isJudgesRoute && <Footer />}
-        </Provider>
-      </body>
+          {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
+            <Footer />
+          )}
+        </body>
+      </Provider>
     </html>
   );
 }

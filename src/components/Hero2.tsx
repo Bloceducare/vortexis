@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { Button } from "./ui/Button";
 export default function HackathonCTA() {
   return (
     <div className="max-w-6xl mx-auto p-6 text-white">
@@ -8,7 +8,7 @@ export default function HackathonCTA() {
 
         {/* New To Hackathons? Card */}
 
-        <div className="relative w-full bg-[#605DEC] overflow-hidden rounded-3xl p-4 ">
+        <div className="relative w-full bg-[#605DEC] overflow-hidden rounded-3xl p-4 ">variant="primary" 
   <div className="absolute inset-0 overflow-hidden">
 <div className="w-55 h-72 bg-gradient-to-br from-[#8399E9] to-[#605DEC] absolute -top-0 right-22" 
      style={{
@@ -113,7 +113,7 @@ export default function HackathonCTA() {
         <p className="text-sm text-gray-600 mb-4">
           Subscribe to our news letter
         </p>
-        <Button variant="primary" size="lg" className="px-6 py-3 text-lg">
+        <Button size="lg" className="px-6 py-3 text-lg">
           Subscribe
         </Button>
       </div>

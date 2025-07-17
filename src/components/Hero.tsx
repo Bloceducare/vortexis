@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "../components/ui/Button";
+import { Button } from "./ui/Button";
 
 export const Hero: React.FC = () => {
   return (
@@ -112,7 +112,6 @@ export const Hero: React.FC = () => {
           md:flex-row md:justify-center md:gap-6
         ">
           <Button
-            variant="primary"
             size="lg"
             className="
               bg-[#605DEC] text-white 
