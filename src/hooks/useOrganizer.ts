@@ -37,11 +37,11 @@ export default function useOrganizer() {
   });
 
   const inviteJudgesMutation = useMutation({
-    mutationFn: async ({ hackathonId, emails }: { hackathonId: string; emails: string[] }) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/invite-judge`, {
+    mutationFn: async ({ hackathonId, email }: { hackathonId: string; email: string[] }) => {
+      const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/invite-judge/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emails }),
+        body: JSON.stringify({ email }),
       });
 
       if (!res.ok) throw new Error('Failed to invite judges');
