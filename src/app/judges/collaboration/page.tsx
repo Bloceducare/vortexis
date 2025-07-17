@@ -1,8 +1,9 @@
 "use client";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import FinalDecision from "@/components/collaborations/finalDecision";
 import JudgeOnlyRoom from "@/components/collaborations/judgeOnlyRoom";
 import OrganizerDiscussion from "@/components/collaborations/organizerDiscussion";
-import { useState } from "react";
 
 const tabs = [
   {
@@ -19,16 +20,21 @@ const tabs = [
   },
 ];
 
-// interface PageProps {
-//   params: { id: string };
-//   searchParams?: Record<string, string | string[] | undefined>; // Add this
-// }
-
-export default function CollaborationPage() {
+function CollaborationPageContent() {
   const [activeTab, setActiveTab] = useState(1);
 
-  // Use params.id to avoid unused params warning
-  // console.log(params.id);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const handleTabChange = (tabNo: number) => {
+    setActiveTab(tabNo);
+    router.replace(`?tab=${tabNo}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) setActiveTab(Number(tabParam));
+  }, [searchParams]);
 
   return (
     <div>
@@ -39,13 +45,17 @@ export default function CollaborationPage() {
         <p>Collaborate with other judges and discuss submissions</p>
       </div>
 
-      <div className="bg-[#FFFFFF] my-3 shadow-md rounded-md border p-3 border-[#E4E4E4]">
+      <div className="bg-[#FFFFFF] my-3 shadow-md rounded-md border p-3 w-[1114px] border-[#E4E4E4]">
         <div>
-          <div className="flex my-6 mt-1.5 cursor-pointer gap-4">
+          <div className="flex my-6 mt-1.5 w-[645px] cursor-pointer gap-4">
             {tabs.map((tab, i) => (
-              <div key={i} onClick={() => setActiveTab(tab.tab_no)}>
+              <div
+                key={i}
+                className="w-[203px]"
+                onClick={() => handleTabChange(tab.tab_no)}
+              >
                 <p
-                  className={`text-center px-7 py-2 ${
+                  className={`text-center px-5 py-2 ${
                     activeTab === tab.tab_no
                       ? "bg-[#605DEC] text-white"
                       : "bg-[#F4F3FE] text-[#C5C0DB]"
@@ -63,5 +73,13 @@ export default function CollaborationPage() {
         {activeTab === 3 && <FinalDecision />}
       </div>
     </div>
+  );
+}
+
+export default function CollaborationPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CollaborationPageContent />
+    </Suspense>
   );
 }

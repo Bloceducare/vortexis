@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Search from "@/public/assets/Search.svg";
 import Image from "next/image";
+import { SearchCheckIcon } from "lucide-react";
 
 interface SearchInputProps {
   onSearch: (query: string) => void;
@@ -18,14 +19,17 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-md ">
-      <Image 
+    <div className="flex items-center gap-2 bg-gray-100 px-2 py-1 rounded-md ">
+      {/* <Image 
         src={Search} 
         alt="Search Icon" 
         width={20} 
         height={20} 
         className="text-gray-500" 
-      />
+      /> */}
+
+      <SearchCheckIcon className="text-gray-500 w-[20px] h-[20px]" />
+
       <input
         type="text"
         placeholder="Search Hackathons"
@@ -38,5 +42,3 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
 };
 
 export default SearchInput;
-
-

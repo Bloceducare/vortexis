@@ -29,20 +29,22 @@ function Members() {
     <div>
       <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
 
-      <div className="flex flex-col gap-4 mt-4">
+      <div className="flex flex-col w-[770px] gap-3 mt-4">
         {members.map((member, index) => {
           return (
             <div
               key={index}
-              className="p-2 flex border-2 items-center border-[#605DEC] rounded-lg text-[#605DEC] gap-4"
+              className="py-1 px-2 flex border-2 items-center border-[#605DEC] rounded-xl text-[#605DEC] gap-4"
             >
-              <img
-                src={`${member.img.src}`}
-                alt={`${member.name}`}
-                className="w-10 h-10 rounded-full"
+              <Image
+                src={member.img || "/placeholder.svg"}
+                alt={member.name}
+                width={40}
+                height={40}
+                className="w-10 h-10 object-cover border-0"
               />
               <div>
-                <p className="font-bold ">{member.name}</p>
+                <p className="font-bold">{member.name}</p>
                 <p className="text-sm">{member.role}</p>
               </div>
             </div>

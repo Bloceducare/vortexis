@@ -24,7 +24,7 @@ export default function Button({
         type === "primary"
           ? "bg-primary border-primary text-white"
           : "text-primary bg-white"
-      } ${className} border-2 min-w-full cursor-pointer rounded-2xl px-4 py-2 font-bold`}
+      } ${className} border-2 min-w-full cursor-pointer rounded-xl px-4 py-2 font-bold`}
       type="button"
     >
       {children}

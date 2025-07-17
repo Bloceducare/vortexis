@@ -6,46 +6,40 @@ import { usePathname } from "next/navigation";
 import DesktopSidebar from "@/components/layouts/DesktopSidebar";
 import Header from "@/components/layouts/Header";
 import MobileSidebar from "@/components/layouts/MobileSidebar";
-import {
-  HomeIcon,
-  ListOrderedIcon,
-  LayoutDashboard,
-  Trophy,
-} from "lucide-react";
 import Team from "@/public/assets/icon/team.svg";
-import Dashboard from "@/public/assets/icon/community.svg";
-import Community from "@/public/assets/icon/community.svg";
-import Resourcess from "@/public/assets/icon/resource.svg";
-import Submit from "@/public/assets/icon/iconoir_submit-document.svg";
-import Champs from "@/public/assets/icon/tabler_flag-filled.svg";
+import Judges from "@/public/assets/icon/tabler_hammer.svg";
+import Analytics from "@/public/assets/icon/Info.svg";
+import Submit from "@/public/assets/icon/Clock.svg";
+import Champs from "@/public/assets/icon/game-icons_trophy-cup.svg";
+import Dash from '@/public/assets/icon/material-symbols_dashboard.svg'
 
 const sidebarItems = [
-  { icon: Dashboard, text: "Dashboard", href: "/organizer" },
+  { icon: Dash, text: "Dashboard", href: "/organizer" },
   {
     icon: Champs,
-    text: "My Hackathons",
-    href: "/organizer/hackathon",
-  },
-  {
-    icon: Team,
-    text: "Team Workspace",
+    text: "Manage Hackathons",
     href: "/organizer/workspaces",
   },
 
   {
-    icon: Resourcess,
-    text: "Resources",
-    href: "/organizer/resources",
+    icon: Team,
+    text: "Participants",
+    href: "/organizer/participants",
   },
   {
     icon: Submit,
-    text: "Submit Project",
-    href: "/organizer/project",
+    text: "Submissions",
+    href: "/organizer/submission",
   },
   {
-    icon: Community,
-    text: "Community",
-    href: "/organizer/community",
+    icon: Analytics,
+    text: "Analytics",
+    href: "/organizer/analytics",
+  },
+  {
+    icon: Judges,
+    text: "Judges",
+    href: "/organizer/judges",
   },
 ];
 
@@ -110,7 +104,7 @@ export default function DashboardLayout({
 
       <div
         className={`flex-1 ${
-          !sidebarExpanded ? "lg:ml-[120px]" : "lg:ml-[280px]"
+          !sidebarExpanded ? "lg:ml-[120px]" : "lg:ml-[270px]"
         } transition-all duration-400 ease-in-out`}
       >
         <Header toggleSidebar={toggleSidebar} />

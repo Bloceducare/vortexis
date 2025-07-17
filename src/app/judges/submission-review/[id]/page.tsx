@@ -10,8 +10,8 @@ export default function SubmissionReviewPage() {
         <p>Reviewing submissions</p>
       </div>
 
-      <div className="bg-[#FFFFFF] my-5  shadow-md rounded-md border border-[#E4E4E4]">
-        <div className="md:w-2/3 px-3 py-8">
+      <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
+        <div className="md:w-[1114px] px-3 py-8">
           <Tabscontent />
         </div>
       </div>

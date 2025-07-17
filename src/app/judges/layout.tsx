@@ -6,18 +6,15 @@ import { usePathname } from "next/navigation";
 import DesktopSidebar from "@/components/layouts/DesktopSidebar";
 import Header from "@/components/layouts/Header";
 import MobileSidebar from "@/components/layouts/MobileSidebar";
-import {
-  HomeIcon,
-  ListOrderedIcon,
-  LayoutDashboard,
-  Trophy,
-} from "lucide-react";
+
 import Team from "@/public/assets/icon/team.svg";
-import Dashboard from "@/public/assets/icon/community.svg";
+// import Dashboard from "@/public/assets/icon/community.svg";
 import Community from "@/public/assets/icon/community.svg";
 import Resourcess from "@/public/assets/icon/resource.svg";
 import Submit from "@/public/assets/icon/iconoir_submit-document.svg";
-import Champs from "@/public/assets/icon/tabler_flag-filled.svg";
+import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
+import Champ from "@/public/assets/icon/judges_trophy.svg";
+import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
 
 import { Nunito, Nunito_Sans } from "next/font/google";
 
@@ -35,32 +32,34 @@ const nunitoSan = Nunito_Sans({
 });
 
 const sidebarItems = [
-  { icon: Dashboard, text: "Dashboard", href: "" },
+  { icon: Dashboard, text: "Dashboard", href: "/judges" },
+
   {
-    icon: Champs,
-    text: "My Hackathons",
-    href: "",
+    icon: Champ,
+    text: "Assigned Hackathons",
+    href: "/",
   },
+
   {
     icon: Team,
-    text: "Team Workspace",
-    href: "",
+    text: "Submissions To Review",
+    href: "/judges",
   },
 
   {
     icon: Resourcess,
-    text: "Resources",
+    text: "Evaluation Criteria",
     href: "",
   },
   {
     icon: Submit,
-    text: "Submit Project",
+    text: "Judge Notes",
     href: "",
   },
   {
-    icon: Community,
-    text: "Community",
-    href: "",
+    icon: Trophy,
+    text: "Discussions",
+    href: "judges/collaboration",
   },
 ];
 
@@ -99,12 +98,13 @@ export default function DashboardLayout({
 
   return (
     <div
-      className={`flex h-full min-h-screen gap-6 bg-[#FFFFFF] ${nunito.variable} ${nunitoSan.variable} antialiased`}
+      className={`flex h-full min-h-screen max-w-full gap-6 bg-[#f5f5f5] ${nunito.variable} ${nunitoSan.variable} antialiased`}
     >
       <DesktopSidebar
         sidebarExpanded={sidebarExpanded}
         sidebarItems={sidebarItems}
         toggleSidebar={toggleSidebar}
+        settingPage=""
         pathname={pathname}
       />
 
@@ -118,11 +118,13 @@ export default function DashboardLayout({
       <div
         className={`flex-1 ${
           !sidebarExpanded ? "lg:ml-[120px]" : "lg:ml-[280px]"
-        } transition-all duration-400 ease-in-out shadow-xl`}
+        }  transition-all duration-400 ease-in-out `}
       >
-        <Header toggleSidebar={toggleSidebar} />
+        <div className="bg-white mb-2">
+          <Header toggleSidebar={toggleSidebar} />
+        </div>
 
-        <main className="min-h-[calc(100vh-64px)] overflow-y-auto p-4 ">
+        <main className="min-h-[calc(100vh-64px)] w-[98%] rounded-lg shadow bg-white overflow-y-auto p-4 mt-4  ">
           {children}
         </main>
       </div>

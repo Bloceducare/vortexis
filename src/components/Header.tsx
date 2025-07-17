@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Button } from "../components/ui/Button";
+// import { button } from "./ui/button";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,24 +46,24 @@ export const Header: React.FC = () => {
             {!user ? (
               <>
                 <Link href="/auth">
-                  <Button
-                    variant="outline"
+                  <button
+                    type="button"
                     className="w-full  border-[#009AFF]"
                   >
                     Log in
-                  </Button>
+                  </button>
                 </Link>
                 <Link href="/auth/signup">
-                  <Button variant="primary" className="w-full">
+                  <button className="w-full">
                     Sign up
-                  </Button>
+                  </button>
                 </Link>
               </>
             ) : (
               <Link href="/api/auth/signout?callbackUrl=/">
-                <Button variant="primary" className="w-full">
+                <button className="w-full">
                   Logout
-                </Button>
+                </button>
               </Link>
             )}
           </div>
@@ -140,23 +140,23 @@ export const Header: React.FC = () => {
               {!user ? (
                 <div className="space-y-3">
                   <Link href="/auth" className="block">
-                    <Button
-                      variant="outline"
+                    <button
+                      type="button"
                       className="w-full  border-[#009AFF]"
                     >
                       Log in
-                    </Button>
+                    </button>
                   </Link>
                   <Link href="/auth/signup">
-                    <Button variant="primary" className="w-full">
+                    <button className="w-full">
                       Sign up
-                    </Button>
+                    </button>
                   </Link>
                 </div>
               ) : (
-                <Button variant="primary" className="w-full">
+                <button className="w-full">
                   Logout
-                </Button>
+                </button>
               )}
             </div>
           </div>

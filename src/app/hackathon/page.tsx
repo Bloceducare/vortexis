@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import HackathonHeaders from "@/components/HackathonHeaders";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/Button";
 import HackathonCard from "@/components/HackathonCard";
 import FilterSection from "@/components/FilterSection"; // Import the new component
@@ -107,7 +107,7 @@ const Page: React.FC = () => {
             placeholder="Search by hackathon title or keywords"
             className="md:w-[30%] h-[50%] md:h-full"
           />
-          <Button variant="primary" size="lg" className="px-6">
+          <Button size="lg" className="px-6">
             Search Hackathons
           </Button>
         </div>

@@ -3,7 +3,8 @@ import Deliverables from "@/components/judgeReview/deliverables";
 import Evaluation from "@/components/judgeReview/evaluation";
 import Members from "@/components/judgeReview/members";
 import Vote from "@/components/judgeReview/vote";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const tabs = [
   {
@@ -27,12 +28,29 @@ const tabs = [
 function Tabscontent() {
   const [activeTab, setActiveTab] = useState(1);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const handleTabChange = (tabNo: number) => {
+    setActiveTab(tabNo);
+    router.replace(`?tab=${tabNo}`, { scroll: false });
+  };
+
+  useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam) setActiveTab(Number(tabParam));
+  }, [searchParams]);
+
   return (
     <div>
-      <div className="flex mb-6 -mt-1.5 cursor-pointer gap-4 ">
+      <div className="flex mb-6 -mt-1.5 w-[860px] cursor-pointer gap-4 ">
         {tabs.map((tab, i) => {
           return (
-            <div key={i} onClick={() => setActiveTab(tab.tab_no)}>
+            <div
+              key={i}
+              className="w-[203px]"
+              onClick={() => handleTabChange(tab.tab_no)}
+            >
               <p
                 className={`text-center px-7 py-2 ${
                   activeTab === i + 1

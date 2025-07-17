@@ -25,11 +25,12 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     console.log("Search for:", query);
   };
   return (
-    <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white mx-4 px-10 ">
+    <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-[100%] border-b bg-white px-10 ">
       <div className="flex h-full items-center justify-between pr-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
-          <button
+          <button type="button"
+            aria-label="Toggle Menu"
             onClick={toggleSidebar}
             className="hover:bg-gray-100 rounded-md p-2 focus:outline-none lg:hidden"
           >
@@ -37,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </button>
 
           {/* Search Box */}
-          <div className="p-6">
+          <div className="px-6">
             <SearchInput onSearch={handleSearch} />
           </div>
         </div>
@@ -56,7 +57,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </div>
         </div>
 
-        {/* 
+        {/*
         <Image
           src={Logo} // Replace with your logo
           alt="Logo"

@@ -5,11 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import  {Footer}  from "@/components/Footer";
 import { usePathname } from "next/navigation";
-
-// export const metadata: Metadata = {
-//   title: "VORTEXIS",
-//   description: "Vortexis by Web3bridge",
-// };
+import { Provider } from "./provider";
 
 export default function RootLayout({
   children,
@@ -20,15 +16,20 @@ export default function RootLayout({
 
   const isOrganizerRoute = pathname.includes("/organizer");
   const isJudgesRoute = pathname.includes("/judges");
+  const isDashboardRoute = pathname.includes("/dashboard");
 
   return (
     <html lang="en">
+      <Provider>
+
       <body>
-        {!isJudgesRoute && <Header />}
+        {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && <Header />}
 
         {children}
-        {!isOrganizerRoute && !isJudgesRoute && <Footer />}
+        {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && <Footer />}
       </body>
+      </Provider>
+
     </html>
   );
 }
