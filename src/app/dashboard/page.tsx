@@ -1,6 +1,6 @@
 'use client';
 import { Users, FileText, HelpCircle, Plus, AlertCircle } from "lucide-react";
-import Card from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 import { HackathonCard } from "@/components/dashboard/HackathonCard";
 import { DeadlineItem } from "@/components/dashboard/DeadlineItem";
 import { QuickActionButton } from "@/components/dashboard/QuickActionButton";
