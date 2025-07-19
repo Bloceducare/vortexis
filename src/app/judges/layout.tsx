@@ -75,7 +75,6 @@ export default function DashboardLayout({
 
   useEffect(() => {
     const handleResize = () => {
-      console.log("Window width:", window.innerWidth);
       if (window.innerWidth < 768) {
         setSidebarExpanded(false);
         setIsMobile(true);
@@ -92,12 +91,6 @@ export default function DashboardLayout({
   }, []);
 
   const toggleSidebar = () => {
-    console.log(
-      "toggleSidebar called, isMobile:",
-      isMobile,
-      "mobileMenuOpen:",
-      mobileMenuOpen
-    );
     if (isMobile) {
       setMobileMenuOpen(!mobileMenuOpen);
     } else {
