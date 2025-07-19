@@ -2,16 +2,17 @@
 
 import React, { useState } from 'react'
 import Invitation from './component/Invitation'
-import JudgesList from './component/JudgesList' // Uncomment if you have this component
-import { useRouter } from 'next/router'
+import JudgesList from './component/JudgesList'
+import { useParams } from 'next/navigation'
 
 
 const tab = ["Invite Judges", "Judges List"]
 
 function Judges() {
   const [activeTab, setActiveTab] = useState("Invite Judges")
-const router = useRouter();
-const hackathon_id = router.query.hackathon_id;
+
+ const params = useParams();
+  const hackathon_id = params?.hackathon_id as string;
   return (
     <section className="bg-white px-10 rounded-2xl py-5">
       {/* Tabs */}
