@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/Button";
-import Card from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 import { Plus, Github, FileText, Book } from "lucide-react";
 
 const TeamWorkspace = () => {

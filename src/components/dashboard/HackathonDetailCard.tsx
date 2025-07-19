@@ -1,6 +1,6 @@
 
 
-import Card from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 
 interface HackathonDetailCardProps {
   title: string;
