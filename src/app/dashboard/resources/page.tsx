@@ -2,7 +2,7 @@
 
 
 import { useState } from "react";
-import Card from "@/components/ui/card";
+import {Card }from "@/components/ui/card";
 import { Code, FileText, Link } from "lucide-react";
 
 const TabMenu = ["api-documentation", "design-assets", "mentors", "faqs"];
