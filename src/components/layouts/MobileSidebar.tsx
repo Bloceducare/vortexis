@@ -1,10 +1,13 @@
+"use client";
+
+import React, { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { Settings, LogOutIcon, ChevronLeft } from "lucide-react";
-import React from "react";
 
 interface SidebarItem {
-  icon: React.ReactNode;
+  icon: string;
   text: string;
   href: string;
 }
@@ -16,7 +19,7 @@ interface MobileSidebarProps {
   setMobileMenuOpen: (open: boolean) => void;
 }
 
-const MobileSidebar: React.FC<MobileSidebarProps> = ({
+const MobileSidebar: FC<MobileSidebarProps> = ({
   sidebarItems,
   pathname,
   mobileMenuOpen,
@@ -24,7 +27,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
 }) => {
   return (
     <>
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -36,8 +38,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
           />
         )}
       </AnimatePresence>
-
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.aside
@@ -55,11 +55,11 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                 <button
                   onClick={() => setMobileMenuOpen(false)}
                   className="absolute right-2 top-4 flex size-8 items-center justify-center rounded-full border bg-white hover:bg-gray-100"
+                  aria-label="Close mobile menu"
                 >
                   <ChevronLeft size={18} />
                 </button>
               </div>
-
               <div className="flex-1 overflow-y-auto py-4">
                 {sidebarItems.map((item, index) => (
                   <Link
@@ -67,15 +67,23 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                     href={item.href}
                     className={`mb-1 flex items-center rounded-lg px-4 py-3 ${
                       pathname === item.href
-                        ? "border-l-5 border-main bg-[#FFF5DD]"
-                        : "hover:bg-[#FFF5DD]"
+                        ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                        : "hover:bg-[#F7F7FB]"
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-gray-500">{item.icon}</span>
+                    <Image
+                      src={item.icon}
+                      alt={item.text}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
                     <span
                       className={`ml-3 whitespace-nowrap ${
-                        pathname === item.href ? "text-main" : "text-icon"
+                        pathname === item.href
+                          ? "text-[#605DEC]"
+                          : "text-gray-600"
                       }`}
                     >
                       {item.text}
@@ -83,30 +91,25 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                   </Link>
                 ))}
               </div>
-
               <div className="mt-auto">
                 <Link
                   href="/admin/settings"
                   className={`mb-1 flex items-center rounded-lg px-4 py-3 ${
                     pathname === "/admin/settings"
-                      ? "bg-gray-100"
-                      : "hover:bg-gray-50"
+                      ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                      : "hover:bg-[#F7F7FB]"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span className="text-gray-500">
-                    <Settings />
-                  </span>
+                  <Settings size={24} />
                   <span className="text-gray-700 ml-3">Settings</span>
                 </Link>
                 <Link
                   href="/logout"
-                  className="hover:bg-gray-50 flex items-center rounded-lg px-4 py-3"
+                  className="hover:bg-[#F7F7FB] flex items-center rounded-lg px-4 py-3"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span className="text-gray-500">
-                    <LogOutIcon />
-                  </span>
+                  <LogOutIcon size={24} />
                   <span className="ml-3 text-red-500">Sign Out</span>
                 </Link>
               </div>
