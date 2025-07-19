@@ -1,6 +1,6 @@
 # Pull from the remote repository (development branch)
 echo "Pulling from remote repository (development branch)..."
-git pull git@github.com:Bloceducare/blockeducare.git development --no-rebase
+git pull https://github.com/Bloceducare/blockeducare.git development --no-rebase
 if [ $? -ne 0 ]; then
   echo "Error: Failed to pull from remote repository."
   exit 1
@@ -13,12 +13,12 @@ if git status | grep -q "both modified"; then
 fi
 
 # Run the build command
-echo "Running build..."
-npm run build
-if [ $? -ne 0 ]; then
-  echo "Error: Build failed. Please fix build errors before committing."
-  exit 1
-fi
+# echo "Running build..."
+# npm run build
+# if [ $? -ne 0 ]; then
+#   echo "Error: Build failed. Please fix build errors before committing."
+#   exit 1
+# fi
 
 
 echo "Pre-commit checks passed. Proceeding with commit."

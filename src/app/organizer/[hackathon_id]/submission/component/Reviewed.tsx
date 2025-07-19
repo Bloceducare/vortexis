@@ -1,52 +1,55 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 // import { Input } from '@/components/ui/Input'
-import { Submission } from '../../utils'
+import { Submission } from '../../../utils'
 
-function Rejected() {
+function Reviewed() {
     const SubmissionPerPage = 8;
-      const [searchTerm, setSearchTerm] = useState('')
-   const [sortOrder, setSortOrder] = useState('newest')
-  const [filteredSubmissions, setFilteredSubmissions] = useState<{
-   id: number
-   title: string
-   categoty: string
-   members: string
-   team: string
-   status: string
-   date: string
- }[]>([])
+         const [searchTerm, setSearchTerm] = useState('')
+       const [sortOrder, setSortOrder] = useState('newest')
+      const [filteredSubmissions, setFilteredSubmissions] = useState<{
+       id: number
+       title: string
+       categoty: string
+       members: string
+       team: string
+       status: string
+       date: string
+     }[]>([])
 
-    const rejectedSubmissions = Submission.filter(item => item.status === "Rejected");
+    // 1. Filter the "pending" submissions first
+    const reviewedSubmissions = Submission.filter(item => item.status === "Reviewed");
 
-     const totalPages = Math.ceil(
-       rejectedSubmissions.filter(sub =>
-         sub.title.toLowerCase().includes(searchTerm.toLowerCase())
-       ).length / SubmissionPerPage
-     )
-
-       const [currentPage, setCurrentPage] = useState(1);
-
-      useEffect(() => {
-        const filtered = rejectedSubmissions.filter(sub =>
-          sub.title.toLowerCase().includes(searchTerm.toLowerCase())
+      const totalPages = Math.ceil(
+          reviewedSubmissions.filter(sub =>
+            sub.title.toLowerCase().includes(searchTerm.toLowerCase())
+          ).length / SubmissionPerPage
         )
 
-        const sorted = filtered.sort((a, b) => {
-          const dateA = new Date(a.date).getTime()
-          const dateB = new Date(b.date).getTime()
-          return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
-        })
+          const [currentPage, setCurrentPage] = useState(1);
 
-        const startIndex = (currentPage - 1) * SubmissionPerPage
-        const endIndex = startIndex + SubmissionPerPage
-        setFilteredSubmissions(sorted.slice(startIndex, endIndex))
-      }, [searchTerm, sortOrder, currentPage])
+         useEffect(() => {
+           const filtered = reviewedSubmissions.filter(sub =>
+             sub.title.toLowerCase().includes(searchTerm.toLowerCase())
+           )
+
+           const sorted = filtered.sort((a, b) => {
+             const dateA = new Date(a.date).getTime()
+             const dateB = new Date(b.date).getTime()
+             return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
+           })
+
+           const startIndex = (currentPage - 1) * SubmissionPerPage
+           const endIndex = startIndex + SubmissionPerPage
+           setFilteredSubmissions(sorted.slice(startIndex, endIndex))
+         }, [searchTerm, sortOrder, currentPage])
 
 
-      const handlePageChange = (page: number) => {
-       setCurrentPage(page)
-     }
+         const handlePageChange = (page: number) => {
+          setCurrentPage(page)
+        }
+
+
 
     const handleNext = () => {
       if (currentPage < totalPages) {
@@ -60,7 +63,7 @@ function Rejected() {
       }
     };
 
-    const start = (currentPage - 1) * SubmissionPerPage + 1;
+     const start = (currentPage - 1) * SubmissionPerPage + 1;
     const end = Math.min(currentPage * SubmissionPerPage, filteredSubmissions.length);
   return (
    <motion.div  initial={{ opacity: 0,  }}
@@ -114,12 +117,12 @@ function Rejected() {
             <p className="text-[#7E7E7E] text-sm">Sort by :</p>
             <select
               value={sortOrder}
+              title='sort submissions'
               onChange={e => {
                 setSortOrder(e.target.value)
                 setCurrentPage(1)
               }}
               className="font-semibold text-sm cursor-pointer outline-none"
-              aria-label="Sort submissions"
             >
               <option value="newest">Newest</option>
               <option value="oldest">Oldest</option>
@@ -153,9 +156,9 @@ function Rejected() {
                 <h1 className='font-bold  text-[#212121]'>{sub.team}</h1>
                 <p className='text-[#727272] font-medium'>{sub.members} members</p>
             </div></td>
-        <td className="px-2 py-5 text-[#292D32] font-medium">{sub.date}</td>
-        <td className="px-5 py-3">
-            <span className={`px-5 py-2 rounded-lg font-semibold border-[#DF0404] border bg-[#FFC5C5] text-[#DF0404] `}>
+            <td className="px-2 py-5 text-[#292D32] font-medium">{sub.date}</td>
+            <td className="px-5 py-3">
+            <span className={`px-5 py-2 rounded-lg font-semibold border-[#00B087] border bg-[#16C09861] `}>
                 {sub.status}
             </span>
         </td>
@@ -166,8 +169,8 @@ function Rejected() {
    </table>
 
    <div className='flex justify-between items-center mt-5 px-5'>
-    <p className='text-[#727272]'>Showing data { end === 0 ? "0" : start } to {end}  of {filteredSubmissions.length} entries</p>
-    <nav className="flex justify-center items-center gap-3 mt-5">
+   <p className='text-[#727272]'>Showing data { end === 0 ? "0" : start } to {end}  of {filteredSubmissions.length} entries</p>
+   <nav className="flex justify-center items-center gap-3 mt-5">
         <p onClick={handlePrev}    className='border px-4 rounded-lg cursor-pointer bg-[#F5F5F5] border-[#EEEEEE] py-2 text-[#404B52] font-semibold'  > {" < "} </p>
       <ul className="flex space-x-2">
         {Array.from({ length: totalPages }, (_, index) => (
@@ -195,4 +198,4 @@ function Rejected() {
   )
 }
 
-export default Rejected;
+export default Reviewed;

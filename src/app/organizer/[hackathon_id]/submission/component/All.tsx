@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Submission } from '../../utils'
+import { Submission } from '../../../utils'
 
 function All() {
   const SubmissionPerPage = 8

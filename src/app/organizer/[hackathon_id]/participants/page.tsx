@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ParticipantsData } from '../utils'
+import { ParticipantsData } from '../../utils'
 import { getCountries, Country } from '@/app/api/country/getCountries'
 
 function Participants() {

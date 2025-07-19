@@ -1,16 +1,26 @@
-import React, { useState } from 'react'
-import { NavigationProps } from '@/components/Interface';
+'use client';
 
+import React, { useState } from 'react';
+import { NavigationProps } from '@/components/Interface';
+import { useHackathonStore } from '@/store/useHackathonStore';
+import { useShallow } from 'zustand/react/shallow';
 
 function Submission({ onNext, onPrev }: NavigationProps) {
   const initialNotifications = [
-    { label: "Project Description", checked: true },
-    { label: "Demo Video", checked: false },
-    { label: "Slide Deck", checked: true },
-    { label: "GitHub Repository", checked: true }
+    { label: 'Project Description', checked: true },
+    { label: 'Demo Video', checked: false },
+    { label: 'Slide Deck', checked: true },
+    { label: 'GitHub Repository', checked: true },
   ];
 
   const [notifications, setNotifications] = useState(initialNotifications);
+
+  const { submission_deadline, setField } = useHackathonStore(
+    useShallow((state) => ({
+      submission_deadline: state.submission_deadline,
+      setField: state.setField,
+    }))
+  );
 
   const handleToggle = (idx: number) => {
     setNotifications((prev) =>
@@ -23,14 +33,17 @@ function Submission({ onNext, onPrev }: NavigationProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onNext?.();
-    // Handle form submission logic here
-    console.log("Form submitted");
-  }
+    console.log('Form submitted');
+  };
 
   const previousButton = () => {
     onPrev?.();
-    console.log("Going to previous step");
-  }
+    console.log('Going to previous step');
+  };
+
+  const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setField('submission_deadline', e.target.value);
+  };
 
   return (
     <section className="p-4">
@@ -47,16 +60,8 @@ function Submission({ onNext, onPrev }: NavigationProps) {
               type="date"
               required
               name="submission_deadline"
-              className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
-            />
-          </div>
-
-          <div className="w-full md:w-[45%]">
-            <label className="text-lg text-[#2F3036]">End Date</label>
-            <input
-              type="date"
-              required
-              name="end_date"
+              value={submission_deadline ?? ''}
+              onChange={handleDeadlineChange}
               className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
             />
           </div>
@@ -71,49 +76,52 @@ function Submission({ onNext, onPrev }: NavigationProps) {
           />
         </div>
 
-
-      {/* Toggle Section */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
-        <div className="space-y-4">
-          {notifications.map((notif, idx) => (
-            <div key={idx} className="flex items-center justify-between w-[25%] pb-3">
-              <span className="text-gray-800">{notif.label}</span>
-              <button
-                onClick={() => handleToggle(idx)}
-                type="button"
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  notif.checked ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notif.checked ? 'translate-x-6' : 'translate-x-1'
+        {/* Toggle Section */}
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
+          <div className="space-y-4">
+            {notifications.map((notif, idx) => (
+              <div key={idx} className="flex items-center justify-between w-[25%] pb-3">
+                <span className="text-gray-800">{notif.label}</span>
+                <button
+                  onClick={() => handleToggle(idx)}
+                  type="button"
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    notif.checked ? 'bg-blue-600' : 'bg-gray-300'
                   }`}
-                />
-              </button>
-            </div>
-          ))}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      notif.checked ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-     
-
-
-
+        {/* Navigation Buttons */}
         <div className="mt-10 flex justify-between">
-        <button className="border-[#0B40EE] border text-[#0B40EE] py-2 px-8 rounded cursor-pointer" onClick={previousButton}>
-          Previous
-        </button>
+          <button
+            className="border-[#0B40EE] border text-[#0B40EE] py-2 px-8 rounded cursor-pointer"
+            type="button"
+            onClick={previousButton}
+          >
+            Previous
+          </button>
 
-        <button className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer" type='submit'>
-          Next
-        </button>
-      </div>
+          <button
+            className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer"
+            type="submit"
+          >
+            Next
+          </button>
+        </div>
       </form>
-
     </section>
   );
 }
 
 export default Submission;
+
