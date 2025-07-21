@@ -1,21 +1,13 @@
+"use client";
+
+import React, { FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-// import Image from 'next/image';
+import Image from "next/image";
 import Link from "next/link";
-import { Settings, LogOutIcon } from "lucide-react";
-
-import { ChevronLeft } from "lucide-react";
-// import Logo from '@/assests/Logo.png';
-import React from "react";
-// import { usePathname } from 'next/navigation';
-
-// import HomeIcon from '../assets/icons/HomeIcon';
-// import ProductIcon from '../assets/icons/ProductIcon';
-// import OrderIcon from '../assets/icons/OrderIcon';
-// import CartIcon from '../assets/icons/CartIcon';
-// import SupportIcon from '../assets/icons/SupportIcon';
+import { Settings, LogOutIcon, ChevronLeft } from "lucide-react";
 
 interface SidebarItem {
-  icon: React.ReactNode;
+  icon: string;
   text: string;
   href: string;
 }
@@ -27,7 +19,7 @@ interface MobileSidebarProps {
   setMobileMenuOpen: (open: boolean) => void;
 }
 
-const MobileSidebar: React.FC<MobileSidebarProps> = ({
+const MobileSidebar: FC<MobileSidebarProps> = ({
   sidebarItems,
   pathname,
   mobileMenuOpen,
@@ -35,7 +27,6 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
 }) => {
   return (
     <>
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -47,36 +38,28 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
           />
         )}
       </AnimatePresence>
-
-      {/* Mobile Sidebar */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.aside
             initial={{ x: -240 }}
             animate={{ x: 0 }}
             exit={{ x: -240 }}
-            transition={{ ease: "easeOut" }}
-            className="border-gray-200 fixed left-0 top-0 z-50 h-full w-64 border-r bg-white px-4 md:hidden"
+            transition={{ ease: "easeOut", duration: 0.3 }}
+            className="fixed left-0 top-0 z-50 h-full w-3/4 max-w-64 border-r bg-white px-4 md:hidden"
           >
             <div className="flex h-full flex-col">
               <div className="flex h-16 items-center justify-between px-4">
                 <div className="h-8 w-full">
-                  {/* <Image
-                    src={Logo}
-                    alt="Logo"
-                    width={120}
-                    height={32}
-                    className="object-contain"
-                  /> */}
+                  <span className="text-lg font-bold">Web3Bridge</span>
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="border-gray-200 hover:bg-gray-100 absolute -right-5 top-5 flex size-8 items-center justify-center rounded-full border bg-white"
+                  className="absolute right-2 top-4 flex size-8 items-center justify-center rounded-full border bg-white hover:bg-gray-100"
+                  aria-label="Close mobile menu"
                 >
                   <ChevronLeft size={18} />
                 </button>
               </div>
-
               <div className="flex-1 overflow-y-auto py-4">
                 {sidebarItems.map((item, index) => (
                   <Link
@@ -84,15 +67,23 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                     href={item.href}
                     className={`mb-1 flex items-center rounded-lg px-4 py-3 ${
                       pathname === item.href
-                        ? "border-l-5 border-main bg-[#FFF5DD]"
-                        : "hover:bg-[#FFF5DD]"
+                        ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                        : "hover:bg-[#F7F7FB]"
                     }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-gray-500">{item.icon}</span>
+                    <Image
+                      src={item.icon}
+                      alt={item.text}
+                      width={24}
+                      height={24}
+                      className="object-contain"
+                    />
                     <span
-                      className={` ml-3 whitespace-nowrap ${
-                        pathname === item.href ? "text-main" : "text-icon"
+                      className={`ml-3 whitespace-nowrap ${
+                        pathname === item.href
+                          ? "text-[#605DEC]"
+                          : "text-gray-600"
                       }`}
                     >
                       {item.text}
@@ -100,30 +91,25 @@ const MobileSidebar: React.FC<MobileSidebarProps> = ({
                   </Link>
                 ))}
               </div>
-
               <div className="mt-auto">
                 <Link
                   href="/admin/settings"
                   className={`mb-1 flex items-center rounded-lg px-4 py-3 ${
                     pathname === "/admin/settings"
-                      ? "bg-gray-100"
-                      : "hover:bg-gray-50"
+                      ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                      : "hover:bg-[#F7F7FB]"
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span className="text-gray-500">
-                    <Settings />
-                  </span>
+                  <Settings size={24} />
                   <span className="text-gray-700 ml-3">Settings</span>
                 </Link>
                 <Link
                   href="/logout"
-                  className="hover:bg-gray-50 flex items-center rounded-lg  px-4 py-3"
+                  className="hover:bg-[#F7F7FB] flex items-center rounded-lg px-4 py-3"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <span className="text-gray-500">
-                    <LogOutIcon />
-                  </span>
+                  <LogOutIcon size={24} />
                   <span className="ml-3 text-red-500">Sign Out</span>
                 </Link>
               </div>

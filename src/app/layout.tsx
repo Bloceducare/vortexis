@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/Header";
-import  {Footer}  from "@/components/Footer";
+import { Footer } from "@/components/Footer";
 import { usePathname } from "next/navigation";
 import { Provider } from "./provider";
 
@@ -21,15 +21,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Provider>
+        <body>
+          {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
+            <Header />
+          )}
 
-      <body>
-        {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && <Header />}
-
-        {children}
-        {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && <Footer />}
-      </body>
+          {children}
+          {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
+            <Footer />
+          )}
+        </body>
       </Provider>
-
     </html>
   );
 }

@@ -78,8 +78,10 @@ export default function DashboardLayout({
       if (window.innerWidth < 768) {
         setSidebarExpanded(false);
         setIsMobile(true);
+        setMobileMenuOpen(false);
       } else {
         setIsMobile(false);
+        setMobileMenuOpen(false);
       }
     };
 

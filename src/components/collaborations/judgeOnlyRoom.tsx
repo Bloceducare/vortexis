@@ -42,7 +42,7 @@ const judgesRoom = [
 function JudgeOnlyRoom() {
   return (
     <div>
-      <div className="bg-[#DAE0DE3D] w-[1088px] px-4 py-1.5 mb-8 rounded-3xl border-l-24 pl-6 border-l-[#605DEC]">
+      <div className="bg-[#DAE0DE3D] md:w-[1088px] px-4 py-1.5 mb-8 rounded-3xl md:border-l-24 border-l-18 pl-2  md:pl-6 border-l-[#605DEC]">
         <div className="flex justify-between mb-3 px-2">
           <div className="flex items-center gap-2">
             <Pin className="text-[#212121] h-6" />
@@ -53,7 +53,7 @@ function JudgeOnlyRoom() {
         <p>Reminder: All reviews must be completed by May 15th, 5:00 PM EST.</p>
       </div>
 
-      <div className="space-y-7 w-[1083px]">
+      <div className="space-y-7 md:w-[1083px]">
         {judgesRoom.map((room, i) => {
           return (
             <div key={i} className="flex gap-6 px-2">
@@ -63,11 +63,13 @@ function JudgeOnlyRoom() {
                   .map((word) => word[0])
                   .join("")}
               </p>
-              <div className="w-[60%] space-y-1">
-                <p className="text-xl font-medium">{room.name}</p>
+              <div className="md:w-[60%] space-y-1">
+                <p className="md:text-xl font-medium">{room.name}</p>
                 <p className="text-sm">{room.decision}</p>
               </div>
-              <p className="ms-auto pe-2">{room.time} AM</p>
+              <p className="ms-auto md:pe-2 md:text-base text-sm">
+                {room.time} AM
+              </p>
             </div>
           );
         })}
@@ -76,11 +78,11 @@ function JudgeOnlyRoom() {
       <div className="flex justify-center gap-4 mt-5">
         <input
           type="text"
-          className="w-2/4 border h-16 pb-3 px-2 text-[#C5C6CC] border-[#C5C6CC] rounded-md focus:outline-none focus:border-[#C5C6CC] focus:ring-1 focus:ring-[#C5C6CC]"
+          className="md:w-2/4 border h-12 md:h-16 md:pb-3 px-2 text-[#C5C6CC] border-[#C5C6CC] rounded-md focus:outline-none focus:border-[#C5C6CC] focus:ring-1 focus:ring-[#C5C6CC]"
           placeholder="Type your message here........"
         />
 
-        <SendIcon className="w-18 text-white cursor-pointer rounded-md py-1.5 bg-[#605DEC] text-center h-16" />
+        <SendIcon className="w-18 text-white cursor-pointer rounded-md py-1.5 bg-[#605DEC] text-center h-12 md:h-16" />
       </div>
     </div>
   );
