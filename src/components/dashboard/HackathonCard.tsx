@@ -1,6 +1,6 @@
 
 import { Clock } from "lucide-react";
-import Card from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 
 interface HackathonCardProps {
   title: string;

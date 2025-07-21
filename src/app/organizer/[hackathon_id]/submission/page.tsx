@@ -5,6 +5,7 @@ import Pending from './component/Pending';
 import Reviewed from './component/Reviewed';
 import Rejected from './component/Rejected';
 import useOrganizer from '@/hooks/useOrganizer';
+import { useParams } from 'next/navigation';
 
 function SubmitProject() {
   const [activeButton, setActiveButton] = useState("All Submission");
@@ -14,10 +15,15 @@ function SubmitProject() {
     "Reviewed",
     "Rejected",
   ];
+  const params = useParams();
+  const hackathon_id = params?.hackathon_id as string;
+
+
 
   const { useSubmissionById } = useOrganizer();
-  const hackathon_id = '1';
   const { data, isLoading, error } = useSubmissionById(hackathon_id); 
+
+  console.log(data)
 
   const renderComponent = () => {
     switch (activeButton) {

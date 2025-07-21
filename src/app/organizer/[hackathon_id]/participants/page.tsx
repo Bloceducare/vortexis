@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ParticipantsData } from '../../utils'
 import { getCountries, Country } from '@/app/api/country/getCountries'
+import { useParams } from 'next/navigation'
 
 function Participants() {
   const SubmissionPerPage = 8
@@ -25,6 +26,9 @@ function Participants() {
       sub.title.toLowerCase().includes(searchTerm.toLowerCase())
     ).length / SubmissionPerPage
   )
+
+  const params = useParams()
+  const hackathon_id = params?.hackathon_id as string;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)

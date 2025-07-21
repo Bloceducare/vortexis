@@ -18,7 +18,7 @@ const sidebarItems = [
   {
     icon: Champs,
     text: "Manage Hackathons",
-    href: "/organizer/workspaces",
+    href: "/organizer/hackathons",
   },
 
   {
