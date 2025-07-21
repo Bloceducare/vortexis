@@ -8,12 +8,26 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 export default function useOrganizer() {
   const queryClient = useQueryClient();
 
+
+  const getAuthHeaders = (isFormData = false) => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token || ''}`,
+    };
+  
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+  
+    return headers;
+  };
+  
  
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
       const res = await fetch(`${apiUrl}/hackathon`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(true),
         body: JSON.stringify(data),
       });
 
@@ -27,7 +41,7 @@ export default function useOrganizer() {
     mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
       const res = await fetch(`${apiUrl}/hackathon/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(true),
         body: JSON.stringify(data),
       });
 
@@ -40,7 +54,7 @@ export default function useOrganizer() {
     mutationFn: async ({ hackathonId, email }: { hackathonId: string; email: string[] }) => {
       const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/invite-judge/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ email }),
       });
 
@@ -54,29 +68,49 @@ export default function useOrganizer() {
     useQuery({
       queryKey: ['participants'],
       queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon`);
+        const res = await fetch(`${apiUrl}/hackathon`, {
+          headers: getAuthHeaders()
+        });
         if (!res.ok) throw new Error('Unable to fetch participants');
         return res.json();
       },
     });
 
 
-    const useSubmissionById = (hackthon_id: string) => {
+    const useSubmissionById = (hackathon_id: string) => {
       return useQuery({
-        queryKey: ['submission', hackthon_id],
+        queryKey: ['submission', hackathon_id],
         queryFn: async () => {
-          const res = await fetch(`${apiUrl}/hackathon/${hackthon_id}/submission/`);
+          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submission/`, {
+            headers: getAuthHeaders()
+          });
           if (!res.ok) throw new Error('Unable to fetch submission');
           return res.json();
         },
-        enabled: !!hackthon_id,
+        enabled: !!hackathon_id,
       });
     };
+
+
+    const useJudgesById = (hackathon_id: string) => {
+      return useQuery({
+        queryKey: ['judges', hackathon_id], 
+        queryFn: async () => {
+          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/judges/`, {
+            headers: getAuthHeaders()
+          });
+          if (!res.ok) throw new Error('Unable to fetch submission');
+          return res.json();
+        },
+        enabled: !!hackathon_id,
+      })
+    }
 
   const deleteSubmissionMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`${apiUrl}/hackathon/${id}/submission/`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       if (!res.ok) throw new Error('Unable to delete submission');
@@ -94,5 +128,6 @@ export default function useOrganizer() {
     useParticipants,
     useSubmissionById,
     deleteSubmissionMutation,
+    useJudgesById
   };
 }
