@@ -78,7 +78,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
         className="hidden lg:flex flex-col bg-white border-r text-gray-700 fixed h-screen z-50"
       >
         <div className="text-blue-700 text-3xl font-bold text-center py-6">
-          {sidebarExpanded ? 'Vortexis' : 'V'}
+          {sidebarExpanded ? 'Vortexis' : 'V..'}
         </div>
 
         {/* Sidebar Toggle Arrow Button */}

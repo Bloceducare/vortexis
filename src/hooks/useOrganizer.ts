@@ -51,8 +51,8 @@ export default function useOrganizer() {
   });
 
   const inviteJudgesMutation = useMutation({
-    mutationFn: async ({ hackathonId, email }: { hackathonId: string; email: string[] }) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/invite-judge/`, {
+    mutationFn: async ({ hackathon_id, email }: { hackathon_id: string; email: string[] }) => {
+      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/invite-judge/`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify({ email }),
@@ -76,6 +76,33 @@ export default function useOrganizer() {
       },
     });
 
+  const getHackathons = () => {
+    return useQuery({
+      queryKey: ['organizer_hackathon'],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/hackathon`, {
+          headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error('Unable to fetch hackathon');
+        return res.json();
+      },
+    })
+  }
+
+  const getHackathonById = (hackathon_id: string) => {
+    return useQuery({
+      queryKey: ['organizer_hackathon_byId', hackathon_id],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/`, {
+          headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error('Unable to fetch submission');
+        return res.json();
+      },
+      enabled: !!hackathon_id,
+    });
+  };
+
 
     const useSubmissionById = (hackathon_id: string) => {
       return useQuery({
@@ -92,7 +119,7 @@ export default function useOrganizer() {
     };
 
 
-    const useJudgesById = (hackathon_id: string) => {
+    const getHackathonJudges = (hackathon_id: string) => {
       return useQuery({
         queryKey: ['judges', hackathon_id], 
         queryFn: async () => {
@@ -128,6 +155,8 @@ export default function useOrganizer() {
     useParticipants,
     useSubmissionById,
     deleteSubmissionMutation,
-    useJudgesById
+    getHackathons,
+    getHackathonJudges,
+    getHackathonById
   };
 }

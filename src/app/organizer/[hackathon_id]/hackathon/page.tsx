@@ -2,7 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import Button from "@/components/ui/AuthButton";
 import Image from "next/image";
 import People from '@/public/assets/icon/people.svg'
 import Document from '@/public/assets/icon/basil_document-outline.svg'
@@ -12,18 +11,17 @@ import { useRouter } from "next/navigation";
 import BlueTick from "@/public/assets/icon/blue_tick.svg"
 import Speaker from "@/public/assets/icon/speaker.svg"
 import New from "@/public/assets/icon/new.svg"
+import Hackathon_details from "@/app/api/utils/interface";
+import { useParams } from "next/navigation";
+import useOrganizer from "@/hooks/useOrganizer";
 
 
 
 function Page() {
-  const handleClick = () => {
-    console.log("clicks");
-  };
   const router = useRouter();
+  const param = useParams()
 
-  const createHackathon = () => {
-    router.push("/organizer/create-hackathon");
-  }
+
 
   const getIcon = (title: string) => {
     switch (title) {
@@ -143,19 +141,6 @@ function Page() {
               Here’s what happening with your hackathons.
             </motion.p>
           </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <button
-              onClick={createHackathon}
-              className="px-7 py-4 bg-[#605DEC] text-white rounded-lg text-[16px] font-normal cursor-pointer hover:bg-[#7a78e1]"
-            >
-              Create Hackathon
-            </button>
-          </motion.div>
         </motion.div>
 
 
