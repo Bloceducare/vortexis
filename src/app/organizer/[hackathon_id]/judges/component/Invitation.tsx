@@ -2,14 +2,15 @@ import React, { useState, useMemo } from 'react'
 import EmailInput from '@/components/EmailInput';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import useOrganizer from '@/hooks/useOrganizer';
+import { getHackathonIdProps } from '@/app/api/utils/interface';
 
-function Invitation() {
+const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
   const [emails, setEmails] = useState<string[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const inviteLimit = 3;
 
-  const { createHackathonMutation, updateHackathonMutation, inviteJudgesMutation } = useOrganizer();
+  const { inviteJudgesMutation } = useOrganizer();
   const getHackathonData = useHackathonStore((state) => state.getHackathonData);
   const hackathon = useMemo(() => getHackathonData(), [getHackathonData]);
 
@@ -18,18 +19,18 @@ function Invitation() {
     setErrorMessage('');
 
     try {
-     await inviteJudgesMutation.mutateAsync({
+      await inviteJudgesMutation.mutateAsync({
         email: emails,
-        hackathonId: "1",
+        hackathon_id
       });
 
-
       setShowSuccessModal(true);
-      setEmails([]); 
+      setEmails([]);
     } catch (error: any) {
       setErrorMessage(error?.response?.data?.message || "Something went wrong while sending invites.");
     }
-  }
+  };
+
 
   return (
     <>
@@ -53,25 +54,28 @@ function Invitation() {
 
           <div className='mt-10 flex flex-col'>
             <label className='text-lg text-[#2F3036]'>Instructions for Judges</label>
-            <textarea className='outline-none resize-none h-24 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3' placeholder='Enter any specific instructions or criteria for judges...' name='rules'></textarea>
+            <textarea
+              className='outline-none resize-none h-24 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3'
+              placeholder='Enter any specific instructions or criteria for judges...'
+              name='rules'
+            />
           </div>
 
           <button
-  type="submit"
-  disabled={inviteJudgesMutation.isPending || emails.length === 0}
-  className={`bg-[#0B40EE] text-white py-2 px-8 rounded mt-10 transition
-    ${inviteJudgesMutation.isPending || emails.length === 0
-      ? 'opacity-50 cursor-not-allowed'
-      : 'hover:opacity-90 cursor-pointer'}
-  `}
->
-  {inviteJudgesMutation.isPending ? 'Sending Invites...' : 'Send Invites'}
-</button>
-
+            type="submit"
+            disabled={inviteJudgesMutation.isPending || emails.length === 0}
+            className={`bg-[#0B40EE] text-white py-2 px-8 rounded mt-10 transition
+              ${inviteJudgesMutation.isPending || emails.length === 0
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:opacity-90 cursor-pointer'}
+            `}
+          >
+            {inviteJudgesMutation.isPending ? 'Sending Invites...' : 'Send Invites'}
+          </button>
         </form>
       </section>
 
-      {inviteJudgesMutation.isSuccess && (
+      {inviteJudgesMutation.isSuccess && showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
           <div className="bg-white p-6 rounded-lg shadow-md text-center max-w-sm w-full">
             <h2 className="text-xl font-semibold mb-3">🎉 Invitation Sent!</h2>
@@ -86,7 +90,7 @@ function Invitation() {
         </div>
       )}
     </>
-  )
+  );
 }
 
 export default Invitation;

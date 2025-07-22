@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Submission } from '../../../utils'
 
+
 function Pending() { 
     const SubmissionPerPage = 8;
       const [searchTerm, setSearchTerm] = useState('')

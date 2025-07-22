@@ -4,15 +4,26 @@ import React, { useState } from 'react'
 import Invitation from './component/Invitation'
 import JudgesList from './component/JudgesList'
 import { useParams } from 'next/navigation'
+import useOrganizer from '@/hooks/useOrganizer'
 
 
-const tab = ["Invite Judges", "Judges List"]
+const tab = [  "Judges List", "Invite Judges",]
 
 function Judges() {
   const [activeTab, setActiveTab] = useState("Invite Judges")
 
+  const { getHackathonJudges, inviteJudgesMutation  } = useOrganizer()
+
+
+
  const params = useParams();
   const hackathon_id = params?.hackathon_id as string;
+
+  console.log(hackathon_id)
+
+
+  const { data, isLoading, isFetching, isError, refetch } = getHackathonJudges(hackathon_id)
+
   return (
     <section className="bg-white px-10 rounded-2xl py-5">
       {/* Tabs */}
@@ -34,8 +45,12 @@ function Judges() {
 
       {/* Content */}
       <div>
-        {activeTab === "Invite Judges" && <Invitation />}
-        {activeTab === "Judges List" && <JudgesList />}
+        {activeTab === "Invite Judges" && <Invitation hackathon_id={hackathon_id} />}
+        {activeTab === "Judges List" && <JudgesList  judges={data}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            isError={isError}
+            refetch={refetch} />}
       </div>
     </section>
   )

@@ -1,26 +1,46 @@
 import React from 'react'
+import { Judge, ReactQueryState } from '@/app/api/utils/interface';
 
-const judges = [
-  {
-    id: 1,
-    name: 'Dr. John Doe',
-    email: 'john.doe@example.com',
-  },
-  {
-    id: 2,
-    name: 'Ms. Jane Smith',
-    email: 'jane.smith@example.com',
-  },
-  {
-    id: 3,
-    name: 'Prof. Michael Brown',
-    email: 'michael.brown@example.com',
-  },
-]
+interface JudgesListProps extends ReactQueryState {
+  judges: Judge[] | undefined;
+}
 
-const JudgesList = () => {
+
+
+const JudgesList: React.FC<JudgesListProps> = ({
+  judges = [],
+  isLoading,
+  isFetching,
+  isError,
+  refetch
+}) => {
+  if (isLoading) {
+    return <div className="text-center py-10">Loading judges...</div>;
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center text-red-500 py-10">
+        <p>Error loading judges. Please try again.</p>
+        <button
+          onClick={refetch}
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded cursor-pointer"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!judges || judges.length === 0) {
+    return <div className="text-center text-gray-500 py-10">No judges available.</div>;
+  }
+
   return (
-    <div className="overflow-x-auto rounded-lg shadow">
+    <div className="overflow-x-auto rounded-lg shadow relative">
+      {isFetching && (
+        <div className="absolute top-0 right-0 m-2 text-xs text-gray-400">Refreshing...</div>
+      )}
       <table className="min-w-full text-sm text-left">
         <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
           <tr>
@@ -33,14 +53,14 @@ const JudgesList = () => {
           {judges.map((judge, index) => (
             <tr key={judge.id} className="hover:bg-gray-50">
               <td className="px-6 py-4">{index + 1}</td>
-              <td className="px-6 py-4">{judge.name}</td>
+              <td className="px-6 py-4">{judge.first_name} {judge.last_name || ''}</td>
               <td className="px-6 py-4">{judge.email}</td>
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default JudgesList
+export default JudgesList;

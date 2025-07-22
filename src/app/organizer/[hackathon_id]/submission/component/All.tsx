@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Submission } from '../../../utils'
+import { SubmissionProps } from '@/app/api/utils/interface'
 
-function All() {
-  const SubmissionPerPage = 8
+const All: React.FC<SubmissionProps> = ({
+  submissions,
+  isLoading,
+  isFetching,
+  isError,
+  refetch,
+}) => {
+  const SubmissionsPerPage = 8
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
-  const [sortOrder, setSortOrder] = useState('newest')
-  const [filteredSubmissions, setFilteredSubmissions] = useState<{
-    id: number
-    title: string
-    categoty: string
-    members: string
-    team: string
-    status: string
-    date: string
-  }[]>([])
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
+  const [filteredSubmissions, setFilteredSubmissions] = useState<any[]>([])
 
   const totalPages = Math.ceil(
-    Submission.filter(sub =>
-      sub.title.toLowerCase().includes(searchTerm.toLowerCase())
-    ).length / SubmissionPerPage
+    (submissions?.filter(sub =>
+      sub.project.toLowerCase().includes(searchTerm.toLowerCase())
+    ).length ?? 0) / SubmissionsPerPage
   )
+  
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
 
-  const start = (currentPage - 1) * SubmissionPerPage + 1;
-    const end = Math.min(currentPage * SubmissionPerPage, filteredSubmissions.length);
+  const start = (currentPage - 1) * SubmissionsPerPage + 1
+  const end = Math.min(currentPage * SubmissionsPerPage, filteredSubmissions.length)
 
   const handleNext = () => {
     if (currentPage < totalPages) handlePageChange(currentPage + 1)
@@ -39,20 +38,37 @@ function All() {
   }
 
   useEffect(() => {
-    const filtered = Submission.filter(sub =>
-      sub.title.toLowerCase().includes(searchTerm.toLowerCase())
+    if (!submissions) return;
+  
+    const filtered = submissions.filter(sub =>
+      sub.project?.toLowerCase().includes(searchTerm.toLowerCase())
     )
-
+  
     const sorted = filtered.sort((a, b) => {
-      const dateA = new Date(a.date).getTime()
-      const dateB = new Date(b.date).getTime()
+      const dateA = new Date(a.created_at).getTime()
+      const dateB = new Date(b.created_at).getTime()
       return sortOrder === 'newest' ? dateB - dateA : dateA - dateB
     })
-
-    const startIndex = (currentPage - 1) * SubmissionPerPage
-    const endIndex = startIndex + SubmissionPerPage
+  
+    const startIndex = (currentPage - 1) * SubmissionsPerPage
+    const endIndex = startIndex + SubmissionsPerPage
+  
     setFilteredSubmissions(sorted.slice(startIndex, endIndex))
-  }, [searchTerm, sortOrder, currentPage])
+  }, [submissions, searchTerm, sortOrder, currentPage])
+  
+
+  if (isLoading) return <p className="text-center p-10">Loading submissions...</p>
+
+  if (isError)
+    return (
+      <div className="text-center p-10 text-red-500">
+        Failed to load submissions.
+        <br />
+        <button onClick={refetch} className="mt-2 underline text-blue-500 cursor-pointer">
+          Retry
+        </button>
+      </div>
+    )
 
   return (
     <motion.div
@@ -71,24 +87,15 @@ function All() {
             <svg
               width="24"
               height="24"
-              viewBox="0 0 24 24"
               fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+              stroke="#7E7E7E"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
             >
-              <path
-                d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z"
-                stroke="#7E7E7E"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M21 20.9984L16.65 16.6484"
-                stroke="#7E7E7E"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
@@ -107,7 +114,7 @@ function All() {
             <select
               value={sortOrder}
               onChange={e => {
-                setSortOrder(e.target.value)
+                setSortOrder(e.target.value as 'newest' | 'oldest')
                 setCurrentPage(1)
               }}
               className="font-semibold text-sm cursor-pointer outline-none"
@@ -138,38 +145,32 @@ function All() {
               >
                 <td className="px-4 py-5">
                   <div>
-                    <h1 className="font-bold text-[#212121]">{sub.title}</h1>
-                    <p className="text-[#727272] font-medium">
-                      {sub.categoty}
-                    </p>
+                    <h1 className="font-bold text-[#212121]">{sub.project}</h1>
+                    <p className="text-[#727272] font-medium">Hackathon #{sub.hackathon}</p>
                   </div>
                 </td>
                 <td className="px-4 py-5">
                   <div>
                     <h1 className="font-bold text-[#212121]">{sub.team}</h1>
-                    <p className="text-[#727272] font-medium">
-                      {sub.members} members
-                    </p>
+                    <p className="text-[#727272] font-medium">Team ID</p>
                   </div>
                 </td>
                 <td className="px-2 py-5 text-[#292D32] font-medium">
-                  {sub.date}
+                  {new Date(sub.created_at).toLocaleDateString()}
                 </td>
                 <td className="px-5 py-3">
                   <span
                     className={`px-5 py-2 rounded-lg font-semibold ${
-                      sub.status === 'Pending'
-                        ? 'bg-[#F9831C61] text-[#F9831C] border-[#F9831C] border'
-                        : sub.status === 'Reviewed'
-                        ? 'border-[#00B087] border bg-[#16C09861] text-green-800'
-                        : 'border-[#DF0404] border bg-[#FFC5C5] text-[#DF0404]'
+                      sub.approved
+                        ? 'border-green-500 bg-green-100 text-green-700'
+                        : 'border-yellow-500 bg-yellow-100 text-yellow-700'
                     }`}
                   >
-                    {sub.status}
+                    {sub.approved ? 'Approved' : 'Pending'}
                   </span>
                 </td>
                 <td className="px-4 py-5">
-                  {/* You can add buttons/actions here */}
+                  <button className="underline text-sm cursor-pointer">View</button>
                 </td>
               </tr>
             ))}
@@ -177,9 +178,11 @@ function All() {
         </table>
 
         <div className="flex justify-between items-center mt-5 px-5">
-        <p className='text-[#727272]'>Showing data { end === 0 ? "0" : start } to {end}  of {Submission.length} entries</p>
+          <p className="text-[#727272]">
+            Showing {end === 0 ? '0' : start} to {end} of {submissions.length} entries
+          </p>
 
-          <nav className="flex justify-center items-center gap-3 mt-5">
+          <nav className="flex items-center gap-3 mt-5">
             <p
               onClick={handlePrev}
               className="border px-4 rounded-lg cursor-pointer bg-[#F5F5F5] border-[#EEEEEE] py-2 text-[#404B52] font-semibold"

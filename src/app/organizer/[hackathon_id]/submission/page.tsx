@@ -21,14 +21,17 @@ function SubmitProject() {
 
 
   const { useSubmissionById } = useOrganizer();
-  const { data, isLoading, error } = useSubmissionById(hackathon_id); 
+  const { data, isLoading, isError, refetch, isFetching } = useSubmissionById(hackathon_id); 
 
   console.log(data)
 
   const renderComponent = () => {
     switch (activeButton) {
       case "All Submission":
-        return <All />;
+        return <All submissions={data}   isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        refetch={refetch}   />;
       case "Pending14":
         return <Pending />;
       case "Reviewed":
