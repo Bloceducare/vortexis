@@ -45,25 +45,18 @@ export const Header: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4">
             {!user ? (
               <>
-                <Link href="/auth">
-                  <button
-                    type="button"
-                    className="w-full  border-[#009AFF]"
-                  >
+                <Link href="/auth/login/participant">
+                  <button type="button" className="w-full  border-[#009AFF]">
                     Log in
                   </button>
                 </Link>
-                <Link href="/auth/signup">
-                  <button className="w-full">
-                    Sign up
-                  </button>
+                <Link href="/auth/signin/participant">
+                  <button className="w-full">Sign up</button>
                 </Link>
               </>
             ) : (
               <Link href="/api/auth/signout?callbackUrl=/">
-                <button className="w-full">
-                  Logout
-                </button>
+                <button className="w-full">Logout</button>
               </Link>
             )}
           </div>
@@ -125,7 +118,7 @@ export const Header: React.FC = () => {
               href="/hackathons"
               className="block px-3 py-2 text-base font-medium text-[#4D4D4D] hover:text-gray-900"
             >
-             Hackathons
+              Hackathons
             </Link>
             <Link
               href="/about"
@@ -139,24 +132,17 @@ export const Header: React.FC = () => {
             <div className="px-4 space-y-3">
               {!user ? (
                 <div className="space-y-3">
-                  <Link href="/auth" className="block">
-                    <button
-                      type="button"
-                      className="w-full  border-[#009AFF]"
-                    >
+                  <Link href="/auth/login/participant" className="block">
+                    <button type="button" className="w-full  border-[#009AFF]">
                       Log in
                     </button>
                   </Link>
-                  <Link href="/auth/signup">
-                    <button className="w-full">
-                      Sign up
-                    </button>
+                  <Link href="/auth/signin/participant">
+                    <button className="w-full">Sign up</button>
                   </Link>
                 </div>
               ) : (
-                <button className="w-full">
-                  Logout
-                </button>
+                <button className="w-full">Logout</button>
               )}
             </div>
           </div>
