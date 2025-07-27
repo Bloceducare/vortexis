@@ -1,3 +1,4 @@
+"use client"
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -7,25 +8,12 @@ import {
     DropdownMenuItem,
   } from "@/components/ui/dropdown-menu"; 
   import Link from "next/link";
+  import Hackathon_details from "@/app/api/utils/interface";
   
 import { CalendarDays, MapPin, Users, FileText, Scale, Eye, EyeOff, MoreVertical, UserPlus, Pencil } from "lucide-react";
 
 export type HackathonStatus = "upcoming" | "just-created" | "active" | "finished";
 
-export interface Hackathon {
-  id: string;
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  duration: string;
-  venue: string;
-  visibility: "public" | "private";
-  status: HackathonStatus;
-  judges: number;
-  participants: number;
-  submissions: number;
-}
 
 const statusConfig = {
   upcoming: {
@@ -47,11 +35,21 @@ const statusConfig = {
 };
 
 interface HackathonCardProps {
-  hackathon: Hackathon;
+  hackathon: Hackathon_details;
 }
 
 export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
-  const statusStyle = statusConfig[hackathon.status];
+  // const statusStyle = statusConfig[Hackathon_deatails.status];
+
+  const getDurationInDays = (start: string, end: string): number => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+  
+    const diffInMs = endDate.getTime() - startDate.getTime();
+    const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+    return diffInDays;
+  };
+  
 
   return (
     <Card className="group hover:shadow-hover transition-all duration-300 hover:-translate-y-1 bg-card border border-border shadow-card cursor-pointer">
@@ -61,11 +59,9 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             {hackathon.title}
           </CardTitle>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Badge className={statusStyle.className}>
-              {statusStyle.label}
-            </Badge>
+          
             <div className="flex items-center gap-1 text-muted-foreground">
-              {hackathon.visibility === "public" ? (
+              {hackathon.visibility === true ? (
                 <Eye className="h-4 w-4" />
               ) : (
                 <EyeOff className="h-4 w-4" />
@@ -123,10 +119,10 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
         <div className="flex items-center gap-2 text-sm">
           <CalendarDays className="h-4 w-4 text-primary" />
           <span className="text-card-foreground font-medium">
-            {hackathon.startDate} - {hackathon.endDate}
+            {hackathon.start_date} - {hackathon.end_date}
           </span>
           <Badge variant="outline" className="ml-auto">
-            {hackathon.duration}
+         {getDurationInDays(hackathon.start_date!, hackathon.end_date!)} days
           </Badge>
         </div>
 
@@ -142,7 +138,7 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <Scale className="h-4 w-4 text-primary" />
               <span className="text-lg font-semibold text-card-foreground">
-                {hackathon.judges}
+                {hackathon.judges?.length}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Judges</p>
@@ -152,7 +148,7 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <Users className="h-4 w-4 text-primary" />
               <span className="text-lg font-semibold text-card-foreground">
-                {hackathon.participants}
+                {hackathon.participants?.length}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Participants</p>
@@ -162,7 +158,7 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <FileText className="h-4 w-4 text-primary" />
               <span className="text-lg font-semibold text-card-foreground">
-                {hackathon.submissions}
+                {hackathon.submissions?.length}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Submissions</p>

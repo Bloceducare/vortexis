@@ -7,6 +7,12 @@ interface HackathonState extends Partial<Hackathon_details> {
   setField: <K extends keyof Hackathon_details>(key: K, value: Hackathon_details[K]) => void;
   clearHackathon: () => void;
   getHackathonData: () => Partial<Hackathon_details>;
+
+   // For fetched hackathons
+   hackathons: Hackathon_details[];
+   setHackathons: (hackathons: Hackathon_details[]) => void;
+   selectedHackathonId: string | null;
+   setSelectedHackathonId: (id: string) => void;
 }
 
 export const useHackathonStore = create<HackathonState>()(
@@ -54,6 +60,11 @@ export const useHackathonStore = create<HackathonState>()(
         const { setField, clearHackathon, getHackathonData, ...data } = state;
         return data;
       },
+       // Fetched hackathons
+      hackathons: [],
+      setHackathons: (hackathons) => set({ hackathons }),
+      selectedHackathonId: null,
+      setSelectedHackathonId: (id) => set({ selectedHackathonId: id }),
     }),
     {
       name: 'hackathon-storage',
