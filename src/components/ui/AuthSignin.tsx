@@ -1,148 +1,181 @@
 "use client";
-
-import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { signInGithubAction, signInGoogleAction } from "@/lib/actions";
-import Input from "./AuthInput";
 import Button from "./AuthButton";
 import Divider from "./Divider";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useSignUpForm } from "@/hooks/useSignup";
+import {
+  organizerFormFields,
+  participantsFormFields,
+  type FormField,
+} from "@/lib/form-fields";
 
-const organizerFormFields = [
-  {
-    name: "name",
-    label: "Name",
-    type: "text",
-    placeholder: "Enter your full name...",
-    eyeView: false,
-  },
-  {
-    name: "email",
-    label: "Email Address",
-    type: "email",
-    placeholder: "Enter your email address...",
-    eyeView: false,
-  },
-  {
-    name: "organization",
-    label: "Organization / Company Name",
-    type: "text",
-    placeholder: "The name of your company / organization",
-    eyeView: false,
-  },
-  {
-    name: "phone",
-    label: "Phone Number (Optional)",
-    type: "tel",
-    placeholder: "+123",
-    eyeView: false,
-  },
-  {
-    name: "password",
-    label: "Password",
-    type: "password",
-    placeholder: "Input your password",
-    eyeView: true,
-  },
-  {
-    name: "confirmPassword",
-    label: "Confirm Password",
-    type: "password",
-    placeholder: "Confirm your password",
-    eyeView: true,
-  },
-] as const; // 'as const' for literal type inference
+// Type definitions for form data (needed for FieldPath)
+import type { OrganizerFormData, ParticipantFormData } from "@/lib/validator";
+import type { FieldPath } from "react-hook-form";
 
-type FormField = (typeof organizerFormFields)[number];
+type FormData = OrganizerFormData | ParticipantFormData;
+
 type AuthFormType = "organizers" | "participants";
 
 interface SignUpFormProps {
   type: AuthFormType;
-  // fields: FormField[];
 }
 
 export default function SignUpForm({ type }: SignUpFormProps) {
-  const [showPassword, setShowPassword] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const {
+    register,
+    handleSubmit,
+    errors,
+    isSubmitting,
+    showPassword,
+    toggleShowPassword,
+    onSubmit,
+  } = useSignUpForm(type); // Use the custom hook
 
-  const toggleShowPassword = (fieldName: string) => {
-    setShowPassword((prev) => ({
-      ...prev,
-      [fieldName]: !prev[fieldName],
-    }));
-  };
+  const formFields: FormField[] =
+    type === "organizers" ? organizerFormFields : participantsFormFields;
 
   return (
-    <div className="shadow-md bg-white md:w-[798px] h-full rounded-[24px] p-2">
-      <h1 className="text-2xl text-center py-4 text-[#2E0BF4] font-[700] ">
-        {type === "organizers"
-          ? "Create Your Organizer Account"
-          : "Create Your Participant Account"}
+    <div className="shadow-md bg-white w-full max-w-[798px] mx-auto h-full rounded-[24px] p-4 md:p-2">
+      <h1 className="text-2xl text-center py-4 text-[#2E0BF4] font-[700]">
+        {type === "organizers" && "Create Your Organizer Account"}
+        {type === "participants" && "Create Your Participant Account"}
       </h1>
 
-      <form className="text-[#2F3036] p-2 w-[95%] mx-auto">
-        {organizerFormFields.map((field) => (
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="text-[#2F3036] p-2 w-[95%] mx-auto"
+      >
+        {formFields.map((field) => (
           <div key={field.name} className="mb-4 relative">
-            <label className="block font-[700] text-sm">{field.label}</label>
+            <label className="block font-[700] text-sm mb-1">
+              {field.label}
+            </label>
+
             {!field.eyeView && (
-              <input
-                type={field.type}
-                placeholder={field.placeholder}
-                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent"
-                required
-              />
-            )}
-            {field.eyeView && (
               <div>
                 <input
+                  {...register(field.name as FieldPath<FormData>)}
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
+                    errors[field.name as keyof FormData]
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
+                />
+                {errors[field.name as keyof FormData] && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {errors[field.name as keyof FormData]?.message}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {field.eyeView && (
+              <div className="relative">
+                <input
+                  {...register(field.name as FieldPath<FormData>)}
                   type={showPassword[field.name] ? "text" : "password"}
                   placeholder={field.placeholder}
-                  className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent"
-                  required
+                  className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
+                    errors[field.name as keyof FormData]
+                      ? "border-red-500"
+                      : "border-gray-300"
+                  }`}
                 />
                 <div
-                  className="absolute right-3 top-7.5 cursor-pointer"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   onClick={() => toggleShowPassword(field.name)}
                 >
                   {showPassword[field.name] ? (
-                    <span>
-                      <EyeOff />
-                    </span>
+                    <EyeOff className="h-4 w-4 text-gray-500" />
                   ) : (
-                    <span>
-                      <Eye />
-                    </span>
+                    <Eye className="h-4 w-4 text-gray-500" />
                   )}
                 </div>
+                {errors[field.name as keyof FormData] && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {errors[field.name as keyof FormData]?.message}
+                  </span>
+                )}
               </div>
+            )}
+
+            {field.description && (
+              <span className="text-xs text-gray-500 mt-1 block">
+                {field.description}
+              </span>
             )}
           </div>
         ))}
 
-        <p className="flex items-center mt-7 mb-2 space-x-4">
-          <input type="checkbox" className="md:scale-150 scale-175" />{" "}
-          <label>I'm signing up as a Hackathon Organizer</label>
-        </p>
-        <p className="flex items-center  mb-2 space-x-4">
-          <input type="checkbox" className="md:scale-150 scale-175" />{" "}
-          <label>I agree to the Terms of Service and Privacy Policy</label>
-        </p>
+        {/* Organizer-specific checkbox */}
+        {type === "organizers" && (
+          <div className="mb-4">
+            <div className="flex items-center space-x-4">
+              <input
+                {...register("isOrganizer" as FieldPath<FormData>)}
+                type="checkbox"
+                className="md:scale-150 scale-175"
+              />
+              <label className="text-sm">
+                I'm signing up as a Hackathon Organizer
+              </label>
+            </div>
+            {errors.isOrganizer && (
+              <span className="text-xs text-red-500 mt-1 block">
+                {errors.isOrganizer.message}
+              </span>
+            )}
+          </div>
+        )}
 
-        <button className="mt-4 bg-[#605DEC] w-full md:block flex justify-center text-white py-3 cursor-pointer text-center rounded-sm">
-          Create
+        {/* Terms and conditions checkbox */}
+        <div className="mb-4">
+          <div className="flex items-center space-x-4">
+            <input
+              {...register("agreeToTerms" as FieldPath<FormData>)}
+              type="checkbox"
+              className="md:scale-150 scale-175"
+            />
+            <label className="text-sm">
+              I agree to the Terms of Service and Privacy Policy
+            </label>
+          </div>
+          {errors.agreeToTerms && (
+            <span className="text-xs text-red-500 mt-1 block">
+              {errors.agreeToTerms.message}
+            </span>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="mt-4 bg-[#605DEC] w-full text-white py-3 cursor-pointer text-center rounded-sm hover:bg-[#4f4bcc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting
+            ? "Creating Account..."
+            : type === "organizers"
+            ? "Create Your Organizer Account"
+            : "Sign Up & Explore Hackathons"}
         </button>
       </form>
 
-      <div className="w-[80%] mx-auto">
+      <div className="w-[80%] mx-auto my-4">
         <Divider>or</Divider>
       </div>
 
-      <div className="w-[93%] mx-auto">
+      <div className="w-full max-w-md space-y-3 mx-auto px-4">
         <Button
           onClick={signInGoogleAction}
           type="secondary"
-          className="relative flex w-[90%] items-center justify-center"
+          className="relative flex w-full items-center justify-center h-12"
         >
           <img
             src="https://authjs.dev/img/providers/google.svg"
@@ -151,17 +184,50 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             height="24"
             width="24"
           />
-          Sign in with Google
+          <span className="text-sm md:text-base">Sign up with Google</span>
+        </Button>
+
+        <Button
+          onClick={signInGithubAction}
+          type="secondary"
+          className="relative flex w-full items-center justify-center h-12"
+        >
+          <img
+            src="https://authjs.dev/img/providers/github.svg"
+            className="absolute left-3 h-5 w-5"
+            alt="github logo"
+            height="24"
+            width="24"
+          />
+          <span className="text-sm md:text-base">Sign up with GitHub</span>
         </Button>
       </div>
-      <p className="text-center mb-5 font-[600] mt-3 text-[#2F3036]">
-        {type === "organizers"
-          ? "Already have an organizer account?"
-          : "Already have a participant account?"}
-        <Link className="underline pl-1" href="/auth/login/organizer">
+
+      <p className="text-center mb-5 font-[600] mt-6 text-[#2F3036] text-sm">
+        Already have an account?
+        <Link
+          className="underline pl-1 text-[#2E0BF4]"
+          href={`/auth/login/${
+            type === "organizers" ? "organizer" : "participant"
+          }`}
+        >
           Login here
         </Link>
       </p>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 }
