@@ -1,3 +1,4 @@
+"use client"
 import { HackathonList } from "./components/HackathonList";
 
 const Index = () => {

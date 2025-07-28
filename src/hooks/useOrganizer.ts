@@ -80,12 +80,13 @@ export default function useOrganizer() {
     return useQuery({
       queryKey: ['organizer_hackathon'],
       queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon`, {
+        const res = await fetch(`${apiUrl}/hackathon/organizer/hackathons/`, {
           headers: getAuthHeaders()
         });
         if (!res.ok) throw new Error('Unable to fetch hackathon');
         return res.json();
       },
+      staleTime: Infinity,
     })
   }
 

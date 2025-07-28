@@ -12,16 +12,19 @@ import Judges from "@/public/assets/icon/tabler_hammer.svg";
 import Submit from "@/public/assets/icon/Clock.svg";
 import Dash from '@/public/assets/icon/material-symbols_dashboard.svg';
 import Header from '@/components/layouts/Header';
+import useOrganizer from '@/hooks/useOrganizer';
+import { useHackathonStore } from '@/store/useHackathonStore';
+import { mockHackathons } from '../api/utils/interface';
 
 interface OrganizerLayoutProps {
   children: React.ReactNode;
 }
 
-const mockHackathons = [
-  { id: '1', name: 'AI Hackathon' },
-  { id: '2', name: 'Web3 Hack' },
-  { id: '3', name: 'Green Tech Sprint' },
-];
+// const mockHackathons = [
+//   { id: '1', name: 'AI Hackathon' },
+//   { id: '2', name: 'Web3 Hack' },
+//   { id: '3', name: 'Green Tech Sprint' },
+// ];
 
 const navLinks = [
   { label: 'Manage', path: 'hackathon', icon: Trophy },
@@ -37,6 +40,14 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const { getHackathons } = useOrganizer()
+  const setHackathons = useHackathonStore(state => state.setHackathons);
+
+
+  const { data, isLoading, error } = getHackathons()
+  // setHackathons(data)
+  setHackathons(mockHackathons)
+  const hackathons = useHackathonStore((state) => state.hackathons);
 
   const selectedHackathon = useMemo(() => {
     const segments = pathname.split('/');
@@ -45,9 +56,9 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   }, [pathname]);
 
   const selectedHackathonName =
-    mockHackathons.find(h => h.id === selectedHackathon)?.name || 'Select Hackathon';
+    mockHackathons.find(h => h.id === selectedHackathon)?.title || 'Select Hackathon';
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: string | undefined) => {
     const segments = pathname.split('/');
     const index = segments.indexOf('organizer');
     const currentSubpath = segments[index + 2] || '';
@@ -135,13 +146,13 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
                   transition={{ duration: 0.2 }}
                   className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow origin-top z-[100]"
                 >
-                  {mockHackathons.map(h => (
+                  {hackathons.map(h => (
                     <li
                       key={h.id}
                       onClick={() => handleSelect(h.id)}
                       className="p-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
                     >
-                      {h.name}
+                      {h.title}
                     </li>
                   ))}
                 </motion.ul>
