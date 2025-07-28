@@ -14,7 +14,7 @@ function page() {
           </p>
         </div>
 
-        <div className="w-[814px] mx-auto mt-10">
+        <div className="md:w-[814px] mx-auto mt-10">
           <SignUpForm type="participants" />
         </div>
       </div>

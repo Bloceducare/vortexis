@@ -6,24 +6,25 @@ import Button from "./AuthButton";
 import Divider from "./Divider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSignUpForm } from "@/hooks/useSignup";
 import {
   organizerFormFields,
   participantsFormFields,
   type FormField,
 } from "@/lib/form-fields";
 
-// Type definitions for form data (needed for FieldPath)
 import type { OrganizerFormData, ParticipantFormData } from "@/lib/validator";
-import type { FieldPath } from "react-hook-form";
-
-type FormData = OrganizerFormData | ParticipantFormData;
+import { useSignUpForm } from "@/hooks/useSignup";
 
 type AuthFormType = "organizers" | "participants";
 
 interface SignUpFormProps {
   type: AuthFormType;
 }
+
+// Helper function to get error safely
+const getFieldError = (errors: any, fieldName: string) => {
+  return errors[fieldName];
+};
 
 export default function SignUpForm({ type }: SignUpFormProps) {
   const {
@@ -34,7 +35,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
     showPassword,
     toggleShowPassword,
     onSubmit,
-  } = useSignUpForm(type); // Use the custom hook
+  } = useSignUpForm(type);
 
   const formFields: FormField[] =
     type === "organizers" ? organizerFormFields : participantsFormFields;
@@ -59,18 +60,18 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             {!field.eyeView && (
               <div>
                 <input
-                  {...register(field.name as FieldPath<FormData>)}
+                  {...register(field.name as any)}
                   type={field.type}
                   placeholder={field.placeholder}
                   className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
-                    errors[field.name as keyof FormData]
+                    getFieldError(errors, field.name)
                       ? "border-red-500"
                       : "border-gray-300"
                   }`}
                 />
-                {errors[field.name as keyof FormData] && (
+                {getFieldError(errors, field.name) && (
                   <span className="text-xs text-red-500 mt-1 block">
-                    {errors[field.name as keyof FormData]?.message}
+                    {getFieldError(errors, field.name)?.message}
                   </span>
                 )}
               </div>
@@ -79,11 +80,11 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             {field.eyeView && (
               <div className="relative">
                 <input
-                  {...register(field.name as FieldPath<FormData>)}
+                  {...register(field.name as any)}
                   type={showPassword[field.name] ? "text" : "password"}
                   placeholder={field.placeholder}
                   className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
-                    errors[field.name as keyof FormData]
+                    getFieldError(errors, field.name)
                       ? "border-red-500"
                       : "border-gray-300"
                   }`}
@@ -98,9 +99,9 @@ export default function SignUpForm({ type }: SignUpFormProps) {
                     <Eye className="h-4 w-4 text-gray-500" />
                   )}
                 </div>
-                {errors[field.name as keyof FormData] && (
+                {getFieldError(errors, field.name) && (
                   <span className="text-xs text-red-500 mt-1 block">
-                    {errors[field.name as keyof FormData]?.message}
+                    {getFieldError(errors, field.name)?.message}
                   </span>
                 )}
               </div>
@@ -119,7 +120,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
           <div className="mb-4">
             <div className="flex items-center space-x-4">
               <input
-                {...register("isOrganizer" as FieldPath<FormData>)}
+                {...register("isOrganizer" as any)}
                 type="checkbox"
                 className="md:scale-150 scale-175"
               />
@@ -127,9 +128,9 @@ export default function SignUpForm({ type }: SignUpFormProps) {
                 I'm signing up as a Hackathon Organizer
               </label>
             </div>
-            {errors.isOrganizer && (
+            {getFieldError(errors, "isOrganizer") && (
               <span className="text-xs text-red-500 mt-1 block">
-                {errors.isOrganizer.message}
+                {getFieldError(errors, "isOrganizer").message}
               </span>
             )}
           </div>
@@ -139,7 +140,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
         <div className="mb-4">
           <div className="flex items-center space-x-4">
             <input
-              {...register("agreeToTerms" as FieldPath<FormData>)}
+              {...register("agreeToTerms" as any)}
               type="checkbox"
               className="md:scale-150 scale-175"
             />
@@ -147,9 +148,9 @@ export default function SignUpForm({ type }: SignUpFormProps) {
               I agree to the Terms of Service and Privacy Policy
             </label>
           </div>
-          {errors.agreeToTerms && (
+          {getFieldError(errors, "agreeToTerms") && (
             <span className="text-xs text-red-500 mt-1 block">
-              {errors.agreeToTerms.message}
+              {getFieldError(errors, "agreeToTerms").message}
             </span>
           )}
         </div>

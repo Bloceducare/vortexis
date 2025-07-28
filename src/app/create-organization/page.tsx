@@ -96,7 +96,6 @@ export default function Page() {
         }
       });
 
-      
       const authToken =
         localStorage.getItem("authToken") ||
         sessionStorage.getItem("authToken");

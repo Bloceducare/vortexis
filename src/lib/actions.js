@@ -18,7 +18,6 @@ export async function signInGithubAction() {
 
 export async function handleGithubCallback() {
   try {
-    // Get the code from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
 
@@ -30,7 +29,7 @@ export async function handleGithubCallback() {
     // 7bae3f562e7ae7739a18
 
     // Send the code to your backend
-    const res = await fetch("http://localhost:8000/api/v1/auth/github", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/github`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -166,7 +165,7 @@ export async function handleGoogleCallback() {
     }
 
     // Send the ID token to your backend
-    const res = await fetch("http://localhost:8000/api/v1/auth/google", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

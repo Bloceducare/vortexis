@@ -9,7 +9,7 @@ import { otpSchema, type OtpFormData } from "@/lib/validator";
 import { useRouter } from "next/navigation";
 
 interface OtpVerificationFormProps {
-  email: string; 
+  email: string;
 }
 
 export default function OtpVerificationForm({
@@ -17,11 +17,8 @@ export default function OtpVerificationForm({
 }: OtpVerificationFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [resendCooldown, setResendCooldown] = useState(60); // 60 seconds cooldown
+  const [resendCooldown, setResendCooldown] = useState(60);
   const [isResending, setIsResending] = useState(false);
-
-  // Log the email prop received by the component
-  console.log("OtpVerificationForm: Received email prop =", email);
 
   const {
     register,
@@ -31,7 +28,7 @@ export default function OtpVerificationForm({
   } = useForm<OtpFormData>({
     resolver: zodResolver(otpSchema),
     defaultValues: {
-      email: email, // Pre-fill email from props
+      email: email,
       otp: "",
     },
   });
@@ -44,60 +41,53 @@ export default function OtpVerificationForm({
       }, 1000);
     } else if (resendCooldown === 0) {
       setIsResending(false);
-      setResendCooldown(60); // Reset for next resend
+      setResendCooldown(60);
     }
     return () => clearTimeout(timer);
   }, [isResending, resendCooldown]);
 
   const onSubmit = async (data: OtpFormData) => {
     setIsSubmitting(true);
-    console.log("OTP verification onSubmit: Setting isSubmitting to TRUE");
-    try {
-      console.log("OTP verification data being sent:", data); // Crucial: check the email field here
 
+    const payload = {
+      email: data.email.trim().toLowerCase(),
+      code: data.otp.trim(),
+    };
+
+    if (!payload.code) {
+      toast.error("Please enter a valid OTP.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify-otp/`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/verify/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(payload),
         }
       );
 
-      console.log("OTP verification Response status:", response.status);
-      console.log(
-        "OTP verification Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
       const responseText = await response.text();
-      console.log("OTP verification Raw response body:", responseText);
 
       let responseData: any = null;
       try {
         responseData = JSON.parse(responseText);
-        console.log("OTP verification Parsed response data:", responseData);
-      } catch (parseError) {
-        console.log(
-          "OTP verification Response is not JSON:",
-          responseText.substring(0, 200)
-        );
-      }
+      } catch (parseError) {}
 
       if (!response.ok) {
-        console.error(
-          `OTP verification HTTP Error: ${response.status} ${response.statusText}`
-        );
         let errorMessage = "OTP verification failed. Please try again.";
 
         if (responseData) {
           errorMessage =
             responseData.message ||
-            responseData.error ||
             responseData.detail ||
+            responseData.code ||
             responseData.errors ||
             JSON.stringify(responseData);
 
@@ -118,14 +108,12 @@ export default function OtpVerificationForm({
         return;
       }
 
-      // Success case
       toast.success(
         "Account verified successfully! Redirecting to dashboard..."
       );
       reset();
-      router.push("/dashboard"); // Adjust this path as needed
+      router.push("/hackathon");
     } catch (error) {
-      console.error("Error during OTP verification:", error);
       if (error instanceof TypeError && error.message.includes("fetch")) {
         toast.error(
           "Network error. Please check your connection and try again."
@@ -135,17 +123,29 @@ export default function OtpVerificationForm({
       }
     } finally {
       setIsSubmitting(false);
-      console.log(
-        "OTP verification onSubmit: Setting isSubmitting to FALSE (finally block)"
-      );
     }
   };
 
   const handleResendOtp = async () => {
+    const normalizedEmail = email?.trim().toLowerCase();
+    if (
+      !normalizedEmail ||
+      typeof normalizedEmail !== "string" ||
+      !normalizedEmail.includes("@") ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+    ) {
+      toast.error("Please provide a valid email address.");
+      return;
+    }
+
     setIsResending(true);
-    setResendCooldown(60); // Start cooldown immediately
-    console.log("Resending OTP for email:", email); // Crucial: check the email value here
+    setResendCooldown(60);
+
     try {
+      if (!process.env.NEXT_PUBLIC_BASE_URL) {
+        throw new Error("NEXT_PUBLIC_BASE_URL is not defined");
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/resend-otp/`,
         {
@@ -154,23 +154,35 @@ export default function OtpVerificationForm({
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({ email: normalizedEmail }),
         }
       );
+
+      const responseText = await response.text();
+
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (parseError) {
+        throw new Error("Invalid response format from server");
+      }
 
       if (response.ok) {
         toast.success("New OTP sent successfully! Please check your email.");
       } else {
-        const errorData = await response.json();
         const errorMessage =
-          errorData.message || errorData.detail || "Failed to resend OTP.";
+          responseData.message ||
+          responseData.detail ||
+          responseData.errors ||
+          `Failed to resend OTP (Status: ${response.status})`;
         toast.error(`Failed to resend OTP: ${errorMessage}`);
       }
     } catch (error) {
-      console.error("Error resending OTP:", error);
-      toast.error("Network error while trying to resend OTP.");
-    } finally {
-      // Cooldown is managed by useEffect, no need to reset isResending here immediately
+      const errorMessage =
+        error instanceof Error && error.message.includes("NEXT_PUBLIC_BASE_URL")
+          ? "Configuration error. Please contact support."
+          : "Network error while trying to resend OTP.";
+      toast.error(errorMessage);
     }
   };
 

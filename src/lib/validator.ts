@@ -97,13 +97,12 @@ export const participantSchema = z
   });
 
 export const otpSchema = z.object({
-  email: z.string().email("A valid email is required."),
+  email: z.string().email("A valid email is required.").trim(), 
   otp: z
     .string()
     .length(6, "OTP must be 6 digits.")
     .regex(/^\d+$/, "OTP must contain only digits."),
 });
-
 export type OrganizerFormData = z.infer<typeof organizerSchema>;
 export type ParticipantFormData = z.infer<typeof participantSchema>;
 export type AuthFormType = "organizers" | "participants";
