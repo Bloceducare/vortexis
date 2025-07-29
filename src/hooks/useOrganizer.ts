@@ -25,16 +25,37 @@ export default function useOrganizer() {
  
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
-      const res = await fetch(`${apiUrl}/hackathon`, {
+      const formData = new FormData();
+  
+      formData.append('title', data.title || '');
+      formData.append('description', data.description || '');
+      formData.append('venue', data.venue || '');
+      formData.append('start_date', data.start_date || '');
+      formData.append('end_date', data.end_date || '');
+      formData.append('submission_deadline', data.submission_deadline || '');
+      formData.append('grand_prize', String(data.grand_prize || 0));
+      formData.append('visibility', String(data.visibility || false));
+  
+      if (data.banner_image) {
+        formData.append('banner_image', data.banner_image);
+      }
+  
+      formData.append('prizes', JSON.stringify(data.prizes || []));
+      formData.append('skills', JSON.stringify(data.skills || []));
+      formData.append('judges', JSON.stringify(data.judges || []));
+      formData.append('rules', JSON.stringify(data.rules || []));
+  
+      const res = await fetch(`${apiUrl}/hackathon/create/`, {
         method: 'POST',
         headers: getAuthHeaders(true),
-        body: JSON.stringify(data),
+        body: formData, 
       });
-
+  
       if (!res.ok) throw new Error('Failed to create hackathon');
       return res.json();
     },
   });
+  
 
 
   const updateHackathonMutation = useMutation({

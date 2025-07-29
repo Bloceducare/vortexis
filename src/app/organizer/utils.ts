@@ -256,3 +256,69 @@ export const ParticipantsData = [
         status: "Inactive"
     },   
 ]
+
+
+export const skillsData = [
+    // Frontend
+    { id: 1, name: 'HTML' },
+    { id: 2, name: 'CSS' },
+    { id: 3, name: 'JavaScript' },
+    { id: 4, name: 'React' },
+    { id: 5, name: 'TypeScript' },
+    { id: 6, name: 'Next.js' },
+    { id: 7, name: 'Vue.js' },
+    { id: 8, name: 'Tailwind CSS' },
+    { id: 9, name: 'Bootstrap' },
+  
+    // Backend
+    { id: 10, name: 'Node.js' },
+    { id: 11, name: 'Express.js' },
+    { id: 12, name: 'Python' },
+    { id: 13, name: 'Django' },
+    { id: 14, name: 'Flask' },
+    { id: 15, name: 'Java' },
+    { id: 16, name: 'Spring Boot' },
+    { id: 17, name: 'PHP' },
+    { id: 18, name: 'Laravel' },
+  
+    // Mobile
+    { id: 19, name: 'React Native' },
+    { id: 20, name: 'Flutter' },
+    { id: 21, name: 'Kotlin' },
+    { id: 22, name: 'Swift' },
+  
+    // Databases
+    { id: 23, name: 'MySQL' },
+    { id: 24, name: 'PostgreSQL' },
+    { id: 25, name: 'MongoDB' },
+    { id: 26, name: 'Firebase' },
+  
+    // DevOps / Infrastructure
+    { id: 27, name: 'Docker' },
+    { id: 28, name: 'Git' },
+    { id: 29, name: 'CI/CD' },
+    { id: 30, name: 'Linux' },
+  
+    // Design & Product
+    { id: 31, name: 'Figma' },
+    { id: 32, name: 'Adobe XD' },
+    { id: 33, name: 'UI/UX Design' },
+    { id: 34, name: 'Prototyping' },
+  
+    // APIs / Testing / Tools
+    { id: 35, name: 'GraphQL' },
+    { id: 36, name: 'REST APIs' },
+    { id: 37, name: 'Jest' },
+    { id: 38, name: 'Testing Library' },
+    { id: 39, name: 'Webpack' },
+    { id: 40, name: 'Vite' },
+  
+    // Blockchain & Web3
+    { id: 41, name: 'Blockchain' },
+    { id: 42, name: 'Solidity' },
+    { id: 43, name: 'Ethereum' },
+    { id: 44, name: 'Smart Contracts' },
+    { id: 45, name: 'Web3.js' },
+    { id: 46, name: 'Ethers.js' }
+  ];
+  

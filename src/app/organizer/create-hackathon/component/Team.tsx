@@ -3,19 +3,35 @@ import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
+import { skillsData } from '../../utils';
 
 
 
 
 function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
-    
+  const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); 
       const hackathonSelector = useShallow((state: any) => ({
         min_team_size: state.min_team_size,
         max_team_size: state.max_team_size,
+        skills: state.skills,
         setField: state.setField,
       }));
 
-      const { min_team_size, max_team_size, setField } = useHackathonStore(hackathonSelector);
+      const { min_team_size, max_team_size, skills, setField } = useHackathonStore(hackathonSelector);
+
+
+      const handleSkillChange = (id: number) => {
+        let updatedSkills: number[];
+    
+        if (selectedSkillIds.includes(id)) {
+          updatedSkills = selectedSkillIds.filter(skillId => skillId !== id);
+        } else {
+          updatedSkills = [...selectedSkillIds, id];
+        }
+    
+        setSelectedSkillIds(updatedSkills);
+        setField('skills', updatedSkills); 
+      };
   
   const dropdownMinimumIndividual = [
     "1 individual",
@@ -114,7 +130,7 @@ function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
             </select>
           </div>
 
-          {/* Maximum Members Dropdown */}
+        
           <div className="w-full md:w-[45%]">
             <label className="block mb-2 text-[#2F3036] font-bold">Maximum Team Members</label>
             <select
@@ -131,6 +147,33 @@ function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
             </select>
           </div>
         </div>
+
+
+
+        <div className="w-full mt-10">
+        <label className="block mb-2 text-[#2F3036] font-bold">Set Your Skill</label>
+        <div className="grid grid-cols-2 md:grid-cols-7 gap-4 mt-6">
+      {skillsData.map(skill => (
+        <label
+          key={skill.id}
+          className={`cursor-pointer flex items-center gap-2 p-2 rounded-lg border ${
+            selectedSkillIds.includes(skill.id)
+              ? 'bg-blue-100 border-blue-500'
+              : 'bg-white border-gray-300'
+          }`}
+        >
+          <input
+            type="checkbox"
+            value={skill.id}
+            checked={selectedSkillIds.includes(skill.id)}
+            onChange={() => handleSkillChange(skill.id)}
+            className="hidden"
+          />
+          <span>{skill.name}</span>
+        </label>
+      ))}
+    </div>
+    </div>
 
 
         <div className="mt-10">
