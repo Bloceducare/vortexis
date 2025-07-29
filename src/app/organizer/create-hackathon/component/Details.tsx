@@ -75,7 +75,7 @@ function Details({ onNext, data }: NavigationProps) {
       return;
     }
   
-    if (!localData.banner) {
+    if (banner_image) {
       toast.error("Please upload a banner image", {
         position: "top-right",
         autoClose: 3000,
