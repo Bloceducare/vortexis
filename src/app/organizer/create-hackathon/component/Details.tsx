@@ -17,10 +17,11 @@ function Details({ onNext, data }: NavigationProps) {
     start_date: state.start_date,
     end_date: state.end_date,
     rules: state.rules,
+    banner_image: state.banner_image,
     setField: state.setField,
   }));
 
-  const { title, description, start_date, end_date, rules, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, banner_image, setField } = useHackathonStore(hackathonSelector);
   const handleContinue = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -74,7 +75,7 @@ function Details({ onNext, data }: NavigationProps) {
       return;
     }
   
-    if (!localData.banner) {
+    if (banner_image) {
       toast.error("Please upload a banner image", {
         position: "top-right",
         autoClose: 3000,
@@ -99,7 +100,7 @@ function Details({ onNext, data }: NavigationProps) {
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result as string)
-        setLocalData({ ...localData, "banner": file }); 
+        setField("banner_image", file)
       }
       reader.readAsDataURL(file)
     }
