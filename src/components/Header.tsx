@@ -1,15 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-// import { button } from "./ui/button";
+import { useRouter } from "next/navigation"; // Import useRouter
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
+  const router = useRouter(); // Initialize useRouter
 
-  // const { data: session } = useSession();
-  // const user = session?.user?.name;
-  const user = null;
+  useEffect(() => {
+    // Function to check login status from localStorage
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("access_token");
+      setIsLoggedIn(!!token); // Set isLoggedIn to true if token exists, false otherwise
+    };
+
+    // Check status on component mount
+    checkLoginStatus();
+
+    // Listen for changes in localStorage across tabs/windows
+    window.addEventListener("storage", checkLoginStatus);
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+    };
+  }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_email");
+    localStorage.removeItem("user_full_name");
+    localStorage.removeItem("username");
+
+    setIsLoggedIn(false);
+    router.push("/");
+  };
 
   return (
     <header className="bg-white shadow-sm fixed w-full z-50">
@@ -43,10 +72,10 @@ export const Header: React.FC = () => {
             </nav>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            {!user ? (
+            {!isLoggedIn ? (
               <>
                 <Link href="/auth/login/participant">
-                  <button type="button" className="w-full  border-[#009AFF]">
+                  <button type="button" className="w-full border-[#009AFF]">
                     Log in
                   </button>
                 </Link>
@@ -55,9 +84,9 @@ export const Header: React.FC = () => {
                 </Link>
               </>
             ) : (
-              <Link href="/api/auth/signout?callbackUrl=/">
-                <button className="w-full">Logout</button>
-              </Link>
+              <button onClick={handleLogout} className="w-full">
+                Logout
+              </button>
             )}
           </div>
           <div className="flex items-center md:hidden">
@@ -103,7 +132,6 @@ export const Header: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Mobile menu, show/hide based on menu state */}
       {isMenuOpen && (
         <div className="md:hidden">
@@ -127,13 +155,12 @@ export const Header: React.FC = () => {
               About
             </Link>
           </div>
-
           <div className="pt-4 pb-3 border-t border-gray-200">
             <div className="px-4 space-y-3">
-              {!user ? (
+              {!isLoggedIn ? (
                 <div className="space-y-3">
                   <Link href="/auth/login/participant" className="block">
-                    <button type="button" className="w-full  border-[#009AFF]">
+                    <button type="button" className="w-full border-[#009AFF]">
                       Log in
                     </button>
                   </Link>
@@ -142,7 +169,12 @@ export const Header: React.FC = () => {
                   </Link>
                 </div>
               ) : (
-                <button className="w-full">Logout</button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500 rounded-2xl cursor-pointer"
+                >
+                  Logout
+                </button>
               )}
             </div>
           </div>

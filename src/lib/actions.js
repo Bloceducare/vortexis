@@ -3,7 +3,7 @@
 export async function signInGithubAction() {
   try {
     // Redirect to GitHub OAuth
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
+    const clientId = process.env.NEXT_GITHUB_ID;
     // const redirectUri = encodeURIComponent(
     //   `${window.location.origin}/auth/callback`
     // );
@@ -85,7 +85,7 @@ function generateRandomState() {
 
 export async function signInGoogleAction() {
   try {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_ID;
+    const clientId = process.env.NEXT_GOOGLE_ID;
     const redirectUri = encodeURIComponent(
       process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
     );
@@ -143,8 +143,8 @@ export async function handleGoogleCallback() {
       },
       body: new URLSearchParams({
         code,
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_ID,
-        client_secret: process.env.NEXT_PUBLIC_GOOGLE_SECRET,
+        client_id: process.env.NEXT_GOOGLE_ID,
+        client_secret: process.env.NEXT_GOOGLE_SECRET,
         redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
         grant_type: "authorization_code",
       }),

@@ -84,34 +84,49 @@ export default function Page() {
     setError(false);
 
     try {
-      const formData = new FormData();
-      // Append all form fields to FormData
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          if (value instanceof File) {
-            formData.append(key, value);
-          } else {
-            formData.append(key, String(value));
-          }
-        }
-      });
+      // Map form data to API expected format
+      const apiPayload = {
+        name: data.organizationName, // Map organizationName to name
+        description: data.about, // Map about to description
+      };
 
-      const authToken =
-        localStorage.getItem("authToken") ||
-        sessionStorage.getItem("authToken");
+      console.log("Form data:", data);
+      console.log("API payload:", apiPayload);
 
-      const headers: HeadersInit = {};
+      // Get the access token from localStorage (stored from login)
+      const accessToken = localStorage.getItem("access_token");
 
-      if (authToken) {
-        headers["Authorization"] = `Bearer ${authToken}`;
+      console.log("Access token found:", accessToken ? "Yes" : "No");
+      console.log(
+        "Token preview:",
+        accessToken ? accessToken.substring(0, 20) + "..." : "None"
+      );
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      };
+
+      if (accessToken) {
+        headers["Authorization"] = `Bearer ${accessToken}`;
+        console.log("Authorization header set");
+      } else {
+        console.warn("No access token found in localStorage");
+        toast.error("Authentication required. Please log in first.");
+        setError(true);
+        return;
       }
+
+      console.log(
+        "Sending request to:",
+        `${process.env.NEXT_PUBLIC_BASE_URL}/organization/create/`
+      );
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/organization/create/`,
         {
           method: "POST",
           headers,
-          body: formData,
+          body: JSON.stringify(apiPayload),
         }
       );
 
@@ -121,9 +136,9 @@ export default function Page() {
       if (!response.ok) {
         console.error(`HTTP Error: ${response.status} ${response.statusText}`);
 
-        // Handle specific error codes
         if (response.status === 401) {
-          toast.error("Authentication required. Please log in and try again.");
+          toast.error("Authentication failed. Please log in again.");
+          localStorage.removeItem("access_token");
           setError(true);
           return;
         }

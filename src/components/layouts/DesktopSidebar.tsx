@@ -1,10 +1,12 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronRight, Settings, LogOutIcon } from "lucide-react";
 import Link from "next/link";
+import { SignOutConfirmationModal } from "../signOutModal";
+import { useRouter } from "next/navigation";
 
 interface SidebarItem {
   icon: string;
@@ -27,6 +29,25 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
   settingPage,
   pathname,
 }) => {
+  const router = useRouter();
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
+
+  const handleLogout = () => {
+    // Clear all relevant items from localStorage
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_email");
+    localStorage.removeItem("user_full_name");
+    localStorage.removeItem("username");
+
+    // Close the modal
+    setShowSignOutModal(false);
+    // Redirect to home page after logout
+    router.push("/");
+    // Close the sidebar if it's open
+    // onClose();
+  };
+
   return (
     <motion.aside
       initial={false}
@@ -88,12 +109,20 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
               {sidebarExpanded && <span className="ml-4">Settings</span>}
             </Link>
           )}
-          <button className="text-gray-600 flex items-center gap-3 pl-10">
+          <button
+            onClick={() => setShowSignOutModal(true)}
+            className="text-gray-600 flex items-center cursor-pointer gap-3 pl-10"
+          >
             <LogOutIcon size={24} />
             {sidebarExpanded && <span className="text-red-500">Sign out</span>}
           </button>
         </div>
       </div>
+      <SignOutConfirmationModal
+        isOpen={showSignOutModal}
+        onClose={() => setShowSignOutModal(false)}
+        onConfirm={handleLogout}
+      />
     </motion.aside>
   );
 };

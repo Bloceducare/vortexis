@@ -1,6 +1,5 @@
 "use client";
 
-// hooks/use-signup-form.ts
 import { useState } from "react";
 import {
   useForm,
@@ -19,13 +18,11 @@ import {
 
 type AuthFormType = "organizers" | "participants";
 
-// Create a type map to get the correct form data type based on auth type
 type FormDataMap = {
   organizers: OrganizerFormData;
   participants: ParticipantFormData;
 };
 
-// Make the hook generic
 export function useSignUpForm<T extends AuthFormType>(type: T) {
   type CurrentFormData = FormDataMap[T];
 
@@ -35,7 +32,6 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get the correct schema based on type
   const schema = type === "organizers" ? organizerSchema : participantSchema;
 
   // Use the specific form data type instead of union
@@ -170,7 +166,6 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
         return;
       }
 
-      // Success case
       if (responseData) {
         toast.success(
           "Account created successfully! Please check your email to verify your account."
