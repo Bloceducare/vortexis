@@ -12,7 +12,7 @@ import Judges from "@/public/assets/icon/tabler_hammer.svg";
 import Submit from "@/public/assets/icon/Clock.svg";
 import Dash from '@/public/assets/icon/material-symbols_dashboard.svg';
 import Header from '@/components/layouts/Header';
-import useOrganizer from '@/hooks/useOrganizer';
+import useOrganizer from '@/hooks/useOrganizers';
 import { useHackathonStore } from '@/store/useHackathonStore';
 
 interface OrganizerLayoutProps {
@@ -45,7 +45,6 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
 
   const { data, isLoading, error } = getHackathons()
   setHackathons(data)
-  // setHackathons(mockHackathons)
   const hackathons = useHackathonStore((state) => state.hackathons);
 
   const selectedHackathon = useMemo(() => {
@@ -57,18 +56,27 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const selectedHackathonName =
     hackathons?.find(h => h.id === selectedHackathon)?.title || 'Select Hackathon';
 
-  const handleSelect = (id: string | undefined) => {
-    const segments = pathname.split('/');
-    const index = segments.indexOf('organizer');
-    const currentSubpath = segments[index + 2] || '';
-    const newPath = currentSubpath ? `/organizer/${id}/${currentSubpath}` : `/organizer/${id}`;
-
-    if (newPath !== pathname) {
-      router.push(newPath);
-    }
-
-    setIsDropdownOpen(false);
-  };
+    const handleSelect = (id: string | undefined) => {
+      if (!id) return;
+    
+      const segments = pathname.split('/');
+      const index = segments.indexOf('organizer');
+      
+      // Check if there's a subpath after the hackathon ID
+      const currentSubpath = segments.length > index + 2 ? segments[index + 2] : '';
+    
+      // Build the new path
+      const newPath = currentSubpath 
+        ? `/organizer/${id}/${currentSubpath}` 
+        : `/organizer/${id}/hackathon`; // default subpage fallback
+    
+      if (newPath !== pathname) {
+        router.push(newPath);
+      }
+    
+      setIsDropdownOpen(false);
+    };
+    
 
   const toggleSidebar = () => {
     if (isMobile) {
@@ -145,8 +153,8 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
             transition={{ duration: 0.2 }}
             className="absolute left-0 top-full mt-1 w-full bg-white border rounded shadow origin-top z-[100]"
           >
-            {hackathons.length > 0 ? (
-              hackathons.map(h => (
+            {hackathons?.length > 0 ? (
+              hackathons?.map(h => (
                 <li
                   key={h.id}
                   onClick={() => handleSelect(h.id)}

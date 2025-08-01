@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import Hackathon_details from '@/app/api/utils/interface';
@@ -8,71 +7,97 @@ interface HackathonState extends Partial<Hackathon_details> {
   clearHackathon: () => void;
   getHackathonData: () => Partial<Hackathon_details>;
 
-   // For fetched hackathons
-   hackathons: Hackathon_details[];
-   setHackathons: (hackathons: Hackathon_details[]) => void;
-   selectedHackathonId: string | null;
-   setSelectedHackathonId: (id: string) => void;
+  hackathons: Hackathon_details[];
+  setHackathons: (hackathons: Hackathon_details[]) => void;
+  selectedHackathonId: string | null;
+  setSelectedHackathonId: (id: string) => void;
 }
 
+const isClient = typeof window !== 'undefined';
+
 export const useHackathonStore = create<HackathonState>()(
-  persist(
-    (set, get) => ({
-      title: '',
-      description: '',
-      venue: '',
-      start_date: '',
-      end_date: '',
-      submission_deadline: "",
-      grand_prize: 0,
-      prizes: [{ name: '', amount: 0 }],
-      skills: [],
-      judges: [],
-      rules: [],
-      visibility: false,
-      banner_image: null,
-
-      setField: (key, value) => set({ [key]: value }),
-
-      clearHackathon: () =>
-        set({
+  isClient
+    ? persist(
+        (set, get) => ({
           title: '',
           description: '',
           venue: '',
-          details: null,
-          grand_prize: undefined,
-          prizes: [],
-          submission_deadline: "",
           start_date: '',
           end_date: '',
-          visibility: false,
-          min_team_size: undefined,
-          max_team_size: undefined,
-          organization: null,
+          submission_deadline: '',
+          grand_prize: 0,
+          prizes: [{ name: '', amount: 0 }],
           skills: [],
           judges: [],
           rules: [],
+          visibility: false,
           banner_image: null,
+
+          setField: (key, value) => set({ [key]: value }),
+
+          clearHackathon: () =>
+            set({
+              title: '',
+              description: '',
+              venue: '',
+              details: null,
+              grand_prize: undefined,
+              prizes: [],
+              submission_deadline: '',
+              start_date: '',
+              end_date: '',
+              visibility: false,
+              min_team_size: undefined,
+              max_team_size: undefined,
+              organization: null,
+              skills: [],
+              judges: [],
+              rules: [],
+              banner_image: null,
+            }),
+
+          getHackathonData: () => {
+            const state = get();
+            const { setField, clearHackathon, getHackathonData, ...data } = state;
+            return data;
+          },
+
+          hackathons: [],
+          setHackathons: (hackathons) => set({ hackathons }),
+          selectedHackathonId: null,
+          setSelectedHackathonId: (id) => set({ selectedHackathonId: id }),
         }),
+        {
+          name: 'hackathon-storage',
+          partialize: (state) => {
+            const { banner_image, ...persistable } = state;
+            return persistable;
+          },
+        }
+      )
+    : () => ({
+       
+        title: '',
+        description: '',
+        venue: '',
+        start_date: '',
+        end_date: '',
+        submission_deadline: '',
+        grand_prize: 0,
+        prizes: [{ name: '', amount: 0 }],
+        skills: [],
+        judges: [],
+        rules: [],
+        visibility: false,
+        banner_image: null,
 
-      getHackathonData: () => {
-        const state = get();
-        const { setField, clearHackathon, getHackathonData, ...data } = state;
-        return data;
-      },
-       // Fetched hackathons
-      hackathons: [],
-      setHackathons: (hackathons) => set({ hackathons }),
-      selectedHackathonId: null,
-      setSelectedHackathonId: (id) => set({ selectedHackathonId: id }),
-    }),
-    {
-      name: 'hackathon-storage',
-      partialize: (state) => {
-        const { banner_image, ...persistable } = state;
-        return persistable;
-      },
-    }
-  )
+        setField: () => {},
+        clearHackathon: () => {},
+        getHackathonData: () => ({}),
+
+        hackathons: [],
+        setHackathons: () => {},
+        selectedHackathonId: null,
+        setSelectedHackathonId: () => {},
+      })
 );
-

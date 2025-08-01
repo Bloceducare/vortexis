@@ -11,6 +11,8 @@ import {
   import Hackathon_details from "@/app/api/utils/interface";
   
 import { CalendarDays, MapPin, Users, FileText, Scale, Eye, EyeOff, MoreVertical, UserPlus, Pencil } from "lucide-react";
+import { useRouter } from 'next/navigation';
+
 
 export type HackathonStatus = "upcoming" | "just-created" | "active" | "finished";
 
@@ -39,8 +41,8 @@ interface HackathonCardProps {
 }
 
 export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
-  // const statusStyle = statusConfig[Hackathon_deatails.status];
 
+  const router = useRouter();
   const getDurationInDays = (start: string, end: string): number => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -49,10 +51,13 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
     const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
     return diffInDays;
   };
-  
+
+  const navigateToDashboard = (hackathon_id: string | undefined) => {
+    router.push(`/organizer/${hackathon_id}/hackathon`)
+  }  
 
   return (
-    <Card className="group hover:shadow-hover transition-all duration-300 hover:-translate-y-1 bg-card border border-border shadow-card cursor-pointer">
+    <Card className="group hover:shadow-hover transition-all duration-300 hover:-translate-y-1 bg-card border border-border shadow-card cursor-pointer" onClick={() => navigateToDashboard(hackathon.id)}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <CardTitle className="text-xl font-semibold text-card-foreground group-hover:text-primary transition-colors">

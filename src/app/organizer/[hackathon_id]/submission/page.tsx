@@ -4,7 +4,7 @@ import All from './component/All';
 import Pending from './component/Pending';
 import Reviewed from './component/Reviewed';
 import Rejected from './component/Rejected';
-import useOrganizer from '@/hooks/useOrganizer';
+import useOrganizer from '@/hooks/useOrganizers';
 import { useParams } from 'next/navigation';
 
 function SubmitProject() {
@@ -28,16 +28,25 @@ function SubmitProject() {
   const renderComponent = () => {
     switch (activeButton) {
       case "All Submission":
-        return <All submissions={data}   isLoading={isLoading}
+        return <All submissions={data}  isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}
         refetch={refetch}   />;
       case "Pending14":
-        return <Pending />;
+        return <Pending  submissions={data}  isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        refetch={refetch} />;
       case "Reviewed":
-        return <Reviewed />;
+        return <Reviewed  submissions={data}  isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        refetch={refetch}  />;
       case "Rejected":
-        return <Rejected />;
+        return <Rejected submissions={data}  isLoading={isLoading}
+        isFetching={isFetching}
+        isError={isError}
+        refetch={refetch}  />;
       default:
         return null;
     }

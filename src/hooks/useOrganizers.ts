@@ -41,9 +41,13 @@ export default function useOrganizer() {
       }
   
       formData.append('prizes', JSON.stringify(data.prizes || []));
-      formData.append('skills', JSON.stringify(data.skills || []));
+      (data.skills ?? []).forEach((skillId: number) => {
+        formData.append('skills', String(skillId));
+      });
       formData.append('judges', JSON.stringify(data.judges || []));
       formData.append('rules', JSON.stringify(data.rules || []));
+
+      console.log(formData)
   
       const res = await fetch(`${apiUrl}/hackathon/create/`, {
         method: 'POST',
@@ -51,12 +55,17 @@ export default function useOrganizer() {
         body: formData, 
       });
   
-      if (!res.ok) throw new Error('Failed to create hackathon');
-      return res.json();
+      if (!res.ok) {
+        const errorData = await res.json();
+        // Attach specific backend error to the thrown Error
+        throw new Error(
+          errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          'Failed to create hackathon'
+        );
+      }     
     },
   });
-  
-
 
   const updateHackathonMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
@@ -78,24 +87,20 @@ export default function useOrganizer() {
         headers: getAuthHeaders(),
         body: JSON.stringify({ email }),
       });
-
-      if (!res.ok) throw new Error('Failed to invite judges');
-      return res.json();
-    },
+    
+      const data = await res.json();
+    
+      if (!res.ok) {
+        const error = new Error(data?.email?.[0] || 'Failed to invite judges');
+        (error as any).response = data;
+        throw error;
+      }
+    
+      return data;
+    }
+    
+    
   });
-
-
-  const useParticipants = () =>
-    useQuery({
-      queryKey: ['participants'],
-      queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon`, {
-          headers: getAuthHeaders()
-        });
-        if (!res.ok) throw new Error('Unable to fetch participants');
-        return res.json();
-      },
-    });
 
   const getHackathons = () => {
     return useQuery({
@@ -125,12 +130,26 @@ export default function useOrganizer() {
     });
   };
 
+  const useParticipants = (hackathon_id: string) => {
+    return useQuery({
+      queryKey: ['hackathon_particpants_byid', hackathon_id],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/participants/`, {
+          headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error('Inable to fetch participants');
+        return res.json();
+      },
+      enabled: !!hackathon_id,
+    });
+  };
+
 
     const useSubmissionById = (hackathon_id: string) => {
       return useQuery({
         queryKey: ['submission', hackathon_id],
         queryFn: async () => {
-          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submission/`, {
+          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submissions/`, {
             headers: getAuthHeaders()
           });
           if (!res.ok) throw new Error('Unable to fetch submission');
@@ -155,30 +174,14 @@ export default function useOrganizer() {
       })
     }
 
-  const deleteSubmissionMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const res = await fetch(`${apiUrl}/hackathon/${id}/submission/`, {
-        method: 'DELETE',
-        headers: getAuthHeaders()
-      });
-
-      if (!res.ok) throw new Error('Unable to delete submission');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['submissions'] });
-    },
-  });
-
   return {
     createHackathonMutation,
     updateHackathonMutation,
     inviteJudgesMutation,
-    useParticipants,
     useSubmissionById,
-    deleteSubmissionMutation,
     getHackathons,
     getHackathonJudges,
-    getHackathonById
+    getHackathonById,
+    useParticipants
   };
 }

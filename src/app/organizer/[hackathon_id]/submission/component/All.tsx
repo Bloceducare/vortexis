@@ -138,43 +138,48 @@ const All: React.FC<SubmissionProps> = ({
             </tr>
           </thead>
           <tbody>
-            {filteredSubmissions.map((sub, index) => (
-              <tr
-                key={index}
-                className="hover:bg-gray-50 border-b border-[#EEEEEE]"
-              >
-                <td className="px-4 py-5">
-                  <div>
-                    <h1 className="font-bold text-[#212121]">{sub.project}</h1>
-                    <p className="text-[#727272] font-medium">Hackathon #{sub.hackathon}</p>
-                  </div>
-                </td>
-                <td className="px-4 py-5">
-                  <div>
-                    <h1 className="font-bold text-[#212121]">{sub.team}</h1>
-                    <p className="text-[#727272] font-medium">Team ID</p>
-                  </div>
-                </td>
-                <td className="px-2 py-5 text-[#292D32] font-medium">
-                  {new Date(sub.created_at).toLocaleDateString()}
-                </td>
-                <td className="px-5 py-3">
-                  <span
-                    className={`px-5 py-2 rounded-lg font-semibold ${
-                      sub.approved
-                        ? 'border-green-500 bg-green-100 text-green-700'
-                        : 'border-yellow-500 bg-yellow-100 text-yellow-700'
-                    }`}
-                  >
-                    {sub.approved ? 'Approved' : 'Pending'}
-                  </span>
-                </td>
-                <td className="px-4 py-5">
-                  <button className="underline text-sm cursor-pointer">View</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
+
+{filteredSubmissions.length === 0 ? (
+<tr>
+<td colSpan={6} className="text-center py-10 text-gray-500">
+No Submission found.
+</td>
+</tr>
+) : (
+  filteredSubmissions.map((sub, index) => (
+    <tr key={index} className="hover:bg-gray-50 border-b border-[#EEEEEE]">
+      <td className="px-4 py-5">
+        <h1 className="font-bold text-[#212121]">{sub.project}</h1>
+      </td>
+      <td className="px-4 py-5">
+        <h1 className="font-semibold text-[#212121]">{sub.team}</h1>
+      </td>
+      <td className="px-2 py-5 text-[#292D32] font-medium">
+        {new Date(sub.created_at).toLocaleDateString()}
+      </td>
+      <td className="px-4 py-5">
+        <span className="px-4 py-2 rounded-lg font-semibold bg-[#F9FBFF] text-[#555] border border-[#DDD]">
+          {sub.status}
+        </span>
+      </td>
+      <td className="px-4 py-5">
+        <span
+          className={`px-4 py-2 rounded-lg font-semibold border ${
+            sub.approved
+              ? 'bg-[#16C09861] text-[#16C098] border-[#16C098]'
+              : 'bg-[#F9831C61] text-[#F9831C] border-[#F9831C]'
+          }`}
+        >
+          {sub.approved ? 'Approved' : 'Not Approved'}
+        </span>
+      </td>
+      <td className="px-4 py-5 text-sm text-blue-600 underline cursor-pointer">
+        View
+      </td>
+      </tr>
+))
+)}
+</tbody>
         </table>
 
         <div className="flex justify-between items-center mt-5 px-5">

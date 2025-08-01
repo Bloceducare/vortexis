@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import Invitation from './component/Invitation'
 import JudgesList from './component/JudgesList'
 import { useParams } from 'next/navigation'
-import useOrganizer from '@/hooks/useOrganizer'
+import useOrganizer from '@/hooks/useOrganizers'
 
 
 const tab = [  "Judges List", "Invite Judges",]

@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react'
 import EmailInput from '@/components/EmailInput';
 import { useHackathonStore } from '@/store/useHackathonStore';
-import useOrganizer from '@/hooks/useOrganizer';
+import useOrganizer from '@/hooks/useOrganizers';
 import { getHackathonIdProps } from '@/app/api/utils/interface';
+import SuccessModal from '@/components/SuccessModal';
 
 const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
   const [emails, setEmails] = useState<string[]>([]);
@@ -17,19 +18,23 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage('');
-
+  
     try {
       await inviteJudgesMutation.mutateAsync({
         email: emails,
-        hackathon_id
+        hackathon_id,
       });
-
-      setShowSuccessModal(true);
+  
       setEmails([]);
+      setShowSuccessModal(true);
+
     } catch (error: any) {
-      setErrorMessage(error?.response?.data?.message || "Something went wrong while sending invites.");
+      const apiError = error?.response?.email?.[0] || error?.message || 'Something went wrong.';
+      setErrorMessage(apiError);
+
     }
   };
+  
 
 
   return (
@@ -76,19 +81,15 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
       </section>
 
       {inviteJudgesMutation.isSuccess && showSuccessModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center max-w-sm w-full">
-            <h2 className="text-xl font-semibold mb-3">🎉 Invitation Sent!</h2>
-            <p className="text-gray-700 mb-4">Your judge(s) have been successfully invited.</p>
-            <button
-              onClick={() => setShowSuccessModal(false)}
-              className="bg-blue-600 text-white px-5 py-2 rounded-md"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
+        <SuccessModal
+  title="✅ Judges Invited"
+  message="The selected emails have been successfully sent invitations."
+  onClose={() => setShowSuccessModal(false)}
+/>
+
+)}
+
+
     </>
   );
 }
