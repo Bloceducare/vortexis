@@ -36,8 +36,8 @@ export const Header: React.FC = () => {
     localStorage.removeItem("user_full_name");
     localStorage.removeItem("username");
 
-    setIsLoggedIn(false); // Update local state
-    router.push("/"); // Redirect to home page after logout
+    setIsLoggedIn(false);
+    router.push("/");
   };
 
   return (
