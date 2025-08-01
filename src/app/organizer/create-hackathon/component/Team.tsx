@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
 import { skillsData } from '../../utils';
+import useSkills from '@/hooks/useSkills';
+import { Skills } from '@/app/api/utils/interface';
 
 
 
 
-function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
+function Team({ onNext, onPrev,  setData }: NavigationProps ) {
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); 
       const hackathonSelector = useShallow((state: any) => ({
         min_team_size: state.min_team_size,
@@ -18,6 +20,15 @@ function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
       }));
 
       const { min_team_size, max_team_size, skills, setField } = useHackathonStore(hackathonSelector);
+
+      const { getAllSkills } = useSkills()
+
+
+      const { data, isLoading, isError, isFetching, refetch } = getAllSkills()
+
+      console.log(data)
+
+
 
 
       const handleSkillChange = (id: number) => {
@@ -32,6 +43,12 @@ function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
         setSelectedSkillIds(updatedSkills);
         setField('skills', updatedSkills); 
       };
+
+      useEffect(() => {
+        if (skills && Array.isArray(skills)) {
+          setSelectedSkillIds(skills);
+        }
+      }, [skills]);
   
   const dropdownMinimumIndividual = [
     "1 individual",
@@ -151,29 +168,45 @@ function Team({ onNext, onPrev, data, setData }: NavigationProps ) {
 
 
         <div className="w-full mt-10">
-        <label className="block mb-2 text-[#2F3036] font-bold">Set Your Skill</label>
-        <div className="grid grid-cols-2 md:grid-cols-7 gap-4 mt-6">
-      {skillsData.map(skill => (
-        <label
-          key={skill.id}
-          className={`cursor-pointer flex items-center gap-2 p-2 rounded-lg border ${
-            selectedSkillIds.includes(skill.id)
-              ? 'bg-blue-100 border-blue-500'
-              : 'bg-white border-gray-300'
-          }`}
+      <div className="flex items-center justify-between mb-4">
+        <label className="text-[#2F3036] font-bold text-lg">Set Your Skill</label>
+        <button
+          onClick={() => refetch()}
+          className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
-          <input
-            type="checkbox"
-            value={skill.id}
-            checked={selectedSkillIds.includes(skill.id)}
-            onChange={() => handleSkillChange(skill.id)}
-            className="hidden"
-          />
-          <span>{skill.name}</span>
-        </label>
-      ))}
+          {isFetching ? 'Refreshing...' : 'Refetch'}
+        </button>
+      </div>
+
+      {isLoading ? (
+        <p>Loading skills...</p>
+      ) : isError ? (
+        <p className="text-red-500">Failed to load skills.</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+          {data?.map((skill: Skills) => (
+            <label
+              key={skill.id}
+              className={`cursor-pointer flex items-center gap-2 p-2 rounded-lg border transition-all duration-200 ${
+                selectedSkillIds.includes(skill.id)
+                  ? 'bg-blue-100 border-blue-500'
+                  : 'bg-white border-gray-300'
+              }`}
+            >
+              <input
+                type="checkbox"
+                value={skill.id}
+                checked={selectedSkillIds.includes(skill.id)}
+                onChange={() => handleSkillChange(skill.id)}
+                className="hidden"
+              />
+              <span>{skill.name}</span>
+            </label>
+          ))}
+        </div>
+      )}
     </div>
-    </div>
+
 
 
         <div className="mt-10">

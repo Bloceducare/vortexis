@@ -1,5 +1,6 @@
 export default interface Hackathon_details {
   id?: string;
+  slug?: string;
   title?: string | undefined;
   description?: string | undefined;
   venue?: string | undefined;
@@ -14,7 +15,7 @@ export default interface Hackathon_details {
   min_team_size?: number;
   max_team_size?: number;
   organization?: number | null;
-  skills?: string[];
+  skills?: number[];
   judges?: string[];
   rules?: string[];
   participants?: string[];
@@ -24,6 +25,11 @@ export default interface Hackathon_details {
 export interface Prize {
   name: string;
   amount: number;
+}
+
+export interface Skills {
+  id: number;
+  name: string;
 }
 
 export interface Judge {
@@ -52,6 +58,7 @@ export interface Submission {
   team: string;
   hackathon: number;
   approved: boolean;
+  status: string;
   reviews: string;
   created_at: string;
   updated_at: string;

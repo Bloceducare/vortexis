@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState } from 'react'
 import { FileImageIcon } from 'lucide-react'
 import { NavigationProps } from '@/components/Interface';
@@ -75,14 +77,14 @@ function Details({ onNext, data }: NavigationProps) {
       return;
     }
   
-    if (banner_image) {
-      toast.error("Please upload a banner image", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored",
-      });
-      return;
-    }
+    // if (banner_image) {
+    //   toast.error("Please upload a banner image", {
+    //     position: "top-right",
+    //     autoClose: 3000,
+    //     theme: "colored",
+    //   });
+    //   return;
+    // }
   
     // All validations passed
     // setData(localData);

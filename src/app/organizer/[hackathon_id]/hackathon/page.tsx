@@ -6,22 +6,40 @@ import Image from "next/image";
 import People from '@/public/assets/icon/people.svg'
 import Document from '@/public/assets/icon/basil_document-outline.svg'
 import Hacks from '@/public/assets/hackathon.svg'
-import RegistrationTrend from "../../components/RegistrationTrend";
-import { useRouter } from "next/navigation";
 import BlueTick from "@/public/assets/icon/blue_tick.svg"
 import Speaker from "@/public/assets/icon/speaker.svg"
 import New from "@/public/assets/icon/new.svg"
-import Hackathon_details from "@/app/api/utils/interface";
+import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
-import useOrganizer from "@/hooks/useOrganizer";
+import useOrganizer from "@/hooks/useOrganizers";
 
 
 
 function Page() {
-  const router = useRouter();
-  const param = useParams()
+  const params = useParams()
+  const hackathon_id = params?.hackathon_id as string;
 
 
+
+  const { getHackathonById } = useOrganizer()
+
+  const { data, isLoading, error } = getHackathonById(hackathon_id)
+
+  console.log(data)
+
+
+  const getHackathonStatus = (startDate: string, endDate: string) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    if (now < start) return { label: "Upcoming", color: "blue" };
+    if (now >= start && now <= end) return { label: "Active", color: "green" };
+    return { label: "Finished", color: "red" };
+  };
+  
+  const status = getHackathonStatus(data?.start_date, data?.end_date);
+  
 
   const getIcon = (title: string) => {
     switch (title) {
@@ -39,31 +57,29 @@ function Page() {
   const ActiveHackathons = [
     {
       id: 1,
-      number: '243',
-      word: '+42 from last month',
-      icon: People,
-      type: 'Participants'
+      number: data?.submissions.length,
+      word: '',
+      icon: Document,
+      type: 'Submissions'
     },
     {
       id: 2,
-      number: '243',
-      word: '+42 from last month',
+      number: data?.participants.length,
+      word: '',
       icon: People,
       type: 'Participants'
     },
     {
       id: 3,
-      number: '243',
-      word: '+42 from last month',
+      number: data?.themes.length,
       icon: Document,
-      type: 'Participants'
+      type: 'Themes'
     },
     {
       id: 4,
-      number: '243',
-      word: '+42 from last month',
-      icon: Document,
-      type: 'Participants'
+      number: data?.judges.length,
+      icon: People,
+      type: 'judges'
     },
 
 
@@ -72,19 +88,19 @@ function Page() {
   const Details = [
       {
         id: 1,
-        number: '127',
+        number: data?.participants.length,
         icon: People,
         type: 'Participants'
       }, 
       {
         id: 2,
-        number: '28',
+        number: data?.submissions.length,
         icon: Document,
         type: 'Submission'
       }, 
       {
         id: 3,
-        number: '6',
+        number: data?.judges.length,
         icon: People,
         type: 'Judges'
       }, 
@@ -113,6 +129,14 @@ function Page() {
     },
   ];
 
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  };
+
   
 
   return (
@@ -131,139 +155,240 @@ function Page() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
             >
-              Welcome back, Sharon!
+              {data?.title}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
             >
-              Here’s what happening with your hackathons.
+              {data?.description}
             </motion.p>
           </div>
         </motion.div>
 
 
         <motion.div
-            className="mt-10"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-          <motion.h1
-            className="text-[#00AC4F]"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-          >
-            Your Active Hackathons
-          </motion.h1>
+  className="mt-10"
+  initial={{ opacity: 0, y: -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.3, ease: "easeOut" }}
+>
+  <motion.h1
+    className="text-[#1D4ED8] text-2xl font-semibold mb-6"
+    initial={{ opacity: 0, scale: 0.95 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+  >
+    Hackathon Overview
+  </motion.h1>
 
-          <motion.div
-          className="flex justify-between gap-2 mt-5"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.2,
-                },
-              },
-            }}
-          >
+  <motion.div
+    className="flex flex-wrap gap-6"
+    initial="hidden"
+    animate="visible"
+    variants={{
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.15,
+        },
+      },
+    }}
+  >
     {ActiveHackathons.map((active, index) => (
       <motion.div
         key={index}
-        className="py-7 my-2 bg-white text-center border-2 border-[#E4E4E4]  space-y-5 rounded-2xl shadow-md w-[30%]"
+        className="w-full sm:w-[48%] md:w-[22%] bg-white border-2 border-[#E4E4E4] rounded-2xl shadow-md p-6 text-center space-y-4 transition hover:shadow-lg"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ scale: 1.03 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
         <motion.h1
-          className="text-3xl font-semibold text-[#605DEC]"
+          className="text-3xl font-bold text-[#605DEC]"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
         >
           {active.number}
         </motion.h1>
+
         <motion.p
-          className="text-gray-600"
+          className="text-gray-600 text-sm"
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
           {active.word}
         </motion.p>
+
         <motion.div
-          className="flex justify-center items-center gap-2 mt-2"
-          initial={{ scale: 0.8, opacity: 0 }}
+          className="flex justify-center items-center gap-2"
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
-              <Image src={active.icon} alt="icon" className="w-8 h-8" />
-              <p className="text-gray-700">{active.type}</p>
-            </motion.div>
-          </motion.div>
-        ))}
-      </motion.div>
+          <Image src={active.icon} alt="icon" className="w-6 h-6" />
+          <p className="text-gray-700 text-sm">{active.type}</p>
         </motion.div>
+      </motion.div>
+    ))}
+  </motion.div>
+</motion.div>
+
+
 
 
         <motion.section
-  className="flex justify-between gap-3 mt-10"
+  className="flex  gap-3 mt-10"
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ duration: 0.5, ease: "easeOut" }}
 >
-  {/* Hackathon Details */}
-  <motion.div
-    className="w-1/2 bg-white border-2 border-[#E4E4E4] space-y-5 rounded-2xl shadow-md py-4 px-5 cursor-pointer"
-    initial={{ opacity: 0, x: -50 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-  >
-    <div className="space-y-5 w-[90%]  px-2 xl:px-5">
 
-    <div className="flex justify-start">
-      <Image src={Hacks} alt="hacks" />
+  <motion.section
+          className="flex justify-between gap-3 mt-10 w-full"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+   <motion.div
+  className="w-full bg-white py-6 px-6 transition"
+  initial={{ opacity: 0, x: -50 }}
+  animate={{ opacity: 1, x: 0 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+>
+  {/* Header with badge */}
+  <div className="flex justify-between items-center mb-4">
+    <div className="w-44 h-40 rounded-full overflow-hidden">
+      <Image src={Hacks} alt="hack" className="w-full h-full object-cover" />
     </div>
-    <div className="flex gap-10 items-center">
-      <h1 className="font-semibold text-lg">Global AI Agents League</h1>
-      <p className="text-[#3083FF] bg-[#EDF5FE] py-2 px-5 rounded-2xl flex gap-3 items-center">
-        <span className="w-4 h-4 bg-[#3083FF] rounded-full"></span>
-        Active
+    <Badge
+      className={`capitalize rounded-full px-3 py-1 text-white text-sm font-semibold bg-${status.color}-500`}
+    >
+      {status.label}
+    </Badge>
+  </div>
+
+  <div className="space-y-4">
+    <div className="flex justify-between items-center flex-wrap gap-3">
+      <h1 className="font-semibold text-xl">{data?.title}</h1>
+      <p className="text-[#3083FF] bg-[#EDF5FE] py-1 px-3 rounded-full text-sm">
+        {data?.visibility ? "Public" : "Private"}
       </p>
     </div>
-    <p>May 10, 2025 - May 31, 2025</p>
-    <div className="flex justify-around">
+
+    <p className="text-gray-600 text-sm">
+      {formatDate(data?.start_date)} - {formatDate(data?.end_date)}
+    </p>
+
+    {/* Info Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-4 text-sm">
+      <div>
+        <p className="font-bold">Venue:</p>
+        <p>{data?.venue}</p>
+      </div>
+      <div>
+        <p className="font-bold">Grand Prize:</p>
+        <p>₦{data?.grand_prize?.toLocaleString()}</p>
+      </div>
+      <div>
+        <p className="font-bold">Team Size:</p>
+        <p>
+          {data?.min_team_size} - {data?.max_team_size} members
+        </p>
+      </div>
+
+      {/* Other Prizes */}
+      {data?.prizes?.length > 0 && (
+        <div className="col-span-1 sm:col-span-2 md:col-span-3">
+          <p className="font-bold">Other Prizes:</p>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {data.prizes.map((prize: any, index: number) => (
+              <span
+                key={index}
+                className="bg-[#EDF5FE] text-[#3083FF] px-3 py-1 rounded-full text-sm"
+              >
+                {prize.name}: ₦{prize.amount?.toLocaleString()}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Rules */}
+    <div className="mt-6">
+      <p className="font-bold mb-2">Rules:</p>
+      <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
+        {data?.rules?.map((rule: string, index: number) => (
+          <li key={index}>{rule}</li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Judges */}
+    {data?.judges?.length > 0 && (
+  <div className="mt-6">
+    <p className="font-bold mb-2">Judges:</p>
+    <div className="flex flex-wrap gap-4">
+      {data.judges.map((judge: any, index: number) => {
+        const initials = judge.name
+          ?.split(" ")
+          .map((n: string) => n[0])
+          .join("")
+          .toUpperCase();
+
+        return (
+          <div
+            key={index}
+            className="flex items-center gap-3 bg-gray-50 rounded-lg p-2 shadow-sm"
+          >
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+              {initials}
+            </div>
+            <p className="text-sm font-medium text-gray-800">{judge.name}</p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+
+    {/* Stats Section */}
+    <div className="flex justify-around mt-8 border-t pt-5">
       {Details.map((det, index) => (
         <motion.div
           key={index}
-          className="flex flex-col gap-3 items-center"
+          className="flex flex-col gap-2 items-center"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <h1 className="text-xl xl:text-2xl font-bold">{det.number}</h1>
-          <div className="flex gap-2 items-center flex-wrap xl:flex-nowrap justify-center">
-            <Image src={det.icon} alt="icon" className="w-8 h-8" />
-            <p>{det.type}</p>
+          <h1 className="text-xl font-bold">{det.number}</h1>
+          <div className="flex items-center gap-2">
+            <Image src={det.icon} alt="icon" className="w-6 h-6" />
+            <p className="text-sm">{det.type}</p>
           </div>
         </motion.div>
       ))}
     </div>
+  </div>
+</motion.div>
 
-    </div>
 
-  </motion.div>
+        </motion.section>
 
-  {/* Recent Activities */}
-  <motion.div
+ 
+</motion.section>
+
+
+ {/* Recent Activities */}
+  {/* <motion.div
     className="w-1/2 bg-white py-4 px-5 border-2 border-[#E4E4E4] space-y-5 rounded-2xl shadow-md "
     initial={{ opacity: 0, x: 50 }}
     animate={{ opacity: 1, x: 0 }}
@@ -300,11 +425,10 @@ function Page() {
         </motion.div>
 )})}
     </div>
-  </motion.div>
-</motion.section>
+  </motion.div> */}
 
 
-<RegistrationTrend />
+{/* <RegistrationTrend /> */}
 
 
         

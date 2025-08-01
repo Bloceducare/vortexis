@@ -1,22 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/react/shallow';
 import { NavigationProps } from '@/components/Interface';
-// import toast from 'react-hot-toast';
 import { toast } from 'react-toastify';
 
 function Prizes({ onNext, onPrev }: NavigationProps) {
-  const [localPrizes, setLocalPrizes] = useState([{ name: '', amount: 0 }]);
-
-  const { grand_prize, setField } = useHackathonStore(
+  const { grand_prize, prizes, setField } = useHackathonStore(
     useShallow((state) => ({
       grand_prize: state.grand_prize,
       prizes: state.prizes,
       setField: state.setField,
     }))
   );
+
+  const [localPrizes, setLocalPrizes] = useState([{ name: '', amount: 0 }]);
+
+  // Load saved prizes on mount
+  useEffect(() => {
+    if (prizes && prizes.length > 0) {
+      setLocalPrizes(prizes);
+    }
+  }, [prizes]);
 
   const handleGrandPrizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -144,6 +150,7 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
 }
 
 export default Prizes;
+
 
 
 
