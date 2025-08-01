@@ -51,7 +51,7 @@ function AuthLogin({ type }: AuthLoginProps) {
         username: data.username,
         password: data.password,
       };
-      
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/`,
         {
@@ -193,7 +193,7 @@ function AuthLogin({ type }: AuthLoginProps) {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full max-w-[690px] h-[45px] md:h-[45px] text-white py-2 rounded-[3px] mx-auto text-sm md:text-base transition-colors ${
+            className={`w-full max-w-[690px] h-[45px] cursor-pointer md:h-[45px] text-white py-2 rounded-[3px] mx-auto text-sm md:text-base transition-colors ${
               isSubmitting
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-[#2E0BF4] hover:bg-[#2508d4]"

@@ -112,7 +112,7 @@ export default function OtpVerificationForm({
         "Account verified successfully! Redirecting to dashboard..."
       );
       reset();
-      router.push("/hackathon");
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof TypeError && error.message.includes("fetch")) {
         toast.error(
