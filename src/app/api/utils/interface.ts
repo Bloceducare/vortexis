@@ -1,6 +1,5 @@
 export default interface Hackathon_details {
   id?: string;
-  slug?: string;
   title?: string | undefined;
   description?: string | undefined;
   venue?: string | undefined;
