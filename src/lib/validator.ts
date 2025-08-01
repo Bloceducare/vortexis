@@ -103,6 +103,31 @@ export const otpSchema = z.object({
     .length(6, "OTP must be 6 digits.")
     .regex(/^\d+$/, "OTP must contain only digits."),
 });
+
+
+export const LoginFormSchema = z.object({
+  email: z
+    .string()
+    .email({ message: "Please enter a valid email address." })
+    .trim(),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long." })
+    .trim(),
+  rememberMe: z.boolean().optional(),
+});
+
+export type FormState = {
+  success: boolean;
+  message: string;
+  errors?: {
+    email?: string[];
+    password?: string[];
+    form?: string[];
+  };
+};
+
+
 export type OrganizerFormData = z.infer<typeof organizerSchema>;
 export type ParticipantFormData = z.infer<typeof participantSchema>;
 export type AuthFormType = "organizers" | "participants";
