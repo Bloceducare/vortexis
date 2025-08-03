@@ -9,7 +9,8 @@ export const Hero: React.FC = () => {
       {/* Gradient circles - Responsive positioning */}
       <div className="w-full flex gap-0 flex-row justify-center items-center h-screen absolute top-0 bottom-0 left-0 right-0">
         {/* Left circle */}
-        <div className="
+        <div
+          className="
           w-[12em] h-[12em] 
           md:w-[15em] md:h-[15em] 
           lg:w-[25em] lg:h-[25em] 
@@ -18,10 +19,12 @@ export const Hero: React.FC = () => {
           left-[-2em] mt-[-18em]
           md:left-[-2em] md:mt-[-26em]
           lg:left-[3em] lg:mt-[6em]
-        " />
-        
+        "
+        />
+
         {/* Center circle */}
-        <div className="
+        <div
+          className="
           w-[20em] h-[20em] 
           md:w-[25em] md:h-[24em] 
           lg:w-[35em] lg:h-[35em] 
@@ -29,10 +32,12 @@ export const Hero: React.FC = () => {
           mt-[-2em]
           md:mt-[-12em]
           lg:mt-[24em]
-        " />
-        
+        "
+        />
+
         {/* Right circle */}
-        <div className="
+        <div
+          className="
           w-[12em] h-[12em] 
           md:w-[18em] md:h-[18em] 
           lg:w-[35em] lg:h-[35em] 
@@ -41,28 +46,34 @@ export const Hero: React.FC = () => {
           right-[-2em] mt-[15em]
           md:right-[-2em] md:mt-[-16em]
           lg:right-[-3em] lg:mt-[10em]
-        " />
+        "
+        />
       </div>
 
-      <div className="
+      <div
+        className="
         relative z-10 max-w-5xl mx-auto 
         px-4 py-16
         md:px-8 md:py-24
         lg:px-4 lg:py-28
         text-center
-      ">
-        <h1 className="
+      "
+      >
+        <h1
+          className="
           text-2xl leading-tight
           md:text-4xl md:leading-tight
           lg:text-5xl lg:leading-tight
           xl:text-6xl xl:leading-tight
           font-bold text-[#212121] mb-3
           md:mb-4
-        ">
+        "
+        >
           Run. Join. Win.
         </h1>
-        
-        <h2 className="
+
+        <h2
+          className="
           text-xl
           md:text-3xl
           lg:text-4xl
@@ -70,18 +81,24 @@ export const Hero: React.FC = () => {
           font-semibold text-[#212121] mb-4
           md:mb-6
           lg:mb-6
-        ">
-          Everything Hackathon, All In 
+        "
+        >
+          Everything Hackathon, All In
         </h2>
-          <span className="  text-xl
+        <span
+          className="  text-xl
           md:text-3xl
           lg:text-4xl
           xl:text-5xl
           font-semibold text-[#212121] mb-4
           md:mb-6
-          lg:mb-8">One Place.</span> 
+          lg:mb-8"
+        >
+          One Place.
+        </span>
 
-        <p className="
+        <p
+          className="
           text-sm leading-relaxed
           md:text-lg md:leading-relaxed
           lg:text-xl lg:leading-relaxed
@@ -96,21 +113,24 @@ export const Hero: React.FC = () => {
           font-medium 
           px-2 
           md:px-0
-        ">
+        "
+        >
           Vortexis makes it easy to{" "}
           <span className="font-semibold">host hackathons</span>,{" "}
-          <span className="font-semibold">collaborate with teammates</span>,
-          and <span className="font-semibold">build innovative projects</span> —
+          <span className="font-semibold">collaborate with teammates</span>, and{" "}
+          <span className="font-semibold">build innovative projects</span> —
           whether {`you're an `}
           <span className="font-bold">organizer</span>,{" "}
           <span className="font-bold">participant</span>, or{" "}
           <span className="font-bold">judge</span>.
         </p>
 
-        <div className="
+        <div
+          className="
           flex flex-col gap-3
           md:flex-row md:justify-center md:gap-6
-        ">
+        "
+        >
           <Button
             size="lg"
             className="
@@ -126,11 +146,11 @@ export const Hero: React.FC = () => {
               shadow-lg hover:shadow-xl
             "
           >
-            <Link href="/participants">For Participants</Link>
+            <Link href="/auth/signin/participant">For Participants</Link>
           </Button>
-          <Button 
-            variant="outline" 
-            size="lg" 
+          <Button
+            variant="outline"
+            size="lg"
             className="
               px-6 py-3 text-base
               md:text-lg md:px-8 md:py-4
@@ -145,7 +165,7 @@ export const Hero: React.FC = () => {
               shadow-lg hover:shadow-xl
             "
           >
-            <Link href="/organizer">For Organizers</Link>
+            <Link href="/auth/signin/participant">For Organizers</Link>
           </Button>
         </div>
       </div>
