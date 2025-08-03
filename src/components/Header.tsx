@@ -1,33 +1,28 @@
 "use client";
-
 import type React from "react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
+import { Menu, X } from "lucide-react";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // New state for login status
-  const router = useRouter(); // Initialize useRouter
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    // Function to check login status from localStorage
     const checkLoginStatus = () => {
       const token = localStorage.getItem("access_token");
-      setIsLoggedIn(!!token); // Set isLoggedIn to true if token exists, false otherwise
+      setIsLoggedIn(!!token);
     };
 
-    // Check status on component mount
     checkLoginStatus();
-
-    // Listen for changes in localStorage across tabs/windows
     window.addEventListener("storage", checkLoginStatus);
 
-    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener("storage", checkLoginStatus);
     };
-  }, []); // Empty dependency array means this runs once on mount and cleanup on unmount
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -35,151 +30,172 @@ export const Header: React.FC = () => {
     localStorage.removeItem("user_email");
     localStorage.removeItem("user_full_name");
     localStorage.removeItem("username");
-
     setIsLoggedIn(false);
     router.push("/");
   };
 
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
-    <header className="bg-white shadow-sm fixed w-full z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="ml-2 text-xl font-semibold text-[#605DEC]">
-                VORTEXIS
-              </span>
-            </Link>
+    <>
+      <header className="bg-white shadow-sm fixed w-full z-50 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link
+                href="/"
+                className="flex-shrink-0 flex items-center"
+                onClick={closeMenu}
+              >
+                <span className="text-xl font-semibold text-[#605DEC] transition-colors hover:text-[#4D4AE8]">
+                  VORTEXIS
+                </span>
+              </Link>
+            </div>
+
+            {/* Desktop Navigation */}
             <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
               <Link
                 href="/features"
-                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-gray-900"
+                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
               >
                 Features
               </Link>
               <Link
                 href="/hackathons"
-                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-gray-900"
+                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
               >
                 Hackathons
               </Link>
               <Link
                 href="/about"
-                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-gray-900"
+                className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
               >
                 About
               </Link>
             </nav>
-          </div>
-          <div className="hidden md:flex items-center space-x-4">
-            {!isLoggedIn ? (
-              <>
-                <Link href="/auth/login/participant">
-                  <button type="button" className="w-full border-[#009AFF]">
-                    Log in
-                  </button>
-                </Link>
-                <Link href="/auth/signin/participant">
-                  <button className="w-full">Sign up</button>
-                </Link>
-              </>
-            ) : (
-              <button onClick={handleLogout} className="w-full">
-                Logout
-              </button>
-            )}
-          </div>
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-[#4D4D4D] hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-            >
-              <span className="sr-only">Open main menu</span>
-              {isMenuOpen ? (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="block h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-      {/* Mobile menu, show/hide based on menu state */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="pt-2 pb-3 space-y-1">
-            <Link
-              href="/features"
-              className="block px-3 py-2 text-base font-medium text-[#4D4D4D] hover:text-gray-900"
-            >
-              Features
-            </Link>
-            <Link
-              href="/hackathons"
-              className="block px-3 py-2 text-base font-medium text-[#4D4D4D] hover:text-gray-900"
-            >
-              Hackathons
-            </Link>
-            <Link
-              href="/about"
-              className="block px-3 py-2 text-base font-medium text-[#4D4D4D] hover:text-gray-900"
-            >
-              About
-            </Link>
-          </div>
-          <div className="pt-4 pb-3 border-t border-gray-200">
-            <div className="px-4 space-y-3">
+
+            {/* Desktop Auth Buttons */}
+            <div className="hidden md:flex items-center space-x-3">
               {!isLoggedIn ? (
-                <div className="space-y-3">
-                  <Link href="/auth/login/participant" className="block">
-                    <button type="button" className="w-full border-[#009AFF]">
+                <>
+                  <Link href="/auth/login/participant">
+                    <button
+                      type="button"
+                      className="px-4 py-2 text-sm font-medium text-[#009AFF] border border-[#009AFF] rounded-lg hover:bg-[#009AFF] hover:text-white transition-all duration-200"
+                    >
                       Log in
                     </button>
                   </Link>
                   <Link href="/auth/signin/participant">
-                    <button className="w-full">Sign up</button>
+                    <button className="px-4 py-2 text-sm font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
+                      Sign up
+                    </button>
                   </Link>
-                </div>
+                </>
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="w-full bg-red-500 rounded-2xl cursor-pointer"
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200"
                 >
                   Logout
                 </button>
               )}
             </div>
+
+            {/* Mobile menu button */}
+            <div className="flex items-center md:hidden">
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#605DEC] transition-all duration-200"
+                aria-expanded="false"
+              >
+                <span className="sr-only">Open main menu</span>
+                {isMenuOpen ? (
+                  <X className="block h-6 w-6 transition-transform duration-200" />
+                ) : (
+                  <Menu className="block h-6 w-6 transition-transform duration-200" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="bg-white border-t border-gray-200 shadow-lg">
+            {/* Mobile Navigation Links */}
+            <div className="pt-2 pb-3 space-y-1 px-4">
+              <Link
+                href="/features"
+                className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                onClick={closeMenu}
+              >
+                Features
+              </Link>
+              <Link
+                href="/hackathons"
+                className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                onClick={closeMenu}
+              >
+                Hackathons
+              </Link>
+              <Link
+                href="/about"
+                className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                onClick={closeMenu}
+              >
+                About
+              </Link>
+            </div>
+
+            {/* Mobile Auth Buttons */}
+            <div className="pt-4 pb-6 border-t border-gray-200">
+              <div className="px-4 space-y-3">
+                {!isLoggedIn ? (
+                  <>
+                    <Link href="/auth/login/participant" onClick={closeMenu}>
+                      <button
+                        type="button"
+                        className="w-full px-4 py-3 text-base font-medium text-[#009AFF] border border-[#009AFF] rounded-lg hover:bg-[#009AFF] hover:text-white transition-all duration-200"
+                      >
+                        Log in
+                      </button>
+                    </Link>
+                    <Link href="/auth/signin/participant" onClick={closeMenu}>
+                      <button className="w-full px-4 mt-3 py-3 text-base font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
+                        Sign up
+                      </button>
+                    </Link>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      closeMenu();
+                    }}
+                    className="w-full px-4 py-3 text-base font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200"
+                  >
+                    Logout
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 bg-opacity-25 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300"
+          onClick={closeMenu}
+        />
       )}
-    </header>
+    </>
   );
 };
