@@ -6,6 +6,7 @@ import { organizationSchema, type OrganizationFormData } from "@/lib/validator";
 import LogoUploadField from "@/components/ui/LogoUpload";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 const formFields = [
   {
@@ -67,6 +68,8 @@ const formFields = [
 ];
 
 export default function Page() {
+  const router = useRouter();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
   const {
@@ -84,10 +87,9 @@ export default function Page() {
     setError(false);
 
     try {
-      // Map form data to API expected format
       const apiPayload = {
-        name: data.organizationName, // Map organizationName to name
-        description: data.about, // Map about to description
+        name: data.organizationName,
+        description: data.about,
       };
 
       console.log("Form data:", data);
@@ -96,30 +98,17 @@ export default function Page() {
       // Get the access token from localStorage (stored from login)
       const accessToken = localStorage.getItem("access_token");
 
-      console.log("Access token found:", accessToken ? "Yes" : "No");
-      console.log(
-        "Token preview:",
-        accessToken ? accessToken.substring(0, 20) + "..." : "None"
-      );
-
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
 
       if (accessToken) {
         headers["Authorization"] = `Bearer ${accessToken}`;
-        console.log("Authorization header set");
       } else {
-        console.warn("No access token found in localStorage");
         toast.error("Authentication required. Please log in first.");
         setError(true);
         return;
       }
-
-      console.log(
-        "Sending request to:",
-        `${process.env.NEXT_PUBLIC_BASE_URL}/organization/create/`
-      );
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/organization/create/`,
@@ -129,9 +118,6 @@ export default function Page() {
           body: JSON.stringify(apiPayload),
         }
       );
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
 
       if (!response.ok) {
         console.error(`HTTP Error: ${response.status} ${response.statusText}`);
@@ -189,6 +175,10 @@ export default function Page() {
         );
         setError(true);
       }
+
+      router.push("/organizer");
+
+      reset();
     } catch (error) {
       console.error("Submit error:", error);
       setError(true);
