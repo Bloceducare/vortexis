@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { usePathname } from "next/navigation";
 import { Provider } from "./provider";
+import RouteGuard from "@/components/routeGuard";
 
 export default function RootLayout({
   children,
@@ -22,14 +23,16 @@ export default function RootLayout({
     <html lang="en">
       <Provider>
         <body>
-          {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
-            <Header />
-          )}
+          <RouteGuard>
+            {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
+              <Header />
+            )}
 
-          {children}
-          {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
-            <Footer />
-          )}
+            {children}
+            {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
+              <Footer />
+            )}
+          </RouteGuard>
         </body>
       </Provider>
     </html>

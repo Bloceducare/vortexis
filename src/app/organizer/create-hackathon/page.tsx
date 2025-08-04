@@ -75,7 +75,7 @@ function Hackathon() {
 
   return (
     <section className="bg-white px-10 rounded-2xl py-5">
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={5000} />
 
       <div className='space-y-3'>
         <h1 className='text-3xl font-bold text-[#605DEC]'>{activeButton}</h1>
