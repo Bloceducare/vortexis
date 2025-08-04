@@ -6,7 +6,7 @@ function page() {
       <h1>Welcome Back</h1>
       <p>Sign in to your account</p>
 
-      <LoginForm type="organizers" />
+      <LoginForm type="participants" />
     </div>
   );
 }

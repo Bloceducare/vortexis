@@ -4,6 +4,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import AuthErrorPage from "./authError";
 
 export default function RouteGuard({
   children,
@@ -11,6 +12,7 @@ export default function RouteGuard({
   children: React.ReactNode;
 }) {
   const [isLoading, setIsLoading] = useState(true);
+  const [showError, setShowError] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -26,7 +28,8 @@ export default function RouteGuard({
 
       // If no token and trying to access protected route
       if (!accessToken && !isPublicRoute) {
-        router.push("/auth");
+        setShowError(true);
+        setIsLoading(false);
         return;
       }
 
@@ -37,18 +40,26 @@ export default function RouteGuard({
       }
 
       setIsLoading(false);
+      setShowError(false);
     };
 
     checkAuth();
   }, [pathname, router, isPublicRoute]);
 
-  // Show loading while checking
+  // Show loading while checking auth for protected routes
   if (isLoading && !isPublicRoute) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
       </div>
     );
+  }
+
+  if (showError) {
+    return <AuthErrorPage />;
   }
 
   return <>{children}</>;
