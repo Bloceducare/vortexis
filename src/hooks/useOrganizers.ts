@@ -2,24 +2,28 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Hackathon_details from '@/app/api/utils/interface';
+import { useAuthStore } from '@/store/useAuthStore';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export default function useOrganizer() {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  const token = useAuthStore.getState().getToken();
 
 
   const getAuthHeaders = (isFormData = false) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${token || ''}`,
-    };
+    if (token) {
+      const headers: Record<string, string> = {
+        Authorization: `Bearer ${token || ''}`,
+      };
+
+      if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+      }
+    
+      return headers;
+    } 
   
-    if (!isFormData) {
-      headers['Content-Type'] = 'application/json';
-    }
-  
-    return headers;
   };
   
  

@@ -4,15 +4,21 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useUserStore } from "@/store/useUserStore";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const clearToken = useAuthStore((state) => state.clearToken);
+  const clearUser = useUserStore((state) => state.clearUser)
+  const token = useAuthStore.getState().getToken();
+
+
 
   useEffect(() => {
     const checkLoginStatus = () => {
-      const token = localStorage.getItem("access_token");
       setIsLoggedIn(!!token);
     };
 
@@ -25,11 +31,8 @@ export const Header: React.FC = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_email");
-    localStorage.removeItem("user_full_name");
-    localStorage.removeItem("username");
+    clearToken();
+    clearUser();
     setIsLoggedIn(false);
     router.push("/");
   };

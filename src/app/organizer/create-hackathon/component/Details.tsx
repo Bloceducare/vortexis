@@ -1,12 +1,17 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, DragEvent } from 'react'
 import { FileImageIcon } from 'lucide-react'
 import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
 import RuleInput from './RuleInput';
+import dynamic from "next/dynamic";
+
+const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
+  ssr: false,
+});
 
 
 function Details({ onNext, data }: NavigationProps) {
@@ -190,14 +195,14 @@ function Details({ onNext, data }: NavigationProps) {
 
 
 
-        <div className='mt-10 flex flex-col'>
-        <label className='text-2xl text-[#2F3036]'>Description</label>
-        <textarea className='outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3' placeholder='Enter a detailed description of your hackathon' 
-        name='description'
-        value={description}
-        onChange={(e) => setField('description', e.target.value)}
-        ></textarea>
-        </div>
+<div className="mt-10">
+  <label className="text-2xl text-[#2F3036]">Description</label>
+  <TiptapEditor
+    value={description}
+    onChange={(html) => setField("description", html)}
+  />
+</div>
+
 
         <div className="mt-10">
       <label className="text-2xl text-[#2F3036] mb-2 block">Rules & Guidelines</label>

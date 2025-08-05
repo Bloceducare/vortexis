@@ -66,3 +66,34 @@ export interface Submission {
 export interface SubmissionProps extends ReactQueryState {
   submissions: Submission[];
 }
+
+export interface UserProfile {
+  bio: string | null;
+  github: string | null;
+  linkedin: string | null;
+  twitter: string | null;
+  website: string | null;
+  location: string | null;
+  profile_picture: string;
+  skills: string[];
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  profile: UserProfile;
+  is_participant: boolean;
+  is_organizer: boolean;
+  is_judge: boolean;
+  is_moderator: boolean;
+  is_admin: boolean;
+  is_verified: boolean;
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
+  date_joined: string;
+  last_login: string;
+}
