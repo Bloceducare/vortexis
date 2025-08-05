@@ -1,17 +1,23 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/useAuthStore';
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 
 export default function useSkills() {
 
-    const getAuthHeaders = (isFormData = false) => {
-        const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-        const headers: Record<string, string> = {
-          Authorization: `Bearer ${token || ''}`,
-        };
+      const token = useAuthStore.getState().getToken();
+    
+    
+      const getAuthHeaders = (isFormData = false) => {
+        const headers: Record<string, string> = {};
+      
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
       
         if (!isFormData) {
           headers['Content-Type'] = 'application/json';

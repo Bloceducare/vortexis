@@ -3,32 +3,35 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Hackathon_details from '@/app/api/utils/interface';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useHackathonStore } from '@/store/useHackathonStore';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export default function useOrganizer() {
   // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
+  const { banner_image } = useHackathonStore()
 
 
   const getAuthHeaders = (isFormData = false) => {
-    if (token) {
-      const headers: Record<string, string> = {
-        Authorization: `Bearer ${token || ''}`,
-      };
-
-      if (!isFormData) {
-        headers['Content-Type'] = 'application/json';
-      }
-    
-      return headers;
-    } 
+    const headers: Record<string, string> = {};
   
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+  
+    return headers;
   };
+  
   
  
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
+      console.log(data)
       const formData = new FormData();
   
       formData.append('title', data.title || '');
@@ -40,8 +43,8 @@ export default function useOrganizer() {
       formData.append('grand_prize', String(data.grand_prize || 0));
       formData.append('visibility', String(data.visibility || false));
   
-      if (data.banner_image) {
-        formData.append('banner_image', data.banner_image);
+      if (banner_image instanceof File) {
+        formData.append('banner_image', banner_image);
       }
   
       formData.append('prizes', JSON.stringify(data.prizes || []));

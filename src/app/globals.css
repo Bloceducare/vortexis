@@ -185,3 +185,9 @@ body {
   }
 
 }
+
+.rich-text ul,
+.rich-text ol {
+  list-style-type: initial;
+  margin-left: 1.25rem;
+}

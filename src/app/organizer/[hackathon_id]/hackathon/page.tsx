@@ -12,7 +12,7 @@ import New from "@/public/assets/icon/new.svg"
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
-
+import HtmlContent from "@/components/ui/HtMLContent";
 
 
 function Page() {
@@ -24,6 +24,10 @@ function Page() {
   const { getHackathonById } = useOrganizer()
 
   const { data, isLoading, error } = getHackathonById(hackathon_id)
+  const parsedPrizes = data?.prizes ? JSON.parse(data.prizes) : [];
+  const parsedRules: string[] = data?.rules ? JSON.parse(data.rules) : [];
+
+
 
   console.log(data)
 
@@ -162,7 +166,9 @@ function Page() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
             >
-              {data?.description}
+              
+              <HtmlContent html={data?.description} />
+
             </motion.p>
           </div>
         </motion.div>
@@ -308,12 +314,12 @@ function Page() {
         <div className="col-span-1 sm:col-span-2 md:col-span-3">
           <p className="font-bold">Other Prizes:</p>
           <div className="flex flex-wrap gap-2 mt-1">
-            {data.prizes.map((prize: any, index: number) => (
+            {parsedPrizes.map((prize: any, index: number) => (
               <span
                 key={index}
-                className="bg-[#EDF5FE] text-[#3083FF] px-3 py-1 rounded-full text-sm"
+                className=" px-3 py-1 rounded-full text-sm"
               >
-                {prize.name}: ₦{prize.amount?.toLocaleString()}
+              <HtmlContent html={prize.toLocaleString()}/>
               </span>
             ))}
           </div>
@@ -325,8 +331,9 @@ function Page() {
     <div className="mt-6">
       <p className="font-bold mb-2">Rules:</p>
       <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
-        {data?.rules?.map((rule: string, index: number) => (
-          <li key={index}>{rule}</li>
+        {parsedRules.map((rule: string, index: number) => (
+          <p key={index}>              <HtmlContent html={rule} />
+</p>
         ))}
       </ul>
     </div>

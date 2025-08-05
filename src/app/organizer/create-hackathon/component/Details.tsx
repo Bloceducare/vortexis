@@ -15,34 +15,32 @@ const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
 
 
 function Details({ onNext, data }: NavigationProps) {
-  const [preview, setPreview] = useState<string | null>(null);
+  // const [preview, setPreview] = useState<string | null>(null);
 
   const [localData, setLocalData] = useState(data || {});
   const hackathonSelector = useShallow((state: any) => ({
     title: state.title,
+    preview: state.preview,
     description: state.description,
     start_date: state.start_date,
     end_date: state.end_date,
     rules: state.rules,
     banner_image: state.banner_image,
     setField: state.setField,
+    setPreview: state.setPreview
   }));
 
-  const { title, description, start_date, end_date, rules, banner_image, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, banner_image, setPreview, preview, setField } = useHackathonStore(hackathonSelector);
+
+
+
   const handleContinue = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     console.log(title)
   
-    if (title === "") {
-      toast.error("Please enter a title for the hackathon", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored",
-      });
-      return;
-    }
-  
+   
     if (description === "") {
       toast.error("Please enter a description", {
         position: "top-right",
@@ -70,6 +68,16 @@ function Details({ onNext, data }: NavigationProps) {
       return;
     }
 
+    if (title === "") {
+      toast.error("Please enter a title for the hackathon", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored",
+      });
+      return;
+    }
+  
+
     const start = new Date(start_date);
     const end = new Date(end_date);
   
@@ -80,21 +88,7 @@ function Details({ onNext, data }: NavigationProps) {
         theme: "colored",
       });
       return;
-    }
-  
-    // if (banner_image) {
-    //   toast.error("Please upload a banner image", {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     theme: "colored",
-    //   });
-    //   return;
-    // }
-  
-    // All validations passed
-    // setData(localData);
-    console.log("Data submitted:", localData);
-  
+    }  
     if (onNext) {
       onNext();
     }
@@ -220,11 +214,8 @@ function Details({ onNext, data }: NavigationProps) {
             </button>
         </div>
 
-
-
     </form>
-    
-    
+  
     </>
   )
 }

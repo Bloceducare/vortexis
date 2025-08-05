@@ -125,32 +125,33 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 transition={{ duration: 0.2 }}
                 className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
               >
-                <ul className="py-2 text-sm text-gray-700">
-                  <li>
-                    <Link
-                      href="/organizer"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Organizer Dashboard
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/participants"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Participants
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="/judges"
-                      className="block px-4 py-2 hover:bg-gray-100"
-                    >
-                      Judges
-                    </Link>
-                  </li>
-                </ul>
+               <ul className="py-2 text-sm text-gray-700 list-none">
+  <li>
+    <Link
+      href="/organizer"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Organizer Dashboard
+    </Link>
+  </li>
+  <li>
+    <Link
+      href="/participants"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Participants
+    </Link>
+  </li>
+  <li>
+    <Link
+      href="/judges"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Judges
+    </Link>
+  </li>
+</ul>
+
               </motion.div>
             )}
           </AnimatePresence>
