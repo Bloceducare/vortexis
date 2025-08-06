@@ -15,11 +15,13 @@ import Submit from "@/public/assets/icon/iconoir_submit-document.svg";
 import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
 import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
+import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 
 import { Nunito, Nunito_Sans } from "next/font/google";
 
 // import Hackathon_Navbar from "@/components/Navbar/hackathon-navbar";
 import "../globals.css";
+import { History } from "lucide-react";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -34,32 +36,51 @@ const nunitoSan = Nunito_Sans({
 const sidebarItems = [
   { icon: Dashboard, text: "Dashboard", href: "/judges" },
 
-  {
-    icon: Champ,
-    text: "Assigned Hackathons",
-    href: "/",
-  },
+  // {
+  //   icon: Champ,
+  //   text: "Assigned Hackathons",
+  //   href: "/",
+  // },
+
+  // {
+  //   icon: Team,
+  //   text: "Submissions To Review",
+  //   href: "/judges",
+  // },
+  // {
+  //   icon: Team,
+  //   text: "Submissions To Review",
+  //   href: "/judges",
+  // },
+
+  // {
+  //   icon: Submit,
+  //   text: "Judge Notes",
+  //   href: "",
+  // },
 
   {
-    icon: Team,
-    text: "Submissions To Review",
-    href: "/judges",
+    icon: Champ,
+    text: "My Reviews",
+    href: "/judges/my-reviews",
   },
 
   {
     icon: Resourcess,
     text: "Evaluation Criteria",
-    href: "",
+    href: "/judges/evaluation-criteria",
   },
-  {
-    icon: Submit,
-    text: "Judge Notes",
-    href: "",
-  },
+
   {
     icon: Trophy,
     text: "Discussions",
-    href: "judges/collaboration",
+    href: "/judges/collaboration",
+  },
+
+  {
+    icon: Bell,
+    text: "Notifications",
+    href: "/judges/notifications",
   },
 ];
 
