@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ChevronLeft, ChevronsUpDown, LogOutIcon, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,8 +44,12 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
 
 
   const { data, isLoading, error } = getHackathons()
-  setHackathons(data)
-  const hackathons = useHackathonStore((state) => state.hackathons);
+// ✅ Update Zustand only when data changes
+useEffect(() => {
+  if (data) {
+    setHackathons(data);
+  }
+}, [data, setHackathons]);  const hackathons = useHackathonStore((state) => state.hackathons);
 
   const selectedHackathon = useMemo(() => {
     const segments = pathname.split('/');

@@ -12,8 +12,8 @@ interface HackathonState extends Partial<Hackathon_details> {
   selectedHackathonId: string | null;
   setSelectedHackathonId: (id: string) => void;
 
-  preview: string | null;
-  setPreview: (preview: string | null) => void;
+  // preview: string | null;
+  // setPreview: (preview: string | null) => void;
 }
 
 const isClient = typeof window !== 'undefined';
@@ -36,8 +36,8 @@ export const useHackathonStore = create<HackathonState>()(
           visibility: false,
           banner_image: null,
 
-          preview: null, // ✅ Added preview state
-          setPreview: (preview) => set({ preview }), // ✅ Setter
+          // preview: null, // ✅ Added preview state
+          // setPreview: (preview) => set({ preview }), // ✅ Setter
 
           setField: (key, value) => set({ [key]: value }),
 
@@ -60,7 +60,7 @@ export const useHackathonStore = create<HackathonState>()(
               judges: [],
               rules: [],
               banner_image: null,
-              preview: null, // ✅ Clear preview
+              // preview: null, 
             }),
 
           getHackathonData: () => {

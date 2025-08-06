@@ -15,7 +15,7 @@ const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
 
 
 function Details({ onNext, data }: NavigationProps) {
-  // const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
   const [localData, setLocalData] = useState(data || {});
   const hackathonSelector = useShallow((state: any) => ({
@@ -30,7 +30,7 @@ function Details({ onNext, data }: NavigationProps) {
     setPreview: state.setPreview
   }));
 
-  const { title, description, start_date, end_date, rules, banner_image, setPreview, preview, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, banner_image,  setField } = useHackathonStore(hackathonSelector);
 
 
 
@@ -94,18 +94,21 @@ function Details({ onNext, data }: NavigationProps) {
     }
   };
   
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
+      const reader = new FileReader();
+  
       reader.onloadend = () => {
-        setPreview(reader.result as string)
-        setField("banner_image", file)
-      }
-      reader.readAsDataURL(file)
+        const previewUrl = reader.result as string;
+        setPreview(previewUrl);             
+        setField('banner_image', file);      
+      };
+  
+      reader.readAsDataURL(file);
     }
-  }
+  };
+  
 
   return (
     <>
