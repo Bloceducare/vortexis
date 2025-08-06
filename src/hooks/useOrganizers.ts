@@ -10,7 +10,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 export default function useOrganizer() {
   // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
-  const { banner_image } = useHackathonStore()
+  const { banner_image, venue } = useHackathonStore()
 
 
   const getAuthHeaders = (isFormData = false) => {
@@ -36,7 +36,7 @@ export default function useOrganizer() {
   
       formData.append('title', data.title || '');
       formData.append('description', data.description || '');
-      formData.append('venue', data.venue || '');
+      formData.append('venue', venue || '');
       formData.append('start_date', data.start_date || '');
       formData.append('end_date', data.end_date || '');
       formData.append('submission_deadline', data.submission_deadline || '');
@@ -64,7 +64,6 @@ export default function useOrganizer() {
   
       if (!res.ok) {
         const errorData = await res.json();
-        // Attach specific backend error to the thrown Error
         throw new Error(
           errorData?.non_field_errors?.[0] ||
           errorData?.message ||
