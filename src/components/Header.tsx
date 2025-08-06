@@ -83,7 +83,7 @@ export const Header: React.FC = () => {
                   <Link href="/auth/login/participant">
                     <button
                       type="button"
-                      className="px-4 py-2 text-sm font-medium text-[#009AFF] border border-[#009AFF] rounded-lg hover:bg-[#009AFF] hover:text-white transition-all duration-200"
+                      className="px-4 py-2 text-sm font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
                     >
                       Log in
                     </button>
@@ -162,7 +162,7 @@ export const Header: React.FC = () => {
                     <Link href="/auth/login/participant" onClick={closeMenu}>
                       <button
                         type="button"
-                        className="w-full px-4 py-3 text-base font-medium text-[#009AFF] border border-[#009AFF] rounded-lg hover:bg-[#009AFF] hover:text-white transition-all duration-200"
+                        className="w-full px-4 py-3 text-base font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
                       >
                         Log in
                       </button>
