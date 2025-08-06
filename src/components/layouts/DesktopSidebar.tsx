@@ -7,6 +7,8 @@ import { ChevronRight, Settings, LogOutIcon } from "lucide-react";
 import Link from "next/link";
 import { SignOutConfirmationModal } from "../signOutModal";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface SidebarItem {
   icon: string;
@@ -32,13 +34,10 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
   const router = useRouter();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
 
+  const clearToken = useAuthStore((state) => state.clearToken);
+
   const handleLogout = () => {
-    // Clear all relevant items from localStorage
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user_email");
-    localStorage.removeItem("user_full_name");
-    localStorage.removeItem("username");
+   clearToken()
 
     // Close the modal
     setShowSignOutModal(false);

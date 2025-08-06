@@ -69,6 +69,11 @@ function Visibility({ onNext, onPrev }: VisibilityProps) {
     }    
   };
 
+
+  const closeModal = () => {
+    window.location.href = "/organizer"; 
+  }
+
   const previousButton = () => {
     if (onPrev) onPrev();
   };
@@ -207,7 +212,7 @@ function Visibility({ onNext, onPrev }: VisibilityProps) {
         <SuccessModal
           title="🎉 Hackathon Created!"
           message="Your hackathon has been successfully submitted."
-          onClose={() => setShowSuccessModal(false)}
+          onClose={closeModal}
         />
       )}
     </>

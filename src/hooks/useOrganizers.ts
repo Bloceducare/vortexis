@@ -2,18 +2,23 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Hackathon_details from '@/app/api/utils/interface';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useHackathonStore } from '@/store/useHackathonStore';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export default function useOrganizer() {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  const token = useAuthStore.getState().getToken();
+  const { banner_image, venue } = useHackathonStore()
 
 
   const getAuthHeaders = (isFormData = false) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : '';
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${token || ''}`,
-    };
+    const headers: Record<string, string> = {};
+  
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
   
     if (!isFormData) {
       headers['Content-Type'] = 'application/json';
@@ -22,22 +27,24 @@ export default function useOrganizer() {
     return headers;
   };
   
+  
  
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
+      console.log(data)
       const formData = new FormData();
   
       formData.append('title', data.title || '');
       formData.append('description', data.description || '');
-      formData.append('venue', data.venue || '');
+      formData.append('venue', venue || '');
       formData.append('start_date', data.start_date || '');
       formData.append('end_date', data.end_date || '');
       formData.append('submission_deadline', data.submission_deadline || '');
       formData.append('grand_prize', String(data.grand_prize || 0));
       formData.append('visibility', String(data.visibility || false));
   
-      if (data.banner_image) {
-        formData.append('banner_image', data.banner_image);
+      if (banner_image instanceof File) {
+        formData.append('banner_image', banner_image);
       }
   
       formData.append('prizes', JSON.stringify(data.prizes || []));
@@ -57,7 +64,6 @@ export default function useOrganizer() {
   
       if (!res.ok) {
         const errorData = await res.json();
-        // Attach specific backend error to the thrown Error
         throw new Error(
           errorData?.non_field_errors?.[0] ||
           errorData?.message ||

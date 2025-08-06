@@ -11,6 +11,9 @@ interface HackathonState extends Partial<Hackathon_details> {
   setHackathons: (hackathons: Hackathon_details[]) => void;
   selectedHackathonId: string | null;
   setSelectedHackathonId: (id: string) => void;
+
+  // preview: string | null;
+  // setPreview: (preview: string | null) => void;
 }
 
 const isClient = typeof window !== 'undefined';
@@ -26,12 +29,15 @@ export const useHackathonStore = create<HackathonState>()(
           end_date: '',
           submission_deadline: '',
           grand_prize: 0,
-          prizes: [{ name: '', amount: 0 }],
+          prizes: [],
           skills: [],
           judges: [],
           rules: [],
           visibility: false,
           banner_image: null,
+
+          // preview: null, // ✅ Added preview state
+          // setPreview: (preview) => set({ preview }), // ✅ Setter
 
           setField: (key, value) => set({ [key]: value }),
 
@@ -54,6 +60,7 @@ export const useHackathonStore = create<HackathonState>()(
               judges: [],
               rules: [],
               banner_image: null,
+              // preview: null, 
             }),
 
           getHackathonData: () => {
@@ -76,7 +83,6 @@ export const useHackathonStore = create<HackathonState>()(
         }
       )
     : () => ({
-       
         title: '',
         description: '',
         venue: '',
@@ -84,12 +90,15 @@ export const useHackathonStore = create<HackathonState>()(
         end_date: '',
         submission_deadline: '',
         grand_prize: 0,
-        prizes: [{ name: '', amount: 0 }],
+        prizes: [],
         skills: [],
         judges: [],
         rules: [],
         visibility: false,
         banner_image: null,
+
+        preview: null,
+        setPreview: () => {},
 
         setField: () => {},
         clearHackathon: () => {},

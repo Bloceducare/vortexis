@@ -10,6 +10,8 @@ import Divider from "./Divider";
 import Button from "./AuthButton";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/useUserStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -44,6 +46,10 @@ function AuthLogin({ type }: AuthLoginProps) {
       rememberMe: false,
     },
   });
+  const setUser = useUserStore((state) => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
+  const daysInSeconds = 3 * 24 * 60 * 60; 
+
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -94,22 +100,9 @@ function AuthLogin({ type }: AuthLoginProps) {
       console.log("Login successful:", result);
 
       if (result.access_token) {
-        localStorage.setItem("access_token", result.access_token);
-        console.log("Local storage init");
+        setToken(result.access_token, daysInSeconds);
+        setUser(result.user);
       }
-      if (result.refresh_token) {
-        localStorage.setItem("refresh_token", result.refresh_token);
-      }
-      if (result.email) {
-        localStorage.setItem("user_email", result.email);
-      }
-      if (result.full_name) {
-        localStorage.setItem("user_full_name", result.full_name);
-      }
-      if (result.username) {
-        localStorage.setItem("username", result.username);
-      }
-
       router.push("/dashboard");
 
       reset();

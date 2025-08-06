@@ -1,12 +1,17 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, DragEvent } from 'react'
 import { FileImageIcon } from 'lucide-react'
 import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
 import RuleInput from './RuleInput';
+import dynamic from "next/dynamic";
+
+const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
+  ssr: false,
+});
 
 
 function Details({ onNext, data }: NavigationProps) {
@@ -15,29 +20,27 @@ function Details({ onNext, data }: NavigationProps) {
   const [localData, setLocalData] = useState(data || {});
   const hackathonSelector = useShallow((state: any) => ({
     title: state.title,
+    preview: state.preview,
     description: state.description,
     start_date: state.start_date,
     end_date: state.end_date,
     rules: state.rules,
     banner_image: state.banner_image,
     setField: state.setField,
+    setPreview: state.setPreview
   }));
 
-  const { title, description, start_date, end_date, rules, banner_image, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, banner_image,  setField } = useHackathonStore(hackathonSelector);
+
+
+
   const handleContinue = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     console.log(title)
   
-    if (title === "") {
-      toast.error("Please enter a title for the hackathon", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored",
-      });
-      return;
-    }
-  
+   
     if (description === "") {
       toast.error("Please enter a description", {
         position: "top-right",
@@ -65,6 +68,16 @@ function Details({ onNext, data }: NavigationProps) {
       return;
     }
 
+    if (title === "") {
+      toast.error("Please enter a title for the hackathon", {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "colored",
+      });
+      return;
+    }
+  
+
     const start = new Date(start_date);
     const end = new Date(end_date);
   
@@ -75,38 +88,27 @@ function Details({ onNext, data }: NavigationProps) {
         theme: "colored",
       });
       return;
-    }
-  
-    // if (banner_image) {
-    //   toast.error("Please upload a banner image", {
-    //     position: "top-right",
-    //     autoClose: 3000,
-    //     theme: "colored",
-    //   });
-    //   return;
-    // }
-  
-    // All validations passed
-    // setData(localData);
-    console.log("Data submitted:", localData);
-  
+    }  
     if (onNext) {
       onNext();
     }
   };
   
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
+      const reader = new FileReader();
+  
       reader.onloadend = () => {
-        setPreview(reader.result as string)
-        setField("banner_image", file)
-      }
-      reader.readAsDataURL(file)
+        const previewUrl = reader.result as string;
+        setPreview(previewUrl);             
+        setField('banner_image', file);      
+      };
+  
+      reader.readAsDataURL(file);
     }
-  }
+  };
+  
 
   return (
     <>
@@ -190,14 +192,14 @@ function Details({ onNext, data }: NavigationProps) {
 
 
 
-        <div className='mt-10 flex flex-col'>
-        <label className='text-2xl text-[#2F3036]'>Description</label>
-        <textarea className='outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3' placeholder='Enter a detailed description of your hackathon' 
-        name='description'
-        value={description}
-        onChange={(e) => setField('description', e.target.value)}
-        ></textarea>
-        </div>
+<div className="mt-10">
+  <label className="text-2xl text-[#2F3036]">Description</label>
+  <TiptapEditor
+    value={description}
+    onChange={(html) => setField("description", html)}
+  />
+</div>
+
 
         <div className="mt-10">
       <label className="text-2xl text-[#2F3036] mb-2 block">Rules & Guidelines</label>
@@ -215,11 +217,8 @@ function Details({ onNext, data }: NavigationProps) {
             </button>
         </div>
 
-
-
     </form>
-    
-    
+  
     </>
   )
 }

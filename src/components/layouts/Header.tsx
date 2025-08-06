@@ -1,31 +1,73 @@
 "use client";
-import React, { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import React, { useState, useRef, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-// import LocationIcon from '../assets/icons/LocationIcon';
-// import NotificationIcon from '../assets/icons/NotificationIcon';
-// import ProfileIcon from '../assets/icons/ProfileIcon';
-// import Notification from '../Notifications/Notification';
-// import SearchIcon from '../assets/icons/SearchIcon';
-import { MenuIcon } from "lucide-react";
-import Louise from "@/public/assets/icon/louise.svg";
+import { MenuIcon, ChevronDown } from "lucide-react";
 import Alarm from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import SearchInput from "../ui/SearchInput";
-// import Logo from '@/assests/Logo.png';
-// import Flag from '@/assests/Flag.png';
+import Link from "next/link";
+import { useUserStore } from "@/store/useUserStore";
 
 interface HeaderProps {
   toggleSidebar: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-  // const [showNotification, setShowNotification] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const user = useUserStore((state) => state.user);
 
   const handleSearch = (query: string) => {
     console.log("Search for:", query);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const roles = [
+    { key: "is_admin", label: "Admin" },
+    { key: "is_organizer", label: "Organizer" },
+    { key: "is_judge", label: "Judge" },
+    { key: "is_participant", label: "Participant" },
+  ];
+
+  const userRole =
+    roles.find((role) => user && user[role.key as keyof typeof user])?.label ||
+    "";
+
+    const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""}`;
+
+
+  // Function to get a consistent color based on initials (optional: more robust with hashing)
+  const bgColors = [
+    "bg-red-500",
+    "bg-green-500",
+    "bg-yellow-500",
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+  ];
+  const firstCharCode = user?.first_name?.charCodeAt(0) ?? 0;
+  const lastCharCode = user?.last_name?.charCodeAt(0) ?? 0;
+  const colorIndex = (firstCharCode + lastCharCode) % bgColors.length;
+  const avatarColor = bgColors[colorIndex];
+  
+
   return (
-    <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-[100%] border-b bg-white md:px-10 px-5 ">
+    <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
       <div className="flex h-full items-center justify-between md:pr-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
@@ -44,35 +86,77 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-5 md:gap-10">
-          <div>
+        <div className="flex items-center gap-5 md:gap-10 relative" ref={dropdownRef}>
+          <div className="relative">
             <Image src={Alarm} alt="alarm" />
+            {/* Blue dot for active user */}
+            {user?.is_active && (
+              <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-500" />
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
-            <Image src={Louise} alt="profile" />
-            <div>
-              <p>Louise Thompson</p>
-              <p className="text-sm text-[#4F5B67]">Organizer</p>
+          <div
+            className="flex items-center gap-2 cursor-pointer"
+            onClick={() => setShowDropdown((prev) => !prev)}
+          >
+            {/* Avatar with initials and color */}
+            <div
+              className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
+            >
+              {initials.toUpperCase()}
             </div>
+
+            <div className="text-left">
+              <p className="text-sm font-semibold">
+                {user?.first_name} {user?.last_name}
+              </p>
+              <p className="text-sm text-[#4F5B67]">{userRole}</p>
+            </div>
+            <ChevronDown className="text-gray-500 w-4 h-4" />
           </div>
+
+          {/* Dropdown */}
+          <AnimatePresence>
+            {showDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+              >
+               <ul className="py-2 text-sm text-gray-700 list-none">
+  <li>
+    <Link
+      href="/organizer"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Organizer Dashboard
+    </Link>
+  </li>
+  <li>
+    <Link
+      href="/participants"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Participants
+    </Link>
+  </li>
+  <li>
+    <Link
+      href="/judges"
+      className="block px-4 py-2 hover:bg-gray-100"
+    >
+      Judges
+    </Link>
+  </li>
+</ul>
+
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-
-        {/*
-        <Image
-          src={Logo} // Replace with your logo
-          alt="Logo"
-          width={120}
-          height={32}
-          className="block object-contain lg:hidden"
-        /> */}
       </div>
-
-      <AnimatePresence>
-        {/* {showNotification && (
-          <Notification onClose={() => setShowNotification(false)} />
-        )} */}
-      </AnimatePresence>
     </header>
   );
 };

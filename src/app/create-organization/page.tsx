@@ -7,6 +7,7 @@ import LogoUploadField from "@/components/ui/LogoUpload";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const formFields = [
   {
@@ -69,6 +70,8 @@ const formFields = [
 
 export default function Page() {
   const router = useRouter();
+  const token = useAuthStore.getState().getToken();
+  const clearToken = useAuthStore((state) => state.clearToken);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(false);
@@ -95,15 +98,12 @@ export default function Page() {
       console.log("Form data:", data);
       console.log("API payload:", apiPayload);
 
-      // Get the access token from localStorage (stored from login)
-      const accessToken = localStorage.getItem("access_token");
-
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
 
-      if (accessToken) {
-        headers["Authorization"] = `Bearer ${accessToken}`;
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
       } else {
         toast.error("Authentication required. Please log in first.");
         setError(true);
@@ -124,7 +124,7 @@ export default function Page() {
 
         if (response.status === 401) {
           toast.error("Authentication failed. Please log in again.");
-          localStorage.removeItem("access_token");
+          clearToken();
           setError(true);
           return;
         }

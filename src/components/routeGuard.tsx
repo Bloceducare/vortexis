@@ -5,6 +5,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import AuthErrorPage from "./authError";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function RouteGuard({
   children,
@@ -15,6 +16,7 @@ export default function RouteGuard({
   const [showError, setShowError] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const token = useAuthStore.getState().getToken();
 
   // Public routes that don't need authentication
   const publicRoutes = ["/", "/auth", "/forgot-password"];
@@ -22,19 +24,19 @@ export default function RouteGuard({
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
 
+  // console.log(token)
   useEffect(() => {
     const checkAuth = () => {
-      const accessToken = localStorage.getItem("access_token");
 
       // If no token and trying to access protected route
-      if (!accessToken && !isPublicRoute) {
+      if (!token && !isPublicRoute) {
         setShowError(true);
         setIsLoading(false);
         return;
       }
 
       // If has token and on auth page, redirect to dashboard
-      if (accessToken && pathname === "/auth") {
+      if (token && pathname === "/auth") {
         router.push("/dashboard");
         return;
       }
