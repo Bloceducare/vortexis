@@ -13,11 +13,13 @@ import { Badge } from "@/components/ui/badge";
 import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
 import HtmlContent from "@/components/ui/HtMLContent";
+import { useRouter } from "next/navigation";
 
 
 function Page() {
   const params = useParams()
   const hackathon_id = params?.hackathon_id as string;
+  const router = useRouter()
 
 
 
@@ -64,6 +66,7 @@ function Page() {
       number: data?.submissions.length,
       word: '',
       icon: Document,
+      link: `/organizer/${hackathon_id}/submission`,
       type: 'Submissions'
     },
     {
@@ -71,18 +74,14 @@ function Page() {
       number: data?.participants.length,
       word: '',
       icon: People,
+      link: `/organizer/${hackathon_id}/participants`,
       type: 'Participants'
     },
     {
       id: 3,
-      number: data?.themes.length,
-      icon: Document,
-      type: 'Themes'
-    },
-    {
-      id: 4,
       number: data?.judges.length,
       icon: People,
+      link: `/organizer/${hackathon_id}/judges`,
       type: 'judges'
     },
 
@@ -141,6 +140,56 @@ function Page() {
     });
   };
 
+  if (isLoading) {
+    return (
+      <section className="w-full min-h-screen flex items-center justify-center bg-white rounded-2xl animate-pulse">
+        <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24 w-full">
+          <div className="  overflow-hidden animate-pulse p-6 w-full">
+            {/* Title */}
+            <div className="h-8 bg-gray-200 rounded w-40 mb-4" />
+  
+            {/* Intro paragraph */}
+            <div className="space-y-2 mb-6">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-11/12" />
+              <div className="h-4 bg-gray-200 rounded w-10/12" />
+            </div>
+  
+            {/* Hackathon Overview Heading */}
+            <div className="h-6 bg-gray-200 rounded w-48 mb-4" />
+  
+            {/* Stats cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              {[1, 2, 3].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white border rounded-lg shadow p-6 flex flex-col items-center w-full"
+                >
+                  <div className="h-6 w-6 bg-gray-200 rounded-full mb-2" />
+                  <div className="h-6 bg-gray-200 rounded w-6 mb-1" />
+                  <div className="h-4 bg-gray-200 rounded w-20" />
+                </div>
+              ))}
+            </div>
+  
+            {/* Hackathon image + name */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-24 h-24 bg-gray-200 rounded-full" />
+              <div className="h-6 bg-gray-200 rounded w-32" />
+            </div>
+  
+            {/* Status badges */}
+            <div className="flex gap-3">
+              <div className="h-6 bg-gray-200 rounded w-16" />
+              <div className="h-6 bg-gray-200 rounded w-14" />
+            </div>
+          </div>
+        </section>
+      </section>
+    );
+  }
+  
+  
   
 
   return (
@@ -206,13 +255,14 @@ function Page() {
     {ActiveHackathons.map((active, index) => (
       <motion.div
         key={index}
-        className="w-full sm:w-[48%] md:w-[22%] bg-white border-2 border-[#E4E4E4] rounded-2xl shadow-md p-6 text-center space-y-4 transition hover:shadow-lg"
+        className="w-full sm:w-[48%] md:w-[30%] bg-white border-2 border-[#E4E4E4] rounded-2xl shadow-md p-6 text-center space-y-4 transition hover:shadow-lg cursor-pointer"
         variants={{
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
         whileHover={{ scale: 1.03 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
+        onClick={() => router.push(active.link)}
       >
         <motion.h1
           className="text-3xl font-bold text-[#605DEC]"
@@ -245,8 +295,6 @@ function Page() {
     ))}
   </motion.div>
 </motion.div>
-
-
 
 
         <motion.section
@@ -392,54 +440,6 @@ function Page() {
 
  
 </motion.section>
-
-
- {/* Recent Activities */}
-  {/* <motion.div
-    className="w-1/2 bg-white py-4 px-5 border-2 border-[#E4E4E4] space-y-5 rounded-2xl shadow-md "
-    initial={{ opacity: 0, x: 50 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-  >
-    <h1 className="text-lg font-semibold">Recent Activities</h1>
-    <p>Latest updates across all hackathons</p>
-    <div className="space-y-3">
-      {recentActivities.map((activity, index) => {
-        const  icon  = getIcon(activity.title)
-
-        return (
-        <motion.div
-          key={index}
-          className="flex gap-3 items-center p-3 rounded-md cursor-pointer "
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="bg-[#00AC4F38] p-3 rounded-full flex items-center justify-center">
-
-          <Image
-            src={icon}
-            alt="activity icon"
-            className="w-8 h-8"
-            width={30}
-            height={30}
-          />
-          </div>
-          <div className="space-y-1">
-            <h2 className="text-base font-bold text-[#212121]">{activity.title}</h2>
-            <p className="text-[#212121BD] text-sm">{activity.description}</p>
-            <p className="text-[#727272]">May 15, 2025 3:23 PM</p>
-          </div>
-        </motion.div>
-)})}
-    </div>
-  </motion.div> */}
-
-
-{/* <RegistrationTrend /> */}
-
-
-        
-
       </section>
     </>
   );

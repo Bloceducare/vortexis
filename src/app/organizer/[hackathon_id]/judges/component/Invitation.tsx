@@ -9,7 +9,7 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
   const [emails, setEmails] = useState<string[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const inviteLimit = 3;
+  const inviteLimit = 10;
 
   const { inviteJudgesMutation } = useOrganizer();
   const getHackathonData = useHackathonStore((state) => state.getHackathonData);

@@ -15,7 +15,7 @@ const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
 
 
 function Details({ onNext, data }: NavigationProps) {
-  const [preview, setPreview] = useState<string | null>(null);
+  // const [preview, setPreview] = useState<string | null>(null);
 
   const [localData, setLocalData] = useState(data || {});
   const hackathonSelector = useShallow((state: any) => ({
@@ -30,7 +30,7 @@ function Details({ onNext, data }: NavigationProps) {
     setPreview: state.setPreview
   }));
 
-  const { title, description, start_date, end_date, rules, banner_image,  setField } = useHackathonStore(hackathonSelector);
+  const { title, description, start_date, end_date, rules, banner_image, preview, setField } = useHackathonStore(hackathonSelector);
 
 
 
@@ -101,7 +101,7 @@ function Details({ onNext, data }: NavigationProps) {
   
       reader.onloadend = () => {
         const previewUrl = reader.result as string;
-        setPreview(previewUrl);             
+        setField('preview', previewUrl)
         setField('banner_image', file);      
       };
   
@@ -194,10 +194,14 @@ function Details({ onNext, data }: NavigationProps) {
 
 <div className="mt-10">
   <label className="text-2xl text-[#2F3036]">Description</label>
+  <div className='h-[40vh]'>
   <TiptapEditor
     value={description}
     onChange={(html) => setField("description", html)}
   />
+
+  </div>
+
 </div>
 
 

@@ -26,6 +26,13 @@ import {
   ListOrdered,
   Undo,
   Redo,
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Table2,
+  ColumnsIcon,
+  Rows,
+  RemoveFormatting
 } from 'lucide-react';
 
 interface TiptapEditorProps {
@@ -87,36 +94,81 @@ export default function TiptapEditor({
   return (
     <div className="border border-gray-300 rounded-xl bg-white">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 p-2 border-b bg-gray-100">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-gray-100">
         {/* Text formatting */}
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={buttonClass(editor.isActive('bold'))}>
           <Bold size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Bold
+      </span>
         </button>
+        </div>
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={buttonClass(editor.isActive('italic'))}>
           <Italic size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Italic
+      </span>
         </button>
+        </div>
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={buttonClass(editor.isActive('underline'))}>
           <UnderlineIcon size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Underline
+      </span>
         </button>
+        </div>
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().toggleStrike().run()} className={buttonClass(editor.isActive('strike'))}>
           <Strikethrough size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Strike through
+      </span>
         </button>
+        </div>
 
         {/* Lists */}
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={buttonClass(editor.isActive('bulletList'))}>
           <List size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Numbered List
+      </span>
+      
         </button>
+        </div>
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={buttonClass(editor.isActive('orderedList'))}>
           <ListOrdered size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Bullet 
+      </span>
         </button>
+        </div>
 
         {/* Undo/Redo */}
+        <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().undo().run()} className={buttonClass(false)}>
           <Undo size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Undo
+      </span>
+      
         </button>
+        </div>
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().redo().run()} className={buttonClass(false)}>
           <Redo size={16} />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Redo
+      </span>
+      
         </button>
+        </div>
 
         {/* Font size */}
         <select
@@ -124,7 +176,7 @@ export default function TiptapEditor({
           defaultValue=""
           className="border rounded px-2 py-1 text-sm"
         >
-          <option value="">Font Size</option>
+          <option value=""> Size</option>
           <option value="12px">12</option>
           <option value="14px">14</option>
           <option value="16px">16</option>
@@ -133,24 +185,41 @@ export default function TiptapEditor({
           <option value="24px">24</option>
         </select>
 
-        {/* Heading */}
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()} className={buttonClass(editor.isActive('heading', { level: 1 }))}>
-          H1
-        </button>
-        <button type="button" onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} className={buttonClass(editor.isActive('heading', { level: 2 }))}>
-          H2
-        </button>
-
         {/* Alignment */}
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().setTextAlign('left').run()} className={buttonClass(editor.isActive({ textAlign: 'left' }))}>
-          Left
+          <AlignLeft />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Align Left
+      </span>
+      
         </button>
+        </div>
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().setTextAlign('center').run()} className={buttonClass(editor.isActive({ textAlign: 'center' }))}>
-          Center
+          <AlignCenter />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Align Center
+      </span>
+      
         </button>
+        </div>
+        
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().setTextAlign('right').run()} className={buttonClass(editor.isActive({ textAlign: 'right' }))}>
-          Right
+          <AlignRight />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Algn Right
+      </span>
+      
         </button>
+        </div>
+
+        <div className="relative group">
+
 
         {/* Color */}
         <input
@@ -159,28 +228,67 @@ export default function TiptapEditor({
           onInput={(e) => editor.chain().focus().setColor(e.currentTarget.value).run()}
         />
 
-        {/* Table Actions */}
-        <button type="button" onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} className={buttonClass(false)}>
-          Insert Table
-        </button>
+      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Add Color
+      </span>
+        </div>
+
+              {/* Table Actions */}
+       <div className="relative group">
+      <button
+        type="button"
+        onClick={() =>
+          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+        }
+        className={buttonClass(false)}
+      >
+        <Table2 />
+      </button>
+      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Add table
+      </span>
+    </div>
+
+
+    <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().addColumnAfter().run()} className={buttonClass(false)}>
-          +Col
+          <ColumnsIcon />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Add Columns
+      </span>
+      
         </button>
+        </div>
+        <div className="relative group">
+
         <button type="button" onClick={() => editor.chain().focus().addRowAfter().run()} className={buttonClass(false)}>
-          +Row
+          <Rows />
+          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        Add Columns
+      </span>
+      
         </button>
+        </div>
         <button type="button" onClick={() => editor.chain().focus().deleteTable().run()} className={buttonClass(false)}>
           ❌Table
         </button>
       </div>
 
       {/* Editor Content */}
-      <div className="p-4">
-        <EditorContent
-          editor={editor}
-          className="prose prose-sm sm:prose lg:prose-lg max-w-none list-disc list-inside [&_table]:w-full [&_th]:border [&_td]:border [&_td]:px-3 [&_td]:py-2"
-          />
-      </div>
+      <div className="p-2">
+  <EditorContent
+    editor={editor}
+    className="prose prose-sm sm:prose lg:prose-lg max-w-none list-disc list-inside h-[250px] overflow-auto 
+      border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none 
+      [&_div[contenteditable]]:outline-none [&_div[contenteditable]]:focus:outline-none
+      [&_table]:w-full 
+      [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 
+      [&_td]:border [&_td]:border-gray-200 [&_td]:px-3 [&_td]:py-2"
+  />
+
+
+</div>
+
     </div>
   );
 }

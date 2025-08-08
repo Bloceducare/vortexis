@@ -6,6 +6,11 @@ import { getCountries, Country } from '@/app/api/country/getCountries';
 import { useParams } from 'next/navigation';
 import useOrganizer from '@/hooks/useOrganizers';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import TableSkeleton from '@/components/TableSkeleton';
+
+
+
+
 
 function Participants() {
   const SubmissionPerPage = 8;
@@ -81,7 +86,9 @@ function Participants() {
   const start = (currentPage - 1) * SubmissionPerPage + 1;
   const end = Math.min(currentPage * SubmissionPerPage, filteredParticipants.length);
 
-  if (isLoading) return <p className="p-10 text-lg">Loading participants...</p>;
+    if (isLoading) return  <TableSkeleton />;
+
+
   if (isError) return <p className="p-10 text-lg text-red-500">Failed to load participants.</p>;
 
   return (
