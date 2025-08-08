@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { SubmissionProps, Submission } from '@/app/api/utils/interface'
-import { ParticipantsSkeleton } from '../../participants/page'
+import TableSkeleton from '@/components/TableSkeleton'
+
 
 const Pending: React.FC<SubmissionProps> = ({
   submissions,
@@ -59,7 +60,7 @@ const Pending: React.FC<SubmissionProps> = ({
 
   const start = (currentPage - 1) * SubmissionPerPage + 1
   const end = Math.min(currentPage * SubmissionPerPage, pendingSubmissions.length)
-  if (isLoading) return <ParticipantsSkeleton />;
+  if (isLoading) return  <TableSkeleton />;
 
 
   return (

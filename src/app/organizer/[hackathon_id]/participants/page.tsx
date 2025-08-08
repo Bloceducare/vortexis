@@ -6,53 +6,9 @@ import { getCountries, Country } from '@/app/api/country/getCountries';
 import { useParams } from 'next/navigation';
 import useOrganizer from '@/hooks/useOrganizers';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import TableSkeleton from '@/components/TableSkeleton';
 
 
-
-export const ParticipantsSkeleton = () => {
-  return (
-    <div className="p-6 bg-white rounded-xl shadow h-screen">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-        <div className="h-4 w-72 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-
-      {/* Table Head */}
-      <div className="grid grid-cols-6 gap-4 border-b pb-2">
-        {["Name", "Team", "Phone Number", "Email", "Country", "Status"].map(
-          (heading, i) => (
-            <div key={i} className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
-          )
-        )}
-      </div>
-
-      {/* Table Rows Skeleton */}
-      {Array.from({ length: 5 }).map((_, idx) => (
-        <div
-          key={idx}
-          className="grid grid-cols-6 gap-4 py-3 border-b last:border-b-0"
-        >
-          {Array.from({ length: 6 }).map((__, i) => (
-            <div
-              key={i}
-              className="h-4 w-full bg-gray-200 rounded animate-pulse"
-            ></div>
-          ))}
-        </div>
-      ))}
-
-      {/* Footer */}
-      <div className="flex justify-between items-center mt-4">
-        <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
-        <div className="flex gap-2">
-          <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
-          <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 
 
@@ -130,48 +86,9 @@ function Participants() {
   const start = (currentPage - 1) * SubmissionPerPage + 1;
   const end = Math.min(currentPage * SubmissionPerPage, filteredParticipants.length);
 
-  if (isLoading) return (
-    <div className="p-6 bg-white rounded-xl shadow h-screen">
-    {/* Header */}
-    <div className="mb-6">
-      <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-2"></div>
-      <div className="h-4 w-72 bg-gray-200 rounded animate-pulse"></div>
-    </div>
+    if (isLoading) return  <TableSkeleton />;
 
-    {/* Table Head */}
-    <div className="grid grid-cols-6 gap-4 border-b pb-2">
-      {["Name", "Team", "Phone Number", "Email", "Country", "Status"].map(
-        (heading, i) => (
-          <div key={i} className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
-        )
-      )}
-    </div>
 
-    {/* Table Rows Skeleton */}
-    {Array.from({ length: 5 }).map((_, idx) => (
-      <div
-        key={idx}
-        className="grid grid-cols-6 gap-4 py-3 border-b last:border-b-0"
-      >
-        {Array.from({ length: 6 }).map((__, i) => (
-          <div
-            key={i}
-            className="h-4 w-full bg-gray-200 rounded animate-pulse"
-          ></div>
-        ))}
-      </div>
-    ))}
-
-    {/* Footer */}
-    <div className="flex justify-between items-center mt-4">
-      <div className="h-4 w-40 bg-gray-200 rounded animate-pulse"></div>
-      <div className="flex gap-2">
-        <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
-        <div className="h-8 w-8 bg-gray-200 rounded animate-pulse"></div>
-      </div>
-    </div>
-  </div>
-  );
   if (isError) return <p className="p-10 text-lg text-red-500">Failed to load participants.</p>;
 
   return (

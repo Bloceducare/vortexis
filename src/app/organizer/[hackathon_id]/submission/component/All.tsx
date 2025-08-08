@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { SubmissionProps } from '@/app/api/utils/interface'
-import { ParticipantsSkeleton } from '../../participants/page'
+import TableSkeleton from '@/components/TableSkeleton'
 
 const All: React.FC<SubmissionProps> = ({
   submissions,
@@ -58,7 +58,7 @@ const All: React.FC<SubmissionProps> = ({
   }, [submissions, searchTerm, sortOrder, currentPage])
   
 
-  if (isLoading) return <ParticipantsSkeleton />;
+  if (isLoading) return  <TableSkeleton />;
 
   if (isError)
     return (
