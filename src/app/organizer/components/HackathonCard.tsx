@@ -9,6 +9,7 @@ import {
   } from "@/components/ui/dropdown-menu"; 
   import Link from "next/link";
   import Hackathon_details from "@/app/api/utils/interface";
+  import HtmlContent from "@/components/ui/HtMLContent";
   
 import { CalendarDays, MapPin, Users, FileText, Scale, Eye, EyeOff, MoreVertical, UserPlus, Pencil } from "lucide-react";
 import { useRouter } from 'next/navigation';
@@ -115,7 +116,10 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
           </div>
         </div>
         <p className="text-sm text-muted-foreground line-clamp-2">
-          {hackathon.description}
+          {hackathon.description && (
+          <HtmlContent html={hackathon?.description} />
+          )}
+          
         </p>
       </CardHeader>
 

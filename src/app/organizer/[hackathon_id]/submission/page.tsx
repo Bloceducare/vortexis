@@ -6,6 +6,7 @@ import Reviewed from './component/Reviewed';
 import Rejected from './component/Rejected';
 import useOrganizer from '@/hooks/useOrganizers';
 import { useParams } from 'next/navigation';
+import { ParticipantsSkeleton } from '../participants/page';
 
 function SubmitProject() {
   const [activeButton, setActiveButton] = useState("All Submission");

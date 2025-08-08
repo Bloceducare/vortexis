@@ -232,10 +232,7 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
         </div>
       </div>
 
-      <div className='mt-10 flex flex-col'>
-        <label className='text-lg text-[#2F3036]'>Team Formation Rules</label>
-        <textarea className='outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3' placeholder='Describe how teams should be formed or any special requirements...' name='rules'></textarea>
-        </div>
+     
 
 
         <div className="mt-10 flex justify-between">

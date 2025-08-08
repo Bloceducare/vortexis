@@ -20,40 +20,35 @@ export default function RuleInput({ rules, setRules }: RuleInputProps) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       const trimmed = editorValue.trim();
-      if (trimmed && !rules.includes(trimmed)) {
-        setRules([...rules, trimmed]);
+      if (trimmed) {
+        setRules([trimmed]); 
         setEditorValue("");
       }
     }
   };
 
-  const removeRule = (index: number) => {
-    const updated = [...rules];
-    updated.splice(index, 1);
-    setRules(updated);
+  const removeRule = () => {
+    setRules([]);
   };
 
   return (
-    <div className="w-full border-2 border-[#C5C6CC] rounded-2xl p-4 flex flex-col gap-4">
+    <div>
       <div className="flex flex-wrap gap-3">
-        {rules.map((rule, index) => (
-          <div
-            key={index}
-            className="bg-blue-500 text-white rounded-xl p-3 flex items-center gap-3"
-          >
+        {rules.length > 0 && (
+          <div className="bg-blue-500 text-white rounded-xl p-3 flex items-center gap-3">
             <span
-              dangerouslySetInnerHTML={{ __html: rule }}
+              dangerouslySetInnerHTML={{ __html: rules[0] }}
               className="text-white"
             />
             <button
               type="button"
-              onClick={() => removeRule(index)}
+              onClick={removeRule}
               className="hover:text-gray-300 text-xl"
             >
               &times;
             </button>
           </div>
-        ))}
+        )}
       </div>
 
       {/* TipTap Input */}

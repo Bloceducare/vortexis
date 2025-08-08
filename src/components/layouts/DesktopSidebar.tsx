@@ -97,7 +97,7 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
         <div className="mt-auto flex flex-col gap-4 py-2">
           {settingPage && (
             <Link
-              href={settingPage}
+              href="/profile/edit"
               className={`flex items-center py-4 pl-10 ${
                 pathname === settingPage
                   ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"

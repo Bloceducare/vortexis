@@ -67,14 +67,7 @@ function Submission({ onNext, onPrev }: NavigationProps) {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col">
-          <label className="text-lg text-[#2F3036]">Additional Requirements</label>
-          <textarea
-            className="outline-none resize-none h-52 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3"
-            placeholder="Enter any additional submission requirements...."
-            name="aditional"
-          />
-        </div>
+   
 
         {/* Toggle Section */}
         <div className="mt-10">

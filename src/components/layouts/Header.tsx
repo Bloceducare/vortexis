@@ -7,6 +7,7 @@ import Alarm from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import SearchInput from "../ui/SearchInput";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
+import { usePathname } from "next/navigation"; 
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -15,6 +16,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const pathname = usePathname(); 
 
   const user = useUserStore((state) => state.user);
 
@@ -36,21 +38,22 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const roles = [
-    { key: "is_admin", label: "Admin" },
-    { key: "is_organizer", label: "Organizer" },
-    { key: "is_judge", label: "Judge" },
-    { key: "is_participant", label: "Participant" },
-  ];
+  // ✅ Determine current dashboard from route
+  const dashboardMap: Record<string, string> = {
+    "/organizer": "Organizer",
+    "/judges": "Judge",
+    "/dashboard": "Participant",
+  };
 
-  const userRole =
-    roles.find((role) => user && user[role.key as keyof typeof user])?.label ||
-    "";
+  const currentDashboard =
+    Object.entries(dashboardMap).find(([path]) =>
+      pathname.startsWith(path)
+    )?.[1] || "Dashboard";
 
-    const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""}`;
+  // ✅ User initials
+  const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""}`;
 
-
-  // Function to get a consistent color based on initials (optional: more robust with hashing)
+  // ✅ Avatar background color logic
   const bgColors = [
     "bg-red-500",
     "bg-green-500",
@@ -64,7 +67,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const lastCharCode = user?.last_name?.charCodeAt(0) ?? 0;
   const colorIndex = (firstCharCode + lastCharCode) % bgColors.length;
   const avatarColor = bgColors[colorIndex];
-  
 
   return (
     <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
@@ -82,14 +84,16 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 
           {/* Search Box */}
           <div className="px-6 md:block hidden">
-            <SearchInput onSearch={handleSearch} />
+            {/* <SearchInput onSearch={handleSearch} /> */}
           </div>
         </div>
 
-        <div className="flex items-center gap-5 md:gap-10 relative" ref={dropdownRef}>
+        <div
+          className="flex items-center gap-5 md:gap-10 relative"
+          ref={dropdownRef}
+        >
           <div className="relative">
             <Image src={Alarm} alt="alarm" />
-            {/* Blue dot for active user */}
             {user?.is_active && (
               <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-500" />
             )}
@@ -99,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => setShowDropdown((prev) => !prev)}
           >
-            {/* Avatar with initials and color */}
+            {/* Avatar */}
             <div
               className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
             >
@@ -110,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               <p className="text-sm font-semibold">
                 {user?.first_name} {user?.last_name}
               </p>
-              <p className="text-sm text-[#4F5B67]">{userRole}</p>
+              <p className="text-sm text-[#4F5B67]">{currentDashboard}</p>
             </div>
             <ChevronDown className="text-gray-500 w-4 h-4" />
           </div>
@@ -125,33 +129,40 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 transition={{ duration: 0.2 }}
                 className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
               >
-               <ul className="py-2 text-sm text-gray-700 list-none">
-  <li>
-    <Link
-      href="/organizer"
-      className="block px-4 py-2 hover:bg-gray-100"
-    >
-      Organizer Dashboard
-    </Link>
-  </li>
-  <li>
-    <Link
-      href="/participants"
-      className="block px-4 py-2 hover:bg-gray-100"
-    >
-      Participants
-    </Link>
-  </li>
-  <li>
-    <Link
-      href="/judges"
-      className="block px-4 py-2 hover:bg-gray-100"
-    >
-      Judges
-    </Link>
-  </li>
-</ul>
-
+                <ul className="py-2 text-sm text-gray-700 list-none">
+                  <li>
+                    <Link
+                      href="/profile/detail" 
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      View Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/organizer"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Organizer Dashboard
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Participants
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/judges"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      Judges
+                    </Link>
+                  </li>
+                </ul>
               </motion.div>
             )}
           </AnimatePresence>
@@ -162,3 +173,4 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 };
 
 export default Header;
+
