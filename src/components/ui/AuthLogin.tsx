@@ -103,7 +103,7 @@ function AuthLogin({ type }: AuthLoginProps) {
         setToken(result.access_token, daysInSeconds);
         setUser(result.user);
       }
-      router.push("/dashboard");
+      router.push("/home");
 
       reset();
     } catch (error) {
