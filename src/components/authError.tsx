@@ -23,26 +23,18 @@ export default function AuthErrorPage() {
   }, [router]);
 
   const handleTryAgain = () => {
+    router.push("/auth/login/participant");
+  };
+  const handleCreate = () => {
     router.push("/auth/signin/participant");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
       <header className="bg-white shadow-sm px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="text-2xl font-bold text-blue-600">VORTEXIS</div>
-          {/* <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-600 hover:text-gray-900">
-              Features
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">
-              Hackathons
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900">
-              About
-            </a>
-          </nav> */}
+
           <div className="flex items-center space-x-4">
             <button
               onClick={handleTryAgain}
@@ -51,7 +43,7 @@ export default function AuthErrorPage() {
               Login
             </button>
             <button
-              onClick={handleTryAgain}
+              onClick={handleCreate}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Sign Up
@@ -92,7 +84,7 @@ export default function AuthErrorPage() {
             onClick={handleTryAgain}
             className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
           >
-            Sign Up
+            Login{" "}
           </button>
         </div>
       </main>
