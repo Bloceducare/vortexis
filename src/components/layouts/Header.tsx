@@ -7,7 +7,7 @@ import Alarm from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import SearchInput from "../ui/SearchInput";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
-import { usePathname } from "next/navigation"; 
+import { usePathname } from "next/navigation";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -16,7 +16,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const pathname = usePathname(); 
+  const pathname = usePathname();
 
   const user = useUserStore((state) => state.user);
 
@@ -51,7 +51,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     )?.[1] || "Dashboard";
 
   // ✅ User initials
-  const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""}`;
+  const initials = `${user?.first_name?.[0] ?? ""}${
+    user?.last_name?.[0] ?? ""
+  }`;
 
   // ✅ Avatar background color logic
   const bgColors = [
@@ -69,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const avatarColor = bgColors[colorIndex];
 
   return (
-    <header className="border-gray-200 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
+    <header className="border-gray-200 md:max-w-full  sm:max-w-64 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
       <div className="flex h-full items-center justify-between md:pr-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
@@ -132,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 <ul className="py-2 text-sm text-gray-700 list-none">
                   <li>
                     <Link
-                      href="/profile/detail" 
+                      href="/profile/detail"
                       className="block px-4 py-2 hover:bg-gray-100"
                     >
                       View Profile
@@ -173,4 +175,3 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
 };
 
 export default Header;
-

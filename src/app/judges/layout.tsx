@@ -40,24 +40,8 @@ const sidebarItems = [
     icon: Champ,
     text: "Assigned Hackathons",
     href: "/",
+    dropdown: true,
   },
-
-  // {
-  //   icon: Team,
-  //   text: "Submissions To Review",
-  //   href: "/judges",
-  // },
-  // {
-  //   icon: Team,
-  //   text: "Submissions To Review",
-  //   href: "/judges",
-  // },
-
-  // {
-  //   icon: Submit,
-  //   text: "Judge Notes",
-  //   href: "",
-  // },
 
   {
     icon: Champ,
