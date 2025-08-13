@@ -36,28 +36,12 @@ const nunitoSan = Nunito_Sans({
 const sidebarItems = [
   { icon: Dashboard, text: "Dashboard", href: "/judges" },
 
-  // {
-  //   icon: Champ,
-  //   text: "Assigned Hackathons",
-  //   href: "/",
-  // },
-
-  // {
-  //   icon: Team,
-  //   text: "Submissions To Review",
-  //   href: "/judges",
-  // },
-  // {
-  //   icon: Team,
-  //   text: "Submissions To Review",
-  //   href: "/judges",
-  // },
-
-  // {
-  //   icon: Submit,
-  //   text: "Judge Notes",
-  //   href: "",
-  // },
+  {
+    icon: Champ,
+    text: "Assigned Hackathons",
+    href: "/",
+    dropdown: true,
+  },
 
   {
     icon: Champ,

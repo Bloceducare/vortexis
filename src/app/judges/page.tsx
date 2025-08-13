@@ -23,21 +23,21 @@ const SubmissionStatus: SubmissionStatusItem[] = [
 
 const hackathonsJudged: HackathonJudged[] = [
   {
-    name: "Judge Jane",
+    name: "Arbitrum hackers",
     status: "active",
     total_submission: "12",
     due_date: "5/15/2025",
     reviews_completed: "5/12",
   },
   {
-    name: "Judge Jane",
+    name: "Stellar hackquest",
     status: "active",
     total_submission: "12",
     due_date: "5/15/2025",
     reviews_completed: "5/12",
   },
   {
-    name: "Judge Jane",
+    name: "Stlus hackathon",
     status: "active",
     total_submission: "12",
     due_date: "5/15/2025",
@@ -143,7 +143,7 @@ function Page() {
             >
               <div className="flex justify-between">
                 <h2 className="text-xl font-semibold">
-                  Welcome, {judge.name}!
+                   {judge.name}
                 </h2>
                 <Link
                   href={`/judges/submission-review/${i}`}
