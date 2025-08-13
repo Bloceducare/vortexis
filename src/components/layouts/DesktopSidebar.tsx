@@ -124,7 +124,10 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
         >
           Vortexis
         </div>
-        <div className="flex w-full flex-col overflow-y-auto gap-y-2">
+        <div
+          className="flex w-full flex-col overflow-y-auto gap-y-2"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        >
           {sidebarItems.map((item, index) => (
             <div key={index} className="relative">
               <div
@@ -188,7 +191,13 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
                       className="bg-gray-50 border-l-4 border-[#605DEC] ml-5"
                     >
                       {hackathons.length > 0 ? (
-                        <div className="py-2">
+                        <div
+                          className="py-2 max-h-64 overflow-y-auto"
+                          style={{
+                            scrollbarWidth: "none",
+                            msOverflowStyle: "none",
+                          }}
+                        >
                           {hackathons.map((hackathon) => (
                             <div
                               key={hackathon.id}
