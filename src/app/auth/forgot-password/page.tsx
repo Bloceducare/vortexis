@@ -55,40 +55,25 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
+            <Link href="/" className="text-2xl font-bold text-[#605DEC]">
               VORTEXIS
             </Link>
-            <nav className="hidden md:flex space-x-6">
-              <Link
-                href="/features"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Features
-              </Link>
-              <Link
-                href="/hackathons"
-                className="text-gray-600 hover:text-gray-900"
-              >
-                Hackathons
-              </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">
-                About
-              </Link>
-            </nav>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 shadow-sm">
             <Link href="/login">
-              <Button className="border border-gray-300 bg-transparent text-blue-600 hover:bg-gray-100">
+              <Button className="border border-gray-300 bg-transparent text-[#605DEC] hover:bg-gray-100">
                 Login
               </Button>
             </Link>
             <Link href="/signup">
-              <Button className="bg-blue-600 hover:bg-blue-700">Sign Up</Button>
+              <Button className="bg-[#605DEC] hover:bg-blue-700">
+                Sign Up
+              </Button>
             </Link>
           </div>
         </div>
@@ -100,7 +85,7 @@ export default function ForgotPasswordPage() {
           {!isSubmitted ? (
             <>
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-600 mb-4">
+                <h1 className="text-3xl font-bold text-[#605DEC] mb-4">
                   Forgot Password?
                 </h1>
                 <p className="text-gray-600">
@@ -124,10 +109,8 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email address used in creating your account"
-                      className={`w-full ${
-                        error
-                          ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-                          : ""
+                      className={`w-full p-2 border rounded-md text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
+                        error ? "border-red-500" : "border-gray-300"
                       }`}
                       required
                     />
@@ -139,7 +122,7 @@ export default function ForgotPasswordPage() {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base font-medium"
+                    className="w-full bg-[#605DEC] hover:bg-blue-700 text-[#605DEC] py-3 text-base font-medium"
                   >
                     {isLoading ? "Sending..." : "Send Reset Instructions"}
                   </Button>
@@ -158,7 +141,7 @@ export default function ForgotPasswordPage() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-600 mb-4">
+                <h1 className="text-3xl font-bold text-[#605DEC] mb-4">
                   Check Your Email
                 </h1>
                 <p className="text-gray-600 mb-2">
@@ -172,7 +155,7 @@ export default function ForgotPasswordPage() {
               <div className="bg-white rounded-lg shadow-lg p-8 text-center space-y-4">
                 <button
                   onClick={handleTryDifferentEmail}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-[#605DEC] hover:text-blue-700 font-medium"
                 >
                   Try Different Email
                 </button>
