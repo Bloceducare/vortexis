@@ -5,7 +5,6 @@ import type React from "react";
 import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/AuthButton";
-import Input from "@/components/ui/AuthInput";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -29,8 +28,9 @@ export default function ForgotPasswordPage() {
           body: JSON.stringify({ email }),
         }
       );
+
       const data = await response.json();
-      console.log(data);
+      console.log("[v0] API response:", data);
 
       if (response.ok) {
         setIsSubmitted(true);
@@ -42,6 +42,7 @@ export default function ForgotPasswordPage() {
         setError("Something went wrong. Please try again.");
       }
     } catch (error) {
+      console.error("[v0] Network error:", error);
       setError("Network error. Please try again.");
     } finally {
       setIsLoading(false);
@@ -57,7 +58,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className=" border-b border-gray-200 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-8">
             <Link href="/" className="text-2xl font-bold text-[#605DEC]">
@@ -122,7 +123,7 @@ export default function ForgotPasswordPage() {
                   <Button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-[#605DEC] hover:bg-blue-700 text-[#605DEC] py-3 text-base font-medium"
+                    className="w-full bg-[#605DEC] hover:bg-blue-700 text-white py-3 text-base font-medium"
                   >
                     {isLoading ? "Sending..." : "Send Reset Instructions"}
                   </Button>
