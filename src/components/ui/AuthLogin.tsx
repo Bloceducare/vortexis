@@ -178,7 +178,7 @@ function AuthLogin({ type }: AuthLoginProps) {
               </label>
             </div>
             <Link href="/forgot-password">
-              <span className="text-[#2E0BF4] text-sm md:text-base cursor-pointer hover:underline">
+              <span className="text-[#605DEC] text-sm md:text-base cursor-pointer hover:underline">
                 Forgotten Password?
               </span>
             </Link>
@@ -189,7 +189,7 @@ function AuthLogin({ type }: AuthLoginProps) {
             className={`w-full max-w-[690px] h-[45px] cursor-pointer md:h-[45px] text-white py-2 rounded-[3px] mx-auto text-sm md:text-base transition-colors ${
               isSubmitting
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#2E0BF4] hover:bg-[#2508d4]"
+                : "bg-[#605DEC] hover:bg-[#605DEC]"
             }`}
           >
             {isSubmitting ? (
@@ -218,7 +218,7 @@ function AuthLogin({ type }: AuthLoginProps) {
               </span>
             ) : (
               `Log In to ${
-                type === "organizers" ? "Organization" : "Participation"
+                type === "organizers" ? "Organization" : "Participant"
               } Dashboard`
             )}
           </button>
@@ -261,7 +261,7 @@ function AuthLogin({ type }: AuthLoginProps) {
             ? "Don't have an organizer account?"
             : "Don't have a participant account?"}
           <Link
-            className="underline pl-1 text-[#2E0BF4] hover:text-[#2508d4]"
+            className="underline pl-1 text-[#605DEC] hover:text-[#605DEC]"
             href="/auth/signin/organizer"
           >
             Sign Up here
