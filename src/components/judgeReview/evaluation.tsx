@@ -49,15 +49,12 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
 
   return (
     <div className="relative my-4">
-      {/* Track */}
       <div className="relative h-2 w-full bg-[#E8E9F1] rounded-full overflow-hidden">
-        {/* Progress */}
         <div
           className="absolute top-0 left-0 h-full bg-[#605DEC] rounded-full transition-all duration-300 ease-in-out"
           style={{ width: `${value * 10}%` }}
         />
 
-        {/* Thumb */}
         <div
           className={`absolute top-1/2 w-4 h-4 bg-white border-2 border-[#605DEC] rounded-full shadow-md transform -translate-y-1/2 -translate-x-1/2 cursor-pointer transition-all duration-200 ${
             isDragging ? "scale-125 shadow-lg" : "hover:scale-110"

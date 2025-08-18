@@ -6,6 +6,7 @@ import Vote from "@/components/judgeReview/vote";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import OtherJudges from "./judgeReview/overview";
 
 const tabs = [
   {
@@ -23,6 +24,10 @@ const tabs = [
   {
     name: "Evaluation",
     tab_no: 4,
+  },
+  {
+    name: "reviews",
+    tab_no: 5,
   },
 ];
 
@@ -49,7 +54,7 @@ function Tabscontent() {
   return (
     <div>
       {/* Desktop Tabs - Hidden on mobile */}
-      <div className="hidden md:flex mb-6 -mt-1.5 md:w-[860px] w-full cursor-pointer gap-4">
+      <div className="hidden md:flex mb-6 -mt-1.5 md:w-[950px] w-full cursor-pointer gap-4">
         {tabs.map((tab, i) => {
           return (
             <div
@@ -114,6 +119,7 @@ function Tabscontent() {
         {activeTab === 2 && <Deliverables />}
         {activeTab === 3 && <Members />}
         {activeTab === 4 && <Evaluation />}
+        {activeTab === 5 && <OtherJudges />}
       </div>
     </div>
   );
