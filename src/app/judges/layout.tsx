@@ -27,15 +27,15 @@ import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
 import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-});
+// const nunito = Nunito({
+//   variable: "--font-nunito",
+//   subsets: ["latin"],
+// });
 
-const nunitoSan = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-});
+// const nunitoSan = Nunito_Sans({
+//   variable: "--font-nunito-sans",
+//   subsets: ["latin"],
+// });
 
 interface Hackathon {
   id: number;
@@ -169,10 +169,10 @@ export default function JudgesLayout({
       setSidebarExpanded(!sidebarExpanded);
     }
   };
-
+  // ${nunito.variable} ${nunitoSan.variable}
   return (
     <div
-      className={`flex min-h-screen bg-[#f5f5f5] relative ${nunito.variable} ${nunitoSan.variable} antialiased`}
+      className={`flex min-h-screen bg-[#f5f5f5] relative  antialiased`}
     >
       {/* Mobile overlay */}
       {isMobile && mobileMenuOpen && (
