@@ -131,8 +131,8 @@ export default function JudgesLayout({
 
   const handleHackathonSelect = (id: string | undefined) => {
     if (!id) return;
-    // Route directly to submission review for the selected hackathon
-    const newPath = `/judges/submission-review/${id}`;
+    // const newPath = `/judges/submission-review/${id}`;
+    const newPath = `/judges/dashboard/${id}`;
 
     if (newPath !== pathname) {
       router.push(newPath);
