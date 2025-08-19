@@ -6,17 +6,26 @@ import { useRouter } from "next/navigation";
 import SearchInput from "@/components/ui/SearchInput";
 import { getCountries, Country } from "@/app/api/country/getCountries";
 import { motion, AnimatePresence } from "framer-motion";
+import StatusModal from "@/components/StatusModal";
 
 function Home() {
   const router = useRouter();
-  const { getAllHackathon } = useHackathon();
+  const { getAllHackathon, registerUserForHackathon } = useHackathon();
   const [countries, setCountries] = useState<Country[]>([]);
   const { data: hackathons = [], isLoading } = getAllHackathon();
+  const registerMutation = registerUserForHackathon();
+
+
 
   const [sortOption, setSortOption] = useState("newest");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("");
   const [prizeFilter, setPrizeFilter] = useState("all");
+  const [activeHackathon, setActiveHackathon] = useState<string | null>(null);
+  const [modal, setModal] = useState<{open: boolean; type: "success"|"error"; message: string}>({
+    open: false, type: "success", message: ""
+  });
+
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +38,17 @@ function Home() {
   const handleSearch = (query: string) => {
     setSearchQuery(query.toLowerCase());
     setCurrentPage(1);
+  };
+  const Onregister = (hackathon_id: string) => {
+    setActiveHackathon(hackathon_id); 
+    registerMutation.mutate(hackathon_id, {
+      onSuccess: () => {
+        setModal({ open: true, type: "success", message: "You have successfully registered!" });
+      },
+      onError: () => {
+        setModal({ open: true, type: "error", message: "Something went wrong. Please try again." });
+      }
+    });
   };
 
   const filteredHackathons = useMemo(() => {
@@ -150,7 +170,7 @@ function Home() {
         </div>
       </div>
 
-      {/* Filters */}
+  
       <div className="space-y-5 md:px-24 mt-10">
         <div className="flex justify-between flex-wrap md:w-full items-center gap-5 md:gap-0">
           <h1 className="text-xl md:text-3xl">Explore Hackathons For You</h1>
@@ -207,9 +227,6 @@ function Home() {
             <option value="over10k">Over $10,000</option>
           </select>
           </div>
-
-
-        
         </div>
 
         {/* Hackathon grid */}
@@ -270,10 +287,10 @@ function Home() {
 
                         {(isUpcoming || isActive) && (
                           <button
-                            onClick={() => router.push(`/hackathon/${h.id}`)}
+                            onClick={() => Onregister(h.id)}
                             className="mt-4 w-full bg-[#605DEC] text-white py-2 px-4 rounded-lg hover:bg-[#4b49c6] transition-colors cursor-pointer"
                           >
-                            Register Now
+                       {activeHackathon === h.id && registerMutation.isPending ? "Registering..." : "Register"}
                           </button>
                         )}
                       </motion.div>
@@ -283,6 +300,16 @@ function Home() {
               )
               : <p>No hackathons found for this filter.</p>}
         </div>
+
+        <StatusModal
+        isOpen={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        message={modal.message}
+      />
+
+
+
 
         {/* Pagination */}
         <div className="flex justify-center items-center mt-8 gap-2">
