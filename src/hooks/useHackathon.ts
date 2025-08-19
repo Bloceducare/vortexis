@@ -67,10 +67,25 @@ export default function useHackathon() {
       },
     });
   };
+
+    const getHackathonById = (hackathon_id: string) => {
+      return useQuery({
+        queryKey: ['organizer_hackathon_byId', hackathon_id],
+        queryFn: async () => {
+          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/`, {
+            headers: getAuthHeaders()
+          });
+          if (!res.ok) throw new Error('Unable to fetch submission');
+          return res.json();
+        },
+        enabled: !!hackathon_id,
+      });
+    };
   
 
   return {
     getAllHackathon,
     registerUserForHackathon,
+    getHackathonById
   };
 }

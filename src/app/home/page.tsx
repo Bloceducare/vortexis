@@ -254,7 +254,8 @@ function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="border rounded-xl p-4 shadow-sm bg-white"
+                        className="border rounded-xl p-4 shadow-sm bg-white cursor-pointer"
+                        onClick={() => router.push(`/hackathon/${h.id}`)}
                       >
                         <img
                           src={h.banner_image}
@@ -285,6 +286,9 @@ function Home() {
                           {h.participants.length} participants
                         </p>
 
+                        <p className="text-gray-500 text-sm">
+                          View details
+                        </p>
                         {(isUpcoming || isActive) && (
                           <button
                             onClick={() => Onregister(h.id)}
