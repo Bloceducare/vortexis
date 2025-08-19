@@ -32,6 +32,7 @@ export default function useHackathon() {
     return headers;
   };
 
+  /** === Queries === */
   const getAllHackathon = () => {
     return useQuery({
       queryKey: ['all_hackathon'],
@@ -41,16 +42,50 @@ export default function useHackathon() {
           headers: getAuthHeaders(),
         });
         if (!res.ok) throw new Error('Unable to fetch hackathon');
-        const data = await res.json();
-        return data;
+        return res.json();
       },
-      enabled: !!user?.id, 
+      enabled: !!user?.id,
     });
   };
 
- 
+  /** === Mutations === */
+  const registerUserForHackathon = () => {
+    return useMutation({
+      mutationFn: async (hackathonId: string) => {
+        if (!user?.id) throw new Error('User must be logged in');
+  
+        const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/register/`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+        });
+  
+        if (!res.ok) throw new Error('Failed to register for hackathon');
+        return res.json();
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['all_hackathon'] });
+      },
+    });
+  };
+
+    const getHackathonById = (hackathon_id: string) => {
+      return useQuery({
+        queryKey: ['organizer_hackathon_byId', hackathon_id],
+        queryFn: async () => {
+          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/`, {
+            headers: getAuthHeaders()
+          });
+          if (!res.ok) throw new Error('Unable to fetch submission');
+          return res.json();
+        },
+        enabled: !!hackathon_id,
+      });
+    };
+  
+
   return {
     getAllHackathon,
-   
+    registerUserForHackathon,
+    getHackathonById
   };
 }
