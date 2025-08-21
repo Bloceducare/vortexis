@@ -59,7 +59,11 @@ export default function useHackathon() {
           headers: getAuthHeaders(),
         });
   
-        if (!res.ok) throw new Error('Failed to register for hackathon');
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to register for hackathon');
+        }
+  
         return res.json();
       },
       onSuccess: () => {
@@ -67,6 +71,7 @@ export default function useHackathon() {
       },
     });
   };
+  
 
     const getHackathonById = (hackathon_id: string) => {
       return useQuery({

@@ -19,7 +19,7 @@ export default function StatusModal({ isOpen, onClose, type, message }: StatusMo
             type === "success" ? "text-green-600" : "text-red-600"
           }`}
         >
-          {type === "success" ? "Success" : "Error"}
+          {type === "success" ? "Registered 🎉" : "Oops 😢"}
         </h2>
         <p className="mb-6 text-gray-700">{message}</p>
 

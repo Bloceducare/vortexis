@@ -90,7 +90,7 @@ export const Header: React.FC = () => {
             </div>
 
 
-            {(isHome || isProfile) && (
+            {isLoggedIn && (
              <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
                 <Link
                href="/dashboard"
@@ -114,7 +114,7 @@ export const Header: React.FC = () => {
            </nav>
           ) }
 
-             {!isHome && !isProfile && (    <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
+             {!isLoggedIn && (    <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
               <Link
                 href="/features"
                 className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
@@ -205,7 +205,7 @@ export const Header: React.FC = () => {
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-       {!isHome && !isProfile && (  <div className="bg-white border-t border-gray-200 shadow-lg">
+       {!isLoggedIn && (  <div className="bg-white border-t border-gray-200 shadow-lg">
             {/* Mobile Navigation Links */}
             <div className="pt-2 pb-3 space-y-1 px-4">
               <Link
@@ -264,7 +264,7 @@ export const Header: React.FC = () => {
               </div>
             </div>
           </div>)}
-          {(isHome || isProfile) && ( <div className="bg-white border-t border-gray-200 shadow-lg">
+          {isLoggedIn && ( <div className="bg-white border-t border-gray-200 shadow-lg">
             {/* Mobile Navigation Links */}
             <div className="pt-2 pb-3 space-y-1 px-4">
               <Link
