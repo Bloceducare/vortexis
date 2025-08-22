@@ -132,6 +132,14 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
               >
                 <ul className="py-2 text-sm text-gray-700 list-none">
+                <li>
+                    <Link
+                      href="/home"
+                      className="block px-4 py-2 hover:bg-gray-100"
+                    >
+                      View Hackathons
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       href="/profile/detail"

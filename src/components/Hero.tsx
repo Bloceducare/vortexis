@@ -144,9 +144,10 @@ export const Hero: React.FC = () => {
               font-semibold
               hover:bg-[#5048D9] transition-colors duration-200
               shadow-lg hover:shadow-xl
+              cursor-pointer
             "
           >
-            <Link href="/auth/signin/participant">For Participants</Link>
+            <Link href="/auth/login/participant">For Participants</Link>
           </Button>
           <Button
             variant="outline"
@@ -163,9 +164,10 @@ export const Hero: React.FC = () => {
               hover:bg-[#605DEC] hover:text-white 
               transition-all duration-200
               shadow-lg hover:shadow-xl
+              cursor-pointer
             "
           >
-            <Link href="/auth/signin/participant">For Organizers</Link>
+            <Link href="/auth/login/participant">For Organizers</Link>
           </Button>
         </div>
       </div>

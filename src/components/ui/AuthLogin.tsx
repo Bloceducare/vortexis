@@ -103,7 +103,8 @@ function AuthLogin({ type }: AuthLoginProps) {
         setToken(result.access_token, daysInSeconds);
         setUser(result.user);
       }
-      router.push("/home");
+      // router.push("/home");
+      window.location.href="/home"
 
       reset();
     } catch (error) {

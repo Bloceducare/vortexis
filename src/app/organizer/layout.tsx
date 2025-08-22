@@ -14,6 +14,8 @@ import Dash from '@/public/assets/icon/material-symbols_dashboard.svg';
 import Header from '@/components/layouts/Header';
 import useOrganizer from '@/hooks/useOrganizers';
 import { useHackathonStore } from '@/store/useHackathonStore';
+import { SignOutConfirmationModal } from '@/components/signOutModal';
+import { useAuthStore } from '@/store/useAuthStore';
 
 interface OrganizerLayoutProps {
   children: React.ReactNode;
@@ -31,10 +33,21 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [logout, setLogout] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { getHackathons } = useOrganizer();
   const setHackathons = useHackathonStore(state => state.setHackathons);
+  const clearToken = useAuthStore((state) => state.clearToken);
+  const OpenModal = () => {
+    setLogout(true)
+  }
+
+  const confirmLogout = () => {
+    clearToken()
+    window.location.href = "/"
+  }
+
 
   const { data } = getHackathons();
 
@@ -222,12 +235,21 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
             <Settings size={20} />
             <span>Settings</span>
           </Link>
-          <button className="flex items-center gap-3 text-red-500">
+          <button className="flex items-center gap-3 text-red-500" onClick={OpenModal}>
             <LogOutIcon size={20} />
             <span>Sign Out</span>
           </button>
         </div>
       </motion.aside>
+
+      {logout && (
+        <SignOutConfirmationModal 
+        onClose={() => setLogout(false)}
+        onConfirm={confirmLogout}
+        isOpen
+        />
+
+      )}
 
       {/* Main content */}
       <div

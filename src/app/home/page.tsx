@@ -43,14 +43,22 @@ function Home() {
     setActiveHackathon(hackathon_id); 
     registerMutation.mutate(hackathon_id, {
       onSuccess: () => {
-        setModal({ open: true, type: "success", message: "You have successfully registered!" });
+        setModal({
+          open: true,
+          type: "success",
+          message: "You have successfully registered!"
+        });
       },
-      onError: () => {
-        setModal({ open: true, type: "error", message: "Something went wrong. Please try again." });
+      onError: (error: any) => {
+        setModal({
+          open: true,
+          type: "error",
+          message: error?.message || "Something went wrong. Please try again."
+        });
       }
     });
   };
-
+  
   const filteredHackathons = useMemo(() => {
     const now = new Date();
     let filteredData = hackathons.filter(
@@ -254,14 +262,22 @@ function Home() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        className="border rounded-xl p-4 shadow-sm bg-white cursor-pointer"
-                        onClick={() => router.push(`/hackathon/${h.id}`)}
+                        className="rounded-xl p-4 shadow-sm bg-white cursor-pointer"
                       >
-                        <img
-                          src={h.banner_image}
-                          alt={h.title}
-                          className="rounded-lg mb-3 h-40 w-full object-cover"
-                        />
+                        <div  onClick={() => router.push(`/hackathon/${h.id}`)}>
+                        {h.banner_image ? (
+                              h.banner_image.trim() !== "" ? (
+                                <img
+                                  src={h.banner_image}
+                                  alt={h.title}
+                                  className="rounded-lg mb-3 h-40 w-full object-cover"
+                                />
+                              ) : (
+                                <div className="rounded-lg mb-3 h-40 w-full object-cover bg-gray-200" />
+                              )
+                            ) : (
+                              <div className="rounded-lg mb-3 h-40 w-full object-cover bg-gray-200" />
+                            )}
                         <h2 className="text-lg font-bold">{h.title}</h2>
                         <div className="flex items-center gap-2 mt-2">
                           <span className="border px-3 py-1 rounded-full text-sm">
@@ -289,6 +305,7 @@ function Home() {
                         <p className="text-gray-500 text-sm">
                           View details
                         </p>
+                        </div>
                         {(isUpcoming || isActive) && (
                           <button
                             onClick={() => Onregister(h.id)}

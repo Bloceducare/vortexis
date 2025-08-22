@@ -10,18 +10,11 @@ import {
   ChevronsUpDown,
   LogOutIcon,
   Settings,
-  ChevronRight,
-  ChevronDown,
-  File,
 } from "lucide-react";
 import Header from "@/components/layouts/Header";
 import { Nunito, Nunito_Sans } from "next/font/google";
 import { useAuthStore } from "@/store/useAuthStore";
-
-// Import icons for judges
-import Community from "@/public/assets/icon/community.svg";
 import Resourcess from "@/public/assets/icon/resource.svg";
-import Submit from "@/public/assets/icon/iconoir_submit-document.svg";
 import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
 import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";

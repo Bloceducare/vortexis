@@ -11,7 +11,7 @@ interface HackathonCardProps {
 
 export function HackathonCard({ title, status, progress, daysLeft }: HackathonCardProps) {
   return (
-    <Card className="transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+    <Card className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1">
       {/* <CardContent className="p-6"> */}
         <div className="space-y-4">
           <div>
