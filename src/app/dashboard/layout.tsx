@@ -52,7 +52,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
 
   const selectedHackathon = useMemo(() => {
     const segments = pathname.split('/');
-    const index = segments.indexOf('organizer');
+    const index = segments.indexOf('dashboard');
     return segments[index + 1] || '';
   }, [pathname]);
 
@@ -62,11 +62,11 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const handleSelect = (id: string | undefined) => {
     if (!id) return;
     const segments = pathname.split('/');
-    const index = segments.indexOf('organizer');
+    const index = segments.indexOf('dashboard');
     const currentSubpath = segments.length > index + 2 ? segments[index + 2] : '';
     const newPath = currentSubpath
-      ? `/organizer/${id}/${currentSubpath}`
-      : `/organizer/${id}/hackathon`;
+      ? `/dashboard/${id}/${currentSubpath}`
+      : `/dashboard/${id}/hackathon`;
 
     if (newPath !== pathname) {
       router.push(newPath);
@@ -141,7 +141,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
 
         <nav className="flex flex-col gap-2 mt-4 px-6">
           <Link
-            href="/organizer"
+            href="/dashboard"
             className={`mb-2 flex gap-4 items-center py-4 pl-2 pr-4 hover:text-gray-900 ${
               pathname === '/dashboard'
                 ? 'text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]'
@@ -188,10 +188,10 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
                     <div className="p-4 text-center text-sm text-gray-600">
                       <p className="text-[#a09393]">No hackathon created</p>
                       <a
-                        href="/organizer/create-hackathon"
+                        href="/home"
                         className="inline-block mt-3 px-1 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded text-sm"
                       >
-                        + Create new hackathon
+                        Join hackathon
                       </a>
                     </div>
                   )}
@@ -204,7 +204,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
           {selectedHackathon && (
             <div>
               {navLinks.map((link, index) => {
-                const fullPath = `/organizer/${selectedHackathon}/${link.path}`;
+                const fullPath = `/dashboard/${selectedHackathon}/${link.path}`;
                 const isActive = pathname === fullPath || pathname?.includes(link.path);
     
                 return (

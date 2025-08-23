@@ -21,7 +21,7 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
   
     try {
       await inviteJudgesMutation.mutateAsync({
-        email: emails,
+        emails: emails,
         hackathon_id,
       });
   
@@ -31,7 +31,6 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
     } catch (error: any) {
       const apiError = error?.response?.email?.[0] || error?.message || 'Something went wrong.';
       setErrorMessage(apiError);
-
     }
   };
   
