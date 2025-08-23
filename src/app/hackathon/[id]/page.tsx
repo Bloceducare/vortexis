@@ -140,7 +140,7 @@ function Hack() {
       <FileText className="w-6 h-6 text-blue-600" />
       Overview
     </h1>
-    <HtmlContent html={data.description} />
+    <HtmlContent html={data?.description} />
   </div>
 
   <div className="mt-10">
@@ -152,7 +152,7 @@ function Hack() {
   <div className="space-y-4">
     <div className="flex items-start gap-3">
       <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
-      <HtmlContent html={data?.rules} />
+      <HtmlContent html={JSON.parse(data?.rules).join("")} />
     </div>
 
     <div className="flex items-start gap-3">
@@ -163,9 +163,6 @@ function Hack() {
     </div>
   </div>
 </div>
-
-  
-
   <div className="mt-10">
     <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
       <Users className="w-6 h-6 text-purple-600" />
@@ -173,7 +170,7 @@ function Hack() {
     </h2>
 
     <div className="w-full">
-      <HtmlContent html={data?.prizes} />
+    <HtmlContent html={JSON.parse(data?.prizes).join("")} />
     </div>
 
     {/* Team Sizes */}

@@ -87,11 +87,11 @@ export default function useOrganizer() {
   });
 
   const inviteJudgesMutation = useMutation({
-    mutationFn: async ({ hackathon_id, email }: { hackathon_id: string; email: string[] }) => {
+    mutationFn: async ({ hackathon_id, emails }: { hackathon_id: string; emails: string[] }) => {
       const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/invite-judge/`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ emails }),
       });
     
       const data = await res.json();
