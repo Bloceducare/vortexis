@@ -92,7 +92,7 @@ function AuthLogin({ type }: AuthLoginProps) {
 
       if (!response.ok) {
         console.log("Error response:", result);
-        toast.error(result.message || "Login failed. Please try again");
+        toast.error(result.detail || "Login failed. Please try again");
         return;
       }
 
