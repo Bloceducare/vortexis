@@ -25,12 +25,15 @@ export default function JudgeInvitationPage() {
     setIsLoading(true);
     setStatus("idle");
 
+    const bearerToken = localStorage.getItem("access_token");
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/hackathon/accept-judge-invitation/`,
         {
           method: "POST",
           headers: {
+            Authorization: `Bearer ${bearerToken}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ token }),

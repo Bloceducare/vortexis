@@ -48,8 +48,7 @@ function AuthLogin({ type }: AuthLoginProps) {
   });
   const setUser = useUserStore((state) => state.setUser);
   const setToken = useAuthStore((state) => state.setToken);
-  const daysInSeconds = 3 * 24 * 60 * 60; 
-
+  const daysInSeconds = 3 * 24 * 60 * 60;
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -97,6 +96,7 @@ function AuthLogin({ type }: AuthLoginProps) {
       }
 
       toast.success("Login successful! Redirecting...");
+      localStorage.setItem("access_token", result.access_token);
       console.log("Login successful:", result);
 
       if (result.access_token) {
@@ -104,7 +104,7 @@ function AuthLogin({ type }: AuthLoginProps) {
         setUser(result.user);
       }
       // router.push("/home");
-      window.location.href="/home"
+      window.location.href = "/home";
 
       reset();
     } catch (error) {

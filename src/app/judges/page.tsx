@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useJudgedHackathons } from "@/hooks/useJudges";
 
 interface SubmissionStatusItem {
   number: number;
@@ -8,11 +10,12 @@ interface SubmissionStatusItem {
 }
 
 interface HackathonJudged {
-  name: string;
-  status: string;
-  total_submission: string;
-  due_date: string;
-  reviews_completed: string;
+  id: string;
+  title: string;
+  description: string;
+  end_date: string;
+  status?: string;
+  // reviews_completed: string;
 }
 
 const SubmissionStatus: SubmissionStatusItem[] = [
@@ -21,31 +24,57 @@ const SubmissionStatus: SubmissionStatusItem[] = [
   { number: 12, status: "submission pending" },
 ];
 
-const hackathonsJudged: HackathonJudged[] = [
-  {
-    name: "Arbitrum hackers",
-    status: "active",
-    total_submission: "12",
-    due_date: "5/15/2025",
-    reviews_completed: "5/12",
-  },
-  {
-    name: "Stellar hackquest",
-    status: "active",
-    total_submission: "12",
-    due_date: "5/15/2025",
-    reviews_completed: "5/12",
-  },
-  {
-    name: "Stlus hackathon",
-    status: "active",
-    total_submission: "12",
-    due_date: "5/15/2025",
-    reviews_completed: "5/12",
-  },
-];
+// const hackathonsJudged: HackathonJudged[] = [
+//   {
+//     name: "Arbitrum hackers",
+//     status: "active",
+//     total_submission: "12",
+//     due_date: "5/15/2025",
+//     reviews_completed: "5/12",
+//   },
+//   {
+//     name: "Stellar hackquest",
+//     status: "active",
+//     total_submission: "12",
+//     due_date: "5/15/2025",
+//     reviews_completed: "5/12",
+//   },
+//   {
+//     name: "Stlus hackathon",
+//     status: "active",
+//     total_submission: "12",
+//     due_date: "5/15/2025",
+//     reviews_completed: "5/12",
+//   },
+// ];
 
 function Page() {
+  // const [hackathons, setHackathons] = useState<HackathonJudged[]>([]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const bearerToken = localStorage.getItem("access_token");
+  //     if (!bearerToken) return;
+
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: `Bearer ${bearerToken}`,
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     setHackathons(data);
+  //     console.log(data);
+  //   };
+
+  //   fetchData();
+  // }, []);
+
+  const { hackathons, loading, error } = useJudgedHackathons();
+
   return (
     <div>
       <motion.div
@@ -128,9 +157,9 @@ function Page() {
           Hackathons You're Judging
         </h2>
         <div className="flex flex-col gap-6 py-4">
-          {hackathonsJudged.map((judge, i) => (
+          {hackathons.map((hackathon, i) => (
             <motion.div
-              key={`${judge.name}-${i}`}
+              key={`${hackathon.id}`}
               className="shadow-md border border-[#E4E4E4] rounded-lg bg-white py-8 md:px-4 px-2 space-y-1.5"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -142,11 +171,9 @@ function Page() {
               whileHover={{ scale: 1.01 }}
             >
               <div className="flex justify-between">
-                <h2 className="text-xl font-semibold">
-                   {judge.name}
-                </h2>
+                <h2 className="text-xl font-semibold">{hackathon.title}</h2>
                 <Link
-                  href={`/judges/submission-review/${i}`}
+                  href={`/judges/dashboard/${hackathon.id}`}
                   className="hidden md:block"
                 >
                   <p className="bg-[#605DEC] text-sm cursor-pointer rounded-md text-center px-2 py-1 text-white">
@@ -156,24 +183,24 @@ function Page() {
               </div>
               <p className="bg-[#164E04] pb-0.5 rounded-full text-white w-15 h-5 flex items-center justify-center gap-1">
                 <span className="w-2 h-2 bg-white rounded-full mt-0.5 inline-block"></span>
-                <span className="text-xs">{judge.status}</span>
+                <span className="text-xs">{hackathon.status}</span>
               </p>
               <p>
                 Total submission:{" "}
-                <span className="text-[#605DEC]">{judge.total_submission}</span>
+                <span className="text-[#605DEC]">{hackathon.description}</span>
               </p>
               <p>
                 Due date:{" "}
-                <span className="text-[#AC0000]">{judge.due_date}</span>
+                <span className="text-[#AC0000]">{hackathon.end_date}</span>
               </p>
-              <p>
+              {/* <p>
                 Reviews completed{" "}
                 <span className="text-[#00AC4F]">
                   {judge.reviews_completed}
                 </span>
-              </p>
+              </p> */}
               <Link
-                href={`/judges/submission-review/${i}`}
+                href={`/judges/dashboard/${hackathon.id}`}
                 className="md:hidden block w-3/4 mx-auto mt-3"
               >
                 <p className="bg-[#605DEC] text-sm cursor-pointer rounded-md text-center px-2 py-1 text-white">
