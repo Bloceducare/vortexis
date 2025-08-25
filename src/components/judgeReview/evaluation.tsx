@@ -10,27 +10,27 @@ const initialEvaluations: EvaluationItem[] = [
   {
     section: "Innovation",
     description: "Originality and creativity of the solution",
-    grade: 5,
+    grade: 0,
   },
   {
     section: "Technical Complexity",
     description: "Implementation difficulty and technical sophistication",
-    grade: 5,
+    grade: 0,
   },
   {
     section: "User Experience",
     description: "Ease of use, intuitiveness, and design quality",
-    grade: 5,
+    grade: 0,
   },
   {
     section: "Impact",
     description: "Potential impact and practical applicability",
-    grade: 5,
+    grade: 0,
   },
   {
     section: "Presentation",
     description: "Quality of documentation and presentation",
-    grade: 5,
+    grade: 0,
   },
 ];
 
