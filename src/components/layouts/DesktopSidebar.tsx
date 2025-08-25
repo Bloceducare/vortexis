@@ -275,7 +275,7 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
         isOpen={showSignOutModal}
         onClose={() => setShowSignOutModal(false)}
         onConfirm={handleLogout}
-      />
+      />   
     </motion.aside>
   );
 };

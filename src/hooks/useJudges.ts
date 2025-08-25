@@ -13,11 +13,13 @@ interface UseJudgedHackathonsReturn {
   hackathons: HackathonJudged[];
   loading: boolean;
   error: string | null;
+  unauthorized: boolean;
 }
 
 export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
   const [hackathons, setHackathons] = useState<HackathonJudged[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [unauthorized, setUnauthorized] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -41,6 +43,10 @@ export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
         }
       );
 
+      if (response.status === 403) {
+        console.log("User is not authorized");
+        setUnauthorized(true);
+      }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -64,5 +70,6 @@ export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
     hackathons,
     loading,
     error,
+    unauthorized,
   };
 };
