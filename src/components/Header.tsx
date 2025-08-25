@@ -282,7 +282,7 @@ export const Header: React.FC = () => {
                 Organizer
               </Link>
               <Link
-                href="/judge"
+                href="/judges"
                 className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
                 onClick={closeMenu}
               >

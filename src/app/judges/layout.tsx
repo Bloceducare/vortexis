@@ -19,6 +19,7 @@ import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
 import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
 import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
+import { useJudgedHackathons } from "@/hooks/useJudges";
 
 // const nunito = Nunito({
 //   variable: "--font-nunito",
@@ -84,32 +85,34 @@ export default function JudgesLayout({
   const clearToken = useAuthStore((state) => state.clearToken);
 
   // Mock hackathons data
-  const hackathons: Hackathon[] = [
-    {
-      id: 1,
-      name: "Arbitrum hackers",
-      status: "active",
-      total_submission: "12",
-      due_date: "5/15/2025",
-      reviews_completed: "5/12",
-    },
-    {
-      id: 2,
-      name: "Stellar hackquest",
-      status: "active",
-      total_submission: "12",
-      due_date: "5/15/2025",
-      reviews_completed: "5/12",
-    },
-    {
-      id: 3,
-      name: "Stylus hackathon",
-      status: "active",
-      total_submission: "12",
-      due_date: "5/15/2025",
-      reviews_completed: "5/12",
-    },
-  ];
+  // const hackathons: Hackathon[] = [
+  //   {
+  //     id: 1,
+  //     name: "Arbitrum hackers",
+  //     status: "active",
+  //     total_submission: "12",
+  //     due_date: "5/15/2025",
+  //     reviews_completed: "5/12",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Stellar hackquest",
+  //     status: "active",
+  //     total_submission: "12",
+  //     due_date: "5/15/2025",
+  //     reviews_completed: "5/12",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Stylus hackathon",
+  //     status: "active",
+  //     total_submission: "12",
+  //     due_date: "5/15/2025",
+  //     reviews_completed: "5/12",
+  //   },
+  // ];
+
+  const { hackathons, loading, error } = useJudgedHackathons();
 
   // Get selected hackathon from URL
   const selectedHackathon = useMemo(() => {
@@ -118,9 +121,10 @@ export default function JudgesLayout({
     return segments[index + 1] || "";
   }, [pathname]);
 
+  // const selectedHackathonName =hackathons.map
   const selectedHackathonName =
-    hackathons?.find((h) => String(h.id) === String(selectedHackathon))?.name ||
-    "Select Hackathon";
+    hackathons?.find((h) => String(h.id) === String(selectedHackathon))
+      ?.title || "Select Hackathon";
 
   const handleHackathonSelect = (id: string | undefined) => {
     if (!id) return;
@@ -162,11 +166,8 @@ export default function JudgesLayout({
       setSidebarExpanded(!sidebarExpanded);
     }
   };
-  // ${nunito.variable} ${nunitoSan.variable}
   return (
-    <div
-      className={`flex min-h-screen bg-[#f5f5f5] relative  antialiased`}
-    >
+    <div className={`flex min-h-screen bg-[#f5f5f5] relative  antialiased`}>
       {/* Mobile overlay */}
       {isMobile && mobileMenuOpen && (
         <div
@@ -263,7 +264,7 @@ export default function JudgesLayout({
                           onClick={() => handleHackathonSelect(String(h.id))}
                           className="p-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
                         >
-                          {h.name}
+                          {h.title}
                         </li>
                       ))
                     ) : (
