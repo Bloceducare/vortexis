@@ -3,6 +3,9 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useJudgedHackathons } from "@/hooks/useJudges";
+import { useHackathon } from "@/hooks/useHackathonDetails";
+import Spinner from "@/components/spinner";
+import { Calendar, Code, Trophy } from "lucide-react";
 
 interface SubmissionStatusItem {
   number: number;
@@ -24,56 +27,44 @@ const SubmissionStatus: SubmissionStatusItem[] = [
   { number: 12, status: "submission pending" },
 ];
 
-// const hackathonsJudged: HackathonJudged[] = [
-//   {
-//     name: "Arbitrum hackers",
-//     status: "active",
-//     total_submission: "12",
-//     due_date: "5/15/2025",
-//     reviews_completed: "5/12",
-//   },
-//   {
-//     name: "Stellar hackquest",
-//     status: "active",
-//     total_submission: "12",
-//     due_date: "5/15/2025",
-//     reviews_completed: "5/12",
-//   },
-//   {
-//     name: "Stlus hackathon",
-//     status: "active",
-//     total_submission: "12",
-//     due_date: "5/15/2025",
-//     reviews_completed: "5/12",
-//   },
-// ];
-
 function Page() {
-  // const [hackathons, setHackathons] = useState<HackathonJudged[]>([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const bearerToken = localStorage.getItem("access_token");
-  //     if (!bearerToken) return;
-
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${bearerToken}`,
-  //         },
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     setHackathons(data);
-  //     console.log(data);
-  //   };
-
-  //   fetchData();
-  // }, []);
-
   const { hackathons, loading, error } = useJudgedHackathons();
+
+  if (hackathons.length === 0 && !loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-96 px-6 py-12">
+        <div className="relative mb-6">
+          <div className="w-24 h-24 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full flex items-center justify-center">
+            <div className="relative">
+              <Trophy className="w-10 h-10 text-blue-500" />
+              <Code className="w-6 h-6 text-purple-500 absolute -bottom-1 -right-1" />
+              <Calendar className="w-5 h-5 text-gray-400 absolute -top-1 -left-1" />
+            </div>
+          </div>
+          <div className="absolute -top-2 -right-2 w-3 h-3 bg-blue-200 rounded-full animate-pulse"></div>
+          <div className="absolute -bottom-2 -left-2 w-2 h-2 bg-purple-200 rounded-full animate-pulse delay-300"></div>
+        </div>
+
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          No Hackathons Found
+        </h3>
+
+        <p className="text-gray-600 text-center max-w-md mb-6 leading-relaxed">
+          There are currently no hackathons to display. Check back later or
+          explore other sections to discover exciting coding competitions.
+        </p>
+
+        <Link href="/">
+          <p className="px-6 py-2.5 w-full m-auto bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Return to DashBoard{" "}
+          </p>
+        </Link>
+      </div>
+    );
+  }
+
+  if (loading) return <Spinner />;
+  // const { hackathon } = useHackathon("22");
 
   return (
     <div>
@@ -186,7 +177,7 @@ function Page() {
                 <span className="text-xs">{hackathon.status}</span>
               </p>
               <p>
-                Total submission:{" "}
+                Title:{" "}
                 <span className="text-[#605DEC]">{hackathon.description}</span>
               </p>
               <p>

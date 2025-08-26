@@ -140,6 +140,7 @@ export default function JudgesLayout({
 
   const handleLogout = () => {
     clearToken();
+    localStorage.removeItem("access_token");
     router.push("/");
   };
 
