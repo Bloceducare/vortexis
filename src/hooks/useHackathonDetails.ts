@@ -21,7 +21,6 @@ interface UseHackathonReturn {
 }
 
 export const useHackathon = (
-  hackathonId: string | undefined,
   options: UseHackathonOptions = {}
 ): UseHackathonReturn => {
   const { enabled = true } = options;
@@ -30,11 +29,6 @@ export const useHackathon = (
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
-    if (!hackathonId) {
-      setError("Hackathon ID is required");
-      return;
-    }
-
     try {
       setLoading(true);
       setError(null);
@@ -45,8 +39,9 @@ export const useHackathon = (
         return;
       }
 
+      // /hackathon/{hackathon_id}/submissions/
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons/`,
         {
           method: "GET",
           headers: {
@@ -79,7 +74,7 @@ export const useHackathon = (
 
       const data = await response.json();
       setHackathon(data);
-      console.log("Hackathon fetched successfully:", data);
+      console.log("Hackathon Data successfully fetched:", data);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -93,10 +88,10 @@ export const useHackathon = (
   };
 
   useEffect(() => {
-    if (enabled && hackathonId) {
+    if (enabled) {
       fetchData();
     }
-  }, [hackathonId, enabled]);
+  }, [enabled]);
 
   return {
     hackathon,

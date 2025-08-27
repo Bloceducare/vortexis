@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const avatarColor = bgColors[colorIndex];
 
   return (
-    <header className="border-gray-200 md:max-w-full  sm:max-w-64 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
+    <header className="border-gray-200 md:max-w-full sm:max-w-64 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
       <div className="flex h-full items-center justify-between md:pr-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
@@ -132,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
               >
                 <ul className="py-2 text-sm text-gray-700 list-none">
-                <li>
+                  <li>
                     <Link
                       href="/home"
                       className="block px-4 py-2 hover:bg-gray-100"

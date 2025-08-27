@@ -80,10 +80,18 @@ export default function RouteGuard({
 
       // If 403, user doesn't have judge role
       if (response.status === 403) {
+        setShowUnauthorized(true);
         return false;
       }
 
-      // If 200 or other success status, user has judge role
+      // if token has expired
+      if (response.status === 401) {
+        localStorage.clear();
+        router.push("/auth/login/participant");
+
+        return false;
+      }
+
       return response.ok;
     } catch (error) {
       console.error("Error checking judge role:", error);
