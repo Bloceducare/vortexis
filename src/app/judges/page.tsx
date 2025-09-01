@@ -6,6 +6,7 @@ import { useJudgedHackathons } from "@/hooks/useJudges";
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import Spinner from "@/components/spinner";
 import { Calendar, Code, Trophy } from "lucide-react";
+import useUser from "@/hooks/useUserProfile";
 
 interface SubmissionStatusItem {
   number: number;
@@ -28,6 +29,16 @@ const SubmissionStatus: SubmissionStatusItem[] = [
 ];
 
 function Page() {
+  const { getUserDetail } = useUser();
+  const { data } = getUserDetail();
+  const [judgename, setJudgename] = useState<{ username: string } | null>(null);
+
+  useEffect(() => {
+    console.log(data);
+    console.log(data?.user);
+    setJudgename(data?.user);
+  }, [data]);
+
   const { hackathons, loading, error } = useJudgedHackathons();
 
   if (hackathons.length === 0 && !loading) {
@@ -79,7 +90,7 @@ function Page() {
         }}
       >
         <h1 className="font-bold text-2xl text-[#605DEC]">
-          Welcome, Judge Sharon!
+          Welcome, {judgename?.username}!
         </h1>
         <p className="text-sm mt-4">
           Your judging dashboard provides an overview of your assigned

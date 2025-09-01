@@ -20,16 +20,9 @@ import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
 import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import { useJudgedHackathons } from "@/hooks/useJudges";
+import { useHackathon } from "@/hooks/useHackathonDetails";
 
-// const nunito = Nunito({
-//   variable: "--font-nunito",
-//   subsets: ["latin"],
-// });
 
-// const nunitoSan = Nunito_Sans({
-//   variable: "--font-nunito-sans",
-//   subsets: ["latin"],
-// });
 
 interface Hackathon {
   id: number;
@@ -113,6 +106,7 @@ export default function JudgesLayout({
   // ];
 
   const { hackathons, loading, error } = useJudgedHackathons();
+  const { hackathon } = useHackathon();
 
   // Get selected hackathon from URL
   const selectedHackathon = useMemo(() => {
@@ -128,7 +122,6 @@ export default function JudgesLayout({
 
   const handleHackathonSelect = (id: string | undefined) => {
     if (!id) return;
-    // const newPath = `/judges/submission-review/${id}`;
     const newPath = `/judges/dashboard/${id}`;
 
     if (newPath !== pathname) {
