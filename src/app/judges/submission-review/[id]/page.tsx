@@ -30,7 +30,7 @@ export default function SubmissionReviewPage() {
   if (!currentSubmission || !hackathonDetails) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600">No submission found.</p>
+        {/* <p className="text-gray-600">No submission found.</p> */}
       </div>
     );
   }
