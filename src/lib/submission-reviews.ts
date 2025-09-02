@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface ReviewData {
   submission: number;
@@ -41,6 +42,7 @@ interface UseReviewSubmissionReturn {
 export function useReviewSubmission(): UseReviewSubmissionReturn {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const submitReview = async (
     hackathonId: string,
@@ -66,6 +68,16 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
 
       if (response.status === 400) {
         setError("Reviewed has been made");
+        toast.error(
+          "You have already submitted a review for this submission.",
+          {
+            autoClose: 5000,
+          }
+        );
+        setTimeout(() => {
+          router.push("/judges");
+        }, 5000);
+        return null;
       }
 
       if (!response.ok) {
@@ -78,17 +90,20 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
       const result: ReviewResponse = await response.json();
 
       toast.success(
-        "Review submitted successfully! Your evaluation has been saved."
+        "Review submitted successfully! Your evaluation has been saved.",
+        { autoClose: 5000 }
       );
+
+      setTimeout(() => {
+        router.push("/judges");
+      }, 5000);
 
       return result;
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to submit review";
       setError(errorMessage);
-
       toast.error(`Submission failed: ${errorMessage}`);
-
       return null;
     } finally {
       setIsSubmitting(false);
