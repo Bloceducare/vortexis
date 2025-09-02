@@ -45,7 +45,7 @@ export default function JudgeInvitationPage() {
       } else {
         const errorData = await response.json();
         setStatus("error");
-        setErrorMessage(errorData.detail || "Failed to accept invitation");
+        setErrorMessage(errorData.error);
       }
     } catch (error) {
       setStatus("error");

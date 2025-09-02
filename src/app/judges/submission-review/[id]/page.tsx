@@ -1,18 +1,48 @@
+"use client";
+
+import { useParams } from "next/navigation";
+import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import Tabscontent from "@/components/Tabscontent";
+import JudgeError from "@/components/judgeReview/JudgeError";
 
 export default function SubmissionReviewPage() {
+  const params = useParams();
+  const submissionId = params.id as string;
+
+  const { hackathonDetails, loading, error, currentSubmission } =
+    useSubmissionReview(submissionId);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#605DEC]"></div>
+          <p className="text-gray-600">Loading submission details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <JudgeError error={error} />;
+  }
+
   return (
     <div>
       <div>
         <h1 className="text-2xl mb-2 font-semibold text-[#605DEC]">
           Submission Review
         </h1>
-        <p>Reviewing submissions</p>
+        <p>Reviewing submissions for {hackathonDetails?.title}</p>
       </div>
 
       <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
         <div className="md:w-[1114px] w-full px-3 py-8">
-          <Tabscontent />
+          {currentSubmission ? (
+            <Tabscontent submission={currentSubmission} />
+          ) : (
+            <p className="text-gray-600">No submission data available.</p>
+          )}{" "}
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import OtherJudges from "./judgeReview/overview";
+import { Submission } from "@/hooks/useHackathonDetails";
 
 const tabs = [
   {
@@ -31,7 +32,15 @@ const tabs = [
   },
 ];
 
-function Tabscontent() {
+interface TabscontentProps {
+  submission: Submission;
+}
+
+function Tabscontent({
+  submission: currentSubmission,
+}: {
+  submission: Submission;
+}) {
   const [activeTab, setActiveTab] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -115,9 +124,9 @@ function Tabscontent() {
 
       {/* Tab Content */}
       <div>
-        {activeTab === 1 && <Vote />}
-        {activeTab === 2 && <Deliverables />}
-        {activeTab === 3 && <Members />}
+        {activeTab === 1 && <Vote items={currentSubmission} />}
+        {activeTab === 2 && <Deliverables items={currentSubmission} />}
+        {activeTab === 3 && <Members items={currentSubmission} />}
         {activeTab === 4 && <Evaluation />}
         {activeTab === 5 && <OtherJudges />}
       </div>

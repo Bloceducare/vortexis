@@ -1,16 +1,24 @@
-function Deliverables() {
+import { Submission } from "@/hooks/useHackathonDetails";
+
+function Deliverables({ items }: { items: Submission }) {
   return (
-    <form className="space-y-6 md:w-[850px]">
+    <div className="space-y-6 md:w-[850px]">
       <p className="w-full p-1.75 text-[#8F9098] rounded-lg border border-[#C5C6CC]">
-        GitHub repository URL
-      </p>
+        <span className="font-bold mr-2">GitHub URL:</span>{" "}
+        <a href={items?.project?.github_url} className="text-blue-400">
+          {items?.project?.github_url}
+        </a>
+      </p>{" "}
       <p className="w-full p-1.75 text-[#8F9098] rounded-lg border border-[#C5C6CC]">
-        Demo video URL
-      </p>
-      <p className="w-full p-1.75 text-[#8F9098] rounded-lg border border-[#C5C6CC]">
-        Presentation slides URL
-      </p>
-    </form>
+        <span className="font-bold mr-2">Live Link:</span>{" "}
+        <a href={items?.project?.live_link} className="text-blue-400">
+          {items?.project?.live_link}
+        </a>
+      </p>{" "}
+      {/* <a className="w-full p-1.75 text-[#8F9098] rounded-lg border border-[#C5C6CC]">
+        {items?.presentationSlidesUrl}
+      </a> */}
+    </div>
   );
 }
 

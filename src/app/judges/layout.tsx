@@ -106,7 +106,6 @@ export default function JudgesLayout({
   // ];
 
   const { hackathons, loading, error } = useJudgedHackathons();
-  const { hackathon } = useHackathon();
 
   // Get selected hackathon from URL
   const selectedHackathon = useMemo(() => {
