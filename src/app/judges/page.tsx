@@ -3,7 +3,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useJudgedHackathons } from "@/hooks/useJudges";
-import { useHackathon } from "@/hooks/useHackathonDetails";
 import Spinner from "@/components/spinner";
 import { Calendar, Code, Trophy } from "lucide-react";
 import useUser from "@/hooks/useUserProfile";
@@ -75,7 +74,6 @@ function Page() {
   }
 
   if (loading) return <Spinner />;
-  // const { hackathon } = useHackathon("22");
 
   return (
     <div>

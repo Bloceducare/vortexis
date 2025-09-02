@@ -1,3 +1,4 @@
+import { Submission } from "@/hooks/useHackathonDetails";
 import Louise from "@/public/assets/icon/louise.svg";
 import Image from "next/image";
 
@@ -24,7 +25,7 @@ const members = [
   },
 ];
 
-function Members() {
+function Members({ items }: { items: Submission }) {
   return (
     <div>
       <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
