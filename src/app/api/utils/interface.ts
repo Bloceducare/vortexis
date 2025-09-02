@@ -97,3 +97,12 @@ export interface User {
   date_joined: string;
   last_login: string;
 }
+
+
+export interface Team {
+  id?: number;
+  name: string;
+  members: string[];
+  hackathon_id: string;
+}
+  

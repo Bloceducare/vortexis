@@ -23,7 +23,7 @@ interface OrganizerLayoutProps {
 
 const navLinks = [
   { label: 'Manage', path: 'hackathon', icon: Trophy },
-  { label: 'Participants', path: 'participants', icon: Team },
+  { label: 'Team', path: 'team', icon: Team },
   { label: 'Submissions', path: 'submission', icon: Submit },
   { label: 'Judges', path: 'judges', icon: Judges },
 ];
