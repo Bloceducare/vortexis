@@ -38,8 +38,10 @@ interface TabscontentProps {
 
 function Tabscontent({
   submission: currentSubmission,
+  hackathonId,
 }: {
   submission: Submission;
+  hackathonId: string;
 }) {
   const [activeTab, setActiveTab] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -127,7 +129,15 @@ function Tabscontent({
         {activeTab === 1 && <Vote items={currentSubmission} />}
         {activeTab === 2 && <Deliverables items={currentSubmission} />}
         {activeTab === 3 && <Members items={currentSubmission} />}
-        {activeTab === 4 && <Evaluation />}
+        {activeTab === 4 && (
+          <Evaluation
+            hackathonId={hackathonId}
+            submissionId={currentSubmission.id}
+            onSubmissionComplete={() => {
+              console.log("Review submitted successfully!");
+            }}
+          />
+        )}
         {activeTab === 5 && <OtherJudges />}
       </div>
     </div>
@@ -135,3 +145,8 @@ function Tabscontent({
 }
 
 export default Tabscontent;
+// hackathonId="hackathon-2024"
+//           submissionId={123}
+//           onSubmissionComplete={() => {
+//             console.log("Review submitted successfully!")
+//           }}

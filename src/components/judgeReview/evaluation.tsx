@@ -1,3 +1,8 @@
+"use client";
+
+import { useReviewSubmission } from "@/lib/submission-reviews";
+import type React from "react";
+
 import { useState } from "react";
 
 interface EvaluationItem {
@@ -63,14 +68,13 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
         />
       </div>
 
-      {/* Hidden range input */}
       <input
         type="range"
         min="0"
         max="10"
         step="0.5"
         value={value}
-        onChange={(e) => onChange(parseFloat(e.target.value))}
+        onChange={(e) => onChange(Number.parseFloat(e.target.value))}
         onMouseDown={() => setIsDragging(true)}
         onMouseUp={() => setIsDragging(false)}
         onTouchStart={() => setIsDragging(true)}
@@ -79,7 +83,6 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
         aria-label={label}
       />
 
-      {/* Grade markers */}
       <div className="flex justify-between text-xs text-gray-400 mt-3">
         {[0, 2.5, 5, 7.5, 10].map((mark) => (
           <div key={mark} className="flex flex-col items-center">
@@ -92,10 +95,21 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
   );
 };
 
-function Evaluation() {
+interface EvaluationProps {
+  hackathonId: string;
+  submissionId: number;
+  onSubmissionComplete?: () => void;
+}
+
+function Evaluation({
+  hackathonId,
+  submissionId,
+  onSubmissionComplete,
+}: EvaluationProps) {
   const [evaluations, setEvaluations] =
     useState<EvaluationItem[]>(initialEvaluations);
   const [comments, setComments] = useState("");
+  const { submitReview, isSubmitting, error } = useReviewSubmission();
 
   const handleGradeChange = (index: number, newGrade: number) => {
     const updatedEvaluations = [...evaluations];
@@ -114,28 +128,36 @@ function Evaluation() {
     return (getTotalScore() / evaluations.length).toFixed(1);
   };
 
-  const handleSaveAndNext = () => {
-    // Handle save logic here
-    console.log("Evaluations:", evaluations);
-    console.log("Comments:", comments);
-    console.log("Total Score:", getTotalScore());
-    console.log("Average Score:", getAverageScore());
+  const handleSaveAndNext = async () => {
+    const reviewData = {
+      submission: submissionId,
+      innovation_score: Math.round(evaluations[0].grade),
+      technical_score: Math.round(evaluations[1].grade),
+      user_experience_score: Math.round(evaluations[2].grade),
+      impact_score: Math.round(evaluations[3].grade),
+      presentation_score: Math.round(evaluations[4].grade),
+      overall_score: Math.round(getTotalScore() / evaluations.length),
+      review: comments.trim() || undefined,
+    };
+
+    const result = await submitReview(hackathonId, reviewData);
+
+    if (result && onSubmissionComplete) {
+      onSubmissionComplete();
+    }
   };
 
   const handleFlagForDiscussion = () => {
-    // Handle flag for discussion logic
     console.log("Flagged for discussion");
   };
 
   const handleDiscuss = () => {
-    // Handle discuss logic
     console.log("Opening discussion");
   };
 
   return (
     <div className="flex md:items-stretch">
       <div className="space-y-6 w-full">
-        {/* Score Summary */}
         <div className="bg-gray-50 p-4 rounded-lg border">
           <div className="flex justify-between items-center">
             <div>
@@ -209,6 +231,12 @@ function Evaluation() {
           </div>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row gap-3 justify-between">
           <button
             onClick={handleFlagForDiscussion}
@@ -227,9 +255,10 @@ function Evaluation() {
         <div className="text-center pt-4">
           <button
             onClick={handleSaveAndNext}
-            className="bg-[#605DEC] px-8 py-3 text-white rounded-md hover:bg-[#504ad1] transition-all duration-200 cursor-pointer font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+            disabled={isSubmitting}
+            className="bg-[#605DEC] px-8 py-3 text-white rounded-md hover:bg-[#504ad1] transition-all duration-200 cursor-pointer font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            Save & Next →
+            {isSubmitting ? "Submitting..." : "Save & Next →"}
           </button>
         </div>
       </div>
