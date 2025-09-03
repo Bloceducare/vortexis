@@ -1,11 +1,10 @@
 "use client";
 
 import JudgeError from "@/components/judgeReview/JudgeError";
-// import JudgeLoad from "@/components/judgeReview/JudgeLoad";
 
-import { useHackathon, type Hackathon } from "@/hooks/useHackathonDetails";
+import { useHackathon } from "@/hooks/useHackathonDetails";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function SubmissionsPage() {
   const { hackathons, selectedHackathon, loading, error, selectHackathon } =
@@ -25,7 +24,7 @@ export default function SubmissionsPage() {
     teamName: submission.team.name,
     // category: "General",
     submissionDate: submission.created_at.split("T")[0],
-    status: submission.approved ? "reviewed" : "pending",
+    status: submission.status,
     teamSize: submission.team.members?.length || 0,
     description: submission.project.description,
     hackathon: selectedHackathon?.title || "",
@@ -62,9 +61,16 @@ export default function SubmissionsPage() {
     // Example: router.push(`/submissions/${submissionId}/review`)
   };
 
-  // if (loading) {
-  //   return <JudgeLoad />;
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#605DEC]"></div>
+          <p className="text-gray-600">Loading submission details...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return <JudgeError error={error} />;

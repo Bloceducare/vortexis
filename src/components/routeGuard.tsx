@@ -1,43 +1,52 @@
 "use client";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, redirect } from "next/navigation";
 import AuthErrorPage from "./authError";
 import { useAuthStore } from "@/store/useAuthStore";
 
-const UnauthorizedPage = () => (
-  <div className="min-h-screen flex items-center justify-center bg-white">
-    <div className="flex flex-col items-center space-y-4 text-center">
-      <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-        <svg
-          className="w-8 h-8 text-red-600"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-          />
-        </svg>
-      </div>
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h1>
-        <p className="text-gray-600">
-          You don't have permission to access this page. Judge role required.
-        </p>
-        <button
-          onClick={() => window.history.back()}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Go Back
-        </button>
+const UnauthorizedPage = () => {
+  const router = useRouter();
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="flex flex-col items-center space-y-4 text-center">
+        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+          <svg
+            className="w-8 h-8 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Access Denied
+          </h1>
+          <p className="text-gray-600">
+            You don't have permission to access this page. Judge role required.
+          </p>
+          <button
+            // onClick={() => window.history.back()}
+            onClick={() => {
+              localStorage.clear();
+              router.push("/auth/login/participant");
+            }}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go Back
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default function RouteGuard({
   children,

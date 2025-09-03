@@ -24,6 +24,7 @@ export interface Submission {
   approved: boolean;
   created_at: string;
   updated_at: string;
+  status: string;
 }
 
 export interface Hackathon {

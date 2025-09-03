@@ -27,6 +27,14 @@ export default function SubmissionReviewPage() {
     return <JudgeError error={error} />;
   }
 
+  if (!currentSubmission || !hackathonDetails) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        {/* <p className="text-gray-600">No submission found.</p> */}
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>
@@ -38,11 +46,12 @@ export default function SubmissionReviewPage() {
 
       <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
         <div className="md:w-[1114px] w-full px-3 py-8">
-          {currentSubmission ? (
-            <Tabscontent submission={currentSubmission} />
-          ) : (
-            <p className="text-gray-600">No submission data available.</p>
-          )}{" "}
+          {
+            <Tabscontent
+              submission={currentSubmission}
+              hackathonId={hackathonDetails?.id.toString()}
+            />
+          }
         </div>
       </div>
     </div>

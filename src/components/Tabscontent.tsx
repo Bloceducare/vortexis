@@ -8,39 +8,26 @@ import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import OtherJudges from "./judgeReview/overview";
 import { Submission } from "@/hooks/useHackathonDetails";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Ensure styles are imported
 
 const tabs = [
-  {
-    name: "Project Details",
-    tab_no: 1,
-  },
-  {
-    name: "Deliverables",
-    tab_no: 2,
-  },
-  {
-    name: "Team Info",
-    tab_no: 3,
-  },
-  {
-    name: "Evaluation",
-    tab_no: 4,
-  },
-  {
-    name: "reviews",
-    tab_no: 5,
-  },
+  { name: "Project Details", tab_no: 1 },
+  { name: "Deliverables", tab_no: 2 },
+  { name: "Team Info", tab_no: 3 },
+  { name: "Evaluation", tab_no: 4 },
+  { name: "reviews", tab_no: 5 },
 ];
 
 interface TabscontentProps {
   submission: Submission;
+  hackathonId: string;
 }
 
 function Tabscontent({
   submission: currentSubmission,
-}: {
-  submission: Submission;
-}) {
+  hackathonId,
+}: TabscontentProps) {
   const [activeTab, setActiveTab] = useState(1);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -64,25 +51,23 @@ function Tabscontent({
     <div>
       {/* Desktop Tabs - Hidden on mobile */}
       <div className="hidden md:flex mb-6 -mt-1.5 md:w-[950px] w-full cursor-pointer gap-4">
-        {tabs.map((tab, i) => {
-          return (
-            <div
-              key={i}
-              className="w-[203px]"
-              onClick={() => handleTabChange(tab.tab_no)}
+        {tabs.map((tab, i) => (
+          <div
+            key={i}
+            className="w-[203px]"
+            onClick={() => handleTabChange(tab.tab_no)}
+          >
+            <p
+              className={`text-center px-7 py-2 ${
+                activeTab === i + 1
+                  ? "bg-[#605DEC] text-white"
+                  : "bg-[#F4F3FE] text-[#C5C0DB]"
+              } transition-all duration-300 rounded-md `}
             >
-              <p
-                className={`text-center px-7 py-2 ${
-                  activeTab === i + 1
-                    ? "bg-[#605DEC] text-white"
-                    : "bg-[#F4F3FE] text-[#C5C0DB]"
-                } transition-all duration-300 rounded-md `}
-              >
-                {tab.name}
-              </p>
-            </div>
-          );
-        })}
+              {tab.name}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Mobile Dropdown - Hidden on desktop */}
@@ -127,9 +112,30 @@ function Tabscontent({
         {activeTab === 1 && <Vote items={currentSubmission} />}
         {activeTab === 2 && <Deliverables items={currentSubmission} />}
         {activeTab === 3 && <Members items={currentSubmission} />}
-        {activeTab === 4 && <Evaluation />}
+        {activeTab === 4 && (
+          <Evaluation
+            hackathonId={hackathonId}
+            submissionId={currentSubmission.id}
+            onSubmissionComplete={() => {
+              console.log("Review submitted successfully!");
+            }}
+          />
+        )}
         {activeTab === 5 && <OtherJudges />}
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 }
