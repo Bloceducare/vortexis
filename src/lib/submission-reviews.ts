@@ -15,7 +15,7 @@ interface ReviewData {
   review?: string;
 }
 
-interface ReviewResponse {
+export interface ReviewResponse {
   id: number;
   submission: number;
   judge: string;
@@ -33,6 +33,11 @@ interface ReviewResponse {
 interface UseReviewSubmissionReturn {
   submitReview: (
     hackathonId: string,
+    reviewData: ReviewData
+  ) => Promise<ReviewResponse | null>;
+  updateReview: (
+    hackathonId: string,
+    reviewId: number,
     reviewData: ReviewData
   ) => Promise<ReviewResponse | null>;
   isSubmitting: boolean;
@@ -110,8 +115,63 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
     }
   };
 
+  const updateReview = async (
+    hackathonId: string,
+    reviewId: number,
+    reviewData: ReviewData
+  ): Promise<ReviewResponse | null> => {
+    setIsSubmitting(true);
+    setError(null);
+
+    const bearerToken = localStorage.getItem("access_token");
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/${reviewId}/`,
+        {
+          // method: "PUT",
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${bearerToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(reviewData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const result: ReviewResponse = await response.json();
+
+      toast.success(
+        "Review updated successfully! Your evaluation has been saved.",
+        { autoClose: 5000 }
+      );
+
+      setTimeout(() => {
+        router.push("/judges");
+      }, 5000);
+
+      return result;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to update review";
+      setError(errorMessage);
+      toast.error(`Update failed: ${errorMessage}`);
+      return null;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     submitReview,
+    updateReview,
     isSubmitting,
     error,
   };

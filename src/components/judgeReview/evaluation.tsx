@@ -1,9 +1,9 @@
 "use client";
 
-import { useReviewSubmission } from "@/lib/submission-reviews";
+import { ReviewResponse, useReviewSubmission } from "@/lib/submission-reviews";
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface EvaluationItem {
   section: string;
@@ -109,7 +109,69 @@ function Evaluation({
   const [evaluations, setEvaluations] =
     useState<EvaluationItem[]>(initialEvaluations);
   const [comments, setComments] = useState("");
-  const { submitReview, isSubmitting, error } = useReviewSubmission();
+  const [existingReviewId, setExistingReviewId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const { submitReview, updateReview, isSubmitting, error } =
+    useReviewSubmission();
+
+  useEffect(() => {
+    const fetchExistingReview = async () => {
+      setIsLoading(true);
+      setFetchError(null);
+      const bearerToken = localStorage.getItem("access_token");
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/?submission=${submissionId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${bearerToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const reviews: ReviewResponse[] = await response.json();
+        if (reviews.length > 0) {
+          const existingReview = reviews[0];
+          setExistingReviewId(existingReview.id);
+          setEvaluations([
+            {
+              ...initialEvaluations[0],
+              grade: existingReview.innovation_score,
+            },
+            { ...initialEvaluations[1], grade: existingReview.technical_score },
+            {
+              ...initialEvaluations[2],
+              grade: existingReview.user_experience_score,
+            },
+            { ...initialEvaluations[3], grade: existingReview.impact_score },
+            {
+              ...initialEvaluations[4],
+              grade: existingReview.presentation_score,
+            },
+          ]);
+          setComments(existingReview.review || "");
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "Failed to fetch existing review";
+        setFetchError(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchExistingReview();
+  }, [hackathonId, submissionId]);
 
   const handleGradeChange = (index: number, newGrade: number) => {
     const updatedEvaluations = [...evaluations];
@@ -140,7 +202,13 @@ function Evaluation({
       review: comments.trim() || undefined,
     };
 
-    const result = await submitReview(hackathonId, reviewData);
+    let result: ReviewResponse | null = null;
+
+    if (existingReviewId) {
+      result = await updateReview(hackathonId, existingReviewId, reviewData);
+    } else {
+      result = await submitReview(hackathonId, reviewData);
+    }
 
     if (result && onSubmissionComplete) {
       onSubmissionComplete();
@@ -154,6 +222,14 @@ function Evaluation({
   const handleDiscuss = () => {
     console.log("Opening discussion");
   };
+
+  if (isLoading) {
+    return <div>Loading existing review...</div>;
+  }
+
+  if (fetchError) {
+    return <div>Error fetching review: {fetchError}</div>;
+  }
 
   return (
     <div className="flex md:items-stretch">
@@ -177,44 +253,42 @@ function Evaluation({
           </div>
         </div>
 
-        {evaluations.map((evaluation, index) => {
-          return (
-            <div
-              key={index}
-              className="bg-white p-4 rounded-lg border border-gray-100"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div className="text-[#212121] flex-1">
-                  <p className="text-xl font-medium">{evaluation.section}</p>
-                  <p className="text-sm mt-1.5 text-gray-600">
-                    {evaluation.description}
-                  </p>
-                </div>
-
-                <div className="text-right ml-4">
-                  <p className="text-[#000000] font-bold text-lg">
-                    {evaluation.grade}/10
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    {evaluation.grade >= 8
-                      ? "Excellent"
-                      : evaluation.grade >= 6
-                      ? "Good"
-                      : evaluation.grade >= 4
-                      ? "Fair"
-                      : "Needs Improvement"}
-                  </p>
-                </div>
+        {evaluations.map((evaluation, index) => (
+          <div
+            key={index}
+            className="bg-white p-4 rounded-lg border border-gray-100"
+          >
+            <div className="flex justify-between items-start mb-2">
+              <div className="text-[#212121] flex-1">
+                <p className="text-xl font-medium">{evaluation.section}</p>
+                <p className="text-sm mt-1.5 text-gray-600">
+                  {evaluation.description}
+                </p>
               </div>
 
-              <CustomSlider
-                value={evaluation.grade}
-                onChange={(newGrade) => handleGradeChange(index, newGrade)}
-                label={`Grade for ${evaluation.section}`}
-              />
+              <div className="text-right ml-4">
+                <p className="text-[#000000] font-bold text-lg">
+                  {evaluation.grade}/10
+                </p>
+                <p className="text-xs text-gray-500">
+                  {evaluation.grade >= 8
+                    ? "Excellent"
+                    : evaluation.grade >= 6
+                    ? "Good"
+                    : evaluation.grade >= 4
+                    ? "Fair"
+                    : "Needs Improvement"}
+                </p>
+              </div>
             </div>
-          );
-        })}
+
+            <CustomSlider
+              value={evaluation.grade}
+              onChange={(newGrade) => handleGradeChange(index, newGrade)}
+              label={`Grade for ${evaluation.section}`}
+            />
+          </div>
+        ))}
 
         <div className="my-6">
           <label className="block font-medium mb-2 text-gray-700">
