@@ -7,6 +7,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 
+
+
 interface JoinTeamPayload {
   teamId: string;
   hackathon_id: string;
@@ -49,7 +51,7 @@ export default function useTeams() {
         });
     };
     
-    const createTeamMutation = () => {
+    const createProjectMutation = () => {
         return useMutation({
           mutationFn: async (data: Team) => {
       
@@ -70,41 +72,6 @@ export default function useTeams() {
         });
       };
 
-const getAvailableTeams = (hackathon_id: string) => {
-  return useQuery({
-    queryKey: ['available-hackathons', hackathon_id], 
-    queryFn: async () => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/available-teams/`, {
-        headers: getAuthHeaders(),
-      });
-
-      if (!res.ok) throw new Error('Unable to fetch available teams');
-      return res.json();
-    },
-  });
-};
-
-const joinTeamMutation = ( ) => {
-  return useMutation({
-    mutationFn: async ({ teamId, hackathon_id }: JoinTeamPayload) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/join-team/`, {
-        method: "POST",
-        headers: {
-          ...getAuthHeaders(),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ team_id: teamId }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Unable to join team");
-      }
-
-      return res.json();
-    },
-  });
-};
 
    const deleteTeamMutation = () => {
     return useMutation({
@@ -128,9 +95,7 @@ const joinTeamMutation = ( ) => {
     
     return {
         getTeam,
-        createTeamMutation,
-        getAvailableTeams,
-        joinTeamMutation,
+        createProjectMutation,
         deleteTeamMutation,
     };
 }

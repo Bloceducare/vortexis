@@ -1,0 +1,119 @@
+"use client";
+
+import React, { useState } from "react";
+import useTeams from "@/hooks/useTeams";
+import { UserTeam } from "@/app/api/utils/interface";
+import { motion } from "framer-motion";
+import { Search, Users, Calendar } from "lucide-react";
+
+interface JoinTeamProps {
+  onClose: () => void;
+  hackathon_id: string;
+}
+
+export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
+  const { getAvailableTeams, joinTeamMutation } = useTeams();
+  const { data } = getAvailableTeams(hackathon_id);
+
+  const { mutateAsync: joinTeam, isPending } = joinTeamMutation();
+
+  const [search, setSearch] = useState("");
+
+  const handleJoinTeam = async (teamId: string, hackathon_id: string) => {
+    try {
+      const response = await joinTeam({ teamId, hackathon_id });
+      console.log("Joined successfully:", response);
+      onClose();
+    } catch (err) {
+      console.error("Error joining team:", err);
+    }
+  };
+
+  const filteredTeams = data?.filter((team: UserTeam) =>
+    team.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <section className="min-h-screen bg-gray-50 rounded-xl p-6">
+      {/* Top bar */}
+      <div className="flex justify-between items-center mb-6">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 hover:text-black transition"
+        >
+          ← Go back
+        </button>
+      </div>
+
+      {/* Title & instructions */}
+      <div className="text-center mb-8">
+        <h2 className="font-bold text-3xl mb-2 text-gray-900">Join a Team</h2>
+        <p className="text-gray-600">
+          Find a team for this hackathon. You can only join{" "}
+          <span className="font-semibold">one team</span>.
+        </p>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative max-w-md mx-auto mb-8">
+        <Search className="absolute left-3 top-3 text-gray-400" size={20} />
+        <input
+          type="text"
+          placeholder="Search teams..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+      </div>
+
+      {/* Team list */}
+      {filteredTeams && filteredTeams.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredTeams.map((team: UserTeam, index: number) => (
+            <motion.div
+              key={team.id}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white border rounded-xl shadow-md p-4 flex flex-col justify-between hover:shadow-lg transition"
+            >
+              <div>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">
+                  {team.name}
+                </h3>
+                <div className="flex items-center text-sm text-gray-500 mb-1">
+                  <Users size={16} className="mr-2" />
+                  Members: {team.members?.length || 0}
+                </div>
+                <div className="flex items-center text-sm text-gray-500">
+                  <Calendar size={16} className="mr-2" />
+                  {new Date(team.created_at).toLocaleDateString()}
+                </div>
+              </div>
+
+              <button
+                onClick={() =>
+                  handleJoinTeam(team.id.toString(), hackathon_id)
+                }
+                disabled={isPending}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isPending ? "Joining..." : "Join Team"}
+              </button>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col justify-center items-center h-40 text-gray-500 bg-gray-100 rounded-lg"
+        >
+          <Users size={40} className="mb-2 text-gray-400" />
+          <p>No teams available yet.</p>
+        </motion.div>
+      )}
+    </section>
+  );
+}

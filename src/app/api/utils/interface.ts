@@ -106,3 +106,36 @@ export interface Team {
   hackathon_id: string;
 }
   
+
+export interface UserTeam {
+  id: number;
+  name: string;
+  organizer: {
+    id: number;
+    username: string;
+  };
+  members: {
+    id: number;
+    username: string;
+  }[];
+  hackathons: {
+    id: number;
+    title: string;
+  }[];
+  projects: any[];
+  submissions: any[];
+  prizes: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface userProject {
+    title: string
+    description: string
+    github_url: string
+    live_link: string;
+    demo_video_url: string;
+    presentation_link: string;
+    team: number;
+}
