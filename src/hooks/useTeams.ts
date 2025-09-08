@@ -49,26 +49,34 @@ export default function useTeams() {
         });
     };
     
-    const createTeamMutation = () => {
-        return useMutation({
-          mutationFn: async (data: Team) => {
-      
-            const res = await fetch(`${apiUrl}/team/create-hackathon-team/`, {
-              method: "POST",
-              headers: getAuthHeaders(),
-              body: JSON.stringify(data),
-            });
-  
-            
-            if (!res.ok) {
-              const errorData = await res.json().catch(() => ({}));
-              throw new Error(errorData?.message || "Unable to create team");
-            }
-      
-            return res.json();
+    const createTeamMutation = useMutation({
+      mutationFn: async (data: Team) => {
+        const res = await fetch(`${apiUrl}/team/create-hackathon-team/`, {
+          method: "POST",
+          headers: {
+            ...getAuthHeaders(),
+            "Content-Type": "application/json",
           },
+          body: JSON.stringify(data),
         });
-      };
+    
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+    
+          // Handle Django-style error responses
+          const errorMessage =
+            errorData?.non_field_errors?.[0] || // grab first non_field_error
+            errorData?.detail || // sometimes APIs use "detail"
+            errorData?.message || // fallback to "message"
+            "Unable to create team";
+    
+          throw new Error(errorMessage);
+        }
+    
+        return res.json();
+      },
+    });
+    
 
 const getAvailableTeams = (hackathon_id: string) => {
   return useQuery({
@@ -83,8 +91,7 @@ const getAvailableTeams = (hackathon_id: string) => {
     },
   });
 };
-
-const joinTeamMutation = ( ) => {
+const joinTeamMutation = () => {
   return useMutation({
     mutationFn: async ({ teamId, hackathon_id }: JoinTeamPayload) => {
       const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/join-team/`, {
@@ -98,13 +105,21 @@ const joinTeamMutation = ( ) => {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Unable to join team");
+        // ✅ Look for backend error keys
+        const message =
+          errorData?.message ||
+          errorData?.detail ||
+          errorData?.non_field_errors?.[0] ||
+          "Unable to join team";
+
+        throw new Error(message);
       }
 
       return res.json();
     },
   });
 };
+
 
    const deleteTeamMutation = () => {
     return useMutation({

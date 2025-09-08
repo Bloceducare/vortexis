@@ -4,6 +4,8 @@ import { useState } from "react";
 import useTeams from "@/hooks/useTeams";
 import { useParams } from "next/navigation";
 import JoinTeam from "./component/Jointeam";
+import { useRouter } from "next/navigation";
+import CreateTeam from "./component/CreateTeam";
 
 import { Users, Award, Folder, FileText, Crown, Calendar } from "lucide-react";
 
@@ -23,6 +25,7 @@ const getRandomColor = () => {
 export default function TeamManagement() {
   const params = useParams();
   const hackathon_id = params?.hackathon_id as string;
+  const router = useRouter()
   const [pages, setPages] = useState({
     join: false,
     create: false,
@@ -38,10 +41,22 @@ export default function TeamManagement() {
     console.log("Leaving team with id:", id);
   };
 
+  const toggleCreateTeam = () => {
+    setPages({ ...pages, create: !pages.create });
+  }
+
+  const goToProject =  () => {
+    router.push(`/dashboard/${hackathon_id}/project`)
+  }
+
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
 
   if (pages.join) {
     return <JoinTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
+  }
+
+  if (pages.create) {
+    return <CreateTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
   }
 
   return (
@@ -138,11 +153,11 @@ export default function TeamManagement() {
       <Folder className="w-5 h-5 text-blue-600" /> Projects
     </h3>
     {data.projects && data.projects.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"  onClick={goToProject}>
         View
       </button>
     ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700">
+      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"  onClick={goToProject}>
         Create
       </button>
     )}
@@ -221,7 +236,7 @@ export default function TeamManagement() {
             >
               Join Team
             </button>
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg">
+            <button className="px-4 py-2 bg-green-600 text-white rounded-lg" onClick={toggleCreateTeam}>
               Create Team
             </button>
           </div>

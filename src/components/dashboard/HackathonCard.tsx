@@ -7,11 +7,12 @@ interface HackathonCardProps {
   status: "ACTIVE" | "UPCOMING" | "COMPLETED";
   progress: number;
   daysLeft: number;
+  onclick: () => void;
 }
 
-export function HackathonCard({ title, status, progress, daysLeft }: HackathonCardProps) {
+export function HackathonCard({ title, status, progress, daysLeft, onclick }: HackathonCardProps) {
   return (
-    <Card className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1">
+    <Card className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer" onClick={onclick}>
       {/* <CardContent className="p-6"> */}
         <div className="space-y-4">
           <div>
