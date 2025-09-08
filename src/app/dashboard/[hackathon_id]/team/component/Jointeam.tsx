@@ -15,17 +15,24 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
   const { getAvailableTeams, joinTeamMutation } = useTeams();
   const { data } = getAvailableTeams(hackathon_id);
 
-  const { mutateAsync: joinTeam, isPending } = joinTeamMutation();
+  const { mutateAsync: joinTeam } = joinTeamMutation();
 
   const [search, setSearch] = useState("");
+  const [joiningTeamId, setJoiningTeamId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleJoinTeam = async (teamId: string, hackathon_id: string) => {
+    setError(null);
+    setJoiningTeamId(teamId);
     try {
       const response = await joinTeam({ teamId, hackathon_id });
       console.log("Joined successfully:", response);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error joining team:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setJoiningTeamId(null);
     }
   };
 
@@ -54,6 +61,13 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
           <span className="font-semibold">one team</span>.
         </p>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="max-w-md mx-auto mb-4 text-red-600 bg-red-100 p-3 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Search bar */}
       <div className="relative max-w-md mx-auto mb-8">
@@ -96,10 +110,16 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
                 onClick={() =>
                   handleJoinTeam(team.id.toString(), hackathon_id)
                 }
-                disabled={isPending}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                disabled={!!joiningTeamId} // disable all buttons when one is joining
+                className={`mt-4 px-4 py-2 rounded-lg text-white transition ${
+                  joiningTeamId === team.id.toString()
+                    ? "bg-blue-400 cursor-wait"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
-                {isPending ? "Joining..." : "Join Team"}
+                {joiningTeamId === team.id.toString()
+                  ? "Joining..."
+                  : "Join Team"}
               </button>
             </motion.div>
           ))}
