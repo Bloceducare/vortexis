@@ -139,10 +139,19 @@ function Page() {
           <span className="text-sm">8 of 20 reviews completed</span>
           <span className="text-sm">40%</span>
         </p>
-        <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+        {/* <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden">
           <div
             className="absolute top-0 left-0 h-full bg-[#605DEC] rounded-full transition-all duration-500 ease-in-out"
             style={{ width: "40%" }}
+          />
+        </div> */}
+
+        <div className="relative h-3 bg-muted rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "40%" }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#605DEC] to-accent rounded-full"
           />
         </div>
       </motion.div>

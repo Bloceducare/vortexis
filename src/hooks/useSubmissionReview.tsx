@@ -1,6 +1,18 @@
 import { useEffect, useState } from "react";
 import { Hackathon, Submission } from "./useHackathonDetails";
 
+interface reviews {
+  impact_score: number;
+  innovation_score: number;
+  overall_score: number;
+  presentation_score: number;
+  review: string;
+  submission: number;
+  technical_score: number;
+  user_experience_score: number;
+  updated_at: string;
+}
+
 export const useSubmissionReview = (id: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -10,6 +22,7 @@ export const useSubmissionReview = (id: string) => {
   const [currentSubmission, setcurrentSubmission] = useState<Submission | null>(
     null
   );
+  const [reviewsData, setReviewsData] = useState<reviews[] | null>(null);
 
   const bearerToken = localStorage.getItem("access_token");
   async function hackathon(id: string) {
@@ -28,9 +41,9 @@ export const useSubmissionReview = (id: string) => {
       );
 
       const submissionData = await submissionResponse.json();
-      setcurrentSubmission(submissionData.submissions[0] || null);
-      sethackathonDetails(submissionData || null);
-      console.log("Hackathon data:", submissionData.submissions);
+      // setcurrentSubmission(submissionData.submissions[0] || null);
+      // sethackathonDetails(submissionData || null);
+      console.log("Hackathon submission data:", submissionData);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -48,7 +61,8 @@ export const useSubmissionReview = (id: string) => {
       setLoading(true);
 
       const submissionResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/team/teams/${teamId}/`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/team/teams/${teamId}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/project/projects/${teamId}/`,
         {
           method: "GET",
           headers: {
@@ -76,7 +90,8 @@ export const useSubmissionReview = (id: string) => {
       setLoading(true);
 
       const submissionResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/reviews/`,
         {
           method: "GET",
           headers: {
@@ -88,6 +103,7 @@ export const useSubmissionReview = (id: string) => {
 
       const teamData = await submissionResponse.json();
       console.log("your previous reviews", teamData);
+      setReviewsData(teamData);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -102,8 +118,8 @@ export const useSubmissionReview = (id: string) => {
 
   useEffect(() => {
     hackathon(id);
-    team("2");
-    review("22")
+    team("22");
+    review("22");
   }, [id]);
 
   return {
@@ -111,5 +127,6 @@ export const useSubmissionReview = (id: string) => {
     error,
     hackathonDetails,
     currentSubmission,
+    reviewsData,
   };
 };

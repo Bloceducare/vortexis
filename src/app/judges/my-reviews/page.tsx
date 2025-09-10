@@ -1,7 +1,22 @@
 "use client";
 
+import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import { Search } from "lucide-react";
 import { useState } from "react";
+
+interface ApiReview {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  impact_score: number;
+  innovation_score: number;
+  overall_score: number;
+  presentation_score: number;
+  technical_score: number;
+  user_experience_score: number;
+  review: string;
+  submission: number;
+}
 
 interface ReviewSummary {
   id: string;
@@ -17,6 +32,49 @@ interface ReviewSummary {
     score: number;
     maxScore: number;
   }[];
+}
+
+function transformApiReviewToSummary(apiReview: ApiReview): ReviewSummary {
+  const totalScore =
+    apiReview.impact_score +
+    apiReview.innovation_score +
+    apiReview.presentation_score +
+    apiReview.technical_score +
+    apiReview.user_experience_score;
+
+  return {
+    id: apiReview.id.toString(),
+    submissionId: apiReview.submission.toString(),
+    submissionName: `Submission #${apiReview.submission}`, // submission names
+    hackathonName: "Current Hackathon", // hackathon names
+    dateReviewed: apiReview.created_at,
+    totalScore: totalScore,
+    maxTotalScore: 50,
+    comments: apiReview.review,
+    scores: [
+      {
+        criterion: "Innovation",
+        score: apiReview.innovation_score,
+        maxScore: 10,
+      },
+      {
+        criterion: "Technical Complexity",
+        score: apiReview.technical_score,
+        maxScore: 10,
+      },
+      {
+        criterion: "User Experience",
+        score: apiReview.user_experience_score,
+        maxScore: 10,
+      },
+      { criterion: "Impact", score: apiReview.impact_score, maxScore: 10 },
+      {
+        criterion: "Presentation",
+        score: apiReview.presentation_score,
+        maxScore: 10,
+      },
+    ],
+  };
 }
 
 function ReviewCard({ review }: { review: ReviewSummary }) {
@@ -78,76 +136,17 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
           {review.comments || "No comments provided."}
         </p>
       </div>
-      {/* <div className="flex justify-end mt-3">
-        <button className="px-3 py-1 text-sm font-medium text-blue-600 hover:text-blue-800 focus:outline-none">
-          View Full Submission
-        </button>
-      </div> */}
     </div>
   );
 }
 
 export default function MyReviewsPage() {
-  // data/my-reviews.ts
-
-  const myReviews: ReviewSummary[] = [
-    {
-      id: "rev1",
-      submissionId: "sub001",
-      submissionName: "Eco-Friendly AI Waste Sorter",
-      hackathonName: "Future Tech Summit 2025",
-      dateReviewed: "2025-05-14T18:00:00Z",
-      totalScore: 42,
-      maxTotalScore: 50,
-      comments:
-        "Strong potential, excellent use of AI for waste classification. The demo had minor glitches, and scalability for large datasets needs further consideration. Overall, a very promising project.",
-      scores: [
-        { criterion: "Innovation", score: 9, maxScore: 10 },
-        { criterion: "Technical Complexity", score: 8, maxScore: 10 },
-        { criterion: "User Experience", score: 7, maxScore: 10 },
-        { criterion: "Impact", score: 9, maxScore: 10 },
-        { criterion: "Presentation", score: 9, maxScore: 10 },
-      ],
-    },
-    {
-      id: "rev2",
-      submissionId: "sub002",
-      submissionName: "Decentralized Voting System",
-      hackathonName: "Web3 Frontier Hack",
-      dateReviewed: "2025-03-19T20:15:00Z",
-      totalScore: 38,
-      maxTotalScore: 50,
-      comments:
-        "Solid blockchain implementation, addressing a critical need. UI is functional but could be more intuitive. Security measures appear robust. Good effort for a hackathon project.",
-      scores: [
-        { criterion: "Innovation", score: 8, maxScore: 10 },
-        { criterion: "Technical Complexity", score: 9, maxScore: 10 },
-        { criterion: "User Experience", score: 6, maxScore: 10 },
-        { criterion: "Impact", score: 8, maxScore: 10 },
-        { criterion: "Presentation", score: 7, maxScore: 10 },
-      ],
-    },
-    {
-      id: "rev3",
-      submissionId: "sub003",
-      submissionName: "Smart Traffic Management",
-      hackathonName: "Smart City Solutions",
-      dateReviewed: "2025-07-23T16:30:00Z",
-      totalScore: 45,
-      maxTotalScore: 50,
-      comments:
-        "Excellent solution for urban traffic flow. The real-time data integration is impressive. Clear presentation and strong potential for real-world adoption. Minor improvements needed in edge case handling.",
-      scores: [
-        { criterion: "Innovation", score: 9, maxScore: 10 },
-        { criterion: "Technical Complexity", score: 9, maxScore: 10 },
-        { criterion: "User Experience", score: 9, maxScore: 10 },
-        { criterion: "Impact", score: 9, maxScore: 10 },
-        { criterion: "Presentation", score: 9, maxScore: 10 },
-      ],
-    },
-  ];
-
+  const { reviewsData, loading, error } = useSubmissionReview("1");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const myReviews: ReviewSummary[] = reviewsData
+    ? (reviewsData as ApiReview[]).map(transformApiReviewToSummary)
+    : [];
 
   const filteredReviews = myReviews.filter(
     (review) =>
@@ -155,6 +154,24 @@ export default function MyReviewsPage() {
       review.hackathonName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       review.comments.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (error) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">My Reviews</h1>
+        <p className="text-red-600 mb-6">Error loading reviews: {error}</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">My Reviews</h1>
+        <p className="text-gray-600 mb-6">Loading your reviews...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">

@@ -4,23 +4,27 @@ import JudgeError from "@/components/judgeReview/JudgeError";
 
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function SubmissionsPage() {
+  const params = useParams();
+  const submissionId = params.id as string;
+
   const { hackathons, selectedHackathon, loading, error, selectHackathon } =
-    useHackathon();
+    useHackathon(submissionId);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   // Get submissions from the selected hackathon
-  const submissions = selectedHackathon?.submissions || [];
+  const submissions = selectedHackathon || [];
 
-  const transformedSubmissions = submissions.map((submission) => ({
+  const transformedSubmissions = hackathons.map((submission) => ({
     id: submission.id,
     hackathonid: submission.hackathon,
-    projectName: submission.project.name,
+    projectName: submission.project.title,
     teamName: submission.team.name,
     // category: "General",
     submissionDate: submission.created_at.split("T")[0],
@@ -119,7 +123,7 @@ export default function SubmissionsPage() {
           )}
         </div>
 
-        {/* Statistics Cards */}
+        {/*  Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-lg border shadow-sm">
             <div className="p-6 pb-2">
