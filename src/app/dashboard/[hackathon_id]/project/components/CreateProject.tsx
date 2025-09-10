@@ -4,10 +4,7 @@ import React, { useState } from "react"
 import { useRouter } from "next/navigation"
 import { userProject } from "@/app/api/utils/interface"
 import useProjects from "@/hooks/useProject"
-import { useTeamStore } from "@/store/useTeamStore";
-
-
-
+import { useTeamStore } from "@/store/useTeamStore"
 
 function CreateProject() {
   const router = useRouter()
@@ -24,8 +21,8 @@ function CreateProject() {
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof userProject, string>>>({})
-    const [error, setError] = useState<string | null>(null);
-  
+  const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -65,19 +62,28 @@ function CreateProject() {
     }
 
     try {
-        await createProjectMutation.mutateAsync(formData);
-        // onClose(); 
-      } catch (err: any) {
-        setError(err.message || "Failed to create team.");
-      }
+      await createProjectMutation.mutateAsync(formData)
+      setSuccessMessage("🎉 Project created successfully!")
+      setFormData({
+        title: "",
+        description: "",
+        github_url: "",
+        live_link: "",
+        demo_video_url: "",
+        presentation_link: "",
+        team: team?.id ?? 0,
+      })
+    } catch (err: any) {
+      setError(err.message || "Failed to create project.")
+    }
   }
 
   return (
-    <div className="p-6 w-full">
+    <div className="p-6 w-full relative">
       <h1 className="text-2xl font-bold mb-6">Create Project</h1>
       <form onSubmit={handleSubmit} className="space-y-4 text-start">
-       
-        <div className="space-y-4">
+        {/* Title */}
+        <div className="space-y-2">
           <label className="block font-medium">Title *</label>
           <input
             type="text"
@@ -89,8 +95,8 @@ function CreateProject() {
           {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
         </div>
 
-      
-        <div className="space-y-4">
+        {/* Description */}
+        <div className="space-y-2">
           <label className="block font-medium">Description *</label>
           <textarea
             name="description"
@@ -102,7 +108,7 @@ function CreateProject() {
         </div>
 
         {/* Github URL */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <label className="block font-medium">Github URL *</label>
           <input
             type="url"
@@ -115,7 +121,7 @@ function CreateProject() {
         </div>
 
         {/* Live Link */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <label className="block font-medium">Live Link</label>
           <input
             type="url"
@@ -128,7 +134,7 @@ function CreateProject() {
         </div>
 
         {/* Demo Video URL */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <label className="block font-medium">Demo Video URL</label>
           <input
             type="url"
@@ -141,7 +147,7 @@ function CreateProject() {
         </div>
 
         {/* Presentation Link */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <label className="block font-medium">Presentation Link</label>
           <input
             type="url"
@@ -155,19 +161,38 @@ function CreateProject() {
 
         {/* Submit */}
         <div className="flex justify-end">
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-5 cursor-pointer"
-        >
-          Submit
-        </button>
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-5 cursor-pointer"
+          >
+            Submit
+          </button>
         </div>
-     
       </form>
+
+      {/* ✅ Success Modal */}
+      {successMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-[90%] max-w-md">
+            <h2 className="text-xl font-bold mb-4">Success</h2>
+            <p className="mb-6">{successMessage}</p>
+            <button
+              onClick={() => {
+                setSuccessMessage(null)
+                router.push("/dashboard") // 👈 redirect if needed
+              }}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
 export default CreateProject
+
 
 
