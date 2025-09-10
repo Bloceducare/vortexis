@@ -122,7 +122,7 @@ export default function TeamManagement() {
                         >
                           {initials}
                         </div>
-                        <div className="absolute top-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition 
+                        <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition 
                                         bg-white shadow-lg border border-gray-200 text-black rounded-lg px-3 py-2 
                                         whitespace-nowrap z-10 w-max min-w-[120px]">
                           <p className="font-semibold text-gray-800 text-sm">{m.username}</p>
@@ -153,11 +153,11 @@ export default function TeamManagement() {
       <Folder className="w-5 h-5 text-blue-600" /> Projects
     </h3>
     {data.projects && data.projects.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"  onClick={goToProject}>
+      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
         View
       </button>
     ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700"  onClick={goToProject}>
+      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer"  onClick={goToProject}>
         Create
       </button>
     )}

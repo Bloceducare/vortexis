@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Team } from '@/app/api/utils/interface';
 import { useAuthStore } from '@/store/useAuthStore';
+import { useTeamStore } from '@/store/useTeamStore';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -15,6 +16,7 @@ interface JoinTeamPayload {
 export default function useTeams() {
     const queryClient = useQueryClient();
      const token = useAuthStore.getState().getToken();
+     const { setTeam,  } = useTeamStore()
     
     
       const getAuthHeaders = (isFormData = false) => {
@@ -43,6 +45,8 @@ export default function useTeams() {
               const errorData = await res.json().catch(() => ({}))
               throw new Error(errorData?.message || "Unable to create team");
             }
+            const data = await res.json(); 
+            setTeam(data);
             return res.json();
         },
         enabled: !!hackathon_id,
@@ -51,7 +55,7 @@ export default function useTeams() {
     
     const createTeamMutation = useMutation({
       mutationFn: async (data: Team) => {
-        const res = await fetch(`${apiUrl}/team/create-hackathon-team/`, {
+        const res = await fetch(`${apiUrl}/team/teams/`, {
           method: "POST",
           headers: {
             ...getAuthHeaders(),
@@ -139,6 +143,30 @@ const joinTeamMutation = () => {
     });
   };
 
+  const leaveTeam = () => {
+    return useMutation({
+      mutationFn: async (teamId: string) => {
+        const res = await fetch(`${apiUrl}/team/teams/${teamId}/leave_team/`, {
+          method: "POST", 
+          headers: {
+            ...getAuthHeaders(),
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          throw new Error(
+            errorData?.message ||
+              errorData?.non_field_errors?.[0] ||
+              "Unable to leave team"
+          );
+        }
+  
+        return res.json();
+      },
+    });
+  };
 
     
     return {
@@ -147,5 +175,6 @@ const joinTeamMutation = () => {
         getAvailableTeams,
         joinTeamMutation,
         deleteTeamMutation,
+        leaveTeam
     };
 }

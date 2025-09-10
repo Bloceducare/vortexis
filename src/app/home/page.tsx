@@ -182,9 +182,9 @@ function Home() {
       <div className="space-y-5 md:px-24 mt-10">
         <div className="flex justify-between flex-wrap md:w-full items-center gap-5 md:gap-0">
           <h1 className="text-xl md:text-3xl">Explore Hackathons For You</h1>
-          <p className="md:w-[35%]">
+          <div className="md:w-[35%]">
             <SearchInput onSearch={handleSearch} />
-          </p>
+          </div>
         </div>
 
         {/* Filter controls */}
@@ -299,7 +299,7 @@ function Home() {
                           </span>
                         </p>
                         <p className="mt-1 text-gray-700 text-sm">
-                          {h.participants.length} participants
+                          {h.participants_count} participants
                         </p>
 
                         <p className="text-gray-500 text-sm">

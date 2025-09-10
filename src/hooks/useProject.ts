@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Team } from '@/app/api/utils/interface';
+import { Team, userProject } from '@/app/api/utils/interface';
 import { useAuthStore } from '@/store/useAuthStore';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
@@ -14,7 +14,7 @@ interface JoinTeamPayload {
   hackathon_id: string;
 }
 
-export default function useTeams() {
+export default function useProjects() {
     const queryClient = useQueryClient();
      const token = useAuthStore.getState().getToken();
     
@@ -34,11 +34,11 @@ export default function useTeams() {
       };
       
     
-    const getTeam = (hackathon_id: string) => {
+    const getProject = () => {
         return useQuery({
-        queryKey: ['team', hackathon_id],
+        queryKey: ['team'],
         queryFn: async () => {
-            const res = await fetch(`${apiUrl}/team/teams/by_hackathon/?hackathon_id=${hackathon_id}`, {
+            const res = await fetch(`${apiUrl}/project/projects/`, {
                 headers: getAuthHeaders(),
             });
             if (!res.ok){
@@ -47,31 +47,36 @@ export default function useTeams() {
             }
             return res.json();
         },
-        enabled: !!hackathon_id,
+        // enabled: ,
         });
     };
-    
-    const createProjectMutation = () => {
-        return useMutation({
-          mutationFn: async (data: Team) => {
+    const createProjectMutation = useMutation({
+        mutationFn: async (data: userProject) => {
+          const res = await fetch(`${apiUrl}/project/projects/`, {
+            method: "POST",
+            headers: {
+              ...getAuthHeaders(),
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
       
-            const res = await fetch(`${apiUrl}/team/create-hackathon-team/`, {
-              method: "POST",
-              headers: getAuthHeaders(),
-              body: JSON.stringify(data),
-            });
-  
-            
-            if (!res.ok) {
-              const errorData = await res.json().catch(() => ({}));
-              throw new Error(errorData?.message || "Unable to create team");
-            }
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
       
-            return res.json();
-          },
-        });
-      };
-
+            // Handle Django-style error responses
+            const errorMessage =
+              errorData?.non_field_errors?.[0] || // grab first non_field_error
+              errorData?.detail || // sometimes APIs use "detail"
+              errorData?.message || // fallback to "message"
+              "Unable to create team";
+      
+            throw new Error(errorMessage);
+          }
+      
+          return res.json();
+        },
+      });
 
    const deleteTeamMutation = () => {
     return useMutation({
@@ -94,7 +99,7 @@ export default function useTeams() {
 
     
     return {
-        getTeam,
+        getProject,
         createProjectMutation,
         deleteTeamMutation,
     };
