@@ -105,9 +105,15 @@ export default function ProfileView() {
   // Normal render (data available)
   return (
     <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
-      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="h-44 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-          <div className="absolute -bottom-16 left-6">
+
+      <section className="flex justify-between max-w-6xl mx-auto">
+
+        <section className="space-y-5">
+
+        
+        <section className="flex justify-between items-end">
+     
+          <div className=" text-start">
             <div
               className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center rounded-full border-4 border-white shadow-lg text-white text-3xl sm:text-4xl font-bold"
               style={{ backgroundColor: avatarColor }}
@@ -115,14 +121,17 @@ export default function ProfileView() {
             >
               {initials || "?"}
             </div>
-          </div>
-        </div>
 
-        <div className="pt-20 px-4 sm:px-6 pb-6">
-          <div className="flex items-center justify-between gap-4">
-            <Link
+            <h1 className="text-2xl font-bold mt-4 mb-2">{user.first_name} {user.last_name}</h1>
+            <p className="text-gray-500">@{user.username ?? "unknown"}</p>
+
+          </div>
+     
+
+        <div>
+        <Link
               href="/profile/edit"
-              className={`inline-flex items-center gap-2 text-gray-700 hover:bg-gray-100 px-3 py-2 rounded-full mb-4 ${
+              className={`inline-flex items-center gap-2  hover:bg-[#8987ef] px-3 py-2 bg-[#605DEC] text-white rounded-full mb-4 ${
                 isFetching ? "opacity-60 pointer-events-none" : ""
               }`}
               title="Edit Profile"
@@ -130,50 +139,48 @@ export default function ProfileView() {
               <FaPen className="w-4 h-4" />
               <span className="text-sm font-medium">Edit Profile</span>
             </Link>
+        </div>
 
-            {/* small fetching indicator */}
-            {isFetching && (
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <FaSpinner className="animate-spin" />
-                <span>Updating...</span>
-              </div>
-            )}
-          </div>
 
-          <h1 className="text-2xl font-bold">{user.first_name} {user.last_name}</h1>
-          <p className="text-gray-500">@{user.username ?? "unknown"}</p>
-          <p className="text-gray-600">{user.email ?? ""}</p>
 
-          <div className="mt-4 flex flex-wrap gap-2">
+        </section>
+
+
+        <section className="flex justify-between items-center">
+        <div className="flex flex-wrap gap-2">
             {user.is_organizer && <Badge className="bg-blue-500 cursor-pointer"  onClick={() => router.push("/organizer")}>Organizer</Badge>}
             {user.is_participant && <Badge className="bg-green-500 cursor-pointer" onClick={() => router.push("/dashboard")}>Participant</Badge>}
             {user.is_judge && <Badge className="bg-yellow-500 cursor-pointer"  onClick={() => router.push("/judges")}>Judge</Badge>}
           </div>
 
-          {user.profile?.bio ? (
+
+          <div>
+            {user.profile?.location}
+          </div>
+
+          <div>
+          English
+          </div>
+
+        </section>
+
+
+        {user.profile?.bio ? (
             <div className="mt-6">
               <h2 className="text-lg font-semibold text-gray-800">About</h2>
               <p className="text-gray-700 mt-1">{user.profile.bio}</p>
             </div>
           ) : null}
 
-          {user.profile?.skills?.length > 0 ? (
-            <div className="mt-6">
-              <h2 className="text-lg font-semibold text-gray-800">Skills</h2>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {user.profile.skills.map((skill: string, idx: number) => (
-                  <span
-                    key={idx}
-                    className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm shadow-sm"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ) : null}
 
-          <div className="mt-6 flex gap-4 text-xl text-gray-600">
+{user.profile?.website && (
+              <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="flex gap-2 items-center">
+                <FaGlobe />
+                {user.profile?.website}
+              </a>
+            )}
+
+<div className="mt-6 flex gap-4 text-xl text-gray-600">
             {user.profile?.github && (
               <a href={user.profile.github} target="_blank" rel="noopener noreferrer">
                 <FaGithub />
@@ -189,14 +196,9 @@ export default function ProfileView() {
                 <FaTwitter />
               </a>
             )}
-            {user.profile?.website && (
-              <a href={user.profile.website} target="_blank" rel="noopener noreferrer">
-                <FaGlobe />
-              </a>
-            )}
+         
           </div>
 
-          {/* optional: manual refetch button */}
           <div className="mt-6">
             <button
               onClick={() => refetch()}
@@ -206,8 +208,20 @@ export default function ProfileView() {
               {isFetching ? "Refreshing..." : "Refresh Profile"}
             </button>
           </div>
-        </div>
-      </div>
+    
+        </section>
+
+
+        <section>
+
+        </section>
+
+      </section>
+
+
+      
+
+      
     </section>
   );
 }
