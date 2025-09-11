@@ -62,7 +62,8 @@ export const useSubmissionReview = (id: string) => {
 
       const submissionResponse = await fetch(
         // `${process.env.NEXT_PUBLIC_API_URL}/team/teams/${teamId}/`,
-        `${process.env.NEXT_PUBLIC_API_URL}/project/projects/${teamId}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/project/projects/by_hackathon/?hackathon_id=${teamId}`,
+
         {
           method: "GET",
           headers: {

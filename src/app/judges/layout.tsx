@@ -21,8 +21,7 @@ import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
 import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import { useHackathon } from "@/hooks/useHackathonDetails";
-
-
+import { SignOutConfirmationModal } from "@/components/signOutModal";
 
 interface Hackathon {
   id: number;
@@ -72,6 +71,8 @@ export default function JudgesLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
 
   const pathname = usePathname();
   const router = useRouter();
@@ -132,7 +133,7 @@ export default function JudgesLayout({
 
   const handleLogout = () => {
     clearToken();
-    localStorage.removeItem("access_token");
+    localStorage.clear();
     router.push("/");
   };
 
@@ -333,13 +334,18 @@ export default function JudgesLayout({
             {(sidebarExpanded || isMobile) && <span>Settings</span>}
           </Link>
           <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 text-red-500 hover:bg-[#F7F7FB] py-2 px-2 rounded"
+            onClick={() => setShowSignOutModal(true)}
+            className="flex items-center gap-3 cursor-pointer text-red-500 hover:bg-[#F7F7FB] py-2 px-2 rounded"
           >
             <LogOutIcon size={20} />
             {(sidebarExpanded || isMobile) && <span>Sign Out</span>}
           </button>
         </div>
+        <SignOutConfirmationModal
+          isOpen={showSignOutModal}
+          onClose={() => setShowSignOutModal(false)}
+          onConfirm={handleLogout}
+        />
       </motion.aside>
 
       {/* Main content */}
