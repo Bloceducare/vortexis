@@ -4,7 +4,7 @@ import useUser from "@/hooks/useUserProfile";
 import { useRouter } from "next/navigation";
 
 interface SettingsProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export default function SettingsPage({ onClose }: SettingsProps) {
@@ -54,7 +54,10 @@ export default function SettingsPage({ onClose }: SettingsProps) {
   useEffect(() => {
     if (updateDetailMutation.isSuccess && updateProfileMutation.isSuccess) {
       router.push("/profile/detail");
-      onClose();
+      if (onClose) {
+        onClose();
+      }
+      
     }
     if (updateDetailMutation.isError || updateProfileMutation.isError) {
       setShowErrorModal(true);

@@ -114,9 +114,8 @@ export default function TeamManagement() {
                       <div
                         key={m.id}
                         className="relative group cursor-pointer"
-                        onClick={() =>
-                          console.log("Go to profile of:", m.username)
-                        }
+                        onClick={() => router.push(`/profile/${data.id}`)}
+
                       >
                         <div
                           className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold ${color}`}
@@ -132,7 +131,7 @@ export default function TeamManagement() {
 
                           <button
                             className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1"
-                            onClick={() => console.log("View profile of:", m.username)}
+                            onClick={() => router.push(`/profile/${data.id}`)}
                           >
                             View Profile
                           </button>
