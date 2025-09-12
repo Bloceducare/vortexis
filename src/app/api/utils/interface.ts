@@ -108,7 +108,7 @@ export interface Team {
   
 
 export interface UserTeam {
-  id: number;
+  id: number ;
   name: string;
   organizer: {
     id: number;

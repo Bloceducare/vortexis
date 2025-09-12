@@ -48,6 +48,21 @@ export default function useUser() {
     });
   };
 
+  const getPublicUser = (userId?: string) => {
+    return useQuery({
+      queryKey: ["publicUser", userId],
+      queryFn: async () => {
+        if (!userId) throw new Error("User ID is missing");
+        const res = await fetch(`${apiUrl}/auth/profiles/${userId}/`, {
+          headers: getAuthHeaders(), 
+        }); 
+        if (!res.ok) throw new Error("Unable to fetch public user profile");
+        return res.json();
+      },
+      enabled: !!userId,
+    });
+  };
+
   const getUserDetail = () => {
     return useQuery({
       queryKey: ['userDetail', user?.id],
@@ -104,5 +119,6 @@ export default function useUser() {
     updateUserProfile,
     updateUserDetail,
     getUserDetail,
+    getPublicUser
   };
 }

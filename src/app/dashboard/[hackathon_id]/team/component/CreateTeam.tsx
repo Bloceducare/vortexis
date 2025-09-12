@@ -60,7 +60,7 @@ export default function CreateTeam({ onClose, hackathon_id }: CreateTeamProps) {
         name: formData.name,
         members: formData.members,
       });
-      onClose(); // close after success
+      onClose(); 
     } catch (err: any) {
       setError(err.message || "Failed to create team.");
     }
@@ -138,7 +138,7 @@ export default function CreateTeam({ onClose, hackathon_id }: CreateTeamProps) {
             </div>
           </div>
 
-          {/* Buttons */}
+        
           <div className="flex justify-end gap-3 pt-6">
             <button
               type="button"
