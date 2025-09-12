@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useMemo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
-import SettingsPage from "../edit/components/page";
+import SettingsPage from "../edit/components/Settings";
 
 export default function ProfileView() {
   const { getUserDetail } = useUser();
