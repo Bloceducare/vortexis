@@ -25,7 +25,7 @@ const navLinks = [
   { label: 'Manage', path: 'hackathon', icon: Trophy },
   { label: 'Team', path: 'team', icon: Team },
   { label: 'Projects', path: 'project', icon: Submit },
-  { label: 'Judges', path: 'judges', icon: Judges },
+  { label: 'Submission', path: 'submission', icon: Judges },
 ];
 
 export default function OrganizerLayout({ children }: OrganizerLayoutProps) {

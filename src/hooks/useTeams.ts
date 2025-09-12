@@ -34,24 +34,28 @@ export default function useTeams() {
       };
       
     
-    const getTeam = (hackathon_id: string) => {
+      const getTeam = (hackathon_id: string) => {
         return useQuery({
-        queryKey: ['team', hackathon_id],
-        queryFn: async () => {
-            const res = await fetch(`${apiUrl}/team/teams/by_hackathon/?hackathon_id=${hackathon_id}`, {
-                headers: getAuthHeaders(),
-            });
-            if (!res.ok){
-              const errorData = await res.json().catch(() => ({}))
-              throw new Error(errorData?.message || "Unable to create team");
+          queryKey: ['team', hackathon_id],
+          queryFn: async () => {
+            const res = await fetch(
+              `${apiUrl}/team/teams/by_hackathon/?hackathon_id=${hackathon_id}`,
+              { headers: getAuthHeaders() }
+            );
+      
+            if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData?.message || "Unable to fetch team");
             }
-            const data = await res.json(); 
+      
+            const data = await res.json();
             setTeam(data);
-            return res.json();
-        },
-        enabled: !!hackathon_id,
+            return data; // ✅ return parsed JSON
+          },
+          enabled: !!hackathon_id,
         });
-    };
+      };
+      
     
     const createTeamMutation = useMutation({
       mutationFn: async (data: Team) => {

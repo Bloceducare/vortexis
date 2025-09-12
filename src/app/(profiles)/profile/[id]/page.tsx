@@ -1,9 +1,9 @@
 import React from 'react'
 
-function singleProfile() {
+function SingleProfile() {
   return (
     <div>singleProfile</div>
   )
 }
 
-export default singleProfile
+export default SingleProfile

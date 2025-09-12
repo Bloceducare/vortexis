@@ -4,15 +4,16 @@ import { Badge } from "@/components/ui/badge";
 import useUser from "@/hooks/useUserProfile";
 import { FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaPen, FaSpinner } from "react-icons/fa";
 import Link from "next/link";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
+import SettingsPage from "../edit/page";
 
 export default function ProfileView() {
   const { getUserDetail } = useUser();
   const router = useRouter()
+  const [modal, setModal] = useState(false)
 
-  // assume getUserDetail returns a react-query hook result
   const { data, error, isLoading, isError, isFetching, refetch } = getUserDetail();
 
   const setUser = useUserStore.getState().setUser
@@ -102,7 +103,7 @@ export default function ProfileView() {
     );
   }
 
-  // Normal render (data available)
+
   return (
     <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
 
@@ -129,16 +130,16 @@ export default function ProfileView() {
      
 
         <div>
-        <Link
-              href="/profile/edit"
+        <button
               className={`inline-flex items-center gap-2  hover:bg-[#8987ef] px-3 py-2 bg-[#605DEC] text-white rounded-full mb-4 ${
                 isFetching ? "opacity-60 pointer-events-none" : ""
               }`}
               title="Edit Profile"
+              onClick={() => setModal(true)}
             >
               <FaPen className="w-4 h-4" />
               <span className="text-sm font-medium">Edit Profile</span>
-            </Link>
+            </button>
         </div>
 
 
@@ -217,6 +218,13 @@ export default function ProfileView() {
         </section>
 
       </section>
+
+
+      {modal && (
+        <SettingsPage 
+        onClose={() => setModal(false)}
+        />
+      )}
 
 
       

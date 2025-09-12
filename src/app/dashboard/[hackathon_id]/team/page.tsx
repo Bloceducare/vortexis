@@ -50,6 +50,7 @@ export default function TeamManagement() {
   }
 
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
+  console.log(data)
 
   if (pages.join) {
     return <JoinTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
