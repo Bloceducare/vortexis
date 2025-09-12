@@ -28,6 +28,10 @@ export interface Submission {
 }
 
 export interface Hackathon {
+  hackathon: any;
+  project: any;
+  team: any;
+  status: any;
   id: number;
   title: string;
   description: string;
@@ -66,6 +70,7 @@ interface UseHackathonReturn {
 }
 
 export const useHackathon = (
+  hackathonID: string | null,
   options: UseHackathonOptions = {}
 ): UseHackathonReturn => {
   const { enabled = true } = options;
@@ -88,7 +93,8 @@ export const useHackathon = (
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons/`,
+        // `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonID}/submissions/`,
         {
           method: "GET",
           headers: {
@@ -119,7 +125,7 @@ export const useHackathon = (
       }
 
       const data = await response.json();
-      console.log("Raw API response:", data);
+      console.log("Hackathon judged by a judge", data);
 
       // Since the API returns an array of hackathons
       setHackathons(data);
@@ -128,8 +134,6 @@ export const useHackathon = (
       if (data.length > 0) {
         setSelectedHackathon(data[0]);
       }
-
-      console.log("Hackathons successfully fetched:", data);
     } catch (err) {
       const errorMessage =
         err instanceof Error
