@@ -30,15 +30,30 @@ export default function TeamManagement() {
     join: false,
     create: false,
   });
+    const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
 
-  const { getTeam } = useTeams();
+  const { getTeam, leaveTeam } = useTeams();
 
   const toggleJoinTeamPage = () => {
     setPages({ ...pages, join: !pages.join });
   };
 
-  const handleDeleteTeam = (id: number) => {
-    console.log("Leaving team with id:", id);
+  const leaveTeamMutation = leaveTeam();
+
+  const handleLeaveTeam = async (id: number) => {
+    try {
+      await leaveTeamMutation.mutateAsync(String(id));
+      console.log("Left team successfully");
+      setFeedback({
+        type: "success",
+        message: `Left ${data.name} team Successfully.`,
+      });
+    } catch (error: any) {
+      setFeedback({
+        type: "error",
+        message: error?.message || "Unable to leave the team please try again later.",
+      });
+    }
   };
 
   const toggleCreateTeam = () => {
@@ -73,10 +88,10 @@ export default function TeamManagement() {
               {data.name}
             </h2>
             <button
-              className="px-4 py-2 bg-red-500 text-white rounded-lg"
-              onClick={() => handleDeleteTeam(data.id)}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
+              onClick={() => handleLeaveTeam(data.id)}
             >
-              Leave Team
+                {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
             </button>
           </div>
 
@@ -94,8 +109,8 @@ export default function TeamManagement() {
               <Calendar className="w-5 h-5 text-gray-500" />
               <p>
                 <span className="font-semibold">Hackathon:</span>{" "}
-                {data.hackathons && data.hackathons.length > 0
-                  ? data.hackathons[0].title
+                {data.hackathon 
+                  ? data.hackathon.title
                   : "N/A"}
               </p>
             </div>
@@ -180,11 +195,11 @@ export default function TeamManagement() {
       <FileText className="w-5 h-5 text-green-600" /> Submissions
     </h3>
     {data.submissions && data.submissions.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
+      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
         View
       </button>
     ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700">
+      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
         Create
       </button>
     )}
@@ -193,7 +208,7 @@ export default function TeamManagement() {
   {data.submissions && data.submissions.length > 0 ? (
     <ul className="list-disc ml-5 text-gray-700 space-y-1">
       {data.submissions.map((s: any) => (
-        <li key={s.id}>{s.title || "Untitled Submission"}</li>
+        <li key={s.id}>{s.project_title || "Untitled Submission"}</li>
       ))}
     </ul>
   ) : (
@@ -238,6 +253,29 @@ export default function TeamManagement() {
             </button>
             <button className="px-4 py-2 bg-green-600 text-white rounded-lg" onClick={toggleCreateTeam}>
               Create Team
+            </button>
+          </div>
+        </div>
+      )}
+
+
+        {/* Feedback Modal */}
+        {feedback && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
+            <h2
+              className={`text-lg font-semibold mb-3 ${
+                feedback.type === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {feedback.type === "success" ? "Success" : "Error"}
+            </h2>
+            <p className="text-gray-700 mb-6">{feedback.message}</p>
+            <button
+              onClick={() => setFeedback(null)}
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+            >
+              OK
             </button>
           </div>
         </div>

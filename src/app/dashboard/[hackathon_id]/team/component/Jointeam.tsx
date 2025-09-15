@@ -13,7 +13,7 @@ interface JoinTeamProps {
 
 export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
   const { getAvailableTeams, joinTeamMutation } = useTeams();
-  const { data } = getAvailableTeams(hackathon_id);
+  const { data, isLoading } = getAvailableTeams(hackathon_id);
 
   const { mutateAsync: joinTeam } = joinTeamMutation();
 
@@ -81,8 +81,17 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
         />
       </div>
 
-      {/* Team list */}
-      {filteredTeams && filteredTeams.length > 0 ? (
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-40">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"
+          />
+          <span className="ml-3 text-gray-600">Loading teams...</span>
+        </div>
+      ) : filteredTeams && filteredTeams.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredTeams.map((team: UserTeam, index: number) => (
             <motion.div
@@ -110,7 +119,7 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
                 onClick={() =>
                   handleJoinTeam(team.id.toString(), hackathon_id)
                 }
-                disabled={!!joiningTeamId} // disable all buttons when one is joining
+                disabled={!!joiningTeamId}
                 className={`mt-4 px-4 py-2 rounded-lg text-white transition ${
                   joiningTeamId === team.id.toString()
                     ? "bg-blue-400 cursor-wait"
