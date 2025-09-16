@@ -12,12 +12,16 @@ import {
 } from "lucide-react";
 import useTeams from "@/hooks/useTeams";
 import { useRouter } from "next/navigation";
+import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
 
 const Hackathons = () => {
   const params = useParams();
   const hackathon_id = params?.hackathon_id as string;
   const router = useRouter()
+
+
+
 
   const getRandomColor = () => {
     const colors = [
@@ -195,11 +199,7 @@ const Hackathons = () => {
           )}
         </div>
 
-        {/* Extra Details */}
-        {/* <div className="p-6 bg-gray-50 rounded-xl">
-          <h2 className="font-semibold text-lg">About</h2>
-          <HtmlContent html={data?.description} />
-        </div> */}
+  
       </div>
     </div>
   );
