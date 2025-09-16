@@ -9,9 +9,10 @@ import { useUserProjectStore } from "@/store/useProjectStore"
 
 interface UpdateProps {
   onClose: () => void;
+  hackathon_id: string;
 }
 
-function  UpdateProject({ onClose }: UpdateProps){
+function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
   const router = useRouter()
   const { team } = useTeamStore()
   const { updateProjectMutation } = useProjects()
@@ -25,6 +26,7 @@ function  UpdateProject({ onClose }: UpdateProps){
     demo_video_url: "",
     presentation_link: "",
     team: team?.id ?? 0,
+    hackathon: hackathon_id ?? 0
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof userProject, string>>>({})
@@ -42,6 +44,7 @@ function  UpdateProject({ onClose }: UpdateProps){
         demo_video_url: project.demo_video_url ?? "",
         presentation_link: project.presentation_link ?? "",
         team: team?.id ?? 0,
+        hackathon: hackathon_id ?? 0
       })
     }
   }, [project, team?.id])

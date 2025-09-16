@@ -139,4 +139,5 @@ export interface userProject {
     demo_video_url: string;
     presentation_link: string;
     team: number;
+    hackathon: string
 }

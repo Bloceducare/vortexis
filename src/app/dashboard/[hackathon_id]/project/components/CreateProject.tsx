@@ -6,7 +6,12 @@ import { userProject } from "@/app/api/utils/interface"
 import useProjects from "@/hooks/useProject"
 import { useTeamStore } from "@/store/useTeamStore"
 
-function CreateProject() {
+
+interface createProps {
+  hackathon_id: string; 
+}
+
+function CreateProject({ hackathon_id }: createProps ) {
   const router = useRouter()
   const { team } = useTeamStore()
   const { createProjectMutation } = useProjects()
@@ -18,6 +23,7 @@ function CreateProject() {
     demo_video_url: "",
     presentation_link: "",
     team: team?.id ?? 0,
+    hackathon: hackathon_id ?? 0
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof userProject, string>>>({})
@@ -72,6 +78,7 @@ function CreateProject() {
         demo_video_url: "",
         presentation_link: "",
         team: team?.id ?? 0,
+        hackathon: hackathon_id ?? 0
       })
     } catch (err: any) {
       setError(err.message || "Failed to create project.")
@@ -165,21 +172,21 @@ function CreateProject() {
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mt-5 cursor-pointer"
           >
-            Submit
+           {createProjectMutation.isPending ? "Submitting" : "Submit"}
           </button>
         </div>
       </form>
 
       {/* ✅ Success Modal */}
       {successMessage && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center w-[90%] max-w-md">
             <h2 className="text-xl font-bold mb-4">Success</h2>
             <p className="mb-6">{successMessage}</p>
             <button
               onClick={() => {
                 setSuccessMessage(null)
-                router.push("/dashboard") // 👈 redirect if needed
+                router.push("/dashboard") 
               }}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >

@@ -1,19 +1,35 @@
-'use client';
+"use client";
+import { useEffect } from "react";
 import { Users, FileText, HelpCircle, Plus, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { HackathonCard } from "@/components/dashboard/HackathonCard";
 import { DeadlineItem } from "@/components/dashboard/DeadlineItem";
 import { QuickActionButton } from "@/components/dashboard/QuickActionButton";
-import useParticipants from '@/hooks/useParticipants';
+import useParticipants from "@/hooks/useParticipants";
 import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
+import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
 const Page = () => {
   const user = useUserStore((state) => state.user);
   const { getHackathons } = useParticipants();
   const router = useRouter();
 
+  // ✅ Zustand store
+  const {
+    hackathons,
+    setHackathons,
+  } = useUserHackathonsStore();
+
+  // ✅ Query hook
   const { data, isLoading, isError, refetch } = getHackathons();
+
+  // ✅ Update Zustand only when data changes
+  useEffect(() => {
+    if (data) {
+      setHackathons(data);
+    }
+  }, [data, setHackathons]);
 
   const calculateDaysLeft = (date: string) => {
     const today = new Date();
@@ -22,47 +38,51 @@ const Page = () => {
     return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0);
   };
 
-  const deadlines = data?.map((hackathon: any) => ({
-    title: "Submission Deadline",
-    subtitle: hackathon.title,
-    daysLeft: calculateDaysLeft(hackathon.submission_deadline),
-    date: new Date(hackathon.submission_deadline).toLocaleDateString(),
-    rawDate: hackathon.submission_deadline,
-    type: "green" as const,
-  })).sort(
-    (a: any, b: any) =>
-      new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
-  );
-
-  const hackathons = data?.map((hackathon: any) => {
-    const today = new Date();
-    const start = new Date(hackathon.start_date);
-    const end = new Date(hackathon.end_date);
-
-    let status = "Upcoming";
-    if (today >= start && today <= end) {
-      status = "Active";
-    } else if (today > end) {
-      status = "Ended";
-    }
-
-    return {
-      title: hackathon.title,
-      daysLeft: calculateDaysLeft(hackathon.end_date),
+  const deadlines = hackathons
+    ?.map((hackathon: any) => ({
+      title: "Submission Deadline",
+      subtitle: hackathon.title,
+      daysLeft: calculateDaysLeft(hackathon.submission_deadline),
       date: new Date(hackathon.submission_deadline).toLocaleDateString(),
-      status,
-      rawDate: hackathon.end_date,
-    };
-  }).sort(
-    (a: any, b: any) =>
-      new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
-  );
+      rawDate: hackathon.submission_deadline,
+      type: "green" as const,
+    }))
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
+    );
+
+  const formattedHackathons = hackathons
+    ?.map((hackathon: any) => {
+      const today = new Date();
+      const start = new Date(hackathon.start_date);
+      const end = new Date(hackathon.end_date);
+
+      let status = "Upcoming";
+      if (today >= start && today <= end) {
+        status = "Active";
+      } else if (today > end) {
+        status = "Ended";
+      }
+
+      return {
+        title: hackathon.title,
+        daysLeft: calculateDaysLeft(hackathon.end_date),
+        date: new Date(hackathon.submission_deadline).toLocaleDateString(),
+        status,
+        rawDate: hackathon.end_date,
+      };
+    })
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
+    );
 
   const quickActions = [
     { icon: Users, label: "Create or Join Team" },
     { icon: FileText, label: "Submit Project" },
     { icon: HelpCircle, label: "Ask a Question" },
-    { icon: Plus, label: "Join New Hackathon", action: () => router.push("/home") }
+    { icon: Plus, label: "Join New Hackathon", action: () => router.push("/home") },
   ];
 
   if (isLoading) {
@@ -75,10 +95,7 @@ const Page = () => {
 
         <div className="space-y-4 flex gap-4">
           {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-40 bg-gray-200 rounded-lg w-full"
-            ></div>
+            <div key={i} className="h-40 bg-gray-200 rounded-lg w-full"></div>
           ))}
         </div>
 
@@ -113,8 +130,8 @@ const Page = () => {
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-green-600">Your Hackathons</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hackathons?.map((hackathon: any, index: number) => (
-              <HackathonCard  key={index} {...hackathon}  />
+            {formattedHackathons?.map((hackathon: any, index: number) => (
+              <HackathonCard key={index} {...hackathon} />
             ))}
           </div>
         </div>

@@ -64,7 +64,7 @@ function Project() {
         <p className="mb-6 text-gray-500 max-w-md">
           You haven’t created a project yet. Start by creating one now.
         </p>
-        <CreateProject />
+        <CreateProject hackathon_id={hackathon_id} />
       </div>
     )
   }
@@ -77,7 +77,7 @@ function Project() {
     return (
       <div className="p-8 min-h-[60vh] bg-white rounded-2xl shadow-lg">
 
-    <UpdateProject onClose={() => setUpdate(false)} />
+    <UpdateProject onClose={() => setUpdate(false)} hackathon_id={hackathon_id} />
     </div>
     )
   }
