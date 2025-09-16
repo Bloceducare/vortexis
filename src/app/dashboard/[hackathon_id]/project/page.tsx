@@ -16,16 +16,42 @@ import {
   Trash2,
   Pencil,
 } from "lucide-react"
+import { useUserProjectStore } from "@/store/useProjectStore";
+import UpdateProject from "./components/UpdateProject"
+
 
 function Project() {
   const params = useParams()
   const hackathon_id = params?.hackathon_id as string
-  const { getProject, deleteProjectMutation } = useProjects()
+  const { getProject, deleteProjectMutation, submitProjectMutation  } = useProjects()
+  const [update, setUpdate] = useState(false)
 
   const { data, isLoading } = getProject()
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
+
+  const handleSubmitProject = async (project_id: number) => {
+    try {
+      await submitProjectMutation.mutateAsync({
+        project: project_id,
+        hackathon_id,
+      });
+  
+    
+      setFeedback({
+        type: "success",
+        message: "Project submitted successfully.",
+      });
+    } catch (error: any) {
+    
+      setFeedback({
+        type: "error",
+        message: error?.message || "Failed to submit project.",
+      });
+    }
+  };
+  
 
   if (isLoading) {
     return <div className="p-6 text-center text-gray-600">Loading...</div>
@@ -44,6 +70,17 @@ function Project() {
   }
 
   const project = data[0]
+  useUserProjectStore.getState().setProject(project);
+
+
+  if(update) {
+    return (
+      <div className="p-8 min-h-[60vh] bg-white rounded-2xl shadow-lg">
+
+    <UpdateProject onClose={() => setUpdate(false)} />
+    </div>
+    )
+  }
 
   const handleDelete = async () => {
     try {
@@ -148,8 +185,20 @@ function Project() {
 
       {/* Actions */}
       <div className="flex gap-4 mt-10 justify-end">
+      <button
+  className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition cursor-pointer ${
+    submitProjectMutation.isPending
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-green-600 hover:bg-green-700"
+  }`}
+  onClick={() => handleSubmitProject(project.id)}
+  disabled={submitProjectMutation.isPending}
+>
+  {submitProjectMutation.isPending ? "Submitting..." : "Submit Project"}
+</button>
+
         <button
-          onClick={() => console.log("Update project")}
+          onClick={() => setUpdate(true)}
           className="flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition cursor-pointer"
         >
           <Pencil size={18} /> Update
@@ -208,7 +257,7 @@ function Project() {
             <p className="text-gray-700 mb-6">{feedback.message}</p>
             <button
               onClick={() => setFeedback(null)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
             >
               OK
             </button>

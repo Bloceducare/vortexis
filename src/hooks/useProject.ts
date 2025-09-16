@@ -43,7 +43,6 @@ export default function useProjects() {
     });
   };
 
-  /** ✅ Create project */
   const createProjectMutation = useMutation({
     mutationFn: async (data: userProject) => {
       const res = await fetch(`${apiUrl}/project/projects/`, {
@@ -71,7 +70,62 @@ export default function useProjects() {
     },
   });
 
-  /** ✅ Delete project */
+  const updateProjectMutation = useMutation({
+    mutationFn: async ({data, id}: {data: userProject, id: string}) => {
+      const res = await fetch(`${apiUrl}/project/projects/${id}/`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+
+        const errorMessage =
+          errorData?.non_field_errors?.[0] ||
+          errorData?.project ||
+          errorData?.message ||
+          'Unable to update project';
+
+        throw new Error(errorMessage);
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+
+  const submitProjectMutation = useMutation({
+    mutationFn: async ({ project, hackathon_id }: { project: any; hackathon_id: string }) => {
+      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submissions/`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({project}),
+      });
+  
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+  
+        const errorMessage =
+        errorData?.non_field_errors?.[0] ||
+        (Array.isArray(errorData?.project) ? errorData.project[0] : errorData?.project) ||
+        errorData?.message ||
+          'Unable to Submit project';
+  
+        throw new Error(errorMessage);
+      }
+  
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+  
+
+
   const deleteProjectMutation = useMutation({
     mutationFn: async (id: string) => {
       const res = await fetch(`${apiUrl}/project/projects/${id}/`, {
@@ -92,10 +146,13 @@ export default function useProjects() {
     },
   });
 
+
   return {
     getProject,
     createProjectMutation,
     deleteProjectMutation,
+    submitProjectMutation,
+    updateProjectMutation
   };
 }
 

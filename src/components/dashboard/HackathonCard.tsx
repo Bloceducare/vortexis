@@ -1,24 +1,31 @@
 
 import { Clock } from "lucide-react";
 import {Card} from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 interface HackathonCardProps {
+  id: number; 
   title: string;
   status: "ACTIVE" | "UPCOMING" | "COMPLETED";
   progress: number;
   daysLeft: number;
-  onclick: () => void;
+  venue: string;
 }
 
-export function HackathonCard({ title, status, progress, daysLeft, onclick }: HackathonCardProps) {
+export function HackathonCard({ title, status, progress, daysLeft, id, venue }: HackathonCardProps) {
+  const router = useRouter()
+  console.log()
   return (
-    <Card className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer" onClick={onclick}>
+    <Card className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer"   onClick={() => {
+      console.log("Clicked hackathon id:", title); 
+      router.push(`/dashboard/${id}/hackathon`);
+    }} >
       {/* <CardContent className="p-6"> */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium text-primary mb-2">{title}</h3>
+            <h3 className="text-lg font-medium text-primary mb-2">{title} {id} </h3>
             <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
-              {status}
+              {status} 
             </span>
           </div>
           

@@ -131,6 +131,7 @@ export interface UserTeam {
 
 
 export interface userProject {
+     id?: string;
     title: string
     description: string
     github_url: string
