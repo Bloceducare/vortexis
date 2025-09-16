@@ -6,7 +6,12 @@ import { userProject } from "@/app/api/utils/interface"
 import useProjects from "@/hooks/useProject"
 import { useTeamStore } from "@/store/useTeamStore"
 
-function CreateProject() {
+
+interface createProps {
+  hackathon_id: string; 
+}
+
+function CreateProject({ hackathon_id }: createProps ) {
   const router = useRouter()
   const { team } = useTeamStore()
   const { createProjectMutation } = useProjects()
@@ -18,6 +23,7 @@ function CreateProject() {
     demo_video_url: "",
     presentation_link: "",
     team: team?.id ?? 0,
+    hackathon: hackathon_id ?? 0
   })
 
   const [errors, setErrors] = useState<Partial<Record<keyof userProject, string>>>({})
@@ -72,6 +78,7 @@ function CreateProject() {
         demo_video_url: "",
         presentation_link: "",
         team: team?.id ?? 0,
+        hackathon: hackathon_id ?? 0
       })
     } catch (err: any) {
       setError(err.message || "Failed to create project.")
