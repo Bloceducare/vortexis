@@ -194,7 +194,7 @@ function Details({ onNext, data }: NavigationProps) {
 
 <div className="mt-10">
   <label className="text-2xl text-[#2F3036]">Description</label>
-  <div className='h-[40vh]'>
+  <div >
   <TiptapEditor
     value={description}
     onChange={(html) => setField("description", html)}

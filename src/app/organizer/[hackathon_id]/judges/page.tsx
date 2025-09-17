@@ -1,28 +1,78 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Invitation from './component/Invitation'
 import JudgesList from './component/JudgesList'
 import { useParams } from 'next/navigation'
 import useOrganizer from '@/hooks/useOrganizers'
 
+const tab = ["Judges List", "Invite Judges"]
 
-const tab = [  "Judges List", "Invite Judges",]
+function JudgesSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4">
+      {/* Tabs Skeleton */}
+      <div className="flex space-x-4">
+        <div className="h-10 w-32 bg-gray-200 rounded-lg"></div>
+        <div className="h-10 w-32 bg-gray-200 rounded-lg"></div>
+      </div>
+
+      {/* List Skeleton */}
+      <div className="mt-6 space-y-3">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-12 bg-gray-200 rounded-lg w-full"
+          ></div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function Judges() {
-  const [activeTab, setActiveTab] = useState("Invite Judges")
+  const [activeTab, setActiveTab] = useState("")
 
-  const { getHackathonJudges, inviteJudgesMutation  } = useOrganizer()
+  const { getHackathonJudges } = useOrganizer()
 
+  const params = useParams()
+  const hackathon_id = params?.hackathon_id as string
 
+  const { data, isLoading, isFetching, isError, refetch } =
+    getHackathonJudges(hackathon_id)
 
- const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+  useEffect(() => {
+    if (data) {
+      if (data.length > 0) {
+        setActiveTab("Judges List")
+      } else {
+        setActiveTab("Invite Judges")
+      }
+    }
+  }, [data])
 
-  console.log(hackathon_id)
+  if (isLoading || isFetching) {
+    return (
+      <section className="bg-white px-10 rounded-2xl py-5">
+        <JudgesSkeleton />
+      </section>
+    )
+  }
 
-
-  const { data, isLoading, isFetching, isError, refetch } = getHackathonJudges(hackathon_id)
+  if (isError) {
+    return (
+      <div className="text-center py-10 text-red-500">
+        Failed to load judges.
+        <br />
+        <button
+          onClick={() => refetch}
+          className="mt-2 underline text-blue-600 cursor-pointer"
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
 
   return (
     <section className="bg-white px-10 rounded-2xl py-5">
@@ -45,15 +95,22 @@ function Judges() {
 
       {/* Content */}
       <div>
-        {activeTab === "Invite Judges" && <Invitation hackathon_id={hackathon_id} />}
-        {activeTab === "Judges List" && <JudgesList  judges={data}
+        {activeTab === "Invite Judges" && (
+          <Invitation hackathon_id={hackathon_id} />
+        )}
+        {activeTab === "Judges List" && (
+          <JudgesList
+            judges={data}
             isLoading={isLoading}
             isFetching={isFetching}
             isError={isError}
-            refetch={refetch} />}
+            refetch={refetch}
+          />
+        )}
       </div>
     </section>
   )
 }
 
 export default Judges
+

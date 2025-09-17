@@ -26,6 +26,8 @@ export default interface Hackathon_details {
 //   amount: number;
 // }
 
+
+
 export interface Skills {
   id: number;
   name: string;
@@ -51,6 +53,36 @@ export interface getHackathonIdProps {
   hackathon_id: string;
 }
 
+export interface Project {
+  id: number;
+  title: string;
+  description: string;
+  github_url: string;
+  live_link: string;
+}
+
+export interface Team {
+  id?: number;
+  name: string;
+}
+
+export interface Review {
+  // Add fields here when you know what reviews contain
+}
+
+export interface HackathonSubmission {
+  id: number;
+  project: Project;
+  team: Team;
+  hackathon: number;
+  approved: boolean;
+  status: "pending" | "approved" | "rejected" | "reviewed"; 
+  reviews: Review[];
+  created_at: string;  
+  updated_at: string;
+}
+
+
 export interface Submission {
   id: number;
   project: string;
@@ -64,7 +96,7 @@ export interface Submission {
 }
 
 export interface SubmissionProps extends ReactQueryState {
-  submissions: Submission[];
+  submissions: HackathonSubmission[];
 }
 
 export interface UserProfile {

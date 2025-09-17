@@ -54,10 +54,14 @@ export default function TiptapEditor({
         orderedList: { keepMarks: true },
         bulletList: { keepMarks: true },
       }),
+      Placeholder.configure({
+        placeholder: 'Start typing here...', 
+        showOnlyWhenEditable: true,
+        showOnlyCurrent: false,
+      }),
       Underline,
       TextStyle,
       FontSize,
-      Placeholder.configure({ placeholder }),
       Heading.configure({ levels: [1, 2, 3] }),
       Color,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
@@ -70,12 +74,12 @@ export default function TiptapEditor({
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {
       attributes: {
-        className: `min-h-[150px] outline-none ${className}`,
+        class: `min-h-[300px] max-h-[350px] w-full outline-none cursor-text px-3 py-2 ${className}`,
       },
     },
     immediatelyRender: false,
   });
-
+  
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || '');
@@ -278,12 +282,13 @@ export default function TiptapEditor({
       <div className="p-2">
   <EditorContent
     editor={editor}
-    className="prose prose-sm sm:prose lg:prose-lg max-w-none list-disc list-inside h-[250px] overflow-auto 
+    className="prose prose-sm sm:prose lg:prose-lg max-w-none list-disc list-inside  overflow-auto 
       border-none outline-none ring-0 focus:outline-none focus:ring-0 focus:border-none focus-visible:outline-none 
       [&_div[contenteditable]]:outline-none [&_div[contenteditable]]:focus:outline-none
       [&_table]:w-full 
       [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 
-      [&_td]:border [&_td]:border-gray-200 [&_td]:px-3 [&_td]:py-2"
+      [&_td]:border [&_td]:border-gray-200 [&_td]:px-3 [&_td]:py-2 
+     min-h-[300px] max-h-[350px] overflow-y-auto cursor-text p-3"
   />
 
 

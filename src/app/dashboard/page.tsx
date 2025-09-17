@@ -15,7 +15,6 @@ const Page = () => {
   const { getHackathons } = useParticipants();
   const router = useRouter();
 
-  // ✅ Zustand store
   const {
     hackathons,
     setHackathons,
@@ -24,7 +23,7 @@ const Page = () => {
   // ✅ Query hook
   const { data, isLoading, isError, refetch } = getHackathons();
 
-  // ✅ Update Zustand only when data changes
+  
   useEffect(() => {
     if (data) {
       setHackathons(data);

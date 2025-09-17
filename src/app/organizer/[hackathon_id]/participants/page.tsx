@@ -40,7 +40,7 @@ function Participants() {
 
   const totalPages = Math.ceil(
     (data ?? []).filter((sub: any) =>
-      sub.title.toLowerCase().includes(searchTerm.toLowerCase())
+      sub.title?.toLowerCase().includes(searchTerm.toLowerCase())
     ).length / SubmissionPerPage
   );
 

@@ -11,7 +11,7 @@ function SubmitProject() {
   const [activeButton, setActiveButton] = useState("All Submission");
   const Buttons = [
     "All Submission",
-    "Pending14",
+    "Pending",
     "Reviewed",
     "Rejected",
   ];
@@ -32,7 +32,7 @@ function SubmitProject() {
         isFetching={isFetching}
         isError={isError}
         refetch={refetch}   />;
-      case "Pending14":
+      case "Pending":
         return <Pending  submissions={data}  isLoading={isLoading}
         isFetching={isFetching}
         isError={isError}

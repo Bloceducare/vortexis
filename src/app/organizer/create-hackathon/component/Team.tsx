@@ -133,35 +133,22 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
           {/* Minimum Members Dropdown */}
           <div className="w-full md:w-[45%]">
             <label className="block mb-2 text-[#2F3036] font-bold">Minimum Team Members</label>
-            <select
-              className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none"
-              name="min_team_size"
+
+            <div className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none">
+              <input type='text' placeholder='Enter minimum team members e.g(1 individual)'   name="min_team_size"
               value={min_team_size}
-              onChange={(e) => setField('min_team_size', e.target.value)}
-            >
-              {dropdownMinimumIndividual.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+              onChange={(e) => setField('min_team_size', e.target.value)} className='w-full border-none outline-none' />
+            </div>
+           
           </div>
 
         
           <div className="w-full md:w-[45%]">
             <label className="block mb-2 text-[#2F3036] font-bold">Maximum Team Members</label>
-            <select
-              className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none"
-              name="max_team_size"
-              value={max_team_size}
-              onChange={(e) => setField('max_team_size', e.target.value)}
-            >
-              {dropdownMaximum.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
+            <div className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none">
+              <input type='text' placeholder='Enter maximum team members e.g(6 members)'   name="max_team_size"
+              value={max_team_size}  onChange={(e) => setField('max_team_size', e.target.value)} className='w-full border-none outline-none' />
+            </div>
           </div>
         </div>
 
@@ -174,7 +161,7 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
           onClick={() => refetch()}
           className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
-          {isFetching ? 'Refreshing...' : 'Refetch'}
+          {isFetching ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
 
@@ -206,9 +193,6 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
         </div>
       )}
     </div>
-
-
-
         <div className="mt-10">
         <div className="space-y-4">
           {notifications.map((notif, idx) => (
@@ -231,9 +215,6 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
           ))}
         </div>
       </div>
-
-     
-
 
         <div className="mt-10 flex justify-between">
         <button className="border-[#0B40EE] border text-[#0B40EE] py-2 px-8 rounded cursor-pointer" onClick={previousButton}>

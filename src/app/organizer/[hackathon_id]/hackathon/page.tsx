@@ -63,7 +63,7 @@ function Page() {
   const ActiveHackathons = [
     {
       id: 1,
-      number: data?.submissions.length,
+      number: data?.submissions_count,
       word: '',
       icon: Document,
       link: `/organizer/${hackathon_id}/submission`,
@@ -71,7 +71,7 @@ function Page() {
     },
     {
       id: 2,
-      number: data?.participants.length,
+      number: data?.participants_count,
       word: '',
       icon: People,
       link: `/organizer/${hackathon_id}/participants`,
@@ -91,13 +91,13 @@ function Page() {
   const Details = [
       {
         id: 1,
-        number: data?.participants.length,
+        number: data?.submissions_count,
         icon: People,
         type: 'Participants'
       }, 
       {
         id: 2,
-        number: data?.submissions.length,
+        number: data?.submissions_count,
         icon: Document,
         type: 'Submission'
       }, 
@@ -108,29 +108,6 @@ function Page() {
         type: 'Judges'
       }, 
   ]
-
-  const recentActivities = [
-    {
-      title: "New Registration",
-      description: "You joined the AI Global Hackathon",
-      icon: Document,
-    },
-    {
-      title: "Review Completed",
-      description: "Submitted a project to the Open Innovation Challenge",
-      icon:  Document,
-    },
-    {
-      title: "New Registration",
-      description: "Received a message from the event organizer",
-      icon:  Document,
-    },
-    {
-      title: "Announcement Posted",
-      description: "Global AI Agents League has concluded",
-      icon:  Document,
-    },
-  ];
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';

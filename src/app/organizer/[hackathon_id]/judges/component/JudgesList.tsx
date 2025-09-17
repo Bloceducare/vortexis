@@ -1,5 +1,6 @@
 import React from 'react'
 import { Judge, ReactQueryState } from '@/app/api/utils/interface';
+import { useRouter } from 'next/navigation';
 
 interface JudgesListProps extends ReactQueryState {
   judges: Judge[] | undefined;
@@ -17,6 +18,7 @@ const JudgesList: React.FC<JudgesListProps> = ({
   if (isLoading) {
     return <div className="text-center py-10">Loading judges...</div>;
   }
+  const router = useRouter()
 
   if (isError) {
     return (
@@ -47,6 +49,7 @@ const JudgesList: React.FC<JudgesListProps> = ({
             <th className="px-6 py-3">#</th>
             <th className="px-6 py-3">Name</th>
             <th className="px-6 py-3">Email</th>
+            <th className='px-6 py-3'>Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
@@ -55,6 +58,9 @@ const JudgesList: React.FC<JudgesListProps> = ({
               <td className="px-6 py-4">{index + 1}</td>
               <td className="px-6 py-4">{judge.first_name} {judge.last_name || ''}</td>
               <td className="px-6 py-4">{judge.email}</td>
+              <td className='px-6 py-4'>
+                <button className='underline cursor-pointer' onClick={() => router.push(`/profile/${judge.id}`)}>View Profile</button>
+              </td>
             </tr>
           ))}
         </tbody>
