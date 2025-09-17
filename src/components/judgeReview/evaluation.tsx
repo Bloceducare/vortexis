@@ -140,7 +140,7 @@ function Evaluation({
         const reviews: ReviewResponse[] = await response.json();
         if (reviews.length > 0) {
           const existingReview = reviews[0];
-          console.log(existingReview);
+          console.log("This is the existingReview", existingReview);
           setExistingReviewId(existingReview.id);
           setEvaluations([
             {

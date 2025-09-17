@@ -3,6 +3,7 @@
 import JudgeError from "@/components/judgeReview/JudgeError";
 
 import { useHackathon } from "@/hooks/useHackathonDetails";
+import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +14,12 @@ export default function SubmissionsPage() {
 
   const { hackathons, selectedHackathon, loading, error, selectHackathon } =
     useHackathon(submissionId);
+
+  const {
+    loading: loadingReview,
+    error: errorReview,
+    hackathonDetails,
+  } = useSubmissionReview(submissionId);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -31,7 +38,7 @@ export default function SubmissionsPage() {
     status: submission.status,
     teamSize: submission.team.members?.length || 0,
     description: submission.project.description,
-    hackathon: selectedHackathon?.title || "",
+    hackathon: hackathonDetails?.title || "",
     githubUrl: submission.project.github_url,
     liveLink: submission.project.live_link,
     presentationUrl: submission.project.presentation_url,
@@ -65,7 +72,7 @@ export default function SubmissionsPage() {
     // Example: router.push(`/submissions/${submissionId}/review`)
   };
 
-  if (loading) {
+  if (loading || loadingReview) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
@@ -76,8 +83,12 @@ export default function SubmissionsPage() {
     );
   }
 
-  if (error) {
-    return <JudgeError error={error} />;
+  if (error || errorReview) {
+    return (
+      <JudgeError
+        error={error || errorReview || "An unknown error occurred."}
+      />
+    );
   }
 
   return (
@@ -93,7 +104,7 @@ export default function SubmissionsPage() {
           </p>
 
           {/* Hackathon Selector */}
-          {hackathons.length > 1 && (
+          {/* {hackathons.length > 1 && (
             <div className="mt-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Select Hackathon:
@@ -109,15 +120,15 @@ export default function SubmissionsPage() {
                 ))}
               </select>
             </div>
-          )}
+          )} */}
 
-          {selectedHackathon && (
+          {hackathonDetails && (
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
               <h2 className="font-semibold text-blue-900">
-                {selectedHackathon.title}
+                {hackathonDetails.title}
               </h2>
               <p className="text-blue-700 text-sm">
-                {selectedHackathon.description}
+                {hackathonDetails.description}
               </p>
             </div>
           )}

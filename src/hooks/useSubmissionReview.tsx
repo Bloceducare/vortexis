@@ -42,7 +42,7 @@ export const useSubmissionReview = (id: string) => {
 
       const submissionData = await submissionResponse.json();
       // setcurrentSubmission(submissionData.submissions[0] || null);
-      // sethackathonDetails(submissionData || null);
+      sethackathonDetails(submissionData || null);
       console.log("Hackathon submission data:", submissionData);
     } catch (err) {
       const errorMessage =
