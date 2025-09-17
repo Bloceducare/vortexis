@@ -28,10 +28,10 @@ export interface Submission {
 }
 
 export interface Hackathon {
-  hackathon: any;
-  project: any;
-  team: any;
-  status: any;
+  project: Project;
+  hackathon: number;
+  // team: any;
+  // status: any;
   id: number;
   title: string;
   description: string;

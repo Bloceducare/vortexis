@@ -4,13 +4,18 @@ import { useParams } from "next/navigation";
 import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import Tabscontent from "@/components/Tabscontent";
 import JudgeError from "@/components/judgeReview/JudgeError";
+import { useHackathon } from "@/hooks/useHackathonDetails";
 
 export default function SubmissionReviewPage() {
   const params = useParams();
   const submissionId = params.id as string;
 
-  const { hackathonDetails, loading, error, currentSubmission } =
-    useSubmissionReview(submissionId);
+  // const { hackathonDetails, loading, error, currentSubmission } =
+  //   useSubmissionReview(submissionId);
+
+  const { hackathons, loading, error, selectedHackathon } =
+    useHackathon(submissionId);
+  console.log("my submission", hackathons);
 
   if (loading) {
     return (
@@ -27,7 +32,8 @@ export default function SubmissionReviewPage() {
     return <JudgeError error={error} />;
   }
 
-  if (!currentSubmission || !hackathonDetails) {
+  // if (!currentSubmission || !hackathonDetails) {
+  if (!selectedHackathon) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         {/* <p className="text-gray-600">No submission found.</p> */}
@@ -41,16 +47,20 @@ export default function SubmissionReviewPage() {
         <h1 className="text-2xl mb-2 font-semibold text-[#605DEC]">
           Submission Review
         </h1>
-        <p>Reviewing submissions for {hackathonDetails?.title}</p>
+        <p>Reviewing submissions for {selectedHackathon?.project?.title}</p>
       </div>
 
       <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
         <div className="md:w-[1114px] w-full px-3 py-8">
           {
             <Tabscontent
-              submission={currentSubmission}
-              hackathonId={hackathonDetails?.id.toString()}
+              submission={selectedHackathon}
+              hackathonId={selectedHackathon?.hackathon?.toString() ?? ""}
             />
+            // <Tabscontent
+            //   submission={currentSubmission}
+            //   hackathonId={hackathonDetails?.id.toString()}
+            // />
           }
         </div>
       </div>
