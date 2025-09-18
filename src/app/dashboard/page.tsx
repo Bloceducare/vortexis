@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Users, FileText, HelpCircle, Plus, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { HackathonCard } from "@/components/dashboard/HackathonCard";
@@ -14,14 +14,12 @@ const Page = () => {
   const user = useUserStore((state) => state.user);
   const { getHackathons } = useParticipants();
   const router = useRouter();
-
   const {
     hackathons,
     setHackathons,
   } = useUserHackathonsStore();
-
-  // ✅ Query hook
   const { data, isLoading, isError, refetch } = getHackathons();
+  const [expanded, setExpanded] = useState(false);
 
   
   useEffect(() => {
@@ -51,35 +49,39 @@ const Page = () => {
         new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
     );
 
-  const formattedHackathons = hackathons
+  const visibleDeadlines = expanded ? deadlines : deadlines?.slice(0, 3);
+
+
+    const formattedHackathons = hackathons
     ?.map((hackathon: any) => {
       const today = new Date();
       const start = new Date(hackathon.start_date);
       const end = new Date(hackathon.end_date);
-
+  
       let status = "Upcoming";
       if (today >= start && today <= end) {
         status = "Active";
       } else if (today > end) {
         status = "Ended";
       }
-
+  
       return {
+        id: hackathon.id, 
         title: hackathon.title,
         daysLeft: calculateDaysLeft(hackathon.end_date),
         date: new Date(hackathon.submission_deadline).toLocaleDateString(),
         status,
         rawDate: hackathon.end_date,
+        venue: hackathon.venue, 
       };
     })
     .sort(
       (a: any, b: any) =>
         new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
     );
+  
 
   const quickActions = [
-    { icon: Users, label: "Create or Join Team" },
-    { icon: FileText, label: "Submit Project" },
     { icon: HelpCircle, label: "Ask a Question" },
     { icon: Plus, label: "Join New Hackathon", action: () => router.push("/home") },
   ];
@@ -139,20 +141,31 @@ const Page = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Deadlines */}
           <div className="lg:col-span-1">
-            <Card>
-              <header className="pb-4 p-5 flex justify-between items-center">
-                <h2 className="flex items-center gap-2 text-red-600 text-xl">
-                  <AlertCircle className="w-5 h-5" />
-                  Upcoming Deadlines
-                </h2>
-              </header>
-              <div className="space-y-2">
-                {deadlines?.map((deadline: any, index: number) => (
-                  <DeadlineItem key={index} {...deadline} />
-                ))}
-              </div>
-            </Card>
+      <Card>
+        <header className="pb-4 p-5 flex justify-between items-center">
+          <h2 className="flex items-center gap-2 text-red-600 text-xl">
+            <AlertCircle className="w-5 h-5" />
+            Upcoming Deadlines
+          </h2>
+        </header>
+        <div className="space-y-2">
+          {visibleDeadlines?.map((deadline: any, index: number) => (
+            <DeadlineItem key={index} {...deadline} />
+          ))}
+        </div>
+
+        {deadlines?.length > 3 && (
+          <div className="p-4">
+            <button
+              className="text-blue-600 text-sm font-medium hover:underline cursor-pointer"
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? "Show less" : `Show ${deadlines.length - 3} more`}
+            </button>
           </div>
+        )}
+      </Card>
+    </div>
 
           {/* Quick Actions */}
           <div>

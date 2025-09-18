@@ -31,15 +31,25 @@ export default function TeamManagement() {
     create: false,
   });
     const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
+    const [addModal, setAddModal] = useState<boolean>(false)
+    const [newMember, setNewMember] = useState("");
 
-  const { getTeam, leaveTeam } = useTeams();
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMember(e.target.value);
+  };
+
+
+  const { getTeam, leaveTeam, inviteMembers } = useTeams();
 
   const toggleJoinTeamPage = () => {
     setPages({ ...pages, join: !pages.join });
   };
 
   const leaveTeamMutation = leaveTeam();
+  const inviteMemberMutation = inviteMembers()
 
+
+  
   const handleLeaveTeam = async (id: number) => {
     try {
       await leaveTeamMutation.mutateAsync(String(id));
@@ -54,7 +64,7 @@ export default function TeamManagement() {
         message: error?.message || "Unable to leave the team please try again later.",
       });
     }
-  };
+  };  
 
   const toggleCreateTeam = () => {
     setPages({ ...pages, create: !pages.create });
@@ -66,6 +76,27 @@ export default function TeamManagement() {
 
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
   console.log(data)
+
+  const handleAddMember = async () => {
+    if (!newMember.trim()) {
+      alert("Please enter a member email");
+      return;
+    }
+
+    try {
+      await inviteMemberMutation.mutateAsync({
+        team_id: data.id,
+        member_email: newMember,
+      });
+      alert("Member invited successfully!");
+      setNewMember("");
+    } catch (err: any) {
+      alert(err.message || "Failed to invite member");
+    } finally {
+      setAddModal(false);
+    }
+  };
+
 
   if (pages.join) {
     return <JoinTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
@@ -87,14 +118,55 @@ export default function TeamManagement() {
               <Crown className="w-6 h-6 text-yellow-500" />
               {data.name}
             </h2>
+
+            <div className="flex gap-2">
+
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer"
+              onClick={() => setAddModal(true)}
+            >
+              Add a member
+            </button>
+
             <button
               className="px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
               onClick={() => handleLeaveTeam(data.id)}
             >
                 {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
             </button>
+            </div>
+         
           </div>
 
+          {addModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-[100vh]">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md relative">
+            <button
+              onClick={() => setAddModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+            >
+              &times;
+            </button>
+
+            <h2 className="text-lg font-semibold mb-4">Invite Member</h2>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newMember}
+                onChange={handleChange}
+                placeholder="Enter member name"
+                className="border p-2 rounded-lg flex-1"
+              />
+              <button
+                onClick={handleAddMember}
+                className="bg-green-500 text-white px-4 py-2 rounded-lg"
+              >
+                Invite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
           {/* Info Section */}
           <div className="grid md:grid-cols-2 gap-4">
             <div className="flex items-center gap-2 border p-3 rounded-lg">

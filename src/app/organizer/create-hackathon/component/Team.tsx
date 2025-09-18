@@ -21,7 +21,7 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
 
       const { min_team_size, max_team_size, skills, setField } = useHackathonStore(hackathonSelector);
 
-      const { getAllSkills } = useSkills()
+      const { getAllSkills, createSkill } = useSkills()
 
 
       const { data, isLoading, isError, isFetching, refetch } = getAllSkills()

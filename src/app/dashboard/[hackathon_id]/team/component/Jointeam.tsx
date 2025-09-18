@@ -27,6 +27,7 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
     try {
       const response = await joinTeam({ teamId, hackathon_id });
       console.log("Joined successfully:", response);
+      window.location.reload()
       onClose();
     } catch (err: any) {
       console.error("Error joining team:", err);

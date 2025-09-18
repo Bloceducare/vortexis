@@ -17,6 +17,24 @@ function Hack() {
   const [countdown, setCountdown] = useState("");
   const user = useUserStore.getState().user
 
+
+  function safeParseContent(content: string | null | undefined): string {
+    if (!content) return "";
+  
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed.join("");
+      }
+      if (typeof parsed === "string") {
+        return parsed;
+      }
+      return "";
+    } catch {
+      return content;
+    }
+  }
+
   const handleAddComment = () => {
     if (!review.trim()) return;
     setComments((prev) => [...prev, review]);
@@ -152,7 +170,7 @@ function Hack() {
   <div className="space-y-4">
     <div className="flex items-start gap-3">
       <CheckCircle className="w-5 h-5 text-green-500 mt-1" />
-      <HtmlContent html={JSON.parse(data?.rules).join("")} />
+      <HtmlContent html={safeParseContent(data?.rules)} />
     </div>
 
     <div className="flex items-start gap-3">
@@ -170,7 +188,7 @@ function Hack() {
     </h2>
 
     <div className="w-full">
-    <HtmlContent html={JSON.parse(data?.prizes).join("")} />
+   <HtmlContent html={safeParseContent(data?.prizes)} />
     </div>
 
     {/* Team Sizes */}

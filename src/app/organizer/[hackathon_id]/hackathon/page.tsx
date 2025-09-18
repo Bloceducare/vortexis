@@ -21,13 +21,29 @@ function Page() {
   const hackathon_id = params?.hackathon_id as string;
   const router = useRouter()
 
+  function safeParseContent(content: string | null | undefined): string {
+    if (!content) return "";
+  
+    try {
+      const parsed = JSON.parse(content);
+      if (Array.isArray(parsed)) {
+        return parsed.join("");
+      }
+      if (typeof parsed === "string") {
+        return parsed;
+      }
+      return "";
+    } catch {
+      return content;
+    }
+  }
+
 
 
   const { getHackathonById } = useOrganizer()
 
   const { data, isLoading, error } = getHackathonById(hackathon_id)
-  const parsedPrizes = data?.prizes ? JSON.parse(data.prizes) : [];
-  const parsedRules: string[] = data?.rules ? JSON.parse(data.rules) : [];
+ 
 
 
 
@@ -335,18 +351,16 @@ function Page() {
       </div>
 
       {/* Other Prizes */}
-      {data?.prizes?.length > 0 && (
+      {data?.prizes && (
         <div className="col-span-1 sm:col-span-2 md:col-span-3">
           <p className="font-bold">Other Prizes:</p>
           <div className="flex flex-wrap gap-2 mt-1">
-            {parsedPrizes.map((prize: any, index: number) => (
+          
               <span
-                key={index}
                 className=" px-3 py-1 rounded-full text-sm"
               >
-              <HtmlContent html={prize.toLocaleString()}/>
+                   <HtmlContent html={safeParseContent(data?.prizes)} />
               </span>
-            ))}
           </div>
         </div>
       )}
@@ -356,10 +370,10 @@ function Page() {
     <div className="mt-6">
       <p className="font-bold mb-2">Rules:</p>
       <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm">
-        {parsedRules.map((rule: string, index: number) => (
-          <p key={index}>              <HtmlContent html={rule} />
+      
+          <p>                       <HtmlContent html={safeParseContent(data?.rules)} />
+
 </p>
-        ))}
       </ul>
     </div>
 
