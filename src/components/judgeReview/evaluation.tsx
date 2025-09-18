@@ -140,6 +140,7 @@ function Evaluation({
         const reviews: ReviewResponse[] = await response.json();
         if (reviews.length > 0) {
           const existingReview = reviews[0];
+          console.log("This is the existingReview", existingReview);
           setExistingReviewId(existingReview.id);
           setEvaluations([
             {
@@ -203,9 +204,11 @@ function Evaluation({
     };
 
     let result: ReviewResponse | null = null;
+    console.log("Hellooooooooooooooo", existingReviewId);
 
     if (existingReviewId) {
       result = await updateReview(hackathonId, existingReviewId, reviewData);
+      result ? console.log("Here is your review number", result) : null;
     } else {
       result = await submitReview(hackathonId, reviewData);
     }

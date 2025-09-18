@@ -119,7 +119,7 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
       </div>
       <div className="mt-2">
         <p className="font-medium text-gray-700 text-sm mb-1">Breakdown:</p>
-        <ul className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-gray-600">
+        <ul className="space-y-1.5 text-sm text-gray-600">
           {review.scores.map((s, idx) => (
             <li key={idx} className="flex justify-between">
               <span>{s.criterion}:</span>

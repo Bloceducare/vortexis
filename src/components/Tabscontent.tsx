@@ -9,7 +9,7 @@ import { ChevronDown } from "lucide-react";
 import OtherJudges from "./judgeReview/overview";
 import { Submission } from "@/hooks/useHackathonDetails";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Ensure styles are imported
+import "react-toastify/dist/ReactToastify.css"; 
 
 const tabs = [
   { name: "Project Details", tab_no: 1 },

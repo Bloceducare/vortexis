@@ -28,10 +28,10 @@ export interface Submission {
 }
 
 export interface Hackathon {
-  hackathon: any;
-  project: any;
-  team: any;
-  status: any;
+  project: Project;
+  hackathon: number;
+  // team: any;
+  // status: any;
   id: number;
   title: string;
   description: string;
@@ -61,8 +61,8 @@ interface UseHackathonOptions {
 }
 
 interface UseHackathonReturn {
-  hackathons: Hackathon[];
-  selectedHackathon: Hackathon | null;
+  hackathons: Submission[];
+  selectedHackathon: Submission | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
@@ -74,8 +74,8 @@ export const useHackathon = (
   options: UseHackathonOptions = {}
 ): UseHackathonReturn => {
   const { enabled = true } = options;
-  const [hackathons, setHackathons] = useState<Hackathon[]>([]);
-  const [selectedHackathon, setSelectedHackathon] = useState<Hackathon | null>(
+  const [hackathons, setHackathons] = useState<Submission[]>([]);
+  const [selectedHackathon, setSelectedHackathon] = useState<Submission | null>(
     null
   );
   const [loading, setLoading] = useState<boolean>(false);

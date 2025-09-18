@@ -5,7 +5,7 @@ const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
 export async function signInGithubAction() {
   try {
-    const clientId = process.env.NEXT_GITHUB_ID;
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
     const scope = encodeURIComponent("read:user user:email");
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=http://localhost:3000/auth/callback&scope=${scope}`;
@@ -53,7 +53,7 @@ export async function handleGithubCallback() {
 
 export async function signInGoogleAction() {
   try {
-    const clientId = process.env.NEXT_GOOGLE_ID;
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_ID;
     const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI);
     const scope = encodeURIComponent("email profile");
     const responseType = "code";
@@ -94,8 +94,8 @@ export async function handleGoogleCallback() {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         code,
-        client_id: process.env.NEXT_GOOGLE_ID,
-        client_secret: process.env.NEXT_GOOGLE_SECRET,
+        client_id: process.env.NEXT_PUBLIC_GOOGLE_ID,
+        client_secret: process.env.NEXT_PUBLIC_GOOGLE_SECRET,
         redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
         grant_type: "authorization_code",
       }),

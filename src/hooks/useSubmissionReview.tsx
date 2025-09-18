@@ -42,7 +42,7 @@ export const useSubmissionReview = (id: string) => {
 
       const submissionData = await submissionResponse.json();
       // setcurrentSubmission(submissionData.submissions[0] || null);
-      // sethackathonDetails(submissionData || null);
+      sethackathonDetails(submissionData || null);
       console.log("Hackathon submission data:", submissionData);
     } catch (err) {
       const errorMessage =
@@ -62,8 +62,8 @@ export const useSubmissionReview = (id: string) => {
 
       const submissionResponse = await fetch(
         // `${process.env.NEXT_PUBLIC_API_URL}/team/teams/${teamId}/`,
-        `${process.env.NEXT_PUBLIC_API_URL}/project/projects/by_hackathon/?hackathon_id=${teamId}`,
-
+        // `${process.env.NEXT_PUBLIC_API_URL}/project/hackathons/${teamId}/projects/2/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/project/projects/${teamId}/`,
         {
           method: "GET",
           headers: {
@@ -74,7 +74,7 @@ export const useSubmissionReview = (id: string) => {
       );
 
       const teamData = await submissionResponse.json();
-      console.log("Team data:", teamData);
+      console.log("project data:", teamData);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -119,7 +119,7 @@ export const useSubmissionReview = (id: string) => {
 
   useEffect(() => {
     hackathon(id);
-    team("22");
+    team("2");
     review("22");
   }, [id]);
 
