@@ -1,7 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { SubmissionProps, Submission } from '@/app/api/utils/interface'
+import { SubmissionProps, HackathonSubmission } from '@/app/api/utils/interface'
 import TableSkeleton from '@/components/TableSkeleton'
 
 
@@ -15,20 +15,23 @@ const Rejected: React.FC<SubmissionProps> = ({
   const SubmissionPerPage = 8
   const [searchTerm, setSearchTerm] = useState('')
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
-  const [filteredSubmissions, setFilteredSubmissions] = useState<Submission[]>([])
+  const [filteredSubmissions, setFilteredSubmissions] = useState<HackathonSubmission[]>([])
   const [currentPage, setCurrentPage] = useState(1)
+      const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
+  
 
-  const RejectedSubmissions = submissions.filter(item => item.status === 'Rejected')
+
+  const RejectedSubmissions = submissions.filter(item => item.status === 'rejected')
 
   const totalPages = Math.ceil(
     RejectedSubmissions.filter(sub =>
-      sub.project.toLowerCase().includes(searchTerm.toLowerCase())
+      sub.project?.title?.toLowerCase().includes(searchTerm.toLowerCase())
     ).length / SubmissionPerPage
   )
 
   useEffect(() => {
     const filtered = RejectedSubmissions.filter(sub =>
-      sub.project.toLowerCase().includes(searchTerm.toLowerCase())
+      sub.project?.title?.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
     const sorted = filtered.sort((a, b) => {
@@ -146,35 +149,83 @@ const Rejected: React.FC<SubmissionProps> = ({
   ) : (
             filteredSubmissions.map((sub, index) => (
               <tr key={index} className="hover:bg-gray-50 border-b border-[#EEEEEE]">
-                <td className="px-4 py-5">
-                  <h1 className="font-bold text-[#212121]">{sub.project}</h1>
-                </td>
-                <td className="px-4 py-5">
-                  <h1 className="font-semibold text-[#212121]">{sub.team}</h1>
-                </td>
-                <td className="px-2 py-5 text-[#292D32] font-medium">
-                  {new Date(sub.created_at).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-5">
-                  <span className="px-4 py-2 rounded-lg font-semibold bg-[#F9FBFF] text-[#555] border border-[#DDD]">
-                    {sub.status}
-                  </span>
-                </td>
-                <td className="px-4 py-5">
-                  <span
-                    className={`px-4 py-2 rounded-lg font-semibold border ${
-                      sub.approved
-                        ? 'bg-[#16C09861] text-[#16C098] border-[#16C098]'
-                        : 'bg-[#F9831C61] text-[#F9831C] border-[#F9831C]'
-                    }`}
+              <td className="px-4 py-5">
+                <h1 className="font-bold text-[#212121]">{sub.project.title}</h1>
+                <p className="text-sm text-gray-500">{sub.project.description}</p>
+              </td>
+              <td className="px-4 py-5">
+                <h1 className="font-semibold text-[#212121]">{sub.team.name}</h1>
+              </td>
+              <td className="px-2 py-5 text-[#292D32] font-medium">
+                {new Date(sub.created_at).toLocaleDateString()}
+              </td>
+              <td className="px-4 py-5">
+                <span className="px-4 py-2 rounded-lg font-semibold bg-[#F9FBFF] text-[#555] border border-[#DDD]">
+                  {sub.status}
+                </span>
+              </td>
+              <td className="px-4 py-5">
+                <span
+                  className={`px-4 py-2 rounded-lg font-semibold border ${
+                    sub.approved
+                      ? 'bg-[#16C09861] text-[#16C098] border-[#16C098]'
+                      : 'bg-[#F9831C61] text-[#F9831C] border-[#F9831C]'
+                  }`}
+                >
+                  {sub.approved ? 'Approved' : 'Not Approved'}
+                </span>
+              </td>
+              <td className="px-4 py-5 text-sm text-blue-600 underline cursor-pointer"
+              onClick={() => setSelectedSubmission(sub)}>
+                View
+              </td>
+          
+              {selectedSubmission && (
+                <div
+                  className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50"
+                  onClick={() => setSelectedSubmission(null)} 
+                >
+                  <div
+                    className="bg-white rounded-lg shadow-lg p-6 w-96 relative"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    {sub.approved ? 'Approved' : 'Not Approved'}
-                  </span>
-                </td>
-                <td className="px-4 py-5 text-sm text-blue-600 underline cursor-pointer">
-                  View
-                </td>
-                </tr>
+                    <button
+                      onClick={() => setSelectedSubmission(null)}
+                      className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 cursor-pointer"
+                    >
+                      ✕
+                    </button>
+          
+                    <h2 className="text-xl font-bold mb-4">
+                      {selectedSubmission.project.title}
+                    </h2>
+                    <p className="text-sm text-gray-500 mb-4">
+                      {selectedSubmission.project.description}
+                    </p>
+          
+                    <div className="space-y-3">
+                      <a
+                        href={selectedSubmission.project.github_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-blue-600 font-semibold text-center"
+                      >
+                        GitHub Repo
+                      </a>
+                      <a
+                        href={selectedSubmission.project.live_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-green-600 font-semibold text-center"
+                      >
+                        Live Link
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+          
+            </tr>
     ))
   )}
           </tbody>

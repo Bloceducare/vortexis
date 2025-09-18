@@ -1,15 +1,31 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import  Hackathon_details  from "@/app/api/utils/interface";
 
+// Define Hackathon type
+export interface Hackathon {
+  id?: number;
+  title?: string;
+  description?: string;
+  grand_prize?: string;
+  banner_image?: string | null;
+  venue?: string;
+  organization?: { name: string };
+  participants_count: number;
+  submissions_count: number;
+  start_date?: string;
+  end_date?: string;
+}
+
+// Zustand store interface
 interface UserHackathons {
-  hackathons: Hackathon_details[];
-  addHackathon: (hackathon: Hackathon_details) => void;
-  setHackathons: (hackathons: Hackathon_details[]) => void;
-  removeHackathon: (id: string) => void;
+  hackathons: Hackathon[];
+  addHackathon: (hackathon: Hackathon) => void;
+  setHackathons: (hackathons: Hackathon[]) => void;
+  removeHackathon: (id: number) => void;
   clearHackathons: () => void;
 }
 
+// Store
 export const useUserHackathonsStore = create<UserHackathons>()(
   persist(
     (set) => ({
@@ -26,7 +42,7 @@ export const useUserHackathonsStore = create<UserHackathons>()(
       clearHackathons: () => set({ hackathons: [] }),
     }),
     {
-      name: "user-hackathons-storage", 
+      name: "user-hackathons-storage", // localStorage key
     }
   )
 );

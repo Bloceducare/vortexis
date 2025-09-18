@@ -2,6 +2,9 @@
 import { useState, useEffect } from "react";
 import useUser from "@/hooks/useUserProfile";
 import { useRouter } from "next/navigation";
+import useSkills from '@/hooks/useSkills';
+import { Skills } from "@/app/api/utils/interface";
+
 
 interface SettingsProps {
   onClose?: () => void;
@@ -10,6 +13,10 @@ interface SettingsProps {
 export default function SettingsPage({ onClose }: SettingsProps) {
   const router = useRouter();
   const { getUserDetail, updateUserDetail, updateUserProfile } = useUser();
+  const [inputValue, setInputValue] = useState("");
+  const [suggestions, setSuggestions] = useState<Skills[]>([]);
+  const [selectedSkills, setSelectedSkills] = useState<Skills[]>([]);
+
 
   const { data, isLoading, error: fetchError } = getUserDetail();
   const updateDetailMutation = updateUserDetail();
@@ -17,6 +24,9 @@ export default function SettingsPage({ onClose }: SettingsProps) {
 
   const tabs = ["Personal", "Social", "Skills & Interests"];
   const [activeTab, setActiveTab] = useState("Personal");
+  const { getAllSkills } = useSkills()
+
+  const {data: userSkills }  = getAllSkills()
 
   const [form, setForm] = useState({
     first_name: "",
@@ -29,12 +39,15 @@ export default function SettingsPage({ onClose }: SettingsProps) {
     linkedin: "",
     twitter: "",
     website: "",
+    skills: [], 
   });
 
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   useEffect(() => {
     if (data?.user) {
+      const userProfileSkills = data.user.profile.skills || []
+  
       setForm({
         first_name: data.user.first_name || "",
         last_name: data.user.last_name || "",
@@ -46,9 +59,13 @@ export default function SettingsPage({ onClose }: SettingsProps) {
         linkedin: data.user.profile?.linkedin || "",
         twitter: data.user.profile?.twitter || "",
         website: data.user.profile?.website || "",
-      });
+        skills: userProfileSkills, // still here for fallback
+      })
+  
+      setSelectedSkills(userProfileSkills) // ✅ populate chip UI
     }
-  }, [data]);
+  }, [data])
+  
 
   // Redirect after success
   useEffect(() => {
@@ -77,6 +94,31 @@ export default function SettingsPage({ onClose }: SettingsProps) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleChangeSkill = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (value.trim().length > 0) {
+      const filtered = userSkills.filter((skill: Skills) =>
+        skill.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  };
+  const handleSelect = (skill: Skills) => {
+    if (!selectedSkills.some((s) => s.id === skill.id)) {
+      setSelectedSkills([...selectedSkills, skill]);
+    }
+    setInputValue("");
+    setSuggestions([]);
+  };
+
+  const handleRemove = (id: number) => {
+    setSelectedSkills(selectedSkills.filter((s) => s.id !== id));
+  };
+
   const handleSave = () => {
     const detailData = {
       first_name: form.first_name,
@@ -92,6 +134,7 @@ export default function SettingsPage({ onClose }: SettingsProps) {
       linkedin: form.linkedin,
       twitter: form.twitter,
       website: form.website,
+      skills: selectedSkills.map((s) => ({ name: s.name })),
     };
 
     updateDetailMutation.mutate({ data: detailData });
@@ -196,18 +239,51 @@ export default function SettingsPage({ onClose }: SettingsProps) {
 
           {/* Skills & Interests Tab */}
           {activeTab === "Skills & Interests" && (
-            <div>
-             
-              {/* Placeholder for skills */}
-              <div className="mt-4">
-                <label className="block font-medium mb-1">Skills</label>
-                <input
-                  type="text"
-                  placeholder="Add your skills..."
-                  className="w-full border rounded-lg p-2"
-                />
-              </div>
-            </div>
+           <div className="">
+           <label className="block mb-1 text-[#212121] font-semibold">Skills & Interests</label>
+     
+           <div className="border rounded-lg p-2 flex flex-wrap items-center gap-2">
+  {selectedSkills.map((skill) => (
+    <span
+      key={skill.id}
+      className="px-3 py-1 bg-[#F2F1FD] text-[#605DEC] rounded-lg flex items-center gap-2 font-semibold text-[16px]"
+    >
+      {skill.name}
+      <button
+        onClick={() => handleRemove(skill.id)}
+        className="text-red-500 hover:text-red-700"
+      >
+        ×
+      </button>
+    </span>
+  ))}
+
+  <input
+    type="text"
+    value={inputValue}
+    onChange={handleChangeSkill}
+    placeholder="Add your skills..."
+    className="flex-1 min-w-[120px] border-none outline-none p-1"
+  />
+</div>
+
+
+     
+           {/* Suggestions dropdown */}
+           {suggestions.length > 0 && (
+             <ul className="border rounded-lg mt-1 bg-white shadow-md max-h-40 overflow-y-auto">
+               {suggestions.map((skill) => (
+                 <li
+                   key={skill.id}
+                   onClick={() => handleSelect(skill)}
+                   className="p-2 hover:bg-gray-100 cursor-pointer"
+                 >
+                   {skill.name}
+                 </li>
+               ))}
+             </ul>
+           )}
+         </div>
           )}
         </div>
 
