@@ -13,6 +13,11 @@ interface JoinTeamPayload {
   hackathon_id: string;
 }
 
+interface addMember {
+  team_id: string;
+  member_email: string;
+}
+
 export default function useTeams() {
     const queryClient = useQueryClient();
      const token = useAuthStore.getState().getToken();
@@ -172,6 +177,34 @@ const joinTeamMutation = () => {
     });
   };
 
+  const inviteMembers = () => {
+    return useMutation({
+      mutationFn: async ({team_id, member_email } : addMember ) => {
+        const res = await fetch(`${apiUrl}/team/teams/${team_id}/add_member/`, {
+          method: "POST",
+          headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ member_email: member_email }),
+        });
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({}));
+          // ✅ Look for backend error keys
+          const message =
+            errorData?.message ||
+            errorData?.detail ||
+            errorData?.non_field_errors?.[0] ||
+            "Unable to join team";
+  
+          throw new Error(message);
+        }
+
+        return res.json()
+      }
+    })
+  }
+
     
     return {
         getTeam,
@@ -179,6 +212,7 @@ const joinTeamMutation = () => {
         getAvailableTeams,
         joinTeamMutation,
         deleteTeamMutation,
+        inviteMembers,
         leaveTeam
     };
 }
