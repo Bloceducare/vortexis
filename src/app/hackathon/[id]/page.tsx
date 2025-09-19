@@ -203,10 +203,6 @@ function Hack() {
       </div>
     </div>
   </div>
-
-
-
-
 </div>
 
           <section className="p-24" style={{ backgroundColor: "#F5F5F5" }}>

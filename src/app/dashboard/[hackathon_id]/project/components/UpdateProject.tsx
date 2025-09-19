@@ -96,125 +96,134 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
   return (
     <div className="p-6 w-full relative">
-      <h1 className="text-2xl font-bold mb-6">Update Project</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 text-start">
-        {/* Title */}
-        <div className="space-y-2">
-          <label className="block font-medium">Title *</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 outline-none"
-          />
-          {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
-        </div>
-
-        {/* Description */}
-        <div className="space-y-2">
-          <label className="block font-medium">Description *</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 h-[20vh] resize-none outline-none"
-          />
-          {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
-        </div>
-
-        {/* Github URL */}
-        <div className="space-y-2">
-          <label className="block font-medium">Github URL *</label>
-          <input
-            type="url"
-            name="github_url"
-            value={formData.github_url}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 outline-none"
-          />
-          {errors.github_url && <p className="text-red-500 text-sm">{errors.github_url}</p>}
-        </div>
-
-        {/* Live Link */}
-        <div className="space-y-2">
-          <label className="block font-medium">Live Link</label>
-          <input
-            type="url"
-            name="live_link"
-            value={formData.live_link}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 outline-none"
-          />
-          {errors.live_link && <p className="text-red-500 text-sm">{errors.live_link}</p>}
-        </div>
-
-        {/* Demo Video URL */}
-        <div className="space-y-2">
-          <label className="block font-medium">Demo Video URL</label>
-          <input
-            type="url"
-            name="demo_video_url"
-            value={formData.demo_video_url}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 outline-none"
-          />
-          {errors.demo_video_url && <p className="text-red-500 text-sm">{errors.demo_video_url}</p>}
-        </div>
-
-        {/* Presentation Link */}
-        <div className="space-y-2">
-          <label className="block font-medium">Presentation Link</label>
-          <input
-            type="url"
-            name="presentation_link"
-            value={formData.presentation_link}
-            onChange={handleChange}
-            className="w-full border rounded-2xl px-3 py-4 outline-none"
-          />
-          {errors.presentation_link && <p className="text-red-500 text-sm">{errors.presentation_link}</p>}
-        </div>
-
-        {/* Submit */}
-        <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={updateProjectMutation.isPending}
-            className={`px-4 py-2 rounded mt-5 cursor-pointer ${
-              updateProjectMutation.isPending
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-          >
-            {updateProjectMutation.isPending ? "Updating..." : "Submit"}
-          </button>
-        </div>
-      </form>
-
-      {/* ✅ Error */}
-      {error && (
-        <p className="text-red-500 text-sm mt-4">{error}</p>
-      )}
-
-      {/* ✅ Success Modal */}
-      {successMessage && (
-        <div className="fixed inset-0 bg-black/40 bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-[90%] max-w-md">
-            <h2 className="text-xl font-bold mb-4">Success</h2>
-            <p className="mb-6">{successMessage}</p>
-            <button
-              onClick={() => {
-                setSuccessMessage(null)
-                onClose()
-              }}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
-            >
-              Done
-            </button>
-          </div>
-        </div>
-      )}
+      <h1 className="text-[#605DEC] font-bold text-2xl md:text-[32px]">Update Your Project</h1>
+      <form onSubmit={handleSubmit} className="space-y-6 text-start">
+    {/* Title */}
+    <div className="space-y-2 mt-5">
+      <label className="block font-bold">Title *</label>
+      <input
+        type="text"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        className="w-full border rounded-xl px-4 py-3 outline-none "
+      />
+      {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
     </div>
+
+    {/* Description */}
+    <div className="space-y-2">
+      <label className="block font-medium">Description *</label>
+      <textarea
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        className="w-full border rounded-xl px-4 py-3 h-[40vh] resize-none outline-none "
+      />
+      {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+    </div>
+
+    {/* Links Section */}
+    <h2 className="text-lg font-semibold text-gray-700">Project Links</h2>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Github URL */}
+      <div className="space-y-2">
+        <label className="block font-medium">Github URL *</label>
+        <input
+          type="url"
+          name="github_url"
+          value={formData.github_url}
+          onChange={handleChange}
+          className="w-full border rounded-xl px-4 py-3 outline-none"
+        />
+        {errors.github_url && <p className="text-red-500 text-sm">{errors.github_url}</p>}
+      </div>
+
+      {/* Live Link */}
+      <div className="space-y-2">
+        <label className="block font-medium">Live Link</label>
+        <input
+          type="url"
+          name="live_link"
+          value={formData.live_link}
+          onChange={handleChange}
+          className="w-full border rounded-xl px-4 py-3 outline-none"
+        />
+        {errors.live_link && <p className="text-red-500 text-sm">{errors.live_link}</p>}
+      </div>
+
+      {/* Demo Video URL */}
+      <div className="space-y-2">
+        <label className="block font-medium">Demo Video URL</label>
+        <input
+          type="url"
+          name="demo_video_url"
+          value={formData.demo_video_url}
+          onChange={handleChange}
+          className="w-full border rounded-xl px-4 py-3 outline-none"
+        />
+        {errors.demo_video_url && <p className="text-red-500 text-sm">{errors.demo_video_url}</p>}
+      </div>
+
+      {/* Presentation Link */}
+      <div className="space-y-2">
+        <label className="block font-medium">Presentation Link</label>
+        <input
+          type="url"
+          name="presentation_link"
+          value={formData.presentation_link}
+          onChange={handleChange}
+          className="w-full border rounded-xl px-4 py-3 outline-none"
+        />
+        {errors.presentation_link && <p className="text-red-500 text-sm">{errors.presentation_link}</p>}
+      </div>
+    </div>
+
+    {/* Submit */}
+    <div className="flex justify-end items-center gap-8">
+
+      <button onClick={() => onClose()} className="bg-gray-300 px-6 py-3 rounded-xl font-medium mt-5 cursor-pointer transition text-[#2d2828]">
+        Cancel
+      </button>
+
+
+      <button
+        type="submit"
+        disabled={updateProjectMutation.isPending}
+        className={`px-6 py-3 rounded-xl font-medium mt-5 cursor-pointer transition ${
+          updateProjectMutation.isPending
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-blue-600 text-white hover:bg-blue-700"
+        }`}
+      >
+        {updateProjectMutation.isPending ? "Updating..." : "Submit"}
+      </button>
+    </div>
+  </form>
+
+  {/* ✅ Error */}
+  {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+
+  {/* ✅ Success Modal */}
+  {successMessage && (
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-xl shadow-lg text-center w-[90%] max-w-md">
+        <h2 className="text-xl font-bold mb-4">Success</h2>
+        <p className="mb-6">{successMessage}</p>
+        <button
+          onClick={() => {
+            setSuccessMessage(null)
+            onClose()
+          }}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
+        >
+          Done
+        </button>
+      </div>
+    </div>
+  )}
+</div>
+
   )
 }
 
