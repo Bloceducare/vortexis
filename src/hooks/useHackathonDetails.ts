@@ -16,6 +16,14 @@ interface Team {
   members: any[];
 }
 
+interface Review {
+  id: number;
+  innovation_score: number;
+  technical_score: number;
+  user_experience_score: number;
+  impact_score: number;
+}
+
 export interface Submission {
   id: number;
   project: Project;
@@ -25,6 +33,7 @@ export interface Submission {
   created_at: string;
   updated_at: string;
   status: string;
+  reviews: Review[];
 }
 
 export interface Hackathon {

@@ -14,8 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <div
-      className="py-8 bg-cover flex justify-center items-start bg-center text-white "
-      style={{ backgroundImage: `url(${bg.src})` }}
+      className="md:pt-20 py-8 bg-cover flex justify-center items-start bg-center text-white "
+      style={{
+        background:
+          "linear-gradient(135deg, #605DEC  0%, #7C3AED 50%, #6366F1 100%)",
+      }}
     >
       <div>{children}</div>
     </div>

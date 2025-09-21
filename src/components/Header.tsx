@@ -144,13 +144,13 @@ export const Header: React.FC = () => {
                   <Link href="/auth/login/participant">
                     <button
                       type="button"
-                      className="px-4 py-2 text-sm font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
+                      className="px-4 cursor-pointer py-2 text-sm font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
                     >
                       Log in
                     </button>
                   </Link>
                   <Link href="/auth/signin/participant">
-                    <button className="px-4 py-2 text-sm font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
+                    <button className="px-4 cursor-pointer py-2 text-sm font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
                       Sign up
                     </button>
                   </Link>
