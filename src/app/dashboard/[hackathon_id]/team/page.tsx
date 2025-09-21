@@ -6,6 +6,8 @@ import { useParams } from "next/navigation";
 import JoinTeam from "./component/Jointeam";
 import { useRouter } from "next/navigation";
 import CreateTeam from "./component/CreateTeam";
+import TeamIcon from "@/public/assets/icon/ant-design_team-outlined.svg"
+import Image from "next/image";
 
 import { Users, Award, Folder, FileText, Crown, Calendar } from "lucide-react";
 
@@ -108,6 +110,13 @@ export default function TeamManagement() {
 
   return (
     <section className="min-h-screen bg-white rounded-xl p-6">
+
+      <div>
+        <h1 className="text-[#605DEC] text-xl md:text-[32px] font-bold">Team Workspace</h1>
+        <p>Collaborate with your team members!</p>
+      </div>
+
+
       {isLoading && <p className="text-center">Loading your team...</p>}
 
       {data && (
@@ -314,7 +323,24 @@ export default function TeamManagement() {
       )}
 
       {!data && !isLoading && (
-        <div className="flex flex-col items-center gap-4">
+        <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3">
+
+          <div className="space-y-3">
+            <h1 className="text-[#00AC4F] text-2xl">Create New Team</h1>
+            <p>You haven't created or joined a team for this hackathon yet.</p>
+          </div>
+
+          <section>
+            <div>
+              <Image src={TeamIcon} alt="img-icon" />
+            </div>
+          </section>
+
+
+
+
+
+<div className="flex flex-col items-center gap-4">
           <p className="text-gray-600">You are not in any team yet.</p>
           <div className="flex gap-4">
             <button
@@ -328,6 +354,10 @@ export default function TeamManagement() {
             </button>
           </div>
         </div>
+
+        </section>
+
+       
       )}
 
 

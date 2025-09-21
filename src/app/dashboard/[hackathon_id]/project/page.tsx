@@ -18,6 +18,8 @@ import {
 } from "lucide-react"
 import { useUserProjectStore } from "@/store/useProjectStore";
 import UpdateProject from "./components/UpdateProject"
+import LinkPreview from "@/components/LinkPreview"
+import useHackathon from "@/hooks/useHackathon"
 
 
 function Project() {
@@ -28,6 +30,9 @@ function Project() {
 
   const { data, isLoading } = getProject()
 
+  const { getHackathonById } = useHackathon();
+    const { data: hackathonData, isLoading: loadingHackathon, error } = getHackathonById(hackathon_id);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null)
 
@@ -37,7 +42,6 @@ function Project() {
         project: project_id,
         hackathon_id,
       });
-  
     
       setFeedback({
         type: "success",
@@ -93,97 +97,150 @@ function Project() {
     }
   }
 
+  const getDeadlineMessage = (deadlineString: string) => {
+    const deadline = new Date(deadlineString);
+    const now = new Date();
+    const diffMs = deadline.getTime() - now.getTime();
+    const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  
+    if (days > 1) return `due in ${days} days`;
+    if (days === 1) return "due tomorrow";
+    if (days === 0) return "due today";
+    return "deadline passed";
+  };
+
+  const formatDeadline = (deadlineString: string) => {
+    const date = new Date(deadlineString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "long", // Saturday
+      year: "numeric", // 2026
+      month: "long",   // October
+      day: "numeric",  // 10
+    });
+  };
+  
+  
   return (
-    <div className="p-8 min-h-[60vh] bg-white rounded-2xl shadow-lg">
+    <div className="p-8 min-h-[60vh] bg-white rounded-2xl ">
+
+      <h1 className="text-[#605DEC] font-bold text-2xl md:text-[32px]">Manage Your Project</h1>
+
+
+
       {/* Header */}
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">{project.title}</h1>
 
-      {/* Details */}
-      <div className="space-y-5">
-        <Detail icon={<Info size={18} />} label="Description" value={project.description} />
+      <section className="flex justify-between mt-10 gap-5">
 
-        <Detail
-          icon={<Github size={18} />}
-          label="Github"
-          value={
-            <a
-              href={project.github_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
-            >
-              {project.github_url}
-            </a>
-          }
-        />
+      <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-[64%]">
+  <div className="space-y-2">
+    <h1 className="text-[#AC0000] text-xl md:text-2xl font-semibold">Project Details</h1>
+    <p>Get more Information about your project</p>
+  </div>
 
-        {project.live_link && (
-          <Detail
-            icon={<Globe size={18} />}
-            label="Live Link"
-            value={
-              <a
-                href={project.live_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {project.live_link}
-              </a>
-            }
-          />
-        )}
+  <div className="space-y-5 mt-3">
+    <h1 className="text-3xl font-bold mb-6 text-gray-900">{project.title}</h1>
 
-        {project.demo_video_url && (
-          <Detail
-            icon={<Video size={18} />}
-            label="Demo Video"
-            value={
-              <a
-                href={project.demo_video_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {project.demo_video_url}
-              </a>
-            }
-          />
-        )}
+    {/* Description */}
+    <Detail icon={<Info size={18} />} label="Description" value={project.description} />
 
-        {project.presentation_link && (
-          <Detail
-            icon={<Presentation size={18} />}
-            label="Presentation"
-            value={
-              <a
-                href={project.presentation_link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {project.presentation_link}
-              </a>
-            }
-          />
-        )}
+<div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+  {project.github_url && (
+    <div>
+      <h3 className="text-xl font-bold text-gray-700 mb-2">GitHub</h3>
+      <LinkPreview
+        url={project.github_url}
+        width="100%"
+        descriptionLength={80}
+        className="rounded-lg shadow"
+      />
+    </div>
+  )}
 
-        <Detail icon={<Users size={18} />} label="Team" value={project.team?.name} />
+  {project.live_link && (
+    <div>
+      <h3 className="text-xl font-bold text-gray-700 mb-2">Live Link</h3>
+      <LinkPreview
+        url={project.live_link}
+        width="100%"
+        descriptionLength={80}
+        className="rounded-lg shadow"
+      />
+    </div>
+  )}
 
-        <Detail
-          icon={<Calendar size={18} />}
-          label="Created At"
-          value={new Date(project.created_at).toLocaleString()}
-        />
+  {project.demo_video_url && (
+    <div>
+      <h3 className="text-xl font-bold text-gray-700 mb-2">Demo Video</h3>
+      <LinkPreview
+        url={project.demo_video_url}
+        width="100%"
+        descriptionLength={80}
+        className="rounded-lg shadow"
+      />
+    </div>
+  )}
 
-        <Detail
-          icon={<RefreshCcw size={18} />}
-          label="Updated At"
-          value={new Date(project.updated_at).toLocaleString()}
-        />
-      </div>
+  {project.presentation_link && (
+    <div>
+      <h3 className="text-xl font-bold text-gray-700 mb-2">Presentation</h3>
+      <LinkPreview
+        url={project.presentation_link}
+        width="100%"
+        descriptionLength={80}
+        className="rounded-lg shadow"
+      />
+    </div>
+  )}
+</div>  
+  </div>
+</section>
 
-      {/* Actions */}
+
+          <section className="w-[35%]">
+
+
+          <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3">
+            <h1 className="text-[#00AC4F] font-semibold text-2xl">Submission Deadline</h1>
+
+
+            <section className="rounded-xl bg-[#DC262612] text-center py-5 px-4 mt-4">
+              <div className="space-y-3 ">
+                <h1 className="font-semibold">Deadline Approaching</h1>
+                <p className="text-[#DC2626]">
+                  {hackathonData?.title} hackathon submissions {getDeadlineMessage(hackathonData?.submission_deadline)}
+                </p>
+              </div>
+            </section>
+
+
+            <div className="mt-5 space-y-2">
+            <p className="text-[#605DEC] font-semibold text-xl">{hackathonData?.title}</p>
+
+            <p className="text-[#AC0000]">
+  Deadline: {formatDeadline(hackathonData?.submission_deadline)}
+</p>
+
+            </div>
+
+
+           
+            </section>
+
+
+
+
+          <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 mt-10">
+          <Detail icon={<Users size={18} />} label="Team" value={project.team?.name} />
+              <Detail icon={<Calendar size={18} />} label="Created At" value={new Date(project.created_at).toLocaleString()} />
+              <Detail icon={<RefreshCcw size={18} />} label="Updated At" value={new Date(project.updated_at).toLocaleString()} />
+            </section>
+          </section>
+
+
+      </section>
+
+
+
       <div className="flex gap-4 mt-10 justify-end">
       <button
   className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition cursor-pointer ${
@@ -241,43 +298,45 @@ function Project() {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Feedback Modal */}
-      {feedback && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
-            <h2
-              className={`text-lg font-semibold mb-3 ${
-                feedback.type === "success" ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {feedback.type === "success" ? "Success" : "Error"}
-            </h2>
-            <p className="text-gray-700 mb-6">{feedback.message}</p>
-            <button
-              onClick={() => setFeedback(null)}
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      )}
+      )}     
     </div>
   )
 }
 
-function Detail({ icon, label, value }: { icon: React.ReactNode; label: string; value: React.ReactNode }) {
+function Detail({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = value.length > 150;
+
+  const displayValue = expanded ? value : value.slice(0, 150);
+
   return (
     <div className="flex items-start gap-3">
       <span className="text-gray-500 mt-1">{icon}</span>
       <div>
         <p className="text-sm font-semibold text-gray-700">{label}</p>
-        <p className="text-gray-600">{value}</p>
+        <p className="text-gray-600">
+          {displayValue}
+          {isLong && !expanded && "..."}
+        </p>
+        {isLong && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-blue-600 text-sm font-medium hover:underline mt-1"
+          >
+            {expanded ? "See less" : "See more"}
+          </button>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
 export default Project
