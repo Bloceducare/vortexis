@@ -133,23 +133,31 @@ export const Hero: React.FC = () => {
         >
           <Button
             size="lg"
-            className="
-              bg-[#605DEC] text-white 
-              px-6 py-3 text-base
-              md:text-lg md:px-8 md:py-4
-              lg:text-xl lg:px-10 lg:py-5
-              w-full 
-              md:w-auto md:min-w-[200px]
-              lg:min-w-[220px]
-              font-semibold
-              hover:bg-[#5048D9] transition-colors duration-200
-              shadow-lg hover:shadow-xl
-              cursor-pointer
+            // className="
+            //   bg-[#605DEC] text-white
+            //   px-6 py-3 text-base
+            //   md:text-lg md:px-8 md:py-4
+            //   lg:text-xl lg:px-10 lg:py-5
+            //   w-full
+            //   md:w-auto md:min-w-[200px]
+            //   lg:min-w-[220px]
+            //   font-semibold
+            //   hover:bg-[#5048D9] transition-colors duration-200
+            //   shadow-lg hover:shadow-xl
+            //   cursor-pointer
+            // "
+            className="inline-block text-center w-full md:w-auto md:min-w-[200px] lg:min-w-[220px]
+            px-6 py-3 text-base md:text-lg md:px-8 md:py-4 lg:text-xl lg:px-10 lg:py-5 font-semibold
+            bg-gradient-to-r from-[#605DEC] to-[#8A85FF] text-white rounded-xl shadow-lg 
+            transform transition-all duration-500 hover:scale-105 hover:shadow-2xl active:scale-95 animate-[pulse-once_2s_ease-in-out_1] cursor-pointer
             "
           >
-            <Link href="/auth/login/participant">For Participants</Link>
+            <Link href="/auth/signin/participant">
+              {" "}
+              Start Your Hackathon Journey
+            </Link>
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="lg"
             className="
@@ -168,7 +176,7 @@ export const Hero: React.FC = () => {
             "
           >
             <Link href="/auth/login/participant">For Organizers</Link>
-          </Button>
+          </Button> */}
         </div>
       </div>
     </section>

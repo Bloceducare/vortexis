@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Error from "@/public/page-error.svg";
 
 export default function AuthErrorPage() {
-  const [countdown, setCountdown] = useState(50);
+  const [countdown, setCountdown] = useState(60);
   const router = useRouter();
 
   useEffect(() => {
@@ -38,13 +38,13 @@ export default function AuthErrorPage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleTryAgain}
-              className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="px-4 py-2 cursor-pointer border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
             >
               Login
             </button>
             <button
               onClick={handleCreate}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 cursor-pointer text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               Sign Up
             </button>
@@ -82,7 +82,7 @@ export default function AuthErrorPage() {
 
           <button
             onClick={handleTryAgain}
-            className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+            className="px-8 py-3 cursor-pointer bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
           >
             Login{" "}
           </button>
