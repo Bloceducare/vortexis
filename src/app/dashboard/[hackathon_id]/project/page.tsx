@@ -125,10 +125,6 @@ function Project() {
 
       <h1 className="text-[#605DEC] font-bold text-2xl md:text-[32px]">Manage Your Project</h1>
 
-
-
-      {/* Header */}
-
       <section className="flex justify-between mt-10 gap-5">
 
       <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-[64%]">

@@ -1,6 +1,6 @@
 "use client";
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -8,8 +8,10 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
-import SearchInput from "./ui/SearchInput";
 import { useJudgedHackathons } from "@/hooks/useJudges";
+import { AnimatePresence, motion } from "framer-motion";
+
+
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,7 +22,10 @@ export const Header: React.FC = () => {
   const token = useAuthStore.getState().getToken();
   const user = useUserStore((state) => state.user);
   const pathname = usePathname();
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
+    const [showDropdown, setShowDropdown] = useState(false);
+  
   const isHome = pathname.startsWith("/home");
   const isProfile = pathname.startsWith("/profile");
 
@@ -90,27 +95,24 @@ export const Header: React.FC = () => {
 
             {isLoggedIn && (
               <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
-                <Link
-                  href="/dashboard"
+               <Link
+                  href="/features"
                   className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
                 >
-                  Participants
+                  Features
                 </Link>
                 <Link
-                  href="/organizer"
+                  href="/home"
                   className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
                 >
-                  Organizer
+                  Hackathons
                 </Link>
-
-                {!unauthorized && (
-                  <Link
-                    href="/judges"
-                    className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
-                  >
-                    Judges
-                  </Link>
-                )}
+                <Link
+                  href="/about"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                >
+                  About
+                </Link>
               </nav>
             )}
 
@@ -156,27 +158,79 @@ export const Header: React.FC = () => {
                   </Link>
                 </>
               ) : (
-                <div className="flex gap-10 items-center">
+                <div
+                className="flex items-center gap-5 md:gap-10 relative"
+                ref={dropdownRef}
+              >
+               
+      
+                <div
+                  className="flex items-center gap-2 cursor-pointer"
+                  onClick={() => setShowDropdown((prev) => !prev)}
+                >
+                  {/* Avatar */}
                   <div
-                    className="flex items-center gap-2"
-                    // onClick={() => setShowDropdown((prev) => !prev)}
+                    className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
                   >
-                    {/* Avatar */}
-                    <div
-                      className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
-                    >
-                      {initials.toUpperCase()}
-                    </div>
-
-                    <div className="text-left">
-                      <p className="text-sm font-semibold">
-                        {user?.first_name} {user?.last_name}
-                      </p>
-                      {/* <p className="text-sm text-[#4F5B67]">{currentDashboard}</p> */}
-                    </div>
-                    {/* <ChevronDown className="text-gray-500 w-4 h-4" /> */}
+                    {initials.toUpperCase()}
                   </div>
+      
+                  <div className="text-left">
+                    <p className="text-sm font-semibold">
+                      {user?.first_name} {user?.last_name}
+                    </p>
+                  </div>
+                  <ChevronDown className="text-gray-500 w-4 h-4" />
                 </div>
+      
+                {/* Dropdown */}
+                <AnimatePresence>
+                  {showDropdown && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                    >
+                      <ul className="py-2 text-sm text-gray-700 list-none">
+                        <li>
+                          <Link
+                            href="/profile/detail"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            View Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/organizer"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Organization
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/dashboard"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Hacker
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            href="/judges"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Judges
+                          </Link>
+                        </li>
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               )}
             </div>
 
@@ -216,7 +270,7 @@ export const Header: React.FC = () => {
                   Features
                 </Link>
                 <Link
-                  href="/hackathons"
+                  href="/home"
                   className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
@@ -270,28 +324,27 @@ export const Header: React.FC = () => {
               {/* Mobile Navigation Links */}
               <div className="pt-2 pb-3 space-y-1 px-4">
                 <Link
-                  href="/dashboard"
+                  href="/features"
                   className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
-                  Participants
+                      Features
                 </Link>
                 <Link
-                  href="/organizer"
+                  href="/home"
                   className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
-                  Organizer
+                  Hackathons
                 </Link>
-                {!unauthorized && (
+                
                   <Link
-                    href="/judges"
+                    href="/about"
                     className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
                     onClick={closeMenu}
                   >
-                    Judges
+                  About
                   </Link>
-                )}
               </div>
             </div>
           )}

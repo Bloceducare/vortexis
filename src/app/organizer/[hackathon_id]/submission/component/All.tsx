@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { SubmissionProps } from '@/app/api/utils/interface'
 import TableSkeleton from '@/components/TableSkeleton'
+import LinkPreview from "@/components/LinkPreview"
+
 
 const All: React.FC<SubmissionProps> = ({
   submissions,
@@ -16,6 +18,7 @@ const All: React.FC<SubmissionProps> = ({
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest')
   const [filteredSubmissions, setFilteredSubmissions] = useState<any[]>([])
   const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
+  const [showFull, setShowFull] = useState(false);
 
   const totalPages = Math.ceil(
     (submissions?.filter(sub =>
@@ -152,8 +155,11 @@ No Submission found.
     <tr key={index} className="hover:bg-gray-50 border-b border-[#EEEEEE]">
     <td className="px-4 py-5">
       <h1 className="font-bold text-[#212121]">{sub.project.title}</h1>
-      <p className="text-sm text-gray-500">{sub.project.description}</p>
-    </td>
+      <p className="text-sm text-gray-500">
+  {sub.project.description.length > 150
+    ? `${sub.project.description.slice(0, 80)}....`
+    : sub.project.description}
+</p>    </td>
     <td className="px-4 py-5">
       <h1 className="font-semibold text-[#212121]">{sub.team.name}</h1>
     </td>
@@ -182,49 +188,72 @@ No Submission found.
     </td>
 
     {selectedSubmission && (
-      <div
-        className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50"
-        onClick={() => setSelectedSubmission(null)} 
+  <div
+    className="fixed inset-0 bg-black/50 bg-opacity-40 flex items-center justify-center z-50"
+    onClick={() => setSelectedSubmission(null)} 
+  >
+    <div
+      className="bg-white rounded-lg shadow-lg p-6 max-w-6xl relative max-h-[80vh] overflow-y-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={() => setSelectedSubmission(null)}
+        className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 cursor-pointer"
       >
-        <div
-          className="bg-white rounded-lg shadow-lg p-6 w-96 relative"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={() => setSelectedSubmission(null)}
-            className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 cursor-pointer"
-          >
-            ✕
-          </button>
+        ✕
+      </button>
 
-          <h2 className="text-xl font-bold mb-4">
-            {selectedSubmission.project.title}
-          </h2>
-          <p className="text-sm text-gray-500 mb-4">
-            {selectedSubmission.project.description}
-          </p>
+      <h2 className="text-xl font-bold mb-4">
+        {selectedSubmission.project.title}
+      </h2>
+      <p className="text-sm text-gray-500 mb-4">
+  {showFull
+    ? selectedSubmission.project.description
+    : `${selectedSubmission.project.description.slice(0, 150)}${
+        selectedSubmission.project.description.length > 150 ? "..." : ""
+      }`}
+</p>
 
-          <div className="space-y-3">
-            <a
-              href={selectedSubmission.project.github_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-blue-600 font-semibold text-center"
-            >
-              GitHub Repo
-            </a>
-            <a
-              href={selectedSubmission.project.live_link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-green-600 font-semibold text-center"
-            >
-              Live Link
-            </a>
-          </div>
-        </div>
-      </div>
-    )}
+{selectedSubmission.project.description.length > 150 && (
+  <button
+    onClick={() => setShowFull(!showFull)}
+    className="text-blue-600 text-sm font-medium hover:underline cursor-pointer"
+  >
+    {showFull ? "See less" : "See more"}
+  </button>
+)}
+
+<div className="flex gap-2 mt-5">
+  <div>
+    <h1 className='font-bold mb-2'>Github Url</h1>
+    {selectedSubmission.project.github_url && (
+    <LinkPreview
+      url={selectedSubmission.project.github_url}
+      width="100%"
+      descriptionLength={80}
+      className="rounded-lg shadow border"
+    />
+  )}
+  </div>
+
+
+  <div>
+  <h1 className='font-bold mb-2'>Live Url</h1>
+  {selectedSubmission.project.live_link && (
+    <LinkPreview
+      url={selectedSubmission.project.live_link}
+      width="100%"
+      descriptionLength={80}
+      className="rounded-lg shadow border"
+    />
+  )}
+  </div>
+</div>
+
+    </div>
+  </div>
+)}
+
 
   </tr>
   
