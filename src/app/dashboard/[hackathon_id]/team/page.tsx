@@ -8,8 +8,12 @@ import { useRouter } from "next/navigation";
 import CreateTeam from "./component/CreateTeam";
 import TeamIcon from "@/public/assets/icon/ant-design_team-outlined.svg"
 import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import useHackathon from "@/hooks/useHackathon";
+import {Card} from "@/components/ui/card";
+import { Plus, Github, FileText, Book, Folder } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
-import { Users, Award, Folder, FileText, Crown, Calendar } from "lucide-react";
 
 const getRandomColor = () => {
   const colors = [
@@ -42,6 +46,8 @@ export default function TeamManagement() {
 
 
   const { getTeam, leaveTeam, inviteMembers } = useTeams();
+    const { getHackathonById } = useHackathon();
+      const { data: hackathonData, isLoading: loadingHackathon, error } = getHackathonById(hackathon_id);
 
   const toggleJoinTeamPage = () => {
     setPages({ ...pages, join: !pages.join });
@@ -110,42 +116,143 @@ export default function TeamManagement() {
 
   return (
     <section className="min-h-screen bg-white rounded-xl p-6">
-
       <div>
         <h1 className="text-[#605DEC] text-xl md:text-[32px] font-bold">Team Workspace</h1>
         <p>Collaborate with your team members!</p>
       </div>
-
-
       {isLoading && <p className="text-center">Loading your team...</p>}
 
       {data && (
-        <div className="border border-gray-200 rounded-xl p-6 bg-white space-y-8">
-          {/* Team Header */}
-          <div className="flex items-center justify-between border-b pb-4">
-            <h2 className="font-bold text-2xl flex items-center gap-2 text-blue-700">
-              <Crown className="w-6 h-6 text-yellow-500" />
-              {data.name}
-            </h2>
+        <div className=" p-6 bg-white space-y-8 mt-10">
 
-            <div className="flex gap-2">
+          <section className="flex gap-5 items-start">
+            <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-[54%]">
+              <div className="space-y-3">
+              <h1 className="font-semibold text-2xl text-[#1E1E1E]">Team: {data.name}</h1>
+              <p>Working on  {data.hackathon 
+                  ? data.hackathon.title
+                  : "N/A"} hackathon</p>
+              </div>
 
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer"
-              onClick={() => setAddModal(true)}
-            >
-              Add a member
-            </button>
+              <h1 className="text-xl text-[#605DEC] font-normal mt-8">Team Members</h1>
 
-            <button
-              className="px-4 py-2 bg-red-500 text-white rounded-lg cursor-pointer"
-              onClick={() => handleLeaveTeam(data.id)}
-            >
-                {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
-            </button>
+          
+              <div className="flex flex-wrap justify-between my-5">
+                {data.members && data.members.length > 0 ? (
+                  data.members.map((m: any) => {
+                    const initials = m.username
+                      ? m.username.slice(0, 2).toUpperCase()
+                      : "??";
+                    const color = getRandomColor();
+                    return (
+                      <div
+                        key={m.id}
+                        className="relative group cursor-pointer w-[48%]"
+                        onClick={() => router.push(`/profile/${data.id}`)}
+
+                      >
+                        <div className="flex gap-2 border-2 border-[#605DEC] rounded-lg px-4 py-2 items-center ">
+                        <div
+                          className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold ${color}`}
+                        >
+                          {initials}
+                        </div>
+                        <div>
+                        <p className="font-semibold text-gray-800 text-sm">{m.username}</p>
+                        </div>
+                        </div>
+                        <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition 
+                                        bg-white shadow-lg border border-gray-200 text-black rounded-lg px-3 py-2 
+                                        whitespace-nowrap z-10 w-max min-w-[120px]">
+                          <p className="font-semibold text-gray-800 text-sm">{m.username}</p>
+
+                          <div className="my-1 border-t border-gray-200"></div>
+
+                          <button
+                            className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1"
+                            onClick={() => router.push(`/profile/${data.id}`)}
+                          >
+                            View Profile
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-gray-500">No members yet</p>
+                )}
+              </div>
+
+            <div className="flex justify-between mt-3 items-center">
+            <button className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"  onClick={() => setAddModal(true)}> + Invite Member</button>  
+            <button  className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer w-[48%]"  onClick={() => handleLeaveTeam(data.id)} >    {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"} </button>
+             </div>
+
+                <div className="mt-10">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                      <Folder className="w-5 h-5 text-blue-600" /> Projects
+                    </h3>
+                    {data.projects && data.projects.length > 0 ? (
+                      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
+                        View
+                      </button>
+                    ) : (
+                      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer"  onClick={goToProject}>
+                        Create
+                      </button>
+                    )}
+                  </div>
+
+              {data.projects && data.projects.length > 0 ? (
+                <div className=" ml-5 text-gray-700 space-y-1">
+                  {data.projects.map((p: any) => (
+                    <p key={p.id}>{p.title || "Untitled Project"}</p>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No projects yet</p>
+              )}
             </div>
-         
-          </div>
+            </section>
+
+            <section className="w-[40%]">
+                 <Card>
+                            <div className="p-6">
+                              <h2 className="text-lg font-semibold text-blue-600 mb-4">Project Resources</h2>
+                              <div className="space-y-3">
+                                <Button
+                                  variant="outline"
+                                  className="w-full flex justify-start gap-3 h-12"
+                                >
+                                  <Github className="w-5 h-5" />
+                                  GitHub Repository
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  className="w-full flex justify-start gap-3 h-12"
+                                >
+                                  <FileText className="w-5 h-5" />
+                                  Project Docs
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  className="w-full flex justify-start gap-3 h-12"
+                                >
+                                  <Book className="w-5 h-5" />
+                                  API Documentation
+                                </Button>
+                              </div>
+                            </div>
+                          </Card>
+              
+            </section>
+
+
+
+
+
+          </section>
 
           {addModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-[100vh]">
@@ -176,184 +283,45 @@ export default function TeamManagement() {
           </div>
         </div>
       )}
-          {/* Info Section */}
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="flex items-center gap-2 border p-3 rounded-lg">
-              <Users className="w-5 h-5 text-gray-500" />
-              <p>
-                <span className="font-semibold">Organizer:</span>{" "}
-                {data.organizer?.username || "Unknown"}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 border p-3 rounded-lg">
-              <Calendar className="w-5 h-5 text-gray-500" />
-              <p>
-                <span className="font-semibold">Hackathon:</span>{" "}
-                {data.hackathon 
-                  ? data.hackathon.title
-                  : "N/A"}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2 border p-3 rounded-lg col-span-2">
-              <Users className="w-5 h-5 text-gray-500" />
-              <p className="font-semibold">Members:</p>
-              <div className="flex flex-wrap gap-2 ml-2">
-                {data.members && data.members.length > 0 ? (
-                  data.members.map((m: any) => {
-                    const initials = m.username
-                      ? m.username.slice(0, 2).toUpperCase()
-                      : "??";
-                    const color = getRandomColor();
-                    return (
-                      <div
-                        key={m.id}
-                        className="relative group cursor-pointer"
-                        onClick={() => router.push(`/profile/${data.id}`)}
-
-                      >
-                        <div
-                          className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold ${color}`}
-                        >
-                          {initials}
-                        </div>
-                        <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition 
-                                        bg-white shadow-lg border border-gray-200 text-black rounded-lg px-3 py-2 
-                                        whitespace-nowrap z-10 w-max min-w-[120px]">
-                          <p className="font-semibold text-gray-800 text-sm">{m.username}</p>
-
-                          <div className="my-1 border-t border-gray-200"></div>
-
-                          <button
-                            className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1"
-                            onClick={() => router.push(`/profile/${data.id}`)}
-                          >
-                            View Profile
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="text-gray-500">No members yet</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-<div className="border p-4 rounded-lg">
-  <div className="flex items-center justify-between mb-2">
-    <h3 className="font-semibold text-lg flex items-center gap-2">
-      <Folder className="w-5 h-5 text-blue-600" /> Projects
-    </h3>
-    {data.projects && data.projects.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
-        View
-      </button>
-    ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer"  onClick={goToProject}>
-        Create
-      </button>
-    )}
-  </div>
-
-  {data.projects && data.projects.length > 0 ? (
-    <ul className="list-disc ml-5 text-gray-700 space-y-1">
-      {data.projects.map((p: any) => (
-        <li key={p.id}>{p.title || "Untitled Project"}</li>
-      ))}
-    </ul>
-  ) : (
-    <p className="text-gray-500">No projects yet</p>
-  )}
-</div>
-
-<div className="border p-4 rounded-lg">
-  <div className="flex items-center justify-between mb-2">
-    <h3 className="font-semibold text-lg flex items-center gap-2">
-      <FileText className="w-5 h-5 text-green-600" /> Submissions
-    </h3>
-    {data.submissions && data.submissions.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
-        View
-      </button>
-    ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
-        Create
-      </button>
-    )}
-  </div>
-
-  {data.submissions && data.submissions.length > 0 ? (
-    <ul className="list-disc ml-5 text-gray-700 space-y-1">
-      {data.submissions.map((s: any) => (
-        <li key={s.id}>{s.project_title || "Untitled Submission"}</li>
-      ))}
-    </ul>
-  ) : (
-    <p className="text-gray-500">No submissions yet</p>
-  )}
-</div>
-
-
-            <div className="border p-4 rounded-lg">
-              <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                <Award className="w-5 h-5 text-purple-600" /> Prizes
-              </h3>
-              {data.prizes && data.prizes.length > 0 ? (
-                <ul className="list-disc ml-5 text-gray-700 space-y-1">
-                  {data.prizes.map((prize: any, i: number) => (
-                    <li key={i}>{prize.title || "Unnamed Prize"}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-500">No prizes yet</p>
-              )}
-            </div>
-          </div>
-
-          {/* Footer Info */}
-          <p className="text-sm text-gray-500 border-t pt-4">
-            <span className="font-semibold">Created at:</span>{" "}
-            {new Date(data.created_at).toLocaleDateString()}
-          </p>
+        
         </div>
       )}
 
       {!data && !isLoading && (
-        <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3">
+        <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-7 mt-4">
 
           <div className="space-y-3">
-            <h1 className="text-[#00AC4F] text-2xl">Create New Team</h1>
+            <h1 className="text-[#00AC4F] text-2xl font-semibold">Create New Team</h1>
             <p>You haven't created or joined a team for this hackathon yet.</p>
           </div>
 
-          <section>
-            <div>
+          <section className="flex flex-col items-center justify-center gap-8 mt-10">
+            <div className="flex flex-col items-center justify-center gap-4">
               <Image src={TeamIcon} alt="img-icon" />
+
+              <h1 className="text-[#212121] font-semibold text-2xl">Create New Team</h1>
+
+              <p className="text-[#727272] text-center text-lg leading-8">Create a team or join an existing one to collaborate with other  <br />
+              participants for the <b>{hackathonData?.title}</b>  Hackathon.</p>
             </div>
-          </section>
 
 
+            <div className="flex gap-5 justify-center">
+            <button className="px-7 py-3 bg-[#3D3ACE] text-white rounded-sm flex gap-3 items-center" onClick={toggleCreateTeam}>
+              Create Team
+              <ArrowRight />
+            </button>
 
-
-
-<div className="flex flex-col items-center gap-4">
-          <p className="text-gray-600">You are not in any team yet.</p>
-          <div className="flex gap-4">
             <button
               onClick={toggleJoinTeamPage}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer"
+              className="px-7 py-3 border-[#605DEC] border-2 text-[#605DEC] rounded-lg cursor-pointer flex gap-3 items-center"
             >
               Join Team
+              <ArrowRight />
             </button>
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg" onClick={toggleCreateTeam}>
-              Create Team
-            </button>
-          </div>
-        </div>
+
+            </div>
+          </section>
 
         </section>
 
@@ -385,3 +353,33 @@ export default function TeamManagement() {
     </section>
   );
 }
+
+
+
+
+{/* <div className="border p-4 rounded-lg">
+  <div className="flex items-center justify-between mb-2">
+    <h3 className="font-semibold text-lg flex items-center gap-2">
+      <FileText className="w-5 h-5 text-green-600" /> Submissions
+    </h3>
+    {data.submissions && data.submissions.length > 0 ? (
+      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
+        View
+      </button>
+    ) : (
+      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
+        Create
+      </button>
+    )}
+  </div>
+
+  {data.submissions && data.submissions.length > 0 ? (
+    <ul className="list-disc ml-5 text-gray-700 space-y-1">
+      {data.submissions.map((s: any) => (
+        <li key={s.id}>{s.project_title || "Untitled Submission"}</li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-500">No submissions yet</p>
+  )}
+</div> */}

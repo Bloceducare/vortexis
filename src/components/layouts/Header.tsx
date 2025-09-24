@@ -153,7 +153,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                       href="/organizer"
                       className="block px-4 py-2 hover:bg-gray-100"
                     >
-                      Organizer Dashboard
+                      Organization
                     </Link>
                   </li>
                   <li>
