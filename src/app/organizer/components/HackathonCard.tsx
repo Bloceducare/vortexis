@@ -157,7 +157,7 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <Users className="h-4 w-4 text-primary" />
               <span className="text-lg font-semibold text-card-foreground">
-                {hackathon.participants?.length}
+                {hackathon.participants_count}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Participants</p>
@@ -167,7 +167,7 @@ export const HackathonCard = ({ hackathon }: HackathonCardProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <FileText className="h-4 w-4 text-primary" />
               <span className="text-lg font-semibold text-card-foreground">
-                {hackathon.submissions?.length}
+                {hackathon.submissions_count}
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Submissions</p>

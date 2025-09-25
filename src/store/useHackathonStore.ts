@@ -35,6 +35,8 @@ export const useHackathonStore = create<HackathonState>()(
           rules: [],
           visibility: false,
           banner_image: null,
+          participants_count: 0,
+          submissions_count: 0,
 
           preview: null,
           setPreview: (preview) => set({ preview }), 
@@ -61,6 +63,8 @@ export const useHackathonStore = create<HackathonState>()(
               rules: [],
               banner_image: null,
               preview: null, 
+              participants_count: 0,
+              submissions_count: 0,
             }),
 
           getHackathonData: () => {
@@ -96,6 +100,8 @@ export const useHackathonStore = create<HackathonState>()(
         rules: [],
         visibility: false,
         banner_image: null,
+        participants_count: 0,
+        submissions_count: 0,
 
         preview: null,
         setPreview: () => {},

@@ -151,7 +151,7 @@ const Page = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`px-4 py-2 rounded-lg font-medium ${
+                className={`px-4 py-2 rounded-lg font-medium cursor-pointer ${
                   activeTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
                 }`}
               >
@@ -198,7 +198,7 @@ const Page = () => {
         </div>
 
         {/* Deadlines + Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
           {/* Deadlines */}
           <Card>
             <header className="pb-4 p-5 flex justify-between items-center">

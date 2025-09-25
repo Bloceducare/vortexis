@@ -36,7 +36,7 @@ export default function useParticipants() {
 
   const getHackathons = () => {
     return useQuery({
-      queryKey: ['organizer_hackathon'],
+      queryKey: ['participant_hackathon'],
       queryFn: async () => {
         const res = await fetch(`${apiUrl}/hackathon/my-registrations/`, {
           headers: getAuthHeaders()
