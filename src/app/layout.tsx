@@ -22,13 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Provider>
-        <body>
+        <body className="flex flex-col min-h-screen">
           <RouteGuard>
             {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
               <Header />
             )}
 
-            {children}
+            {/* Main content grows to fill available space */}
+            <main className="flex-1">{children}</main>
+
             {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
               <Footer />
             )}
@@ -38,3 +40,4 @@ export default function RootLayout({
     </html>
   );
 }
+

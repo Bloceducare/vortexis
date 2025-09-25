@@ -20,6 +20,8 @@ export default interface Hackathon_details {
   participants?: string[];
   submissions?: string[];
   banner_image?: File | null;
+  participants_count?: number;
+  submissions_count?: number;
 }
 // export interface Prize {
 //   name: string;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "react-toastify";
@@ -12,6 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
 import { useAuthStore } from "@/store/useAuthStore";
+import { Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -32,6 +34,7 @@ interface AuthLoginProps {
 
 function AuthLogin({ type }: AuthLoginProps) {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -147,9 +150,10 @@ function AuthLogin({ type }: AuthLoginProps) {
             <label htmlFor="password" className="block font-medium mb-2">
               Password
             </label>
+            <div className="relative">
             <input
               {...register("password")}
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Input your password"
               className={`w-full border p-3 md:p-2 rounded-sm text-base ${
@@ -160,6 +164,14 @@ function AuthLogin({ type }: AuthLoginProps) {
                 errors.password ? "focus:ring-red-500" : "focus:ring-blue-500"
               }`}
             />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}

@@ -7,9 +7,9 @@ export const HackathonList = () => {
   const hackathons = useHackathonStore((state) => state.hackathons);
   const totals = hackathons?.reduce(
     (acc, hackathon) => {
-      acc.totalParticipants += hackathon.participants?.length || 0;
+      acc.totalParticipants += hackathon.participants_count || 0;
       acc.totalJudges += hackathon.judges?.length || 0;
-      acc.totalSubmissions += hackathon.submissions?.length || 0;
+      acc.totalSubmissions += hackathon.submissions_count || 0;
       return acc;
     },
     { totalParticipants: 0, totalJudges: 0, totalSubmissions: 0 }

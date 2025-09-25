@@ -125,7 +125,7 @@ export const Header: React.FC = () => {
                   Features
                 </Link>
                 <Link
-                  href="/hackathons"
+                  href="/home"
                   className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Hackathons
