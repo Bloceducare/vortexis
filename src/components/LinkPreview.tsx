@@ -109,7 +109,7 @@ export default function LinkPreview({
       className={`block border rounded-lg p-3 h-[45vh] hover:shadow-md transition ${className}`}
       style={{ width }}
     >
-        <div className="h-[25vh]">
+        <div className="h-[20vh]">
       {meta.image?.url && (
         <img
           src={meta.image.url}

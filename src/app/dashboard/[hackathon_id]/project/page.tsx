@@ -134,15 +134,32 @@ function Project() {
   </div>
 
   <div className="space-y-5 mt-3">
-    <h1 className="text-3xl font-bold mb-6 text-gray-900">{project.title}</h1>
+  <h1 className="text-3xl font-bold mb-6 text-gray-900">
+  {project.title.charAt(0).toUpperCase() + project.title.slice(1)}
+</h1>
 
     {/* Description */}
     <Detail icon={<Info size={18} />} label="Description" value={project.description} />
 
-<div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+
+    <div>
+    {project.demo_video_url && (
+    <div>
+      <h3 className="text-xl font-bold text-gray-700 mb-2">Demo Video</h3>
+      <LinkPreview
+        url={project.demo_video_url}
+        width="100%"
+        descriptionLength={80}
+        className="rounded-lg shadow"
+      />
+    </div>
+  )}
+    </div>
+
+<div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
   {project.github_url && (
     <div>
-      <h3 className="text-xl font-bold text-gray-700 mb-2">GitHub</h3>
+      <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">GitHub</h3>
       <LinkPreview
         url={project.github_url}
         width="100%"
@@ -154,7 +171,7 @@ function Project() {
 
   {project.live_link && (
     <div>
-      <h3 className="text-xl font-bold text-gray-700 mb-2">Live Link</h3>
+      <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">Live Link</h3>
       <LinkPreview
         url={project.live_link}
         width="100%"
@@ -164,21 +181,11 @@ function Project() {
     </div>
   )}
 
-  {project.demo_video_url && (
-    <div>
-      <h3 className="text-xl font-bold text-gray-700 mb-2">Demo Video</h3>
-      <LinkPreview
-        url={project.demo_video_url}
-        width="100%"
-        descriptionLength={80}
-        className="rounded-lg shadow"
-      />
-    </div>
-  )}
+ 
 
   {project.presentation_link && (
     <div>
-      <h3 className="text-xl font-bold text-gray-700 mb-2">Presentation</h3>
+      <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">Presentation</h3>
       <LinkPreview
         url={project.presentation_link}
         width="100%"
@@ -225,11 +232,22 @@ function Project() {
 
 
 
-          <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 mt-10">
-          <Detail icon={<Users size={18} />} label="Team" value={project.team?.name} />
-              <Detail icon={<Calendar size={18} />} label="Created At" value={new Date(project.created_at).toLocaleString()} />
-              <Detail icon={<RefreshCcw size={18} />} label="Updated At" value={new Date(project.updated_at).toLocaleString()} />
-            </section>
+            <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-5 mt-10">
+  <div className="flex flex-col space-y-4">
+    <Detail icon={<Users size={18} />} label="Team" value={project.team?.name} />
+    <Detail
+      icon={<Calendar size={18} />}
+      label="Created At"
+      value={new Date(project.created_at).toLocaleString()}
+    />
+    <Detail
+      icon={<RefreshCcw size={18} />}
+      label="Updated At"
+      value={new Date(project.updated_at).toLocaleString()}
+    />
+  </div>
+</section>
+
           </section>
 
 

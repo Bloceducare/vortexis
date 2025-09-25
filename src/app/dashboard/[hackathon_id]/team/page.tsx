@@ -183,10 +183,7 @@ export default function TeamManagement() {
                 )}
               </div>
 
-            <div className="flex justify-between mt-3 items-center">
-            <button className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"  onClick={() => setAddModal(true)}> + Invite Member</button>  
-            <button  className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer w-[48%]"  onClick={() => handleLeaveTeam(data.id)} >    {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"} </button>
-             </div>
+          
 
                 <div className="mt-10">
                   <div className="flex items-center justify-between mb-2">
@@ -245,12 +242,28 @@ export default function TeamManagement() {
                               </div>
                             </div>
                           </Card>
+
+
+                          <section className="bg-white shadow-xs rounded-2xl p-6 mt-3">
+  <h2 className="text-lg font-semibold text-blue-600 mb-3">Actions</h2>
+  <div className="flex justify-between items-center gap-4">
+    <button
+      className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"
+      onClick={() => setAddModal(true)}
+    >
+      + Invite Member
+    </button>
+    <button
+      className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer w-[48%]"
+      onClick={() => handleLeaveTeam(data.id)}
+    >
+      {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
+    </button>
+  </div>
+</section>
+
               
             </section>
-
-
-
-
 
           </section>
 
