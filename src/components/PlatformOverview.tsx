@@ -5,7 +5,7 @@ import overview2 from "@/public/assets/overview2.svg";
 import bal from "@/public/assets/bal.svg";
 export default function PlatformOverview() {
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-2xl font-semibold text-center text-indigo-500 mb-8">
         Platform Overview
       </h1>

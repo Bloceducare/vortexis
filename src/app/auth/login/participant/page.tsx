@@ -12,7 +12,10 @@ function page() {
           building amazing projects.
         </p>
       </div>
+      <div className="px-3 md:px-10">
       <AuthLogin type="participants" />
+
+      </div>
     </div>
   );
 }
