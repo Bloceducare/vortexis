@@ -54,7 +54,9 @@ export async function handleGithubCallback() {
 export async function signInGoogleAction() {
   try {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_ID;
-    const redirectUri = encodeURIComponent(process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI);
+    const redirectUri = encodeURIComponent(
+      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
+    );
     const scope = encodeURIComponent("email profile");
     const responseType = "code";
     const accessType = "offline";
@@ -110,7 +112,8 @@ export async function handleGoogleCallback() {
     const tokenData = await tokenResponse.json();
 
     const idToken = tokenData.id_token;
-    if (!idToken) throw new Error("ID token not found in token exchange response");
+    if (!idToken)
+      throw new Error("ID token not found in token exchange response");
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`, {
       method: "POST",
@@ -121,7 +124,7 @@ export async function handleGoogleCallback() {
     if (!res.ok) {
       const errorData = await res.json();
       console.error("Backend error:", errorData);
-      throw new Error("Failed to authenticate with backend");
+      throw new Error(errorData.detail);
     }
 
     const data = await res.json();

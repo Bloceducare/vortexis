@@ -42,21 +42,20 @@ export default function SubmissionReviewPage() {
   }
 
   return (
-    <div>
-      <div>
+    <div className="min-h-screen lg:max-w-7xl md:max-w-4xl bg-gray-50 p-6">
+      <div className=" mx-auto">
         <h1 className="text-2xl mb-2 font-semibold text-[#605DEC]">
           Submission Review
         </h1>
         <p>Reviewing submissions for {selectedHackathon?.project?.title}</p>
       </div>
 
-      <div className="bg-[#FFFFFF] my-5 shadow-md rounded-md border border-[#E4E4E4]">
-        <div className="md:w-[1114px] w-full px-3 py-8">
+      <div className=" max-w-full overflow-x-auto my-5 shadow-md rounded-md border border-[#E4E4E4]">
+        <div className="lg:w-[1114px] overflow-x-scroll px-3 py-8">
           {
             <Tabscontent
               submission={selectedHackathon}
-              hackathonId={selectedHackathon?.hackathon?.toString() ?? ""
-              }
+              hackathonId={selectedHackathon?.hackathon?.toString() ?? ""}
             />
             // <Tabscontent
             //   submission={currentSubmission}
