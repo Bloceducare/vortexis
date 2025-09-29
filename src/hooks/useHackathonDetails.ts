@@ -16,7 +16,11 @@ interface Team {
   members: any[];
 }
 
-interface Review {
+export interface Review {
+  judge: any;
+  presentation_score: number;
+  overall_score: number;
+  review: string;
   id: number;
   innovation_score: number;
   technical_score: number;

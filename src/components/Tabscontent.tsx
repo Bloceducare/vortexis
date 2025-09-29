@@ -121,7 +121,7 @@ function Tabscontent({
             }}
           />
         )}
-        {activeTab === 5 && <OtherJudges />}
+        {activeTab === 5 && <OtherJudges reviews={currentSubmission.reviews} />}
       </div>
 
       {/* Toast Container */}

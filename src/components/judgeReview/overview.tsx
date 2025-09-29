@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Review } from "@/hooks/useHackathonDetails";
+import { useState, useEffect } from "react";
 
 interface EvaluationItem {
   section: string;
@@ -18,79 +19,118 @@ interface JudgeEvaluation {
   averageScore: number;
 }
 
-// Mock data for other judges
-const otherJudgesData: JudgeEvaluation[] = [
-  {
-    judgeId: "judge-1",
-    judgeName: "Gbemi",
-    judgeAvatar: "SC",
-    status: "completed",
-    submittedAt: "2025-01-15 14:30",
-    evaluations: [
-      { section: "Innovation", description: "", grade: 8.5 },
-      { section: "Technical Complexity", description: "", grade: 7.0 },
-      { section: "User Experience", description: "", grade: 9.0 },
-      { section: "Impact", description: "", grade: 7.5 },
-      { section: "Presentation", description: "", grade: 8.0 },
-    ],
-    comments:
-      "Excellent innovative approach with strong user experience. The technical implementation could be more robust, but overall a solid project with great potential for real-world application.",
-    totalScore: 40,
-    averageScore: 8.0,
-  },
-  {
-    judgeId: "judge-2",
-    judgeName: "Goodness",
-    judgeAvatar: "MR",
-    status: "completed",
-    submittedAt: "2025-01-14 16:45",
-    evaluations: [
-      { section: "Innovation", description: "", grade: 7.0 },
-      { section: "Technical Complexity", description: "", grade: 9.0 },
-      { section: "User Experience", description: "", grade: 6.5 },
-      { section: "Impact", description: "", grade: 8.0 },
-      { section: "Presentation", description: "", grade: 7.5 },
-    ],
-    comments:
-      "Impressive technical complexity and implementation. The impact potential is high, though the user experience needs some refinement. The code quality is excellent and shows advanced programming skills.",
-    totalScore: 38,
-    averageScore: 7.6,
-  },
+interface review {
+  reviews: Review[];
+}
 
-  {
-    judgeId: "judge-3",
-    judgeName: "Alex Thompson",
-    judgeAvatar: "AT",
-    status: "in-progress",
-    submittedAt: undefined,
-    evaluations: [],
-    comments: "",
-    totalScore: 0,
-    averageScore: 0,
-  },
-  {
-    judgeId: "judge-4",
-    judgeName: "Amorim",
-    judgeAvatar: "LK",
-    status: "not-started",
-    submittedAt: undefined,
-    evaluations: [],
-    comments: "",
-    totalScore: 0,
-    averageScore: 0,
-  },
-];
+function OtherJudges({ reviews }: review) {
+  console.log("Here are the reviews:", reviews);
 
-function OtherJudges() {
   const [selectedJudge, setSelectedJudge] = useState<string | null>(null);
+  const [filteredJudges, setFilteredJudges] = useState<JudgeEvaluation[]>([]);
 
-  const completedJudges = otherJudgesData.filter(
+  useEffect(() => {
+    const currentUser = JSON.parse(
+      localStorage.getItem("user-storage") || "{}"
+    );
+    const currentJudgeId = currentUser.state.user.id;
+
+    // Filter out current judge's review and transform data
+    const otherJudgesReviews = reviews.filter(
+      (review) => review.judge.id !== currentJudgeId
+    );
+
+    const transformedJudges: JudgeEvaluation[] = otherJudgesReviews.map(
+      (review) => {
+        const evaluations: EvaluationItem[] = [
+          {
+            section: "Innovation",
+            description: "",
+            grade: review.innovation_score,
+          },
+          {
+            section: "Technical Complexity",
+            description: "",
+            grade: review.technical_score,
+          },
+          {
+            section: "User Experience",
+            description: "",
+            grade: review.user_experience_score,
+          },
+          { section: "Impact", description: "", grade: review.impact_score },
+          {
+            section: "Presentation",
+            description: "",
+            grade: review.presentation_score,
+          },
+        ];
+
+        const totalScore =
+          review.innovation_score +
+          review.technical_score +
+          review.user_experience_score +
+          review.impact_score +
+          review.presentation_score;
+        const averageScore = totalScore / 5;
+
+        // Generate initials from username or use first two letters
+        const generateInitials = (username: string): string => {
+          if (!username) return "??";
+          const words = username.split(/[\s_-]+/);
+          if (words.length >= 2) {
+            return words
+              .slice(0, 2)
+              .map((word) => word.charAt(0).toUpperCase())
+              .join("");
+          }
+          return username.slice(0, 2).toUpperCase();
+        };
+
+        // Determine status based on whether scores exist and review is complete
+        const hasAllScores =
+          review.innovation_score > 0 &&
+          review.technical_score > 0 &&
+          review.user_experience_score > 0 &&
+          review.impact_score > 0 &&
+          review.presentation_score > 0;
+
+        let status: "completed" | "in-progress" | "not-started";
+        if (hasAllScores && review.overall_score > 0) {
+          status = "completed";
+        } else if (hasAllScores || review.overall_score > 0) {
+          status = "in-progress";
+        } else {
+          status = "not-started";
+        }
+
+        return {
+          judgeId: review.judge.id.toString(),
+          judgeName: review.judge.username,
+          judgeAvatar: generateInitials(review.judge.username),
+          status,
+          submittedAt:
+            status === "completed"
+              ? new Date().toISOString().slice(0, 16).replace("T", " ")
+              : undefined,
+          evaluations,
+          comments: review.review || "",
+          totalScore,
+          averageScore: Math.round(averageScore * 10) / 10,
+        };
+      }
+    );
+
+    setFilteredJudges(transformedJudges);
+  }, [reviews]);
+
+  const completedJudges = filteredJudges.filter(
     (judge) => judge.status === "completed"
   );
-  const inProgressJudges = otherJudgesData.filter(
+  const inProgressJudges = filteredJudges.filter(
     (judge) => judge.status === "in-progress"
   );
-  const notStartedJudges = otherJudgesData.filter(
+  const notStartedJudges = filteredJudges.filter(
     (judge) => judge.status === "not-started"
   );
 
@@ -257,7 +297,7 @@ function OtherJudges() {
 
       {/* Judges List */}
       <div className="space-y-4">
-        {otherJudgesData.map((judge) => (
+        {filteredJudges.map((judge) => (
           <div
             key={judge.judgeId}
             className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
@@ -439,7 +479,7 @@ function OtherJudges() {
       </div>
 
       {/* Empty State */}
-      {otherJudgesData.length === 0 && (
+      {filteredJudges.length === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <svg
             className="w-16 h-16 text-gray-400 mx-auto mb-4"
