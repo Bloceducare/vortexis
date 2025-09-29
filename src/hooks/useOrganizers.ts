@@ -26,6 +26,98 @@ export default function useOrganizer() {
   
     return headers;
   };
+
+  const createOrganization = useMutation({
+    mutationFn: async (data: { name: string; description: string }) => {
+      const res = await fetch(`${apiUrl}/organization/create/`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+  
+      if (!res.ok) {
+        let errorMessage = 'Failed to create organization';
+  
+        try {
+          const errorData = await res.json();
+          errorMessage =
+            errorData?.non_field_errors?.[0] ||
+            errorData?.message ||
+            errorMessage;
+        } catch (err) {
+        }
+  
+        throw new Error(errorMessage);
+      }
+  
+      return res.json();
+    },
+  });
+
+  const getAllOrganization = useQuery({
+    queryKey: ['organizations'],
+    queryFn: async () => {
+      const res = await fetch(`${apiUrl}/organization/get-all`, {
+        headers: getAuthHeaders()
+      });
+      if (!res.ok) throw new Error('Unable to fetch organizations');
+      return res.json();
+    },
+    staleTime: Infinity,
+  });
+
+  const updateOrganization = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: { name?: string; description?: string } }) => {
+      const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+  
+      if (!res.ok) {
+        let errorMessage = 'Failed to update organization';
+  
+        try {
+          const errorData = await res.json();
+          errorMessage =
+            errorData?.non_field_errors?.[0] ||
+            errorData?.message ||
+            errorMessage;
+        } catch (err) {
+          // fallback: keep default errorMessage
+        }
+  
+        throw new Error(errorMessage);
+      }
+  
+      return res.json();
+    },
+  });
+
+  const deleteOrganizationMutation = useMutation({
+    mutationFn: async (id: string | number) => {
+      const res = await fetch(`${apiUrl}/organization/delete/${id}/`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+  
+      if (!res.ok) {
+        let errorMessage = "Failed to delete organization";
+  
+        try {
+          const errorData = await res.json();
+          errorMessage =
+            errorData?.non_field_errors?.[0] ||
+            errorData?.message ||
+            errorMessage;
+        } catch (err) {}
+  
+        throw new Error(errorMessage);
+      }
+  
+      return res.json();
+    },
+  });
   
   
  
@@ -188,6 +280,10 @@ export default function useOrganizer() {
     getHackathons,
     getHackathonJudges,
     getHackathonById,
-    useParticipants
+    useParticipants, 
+    createOrganization, 
+    getAllOrganization,
+    updateOrganization,
+    deleteOrganizationMutation
   };
 }

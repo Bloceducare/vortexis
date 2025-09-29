@@ -6,10 +6,6 @@ import useProjects from "@/hooks/useProject"
 import CreateProject from "./components/CreateProject"
 import {
   Info,
-  Github,
-  Globe,
-  Video,
-  Presentation,
   Users,
   Calendar,
   RefreshCcw,
@@ -20,6 +16,7 @@ import { useUserProjectStore } from "@/store/useProjectStore";
 import UpdateProject from "./components/UpdateProject"
 import LinkPreview from "@/components/LinkPreview"
 import useHackathon from "@/hooks/useHackathon"
+import { useTeamStore } from "@/store/useTeamStore"
 
 
 function Project() {
@@ -61,20 +58,30 @@ function Project() {
     return <div className="p-6 text-center text-gray-600">Loading...</div>
   }
 
-  if (!data || data.length === 0) {
-    return (
-      <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white rounded-2xl shadow-md">
-        <h2 className="text-2xl font-bold mb-4">No Project Found</h2>
-        <p className="mb-6 text-gray-500 max-w-md">
-          You haven’t created a project yet. Start by creating one now.
-        </p>
-        <CreateProject hackathon_id={hackathon_id} />
-      </div>
-    )
-  }
+ 
 
-  const project = data[0]
+  const team = useTeamStore.getState().team;
+
+
+const project = data?.find((proj: any) => proj.team?.id === team?.id);
+
+if (project) {
   useUserProjectStore.getState().setProject(project);
+}
+
+
+if (!project || project.length === 0) {
+  return (
+    <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white rounded-2xl shadow-md">
+      <h2 className="text-2xl font-bold mb-4">No Project Found</h2>
+      <p className="mb-6 text-gray-500 max-w-md">
+        You haven’t created a project yet. Start by creating one now.
+      </p>
+      <CreateProject hackathon_id={hackathon_id} hackathon_name={hackathonData?.title} />
+    </div>
+  )
+}
+
 
 
   if(update) {
@@ -135,19 +142,19 @@ function Project() {
 
   <div className="space-y-5 mt-3">
   <h1 className="text-3xl font-bold mb-6 text-gray-900">
-  {project.title.charAt(0).toUpperCase() + project.title.slice(1)}
+  {project?.title.charAt(0).toUpperCase() + project?.title.slice(1)}
 </h1>
 
     {/* Description */}
-    <Detail icon={<Info size={18} />} label="Description" value={project.description} />
+    <Detail icon={<Info size={18} />} label="Description" value={project?.description} />
 
 
     <div>
-    {project.demo_video_url && (
+    {project?.demo_video_url && (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mb-2">Demo Video</h3>
       <LinkPreview
-        url={project.demo_video_url}
+        url={project?.demo_video_url}
         width="100%"
         descriptionLength={80}
         className="rounded-lg shadow"
@@ -157,11 +164,11 @@ function Project() {
     </div>
 
 <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-  {project.github_url && (
+  {project?.github_url && (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">GitHub</h3>
       <LinkPreview
-        url={project.github_url}
+        url={project?.github_url}
         width="100%"
         descriptionLength={80}
         className="rounded-lg shadow"
@@ -169,11 +176,11 @@ function Project() {
     </div>
   )}
 
-  {project.live_link && (
+  {project?.live_link && (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">Live Link</h3>
       <LinkPreview
-        url={project.live_link}
+        url={project?.live_link}
         width="100%"
         descriptionLength={80}
         className="rounded-lg shadow"
@@ -183,11 +190,11 @@ function Project() {
 
  
 
-  {project.presentation_link && (
+  {project?.presentation_link && (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mb-2 text-center">Presentation</h3>
       <LinkPreview
-        url={project.presentation_link}
+        url={project?.presentation_link}
         width="100%"
         descriptionLength={80}
         className="rounded-lg shadow"
@@ -234,16 +241,16 @@ function Project() {
 
             <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-5 mt-10">
   <div className="flex flex-col space-y-4">
-    <Detail icon={<Users size={18} />} label="Team" value={project.team?.name} />
+    <Detail icon={<Users size={18} />} label="Team" value={project?.team?.name} />
     <Detail
       icon={<Calendar size={18} />}
       label="Created At"
-      value={new Date(project.created_at).toLocaleString()}
+      value={new Date(project?.created_at).toLocaleString()}
     />
     <Detail
       icon={<RefreshCcw size={18} />}
       label="Updated At"
-      value={new Date(project.updated_at).toLocaleString()}
+      value={new Date(project?.updated_at).toLocaleString()}
     />
   </div>
 </section>

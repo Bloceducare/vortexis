@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Plus, Trash2, Pencil, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import useOrganizer from "@/hooks/useOrganizers";
+import { useUserStore } from "@/store/useUserStore";
 
 interface Organization {
   id: string;
@@ -12,21 +14,8 @@ interface Organization {
 }
 
 export default function OrganizationPage() {
-  const [organizations, setOrganizations] = useState<Organization[]>([
-    {
-      id: "1",
-      name: "Bloceducare",
-      moderators: ["Amiola", "Demilade"],
-      description: "A platform to empower learning through hackathons.",
-    },
-    {
-      id: "2",
-      name: "TechSphere",
-      moderators: ["John Doe"],
-      description: "Driving innovation through communities.",
-    },
-  ]);
-
+  const { user } = useUserStore();
+  const username = user?.username; 
   const [showAddForm, setShowAddForm] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState<Organization | null>(
     null
@@ -34,6 +23,9 @@ export default function OrganizationPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<
     Organization | null
   >(null);
+
+  const { createOrganization, getAllOrganization, updateOrganization, deleteOrganizationMutation } = useOrganizer();
+  const { data, isLoading, isError } = getAllOrganization;
 
   const [newOrg, setNewOrg] = useState({
     name: "",
@@ -43,47 +35,98 @@ export default function OrganizationPage() {
 
   const [search, setSearch] = useState("");
 
-  const handleAddOrganization = () => {
+  // ✅ Modal for responses
+  const [responseModal, setResponseModal] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const handleAddOrganization = async () => {
     if (!newOrg.name.trim()) return;
-    setOrganizations((prev) => [
-      ...prev,
-      {
-        id: String(prev.length + 1),
-        ...newOrg,
-      },
-    ]);
+  
+
+    try {
+      const res = await createOrganization.mutateAsync({
+        name: newOrg.name,
+        description: newOrg.description,
+      });
+
+ 
+
+      setResponseModal({
+        type: "success",
+        message: `Organization "${newOrg.name}" created successfully!`,
+      });
+    } catch (err: any) {
+      setResponseModal({
+        type: "error",
+        message: err.message || "Failed to create organization.",
+      });
+    }
+
     setNewOrg({ name: "", description: "", moderators: [] });
     setShowAddForm(false);
   };
 
   const handleUpdateOrganization = () => {
     if (!showUpdateForm) return;
-    setOrganizations((prev) =>
-      prev.map((org) =>
-        org.id === showUpdateForm.id ? { ...org, ...newOrg } : org
-      )
+  
+    updateOrganization.mutate(
+      {
+        id: showUpdateForm.id, // send the org ID
+        data: {
+          name: newOrg.name,
+          description: newOrg.description,
+        },
+      },
+      {
+        onSuccess: () => {
+          setResponseModal({
+            type: "success",
+            message: `Organization "${newOrg.name}" updated successfully!`,
+          });
+          setNewOrg({ name: "", description: "", moderators: [] });
+          setShowUpdateForm(null);
+        },
+        onError: (error: any) => {
+          setResponseModal({
+            type: "error",
+            message: error.message || "Failed to update organization",
+          });
+        },
+      }
     );
-    setNewOrg({ name: "", description: "", moderators: [] });
-    setShowUpdateForm(null);
   };
+  
 
   const handleDeleteOrganization = () => {
     if (!showDeleteConfirm) return;
-    setOrganizations((prev) =>
-      prev.filter((org) => org.id !== showDeleteConfirm.id)
-    );
-    setShowDeleteConfirm(null);
-  };
+  
+    deleteOrganizationMutation.mutate(showDeleteConfirm.id, {
+      onSuccess: (deletedId) => {
+        setResponseModal({
+          type: "success",
+          message: `Organization "${showDeleteConfirm.name}" deleted successfully!`,
+        });
 
-  const filteredOrganizations = organizations.filter(
-    (org) =>
-      org.name.toLowerCase().includes(search.toLowerCase()) ||
-      (org.description &&
-        org.description.toLowerCase().includes(search.toLowerCase())) ||
-      org.moderators.some((m) =>
-        m.toLowerCase().includes(search.toLowerCase())
-      )
-  );
+  
+        setShowDeleteConfirm(null);
+      },
+      onError: (error: any) => {
+        setResponseModal({
+          type: "error",
+          message: error.message || "Failed to delete organization",
+        });
+      },
+    });
+  };
+  
+
+  const filteredOrganizations = data?.filter(
+    (org: any) => org.organizer === username
+  ) || [];
+
+
 
   return (
     <div className="max-w-7xl mx-auto p-6 relative mt-20">
@@ -118,67 +161,78 @@ export default function OrganizationPage() {
 
       {/* Organizations List */}
       <motion.div
-        className="grid md:grid-cols-2 gap-6"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.15 } },
-        }}
-      >
-        {filteredOrganizations.map((org) => (
-          <motion.div
-            key={org.id}
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.5 }}
-            className="bg-white shadow-md rounded-xl p-5 flex flex-col justify-between hover:shadow-lg transition"
-          >
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {org.name}
-              </h2>
-              <p className="text-sm text-gray-600 mb-3">
-                {org.description || "No description provided"}
-              </p>
-              <div className="flex gap-2 flex-wrap">
-                {org.moderators.map((mod, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-md"
-                  >
-                    {mod}
-                  </span>
-                ))}
-              </div>
-            </div>
+  className="grid md:grid-cols-2 gap-6"
+  initial="hidden"
+  animate="visible"
+  variants={{
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.15 } },
+  }}
+>
+  {filteredOrganizations.map((org: any) => (
+    <motion.div
+      key={org.id}
+      variants={{
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+      }}
+      transition={{ duration: 0.5 }}
+      className="bg-white shadow-md rounded-xl p-5 flex flex-col justify-between hover:shadow-lg transition"
+    >
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">{org.name}</h2>
+        <p className="text-sm text-gray-600 mb-3">
+          {org.description || "No description provided"}
+        </p>
+        <div className="flex gap-2 flex-wrap">
+          {org.moderators.map((mod: any, i: any) => (
+            <span
+              key={i}
+              className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-md"
+            >
+              {mod}
+            </span>
+          ))}
+        </div>
+      </div>
 
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => {
-                  setNewOrg({
-                    name: org.name,
-                    description: org.description || "",
-                    moderators: org.moderators,
-                  });
-                  setShowUpdateForm(org);
-                }}
-                className="px-3 py-1 flex items-center gap-1 border rounded-lg text-indigo-600 hover:bg-indigo-50 text-sm"
-              >
-                <Pencil size={14} /> Update
-              </button>
-              <button
-                onClick={() => setShowDeleteConfirm(org)}
-                className="px-3 py-1 flex items-center gap-1 border rounded-lg text-red-600 hover:bg-red-50 text-sm"
-              >
-                <Trash2 size={14} /> Delete
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="flex flex-col gap-2 mt-4">
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={() => {
+              setNewOrg({
+                name: org.name,
+                description: org.description || "",
+                moderators: org.moderators,
+              });
+              setShowUpdateForm(org);
+            }}
+            className="px-3 py-1 flex items-center gap-1 border rounded-lg text-indigo-600 hover:bg-indigo-50 text-sm"
+          >
+            <Pencil size={14} /> Update
+          </button>
+          <button
+            onClick={() => setShowDeleteConfirm(org)}
+            className="px-3 py-1 flex items-center gap-1 border rounded-lg text-red-600 hover:bg-red-50 text-sm"
+          >
+            <Trash2 size={14} /> Delete
+          </button>
+        </div>
+
+        {/* Approval status */}
+        <span
+          className={`text-xs font-medium px-2 py-1 rounded-md self-end mt-3 ${
+            org.is_approved
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }`}
+        >
+          {org.is_approved ? "Approved" : "Waiting for approval"}
+        </span>
+      </div>
+    </motion.div>
+  ))}
+</motion.div>
 
       {/* Floating button for mobile */}
       <motion.button
@@ -263,9 +317,11 @@ export default function OrganizationPage() {
                       ? handleAddOrganization
                       : handleUpdateOrganization
                   }
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 cursor-pointer"
                 >
-                  {showAddForm ? "Save" : "Update"}
+                  {showAddForm ? createOrganization.isPending
+      ? "Saving..."
+      : "Save" : updateOrganization.isPending ? "Updating..." : "Update"}
                 </button>
               </div>
             </motion.div>
@@ -301,17 +357,59 @@ export default function OrganizationPage() {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowDeleteConfirm(null)}
-                  className="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100"
+                  className="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
-                  onClick={handleDeleteOrganization}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                >
-                  Delete
-                </button>
+  onClick={handleDeleteOrganization}
+  disabled={deleteOrganizationMutation.isPending}
+  className={`px-4 py-2 rounded-lg text-white cursor-pointer ${
+    deleteOrganizationMutation.isPending
+      ? "bg-red-400 cursor-not-allowed"
+      : "bg-red-600 hover:bg-red-700"
+  }`}
+>
+  {deleteOrganizationMutation.isPending ? "Deleting..." : "Delete"}
+</button>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ✅ Response Modal */}
+      <AnimatePresence>
+        {responseModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/40 flex justify-center items-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 text-center"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2
+                className={`text-xl font-semibold mb-4 ${
+                  responseModal.type === "success"
+                    ? "text-green-600"
+                    : "text-red-600"
+                }`}
+              >
+                {responseModal.type === "success" ? "Success" : "Error"}
+              </h2>
+              <p className="text-gray-700 mb-6">{responseModal.message}</p>
+              <button
+                onClick={() => setResponseModal(null)}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              >
+                Done
+              </button>
             </motion.div>
           </motion.div>
         )}

@@ -53,7 +53,7 @@ export default function useUser() {
       queryKey: ["publicUser", userId],
       queryFn: async () => {
         if (!userId) throw new Error("User ID is missing");
-        const res = await fetch(`${apiUrl}/auth/profiles/${userId}/`, {
+        const res = await fetch(`${apiUrl}/auth/users/public/${userId}/`, {
           headers: getAuthHeaders(), 
         }); 
         if (!res.ok) throw new Error("Unable to fetch public user profile");

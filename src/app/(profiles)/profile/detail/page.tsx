@@ -252,18 +252,12 @@ export default function ProfileView() {
         </section>
       </section>
 
-      
-
 
       {modal && (
         <SettingsPage 
         onClose={() => setModal(false)}
         />
       )}
-
-
-      
-
       
     </section>
   );

@@ -56,8 +56,11 @@ const Hackathons = () => {
 
     const { getTeam } = useTeams();
 
+
     const { data: myTeam, error: myTeamError, } = getTeam(hackathon_id);
     console.log(myTeam)
+
+    useUserHackathonsStore((state) => state.addHackathon(myTeam))
   
 
 
