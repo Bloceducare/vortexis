@@ -43,8 +43,8 @@ export default function SignUpForm({ type }: SignUpFormProps) {
   return (
     <div className="shadow-md bg-white md:w-full md:max-w-[798px] mx-auto w-[96%] h-full rounded-[24px] p-4 md:p-2">
       <h1 className="text-2xl text-center py-4 text-[#2E0BF4] font-[700]">
-        {type === "organizers" && "Create Your Organizer Account"}
-        {type === "participants" && "Create Your Participant Account"}
+        {type === "organizers" && "Create Your  Account"}
+        {type === "participants" && "Create Your Account"}
       </h1>
 
       <form

@@ -9,10 +9,10 @@ import CreateTeam from "./component/CreateTeam";
 import TeamIcon from "@/public/assets/icon/ant-design_team-outlined.svg"
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import useHackathon from "@/hooks/useHackathon";
 import {Card} from "@/components/ui/card";
-import { Plus, Github, FileText, Book, Folder } from "lucide-react";
+import {  Github, FileText, Book, Folder } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
 
 const getRandomColor = () => {
@@ -46,12 +46,14 @@ export default function TeamManagement() {
 
 
   const { getTeam, leaveTeam, inviteMembers } = useTeams();
-    const { getHackathonById } = useHackathon();
-      const { data: hackathonData, isLoading: loadingHackathon, error } = getHackathonById(hackathon_id);
+       const hackathonData = useUserHackathonsStore((state) =>
+          state.hackathons.find((h) => h.id === Number(hackathon_id))
+        )
 
   const toggleJoinTeamPage = () => {
     setPages({ ...pages, join: !pages.join });
   };
+
 
   const leaveTeamMutation = leaveTeam();
   const inviteMemberMutation = inviteMembers()
@@ -111,7 +113,7 @@ export default function TeamManagement() {
   }
 
   if (pages.create) {
-    return <CreateTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
+    return <CreateTeam onClose={toggleCreateTeam} hackathon_id={hackathon_id} />;
   }
 
   return (
