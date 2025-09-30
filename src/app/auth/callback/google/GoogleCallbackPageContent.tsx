@@ -75,8 +75,8 @@ export default function GoogleCallbackPageContent() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md rounded-lg border p-8 shadow-md">
-        <h1 className="mb-4 text-2xl font-bold">Google Authentication</h1>
+      <div className="w-full max-w-md rounded-lg p-8 shadow-md">
+        {/* <h1 className="mb-4 text-2xl font-bold">Google Authentication</h1> */}
 
         {status === "loading" && (
           <div className="text-center">
@@ -107,14 +107,14 @@ export default function GoogleCallbackPageContent() {
           </div>
         )}
 
-        {status === "error" && (
+        {/* {status === "error" && (
           <div className="mt-6 border-t pt-4 text-xs text-gray-500">
             <p className="font-semibold">Debug Information:</p>
             <pre className="mt-2 overflow-auto bg-gray-100 p-2">
               {JSON.stringify(debugInfo, null, 2)}
             </pre>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

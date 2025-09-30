@@ -9,7 +9,7 @@ import { ChevronDown } from "lucide-react";
 import OtherJudges from "./judgeReview/overview";
 import { Submission } from "@/hooks/useHackathonDetails";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
 
 const tabs = [
   { name: "Project Details", tab_no: 1 },
@@ -50,7 +50,7 @@ function Tabscontent({
   return (
     <div>
       {/* Desktop Tabs - Hidden on mobile */}
-      <div className="hidden md:flex mb-6 -mt-1.5 md:w-[950px] w-full cursor-pointer gap-4">
+      <div className="hidden md:flex mb-6 -mt-1.5 xl:w-[950px] lg:w-[830px] md:w-[730px] w-full cursor-pointer gap-4">
         {tabs.map((tab, i) => (
           <div
             key={i}
