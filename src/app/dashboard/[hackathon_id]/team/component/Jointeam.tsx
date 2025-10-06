@@ -121,7 +121,7 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
                   handleJoinTeam(team.id.toString(), hackathon_id)
                 }
                 disabled={!!joiningTeamId}
-                className={`mt-4 px-4 py-2 rounded-lg text-white transition ${
+                className={`mt-4 px-4 py-2 rounded-lg text-white transition cursor-pointer ${
                   joiningTeamId === team.id.toString()
                     ? "bg-blue-400 cursor-wait"
                     : "bg-blue-600 hover:bg-blue-700"

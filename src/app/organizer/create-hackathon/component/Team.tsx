@@ -49,25 +49,6 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
           setSelectedSkillIds(skills);
         }
       }, [skills]);
-  
-  const dropdownMinimumIndividual = [
-    "1 individual",
-    "2 Members",
-    "3 Members",
-    "4 Members",
-    "5 Members",
-    "6 Members",
-    "7 Members",
-  ];
-
-  const dropdownMaximum = [
-    "2 Members",
-    "3 Members",
-    "4 Members",
-    "5 Members",
-    "6 Members",
-    "7 Members",
-  ];
 
   const initialNotifications = [
     { label: "Allow Solo Participation", checked: true },
@@ -130,7 +111,6 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
         <form onSubmit={handleSubmit}>
 
         <div className="flex gap-6 flex-wrap">
-          {/* Minimum Members Dropdown */}
           <div className="w-full md:w-[45%]">
             <label className="block mb-2 text-[#2F3036] font-bold">Minimum Team Members</label>
 
@@ -138,8 +118,7 @@ function Team({ onNext, onPrev,  setData }: NavigationProps ) {
               <input type='text' placeholder='Enter minimum team members e.g(1 individual)'   name="min_team_size"
               value={min_team_size}
               onChange={(e) => setField('min_team_size', e.target.value)} className='w-full border-none outline-none' />
-            </div>
-           
+            </div>  
           </div>
 
         

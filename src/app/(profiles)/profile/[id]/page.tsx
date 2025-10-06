@@ -20,9 +20,10 @@ function SingleProfile() {
 
   const [activeTab, setActiveTab] = useState("Hackathons");
 
-  const user = data?.user ?? null;
+  const user = data ?? null;
 
-  // 🎨 Memoize derived values
+
+
   const avatarColor = useMemo(() => {
     const colors = [
       "#FF5733", "#33B5E5", "#2ECC71", "#9B59B6",
@@ -190,12 +191,12 @@ function SingleProfile() {
             <h1 className="text-[#212121] font-semibold">Skills & Interests</h1>
             {user.profile?.skills?.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-3">
-                {user.profile.skills.map((skill: { id: number; name: string }) => (
+                {user.profile.skills.map((skill: any) => (
                   <span
                     key={skill.id}
                     className="px-3 py-1 bg-blue-100 text-[#605DEC] text-sm rounded-xl"
                   >
-                    {skill.name.charAt(0).toUpperCase() + skill.name.slice(1)}
+                    {skill?.charAt(0).toUpperCase() + skill.slice(1)}
                   </span>
                 ))}
               </div>
