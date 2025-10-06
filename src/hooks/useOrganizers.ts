@@ -57,7 +57,7 @@ export default function useOrganizer() {
   const getAllOrganization = useQuery({
     queryKey: ['organizations'],
     queryFn: async () => {
-      const res = await fetch(`${apiUrl}/organization/get-all`, {
+      const res = await fetch(`${apiUrl}/organization/my-organizations/`, {
         headers: getAuthHeaders()
       });
       if (!res.ok) throw new Error('Unable to fetch organizations');

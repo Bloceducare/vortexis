@@ -1,14 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { FaGithub, FaLinkedin, FaTwitter, FaGlobe } from "react-icons/fa";
 import LinkImg from "@/public/assets/icon/link.svg";
 import LocationIcon from "@/public/assets/icon/location.svg";
 import { Badge } from "@/components/ui/badge";
 import useUser from "@/hooks/useUserProfile";
-// import Hackathons from "./component/Hackathons";
 
 const tabs = ["Hackathons", "Activity", "Badges"];
 
@@ -17,13 +16,13 @@ function SingleProfile() {
   const userId = params?.id as string;
 
   const { getPublicUser } = useUser();
-  const { data, error, isLoading, isError, refetch, isFetching } = getPublicUser(userId);
+  const { data, error, isLoading, isError, refetch } = getPublicUser(userId);
 
   const [activeTab, setActiveTab] = useState("Hackathons");
 
   const user = data?.user ?? null;
 
-  // Random avatar color
+  // 🎨 Memoize derived values
   const avatarColor = useMemo(() => {
     const colors = [
       "#FF5733", "#33B5E5", "#2ECC71", "#9B59B6",
@@ -32,11 +31,13 @@ function SingleProfile() {
     return colors[Math.floor(Math.random() * colors.length)];
   }, []);
 
-  const initials = (
-    `${user?.first_name?.[0] || ""}${user?.last_name?.[0] || ""}`
-  ).toUpperCase();
+  const initials = useMemo(
+    () =>
+      `${user?.first_name?.[0] || ""}${user?.last_name?.[0] || ""}`.toUpperCase(),
+    [user?.first_name, user?.last_name]
+  );
 
-  // Loading state
+  // 🔄 Loading State
   if (isLoading) {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pt-24">
@@ -53,29 +54,29 @@ function SingleProfile() {
     );
   }
 
-  // Error state
+  // ❌ Error State
   if (isError) {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pt-24">
         <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Unable to load profile</h2>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2">
+            Unable to load profile
+          </h2>
           <p className="text-sm text-gray-600 mb-4">
             {error?.message || "Something went wrong while fetching this profile."}
           </p>
-          <div className="flex items-center justify-center gap-3">
-            <button
-              onClick={() => refetch()}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Retry
-            </button>
-          </div>
+          <button
+            onClick={() => refetch()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
+            Retry
+          </button>
         </div>
       </section>
     );
   }
 
-  // Empty state
+  // 🚫 Empty State
   if (!user) {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pt-24">
@@ -92,7 +93,7 @@ function SingleProfile() {
   return (
     <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
       <section className="flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
-        {/* Left: Profile Info */}
+        {/* 🧑 Left: Profile Info */}
         <section className="space-y-5 w-full lg:w-[60%]">
           {/* Avatar + Name */}
           <section className="flex justify-between items-end">
@@ -100,11 +101,10 @@ function SingleProfile() {
               <div
                 className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center rounded-full border-4 border-white shadow-lg text-white text-3xl sm:text-4xl font-bold"
                 style={{ backgroundColor: avatarColor }}
-                title={`${user.first_name ?? ""} ${user.last_name ?? ""}`}
+                aria-label={`${user.first_name ?? ""} ${user.last_name ?? ""}`}
               >
                 {initials || "?"}
               </div>
-
               <h1 className="text-2xl font-bold mt-4 mb-2">
                 {user.first_name} {user.last_name}
               </h1>
@@ -154,17 +154,32 @@ function SingleProfile() {
           {/* Socials */}
           <div className="mt-6 flex gap-4 text-xl text-gray-600">
             {user.profile?.github && (
-              <a href={user.profile.github} target="_blank" rel="noopener noreferrer">
+              <a
+                href={user.profile.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub Profile"
+              >
                 <FaGithub />
               </a>
             )}
             {user.profile?.linkedin && (
-              <a href={user.profile.linkedin} target="_blank" rel="noopener noreferrer">
+              <a
+                href={user.profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn Profile"
+              >
                 <FaLinkedin />
               </a>
             )}
             {user.profile?.twitter && (
-              <a href={user.profile.twitter} target="_blank" rel="noopener noreferrer">
+              <a
+                href={user.profile.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitter Profile"
+              >
                 <FaTwitter />
               </a>
             )}
@@ -173,7 +188,7 @@ function SingleProfile() {
           {/* Skills */}
           <div className="mt-6">
             <h1 className="text-[#212121] font-semibold">Skills & Interests</h1>
-            {user.profile?.skills && user.profile.skills.length > 0 ? (
+            {user.profile?.skills?.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-3">
                 {user.profile.skills.map((skill: { id: number; name: string }) => (
                   <span
@@ -190,7 +205,7 @@ function SingleProfile() {
           </div>
         </section>
 
-        {/* Right: Tabs + Content */}
+        {/* 📑 Right: Tabs + Content */}
         <section className="w-full">
           <div className="flex justify-start">
             <div className="flex gap-4 bg-[#F5F5F5] py-3 px-2 rounded-full">
@@ -210,17 +225,11 @@ function SingleProfile() {
             </div>
           </div>
 
-          {activeTab === "Hackathons" && (
-            <section className="mt-5">
-            <section className="mt-5 text-gray-600">Activity coming soon...</section>
-            </section>
-          )}
-          {activeTab === "Activity" && (
-            <section className="mt-5 text-gray-600">Activity coming soon...</section>
-          )}
-          {activeTab === "Badges" && (
-            <section className="mt-5 text-gray-600">Badges coming soon...</section>
-          )}
+          <section className="mt-5 text-gray-600">
+            {activeTab === "Hackathons" && "Hackathons coming soon..."}
+            {activeTab === "Activity" && "Activity coming soon..."}
+            {activeTab === "Badges" && "Badges coming soon..."}
+          </section>
         </section>
       </section>
     </section>

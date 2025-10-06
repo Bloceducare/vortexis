@@ -10,6 +10,7 @@ import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import { AnimatePresence, motion } from "framer-motion";
+import { SignOutConfirmationModal } from "./signOutModal";
 
 
 
@@ -25,6 +26,7 @@ export const Header: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
     const [showDropdown, setShowDropdown] = useState(false);
+    const [logout, setLogout] = useState(false);
   
   const isHome = pathname.startsWith("/home");
   const isProfile = pathname.startsWith("/profile");
@@ -226,6 +228,14 @@ export const Header: React.FC = () => {
                             Judges
                           </Link>
                         </li>
+                        <li>
+                          <p
+                          onClick={() => setLogout(true)}
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          >
+                            LogOut
+                          </p>
+                        </li>
                       </ul>
                     </motion.div>
                   )}
@@ -310,7 +320,7 @@ export const Header: React.FC = () => {
                         handleLogout();
                         closeMenu();
                       }}
-                      className="w-full px-4 py-3 text-base font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200"
+                      className="w-full px-4 py-3 text-base font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200 cursor-pointer"
                     >
                       Logout
                     </button>
@@ -350,6 +360,12 @@ export const Header: React.FC = () => {
           )}
         </div>
       </header>
+
+      <SignOutConfirmationModal 
+        isOpen={logout} 
+        onClose={() => setLogout(false)} 
+        onConfirm={() => { handleLogout(); setLogout(false); }} 
+      />
 
       {isMenuOpen && (
         <div
