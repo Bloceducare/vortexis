@@ -150,7 +150,7 @@ export default function TeamManagement() {
                       <div
                         key={m.id}
                         className="relative group cursor-pointer w-[48%]"
-                        onClick={() => router.push(`/profile/${data.id}`)}
+                        onClick={() => router.push(`/profile/${m.id}`)}
 
                       >
                         <div className="flex gap-2 border-2 border-[#605DEC] rounded-lg px-4 py-2 items-center ">
@@ -172,7 +172,7 @@ export default function TeamManagement() {
 
                           <button
                             className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1"
-                            onClick={() => router.push(`/profile/${data.id}`)}
+                            onClick={() => router.push(`/profile/${m.id}`)}
                           >
                             View Profile
                           </button>

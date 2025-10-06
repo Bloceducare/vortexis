@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -79,6 +79,10 @@ export default function TiptapEditor({
     },
     immediatelyRender: false,
   });
+
+  const [showTableInput, setShowTableInput] = useState(false);
+const [rows, setRows] = useState(3);
+const [cols, setCols] = useState(3);
   
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
@@ -135,23 +139,32 @@ export default function TiptapEditor({
         </div>
 
         {/* Lists */}
-        <div className="relative group">
-        <button type="button" onClick={() => editor.chain().focus().toggleBulletList().run()} className={buttonClass(editor.isActive('bulletList'))}>
-          <List size={16} />
-          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-        Numbered List
-      </span>
-      
-        </button>
-        </div>
-        <div className="relative group">
-        <button type="button" onClick={() => editor.chain().focus().toggleOrderedList().run()} className={buttonClass(editor.isActive('orderedList'))}>
-          <ListOrdered size={16} />
-          <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-        Bullet 
-      </span>
-        </button>
-        </div>
+<div className="relative group">
+  <button
+    type="button"
+    onClick={() => editor.chain().focus().toggleOrderedList().run()}
+    className={buttonClass(editor.isActive('orderedList'))}
+  >
+    <ListOrdered size={16} />
+    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+      Numbered List
+    </span>
+  </button>
+</div>
+
+<div className="relative group">
+  <button
+    type="button"
+    onClick={() => editor.chain().focus().toggleBulletList().run()}
+    className={buttonClass(editor.isActive('bulletList'))}
+  >
+    <List size={16} />
+    <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+      Bullet List
+    </span>
+  </button>
+</div>
+
 
         {/* Undo/Redo */}
         <div className="relative group">
@@ -238,21 +251,56 @@ export default function TiptapEditor({
         </div>
 
               {/* Table Actions */}
-       <div className="relative group">
-      <button
-        type="button"
-        onClick={() =>
-          editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-        }
-        className={buttonClass(false)}
-      >
-        <Table2 />
-      </button>
-      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
-        Add table
-      </span>
-    </div>
+              <div className="relative group">
+  <button
+    type="button"
+    onClick={() => setShowTableInput(!showTableInput)}
+    className={buttonClass(false)}
+  >
+    <Table2 />
+  </button>
+  <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+    Add Table
+  </span>
 
+  {showTableInput && (
+    <div className="absolute top-full mt-2 left-0 bg-white border shadow-md rounded-lg p-3 flex flex-col gap-2 z-50 w-44">
+      <label className="text-xs text-gray-600">
+        Rows:
+        <input
+          type="number"
+          min={1}
+          value={rows}
+          onChange={(e) => setRows(parseInt(e.target.value) || 1)}
+          className="border px-2 py-1 rounded w-full mt-1"
+        />
+      </label>
+      <label className="text-xs text-gray-600">
+        Columns:
+        <input
+          type="number"
+          min={1}
+          value={cols}
+          onChange={(e) => setCols(parseInt(e.target.value) || 1)}
+          className="border px-2 py-1 rounded w-full mt-1"
+        />
+      </label>
+      <button
+        onClick={() => {
+          editor
+            .chain()
+            .focus()
+            .insertTable({ rows, cols, withHeaderRow: true })
+            .run();
+          setShowTableInput(false);
+        }}
+        className="bg-indigo-600 text-white text-sm rounded-md py-1 hover:bg-indigo-700"
+      >
+        Insert Table
+      </button>
+    </div>
+  )}
+</div>
 
     <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().addColumnAfter().run()} className={buttonClass(false)}>
@@ -288,7 +336,8 @@ export default function TiptapEditor({
       [&_table]:w-full 
       [&_th]:border [&_th]:border-gray-300 [&_th]:px-3 [&_th]:py-2 
       [&_td]:border [&_td]:border-gray-200 [&_td]:px-3 [&_td]:py-2 
-     min-h-[300px] max-h-[350px] overflow-y-auto cursor-text p-3"
+     min-h-[300px] max-h-[350px] overflow-y-auto cursor-text p-3
+      [&_ul]:list-disc [&_ul]:ml-5 [&_ol]:list-decimal [&_ol]:ml-5"
   />
 
 

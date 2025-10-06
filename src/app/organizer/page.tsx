@@ -71,7 +71,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Organization List */}
+   
           <div className="p-6">
 
             {filteredData.length > 0 ? (
@@ -79,12 +79,25 @@ const Index = () => {
                 {filteredData.map((org: any, i: number) => (
                   <div
                     key={i}
-                    className="border p-4 rounded-xl  hover:shadow-lg transition-all bg-white shadow-md h-[30vh] cursor-pointer"
+                    className="border p-4 rounded-xl  hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col justify-between"
                   >
-                    <h3 className="font-semibold text-lg">{org.name}</h3>
+                    <div className="space-y-5">
+                    <h3 className="font-bold text-xl">{org.name}</h3>
                     <p className="text-sm text-gray-500 mt-1">
-                      {org.description || "No description provided."}
+                      {org.description.slice(0, 150) || "No description provided."}
                     </p>
+                   </div> 
+
+
+                    <span
+          className={`text-xs font-medium px-2 py-1 rounded-md self-end mt-3 ${
+            org.is_approved
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }`}
+        >
+          {org.is_approved ? "Approved" : "Waiting for approval"}
+        </span>
                   </div>
                 ))}
 
