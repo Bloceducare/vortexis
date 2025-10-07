@@ -86,7 +86,7 @@ export const useSubmissionReview = (id: string) => {
       setLoading(false);
     }
   }
-  async function review(hackathonId: string) {
+  async function review() {
     try {
       setLoading(true);
 
@@ -120,7 +120,7 @@ export const useSubmissionReview = (id: string) => {
   useEffect(() => {
     hackathon(id);
     team("2");
-    review("22");
+    review();
   }, [id]);
 
   return {

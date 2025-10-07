@@ -2,7 +2,7 @@
 
 import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface ApiReview {
   id: number;
@@ -16,6 +16,20 @@ interface ApiReview {
   user_experience_score: number;
   review: string;
   submission: number;
+  hackathon_id: number; // Added hackathon_id field
+}
+
+interface SubmissionDetails {
+  id: number;
+  project: {
+    id: number;
+    title: string;
+  };
+}
+
+interface HackathonDetails {
+  id: number;
+  title: string;
 }
 
 interface ReviewSummary {
@@ -34,7 +48,67 @@ interface ReviewSummary {
   }[];
 }
 
-function transformApiReviewToSummary(apiReview: ApiReview): ReviewSummary {
+// Function to fetch submission details
+async function fetchSubmissionDetails(
+  hackathonId: number,
+  submissionId: number
+): Promise<string> {
+  try {
+    const bearerToken = localStorage.getItem("access_token");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/submissions/${submissionId}/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch submission details: ${response.status}`);
+    }
+
+    const data: SubmissionDetails = await response.json();
+    return data.project.title;
+  } catch (error) {
+    console.error("Error fetching submission details:", error);
+    return `Submission #${submissionId}`;
+  }
+}
+
+// Function to fetch hackathon details
+async function fetchHackathonDetails(hackathonId: number): Promise<string> {
+  try {
+    const bearerToken = localStorage.getItem("access_token");
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch hackathon details: ${response.status}`);
+    }
+
+    const data: HackathonDetails = await response.json();
+    return data.title;
+  } catch (error) {
+    console.error("Error fetching hackathon details:", error);
+    return "Unknown Hackathon";
+  }
+}
+
+// Updated transformation function
+async function transformApiReviewToSummary(
+  apiReview: ApiReview
+): Promise<ReviewSummary> {
   const totalScore =
     apiReview.impact_score +
     apiReview.innovation_score +
@@ -42,11 +116,17 @@ function transformApiReviewToSummary(apiReview: ApiReview): ReviewSummary {
     apiReview.technical_score +
     apiReview.user_experience_score;
 
+  // Fetch submission and hackathon names
+  const [submissionName, hackathonName] = await Promise.all([
+    fetchSubmissionDetails(apiReview.hackathon_id, apiReview.submission),
+    fetchHackathonDetails(apiReview.hackathon_id),
+  ]);
+
   return {
     id: apiReview.id.toString(),
     submissionId: apiReview.submission.toString(),
-    submissionName: `Submission #${apiReview.submission}`, // submission names
-    hackathonName: "Current Hackathon", // hackathon names
+    submissionName: submissionName,
+    hackathonName: hackathonName,
     dateReviewed: apiReview.created_at,
     totalScore: totalScore,
     maxTotalScore: 50,
@@ -143,10 +223,73 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
 export default function MyReviewsPage() {
   const { reviewsData, loading, error } = useSubmissionReview("1");
   const [searchTerm, setSearchTerm] = useState("");
+  const [myReviews, setMyReviews] = useState<ReviewSummary[]>([]);
+  const [transforming, setTransforming] = useState(false);
 
-  const myReviews: ReviewSummary[] = reviewsData
-    ? (reviewsData as ApiReview[]).map(transformApiReviewToSummary)
-    : [];
+  // Transform reviews data when it's available
+  useEffect(() => {
+    if (reviewsData && Array.isArray(reviewsData)) {
+      setTransforming(true);
+
+      // Transform all reviews in parallel
+      Promise.all((reviewsData as ApiReview[]).map(transformApiReviewToSummary))
+        .then((transformedReviews) => {
+          setMyReviews(transformedReviews);
+        })
+        .catch((error) => {
+          console.error("Error transforming reviews:", error);
+          // Fallback to basic transformation if API calls fail
+          const fallbackReviews = (reviewsData as ApiReview[]).map(
+            (review) => ({
+              id: review.id.toString(),
+              submissionId: review.submission.toString(),
+              submissionName: `Submission #${review.submission}`,
+              hackathonName: "Unknown Hackathon",
+              dateReviewed: review.created_at,
+              totalScore:
+                review.impact_score +
+                review.innovation_score +
+                review.presentation_score +
+                review.technical_score +
+                review.user_experience_score,
+              maxTotalScore: 50,
+              comments: review.review,
+              scores: [
+                {
+                  criterion: "Innovation",
+                  score: review.innovation_score,
+                  maxScore: 10,
+                },
+                {
+                  criterion: "Technical Complexity",
+                  score: review.technical_score,
+                  maxScore: 10,
+                },
+                {
+                  criterion: "User Experience",
+                  score: review.user_experience_score,
+                  maxScore: 10,
+                },
+                {
+                  criterion: "Impact",
+                  score: review.impact_score,
+                  maxScore: 10,
+                },
+                {
+                  criterion: "Presentation",
+                  score: review.presentation_score,
+                  maxScore: 10,
+                },
+              ],
+            })
+          );
+          setMyReviews(fallbackReviews);
+        })
+        .finally(() => {
+          setTransforming(false);
+        });
+    }
+  }, [reviewsData]);
 
   const filteredReviews = myReviews.filter(
     (review) =>
@@ -164,11 +307,13 @@ export default function MyReviewsPage() {
     );
   }
 
-  if (loading) {
+  if (loading || transforming) {
     return (
       <div className="p-4">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">My Reviews</h1>
-        <p className="text-gray-600 mb-6">Loading your reviews...</p>
+        <p className="text-gray-600 mb-6">
+          {loading ? "Loading your reviews..." : "Processing review details..."}
+        </p>
       </div>
     );
   }
