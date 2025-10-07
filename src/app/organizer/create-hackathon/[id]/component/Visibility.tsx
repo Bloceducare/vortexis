@@ -9,9 +9,10 @@ interface VisibilityProps extends NavigationProps {
   data: any;
   setData: (data: any) => void;
   onSubmit: () => void;
+  orgId: number;
 }
 
-function Visibility({ onNext, onPrev }: VisibilityProps) {
+function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
   const initialNotifications = [
     { label: 'Feature this hackathon on the homepage', checked: true },
   ];
@@ -55,7 +56,13 @@ function Visibility({ onNext, onPrev }: VisibilityProps) {
     setErrorMessage('');
 
     try {
-      await createHackathonMutation.mutateAsync(hackathon);
+      const payload = {
+        ...hackathon,
+        organization_id: orgId,
+      }
+      console.log(payload)
+
+      await createHackathonMutation.mutateAsync(payload);
       setShowSuccessModal(true);
       clearHackathon();
     } catch (error: any) {

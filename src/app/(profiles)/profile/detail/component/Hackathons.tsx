@@ -5,6 +5,7 @@ import { Filter } from "lucide-react"
 import Image from "next/image"
 import { useUserHackathonsStore } from "@/store/useUserHackathons"
 import useParticipants from "@/hooks/useParticipants"
+import HtmlContent from "@/components/ui/HtMLContent"
 
 const FilterOption = [
   "All Hackathons",
@@ -33,9 +34,9 @@ function Hackathons() {
   }
 
   return (
-    <section>
+    <section className="h-[85vh] flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <h1 className="font-semibold text-lg">{selected}</h1>
 
         {/* Filter dropdown */}
@@ -66,63 +67,61 @@ function Hackathons() {
         </div>
       </div>
 
-      {/* Content */}
-      {isLoading ? (
-        <p className="text-gray-500">Loading hackathons...</p>
-      ) : isError ? (
-        <p className="text-red-500">Failed to load hackathons.</p>
-      ) : hackathons.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2  gap-6">
-          {hackathons.map((hackathon) => (
-            <div
-              key={hackathon.id}
-              className="border rounded-xl shadow-sm bg-white overflow-hidden"
-            >
-              {/* Banner Image */}
-              {hackathon.banner_image ? (
-               <Image
-               src={
-                 hackathon.banner_image?.startsWith("http")
-                   ? hackathon.banner_image
-                   : `https://res.cloudinary.com/dvuwy2tny/image/upload/${hackathon.banner_image}`
-               }
-               alt={hackathon.title || "Hackathon Banner"}
-               width={400}
-               height={200}
-               className="w-full h-40 object-cover"
-             />
-             
-              ) : (
-                <div className="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
-                  No Image
-                </div>
-              )}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto pr-2 hide-scrollbar">
+        {isLoading ? (
+          <p className="text-gray-500">Loading hackathons...</p>
+        ) : isError ? (
+          <p className="text-red-500">Failed to load hackathons.</p>
+        ) : hackathons.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {hackathons.map((hackathon) => (
+              <div
+                key={hackathon.id}
+                className="border rounded-xl shadow-sm bg-white overflow-hidden"
+              >
+                {/* Banner Image */}
+                {hackathon.banner_image ? (
+                  <Image
+                    src={
+                      hackathon.banner_image?.startsWith("http")
+                        ? hackathon.banner_image
+                        : `https://res.cloudinary.com/dvuwy2tny/image/upload/${hackathon.banner_image}`
+                    }
+                    alt={hackathon.title || "Hackathon Banner"}
+                    width={400}
+                    height={200}
+                    className="w-full h-40 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
+                    No Image
+                  </div>
+                )}
 
-              <div className="p-4">
-                <h2 className="font-semibold text-lg">{hackathon.title}</h2>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {hackathon.description || "No description available"}
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  📍 {hackathon.venue} • 👥 {hackathon.participants_count} participants
-                </p>
-                <p className="text-xs text-gray-500">
-                  🏆 Prize: ${hackathon.grand_prize?.toLocaleString() ?? 0}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {/* 🗓 {new Date(hackathon.start_date).toLocaleDateString()} –{" "}
-                  {new Date(hackathon.end_date).toLocaleDateString()} */}
-                </p>
+                <div className="p-4">
+                  <h2 className="font-semibold text-lg">{hackathon.title}</h2>
+                  <div className="text-sm text-gray-600 line-clamp-2">
+                    <HtmlContent html={hackathon?.description || ""} />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    📍 {hackathon.venue} • 👥 {hackathon.participants_count} participants
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    🏆 Prize: ${hackathon.grand_prize?.toLocaleString() ?? 0}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500">No hackathons available.</p>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No hackathons available.</p>
+        )}
+      </div>
     </section>
   )
 }
 
 export default Hackathons
+
 

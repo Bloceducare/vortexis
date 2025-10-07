@@ -191,3 +191,9 @@ body {
   list-style-type: initial;
   margin-left: 1.25rem;
 }
+
+.rich-text {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}

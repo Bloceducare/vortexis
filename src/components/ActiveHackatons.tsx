@@ -14,7 +14,7 @@ export default function ExploreActiveHackathons() {
   const activeHackathons = useMemo(() => {
     return hackathons
       .filter((h: any) => !h.end_date || new Date(h.end_date) >= new Date())
-      .slice(0, 12); // show only 12
+      .slice(0, 6); // show only 12
   }, [hackathons]);
 
   return (
