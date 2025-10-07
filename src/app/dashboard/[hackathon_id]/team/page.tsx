@@ -13,6 +13,8 @@ import {Card} from "@/components/ui/card";
 import {  Github, FileText, Book, Folder } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
+import { useUserStore } from "@/store/useUserStore";
+
 
 
 const getRandomColor = () => {
@@ -107,6 +109,12 @@ export default function TeamManagement() {
     }
   };
 
+   const user = useUserStore((state) => state.user);
+  const currentMember = data?.members.find(
+    (member: any) => member.id === user?.id
+  );
+
+  const isCreator = currentMember?.is_creator;
 
   if (pages.join) {
     return <JoinTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />;
@@ -171,7 +179,7 @@ export default function TeamManagement() {
                           <div className="my-1 border-t border-gray-200"></div>
 
                           <button
-                            className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1"
+                            className="text-blue-600 hover:text-blue-800 text-xs font-medium mt-1 cursor-pointer"
                             onClick={() => router.push(`/profile/${m.id}`)}
                           >
                             View Profile
@@ -249,12 +257,15 @@ export default function TeamManagement() {
                           <section className="bg-white shadow-xs rounded-2xl p-6 mt-3">
   <h2 className="text-lg font-semibold text-blue-600 mb-3">Actions</h2>
   <div className="flex justify-between items-center gap-4">
-    <button
-      className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"
-      onClick={() => setAddModal(true)}
-    >
-      + Invite Member
-    </button>
+  {isCreator && (
+  <button
+    className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"
+    onClick={() => setAddModal(true)}
+  >
+    + Invite Member
+  </button>
+)}
+
     <button
       className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer w-[48%]"
       onClick={() => handleLeaveTeam(data.id)}
@@ -322,7 +333,7 @@ export default function TeamManagement() {
 
 
             <div className="flex gap-5 justify-center">
-            <button className="px-7 py-3 bg-[#3D3ACE] text-white rounded-sm flex gap-3 items-center" onClick={toggleCreateTeam}>
+            <button className="px-7 py-3 bg-[#3D3ACE] text-white rounded-sm flex gap-3 items-center cursor-pointer" onClick={toggleCreateTeam}>
               Create Team
               <ArrowRight />
             </button>
@@ -368,33 +379,3 @@ export default function TeamManagement() {
     </section>
   );
 }
-
-
-
-
-{/* <div className="border p-4 rounded-lg">
-  <div className="flex items-center justify-between mb-2">
-    <h3 className="font-semibold text-lg flex items-center gap-2">
-      <FileText className="w-5 h-5 text-green-600" /> Submissions
-    </h3>
-    {data.submissions && data.submissions.length > 0 ? (
-      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"  onClick={goToProject}>
-        View
-      </button>
-    ) : (
-      <button className="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 cursor-pointer">
-        Create
-      </button>
-    )}
-  </div>
-
-  {data.submissions && data.submissions.length > 0 ? (
-    <ul className="list-disc ml-5 text-gray-700 space-y-1">
-      {data.submissions.map((s: any) => (
-        <li key={s.id}>{s.project_title || "Untitled Submission"}</li>
-      ))}
-    </ul>
-  ) : (
-    <p className="text-gray-500">No submissions yet</p>
-  )}
-</div> */}

@@ -8,9 +8,13 @@ import Team from './component/Team';
 import Prizes from './component/Prizes';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { useParams } from 'next/navigation';
 
 function Hackathon() {
   const [activeButton, setActiveButton] = useState("Hackathon Details");
+    const params = useParams()
+    const orgid = params?.id ? Number(params.id) : 0; // Default to 0 if undefined
+
 
   const [currentStep, setCurrentStep] = useState(0)
   const [formData, setFormData] = useState({
@@ -67,7 +71,7 @@ function Hackathon() {
       return <Prizes onNext={handleNext} onPrev={handlePrev} data={formData.team} setData={(data: any) => setFormData(prev => ({ ...prev, team: data }))} />;
     }
     if (Buttons[currentStep] === "Visibility") {
-      return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} onSubmit={handleSubmit} />;
+      return <Visibility onNext={handleNext} onPrev={handlePrev} data={formData.visibility} setData={(data: any) => setFormData(prev => ({ ...prev, visibility: data }))} onSubmit={handleSubmit} orgId={orgid} />;
     }
     return null;
   };

@@ -22,8 +22,6 @@ function SingleProfile() {
 
   const user = data ?? null;
 
-
-
   const avatarColor = useMemo(() => {
     const colors = [
       "#FF5733", "#33B5E5", "#2ECC71", "#9B59B6",
@@ -38,7 +36,6 @@ function SingleProfile() {
     [user?.first_name, user?.last_name]
   );
 
-  // 🔄 Loading State
   if (isLoading) {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pt-24">
@@ -55,7 +52,6 @@ function SingleProfile() {
     );
   }
 
-  // ❌ Error State
   if (isError) {
     return (
       <section className="px-4 sm:px-6 lg:px-8 pt-24">
@@ -92,9 +88,9 @@ function SingleProfile() {
   }
 
   return (
-    <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
+    <section className="mb-14 px-4 sm:px-6 lg:px-8 pt-24">
       <section className="flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
-        {/* 🧑 Left: Profile Info */}
+      
         <section className="space-y-5 w-full lg:w-[60%]">
           {/* Avatar + Name */}
           <section className="flex justify-between items-end">

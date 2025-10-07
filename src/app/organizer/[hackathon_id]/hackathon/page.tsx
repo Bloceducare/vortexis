@@ -203,7 +203,7 @@ function Page() {
             >
               {data?.title}
             </motion.h1>
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
@@ -211,7 +211,7 @@ function Page() {
               
               <HtmlContent html={data?.description} />
 
-            </motion.p>
+            </motion.div>
           </div>
         </motion.div>
 

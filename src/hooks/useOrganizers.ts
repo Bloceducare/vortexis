@@ -125,7 +125,8 @@ export default function useOrganizer() {
     mutationFn: async (data: Hackathon_details) => {
       console.log(data)
       const formData = new FormData();
-  
+
+      formData.append('organization_id', String(data.organization_id || 0))
       formData.append('title', data.title || '');
       formData.append('description', data.description || '');
       formData.append('venue', venue || '');
@@ -228,6 +229,37 @@ export default function useOrganizer() {
     });
   };
 
+  const getOrganizationHackathon = (organization_id: string) => {
+    return useQuery({
+      queryKey: ['orgainzation_hackathon', organization_id],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/hackathon/organization/${organization_id}/hackathons/`, {
+          headers: getAuthHeaders()
+        })
+        if(!res.ok) throw new Error('Unable to fetch hackathons');
+        return res.json()
+      },
+      enabled: !!organization_id
+    })
+  }
+
+  const getOrganizationById = (organization_id: string) => {
+    return useQuery({
+      queryKey: ['organization_byId', organization_id],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/organization/get/${organization_id}/`, {
+          headers: getAuthHeaders()
+        });
+        if (!res.ok) throw new Error('Unable to fetch organization');
+        return res.json();
+      },
+      enabled: !!organization_id,
+    });
+  }
+
+
+
+
   const useParticipants = (hackathon_id: string) => {
     return useQuery({
       queryKey: ['hackathon_particpants_byid', hackathon_id],
@@ -284,6 +316,8 @@ export default function useOrganizer() {
     createOrganization, 
     getAllOrganization,
     updateOrganization,
-    deleteOrganizationMutation
+    deleteOrganizationMutation,
+    getOrganizationHackathon,
+    getOrganizationById
   };
 }

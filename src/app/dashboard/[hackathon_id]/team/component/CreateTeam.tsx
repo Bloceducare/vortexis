@@ -49,11 +49,7 @@ export default function CreateTeam({ onClose, hackathon_id }: CreateTeamProps) {
       return;
     }
 
-    if (formData.members.length === 0) {
-      setError("At least one member email is required.");
-      return;
-    }
-
+    
     try {
       await createTeamMutation.mutateAsync({
         hackathon_id,

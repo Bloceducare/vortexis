@@ -1,4 +1,5 @@
 export default interface Hackathon_details {
+  organization_id?: number | null;
   id?: string;
   title?: string | undefined;
   description?: string | undefined;
