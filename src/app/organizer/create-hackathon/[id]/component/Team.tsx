@@ -3,7 +3,6 @@ import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
-import { skillsData } from '../../utils';
 import useSkills from '@/hooks/useSkills';
 import { Skills } from '@/app/api/utils/interface';
 
