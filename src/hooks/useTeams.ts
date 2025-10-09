@@ -190,9 +190,9 @@ const joinTeamMutation = () => {
         });
         if (!res.ok) {
           const errorData = await res.json().catch(() => ({}));
-          // ✅ Look for backend error keys
+        
           const message =
-            errorData?.message ||
+            errorData?.member_email ||
             errorData?.detail ||
             errorData?.non_field_errors?.[0] ||
             "Unable to join team";
@@ -205,6 +205,26 @@ const joinTeamMutation = () => {
     })
   }
 
+  const acceptInvitation = useMutation({
+    mutationFn: async (token: string) => {
+      const res = await fetch(`${apiUrl}/team/teams/accept_invitation/`, {
+        method: "POST",
+        headers: {
+          ...getAuthHeaders(),
+          "Content-Type": "application/json",
+          body: JSON.stringify({ token })
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.message || "Unable to accept invitation");
+      }
+
+      return res.json();
+    },
+  });
+
     
     return {
         getTeam,
@@ -213,6 +233,7 @@ const joinTeamMutation = () => {
         joinTeamMutation,
         deleteTeamMutation,
         inviteMembers,
-        leaveTeam
+        leaveTeam,
+        acceptInvitation
     };
 }

@@ -133,7 +133,7 @@ const Hackathons = () => {
 
           <div className="p-6 bg-gray-50 rounded-xl space-y-4">
             <h2 className="font-semibold text-lg">Rules</h2>
-            <div className="w-1/2">
+            <div className="w-full">
               <HtmlContent html={safeParseContent(data?.rules)} />
             </div>
           </div>

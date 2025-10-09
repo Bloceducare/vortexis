@@ -103,13 +103,13 @@ export default function LinkPreview({
 
   return (
     <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`block border rounded-lg p-3 h-[45vh] hover:shadow-md transition ${className}`}
-      style={{ width }}
-    >
-        <div className="h-[20vh]">
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`block border rounded-lg p-3 h-[45vh] hover:shadow-md transition ${className}`}
+    style={{ width }}
+  >
+    <div className="h-[20vh]">
       {meta.image?.url && (
         <img
           src={meta.image.url}
@@ -117,21 +117,26 @@ export default function LinkPreview({
           className="w-full h-full object-fill rounded mb-3"
         />
       )}
-        </div>
-        <div className="space-y-3 mt-3">
-
-      <h3 className="font-bold text-lg text-gray-900">{meta.title}</h3>
-      <p className="text-sm text-gray-600">
-  {meta.description
-    ? meta.description.length > descriptionLength
-      ? meta.description.slice(0, descriptionLength) + "..."
-      : meta.description
-    : "No description available"}
-</p>
-
-      <span className="text-xs text-blue-600 mt-2 block">{url}</span>
-      </div>
-
-    </a>
+    </div>
+  
+    <div className="space-y-3 mt-3">
+      <h3 className="font-bold text-sm text-gray-900 w-full break-words whitespace-normal">
+        {meta.title}
+      </h3>
+  
+      <p className="text-sm text-gray-600 break-words whitespace-normal">
+        {meta.description
+          ? meta.description.length > descriptionLength
+            ? meta.description.slice(0, descriptionLength) + "..."
+            : meta.description
+          : "No description available"}
+      </p>
+  
+      <span className="text-xs text-blue-600 mt-2 block break-words whitespace-normal">
+        {url}
+      </span>
+    </div>
+  </a>
+  
   )
 }

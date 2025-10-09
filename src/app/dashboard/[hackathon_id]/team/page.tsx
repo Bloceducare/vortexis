@@ -14,6 +14,7 @@ import {  Github, FileText, Book, Folder } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useUserStore } from "@/store/useUserStore";
+import StatusModal from "@/components/StatusModal";
 
 
 
@@ -45,6 +46,9 @@ export default function TeamManagement() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMember(e.target.value);
   };
+    const [modal, setModal] = useState<{open: boolean; type: "success"|"error"; message: string}>({
+      open: false, type: "success", message: ""
+    });
 
 
   const { getTeam, leaveTeam, inviteMembers } = useTeams();
@@ -94,20 +98,29 @@ export default function TeamManagement() {
       alert("Please enter a member email");
       return;
     }
-
+  
     try {
       await inviteMemberMutation.mutateAsync({
         team_id: data.id,
-        member_email: newMember,
+        member_email: newMember.trim(),
       });
-      alert("Member invited successfully!");
+      setModal({
+        open: true,
+        type: "success",
+        message: `You have successfully invited ${newMember} to the team. They will receive an email notification with the invitation details.`,
+      });
       setNewMember("");
     } catch (err: any) {
-      alert(err.message || "Failed to invite member");
+      setModal({
+        open: true,
+        type: "error",
+        message: err?.message || "Something went wrong. Please try again."
+      });
     } finally {
       setAddModal(false);
     }
   };
+  
 
    const user = useUserStore((state) => state.user);
   const currentMember = data?.members.find(
@@ -135,8 +148,8 @@ export default function TeamManagement() {
       {data && (
         <div className=" p-6 bg-white space-y-8 mt-10">
 
-          <section className="flex gap-5 items-start">
-            <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-[54%]">
+          <section className="flex gap-5 items-start flex-wrap md:flex-nowrap">
+            <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-full md:w-[54%]">
               <div className="space-y-3">
               <h1 className="font-semibold text-2xl text-[#1E1E1E]">Team: {data.name}</h1>
               <p>Working on  {data.hackathon 
@@ -147,7 +160,7 @@ export default function TeamManagement() {
               <h1 className="text-xl text-[#605DEC] font-normal mt-8">Team Members</h1>
 
           
-              <div className="flex flex-wrap justify-between my-5">
+              <div className="flex flex-wrap justify-between my-5 ">
                 {data.members && data.members.length > 0 ? (
                   data.members.map((m: any) => {
                     const initials = m.username
@@ -223,7 +236,7 @@ export default function TeamManagement() {
             </div>
             </section>
 
-            <section className="w-[40%]">
+            <section className="w-full md:w-[40%]">
                  <Card>
                             <div className="p-6">
                               <h2 className="text-lg font-semibold text-blue-600 mb-4">Project Resources</h2>
@@ -281,37 +294,50 @@ export default function TeamManagement() {
           </section>
 
           {addModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-[100vh]">
-          <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md relative">
-            <button
-              onClick={() => setAddModal(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
-            >
-              &times;
-            </button>
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-[100vh]">
+    <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md relative">
+      <button
+        onClick={() => setAddModal(false)}
+        className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+      >
+        &times;
+      </button>
 
-            <h2 className="text-lg font-semibold mb-4">Invite Member</h2>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={newMember}
-                onChange={handleChange}
-                placeholder="Enter member name"
-                className="border p-2 rounded-lg flex-1"
-              />
-              <button
-                onClick={handleAddMember}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg"
-              >
-                Invite
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <h2 className="text-lg font-semibold mb-2 text-gray-800">Invite Member</h2>
+      <p className="text-sm text-gray-600 mb-4">
+        Please enter the email address of <span className="font-medium">one person</span> you’d like to invite.
+      </p>
+
+      <div className="flex gap-2">
+        <input
+          type="email"
+          value={newMember}
+          onChange={handleChange}
+          placeholder="Enter member email"
+          className="border p-2 rounded-lg flex-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+        />
+        <button
+          onClick={handleAddMember}
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition cursor-pointer"
+        >
+          Invite
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
         
         </div>
       )}
+
+
+    <StatusModal
+        isOpen={modal.open}
+        onClose={() => setModal(prev => ({ ...prev, open: false }))}
+        type={modal.type}
+        message={modal.message}
+      />
 
       {!data && !isLoading && (
         <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-7 mt-4">
