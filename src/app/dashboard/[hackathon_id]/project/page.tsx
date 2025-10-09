@@ -132,16 +132,16 @@ if (!project || project.length === 0) {
 
       <h1 className="text-[#605DEC] font-bold text-2xl md:text-[32px]">Manage Your Project</h1>
 
-      <section className="flex justify-between mt-10 gap-5">
+      <section className="flex justify-between mt-10 gap-5 flex-wrap md:flex-nowrap">
 
-      <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 w-[64%]">
+      <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3 md:w-[64%]">
   <div className="space-y-2">
     <h1 className="text-[#AC0000] text-xl md:text-2xl font-semibold">Project Details</h1>
     <p>Get more Information about your project</p>
   </div>
 
   <div className="space-y-5 mt-3">
-  <h1 className="text-3xl font-bold mb-6 text-gray-900">
+  <h1 className="text-xl md:text-3xl font-bold mb-6 text-gray-900">
   {project?.title.charAt(0).toUpperCase() + project?.title.slice(1)}
 </h1>
 
@@ -206,7 +206,7 @@ if (!project || project.length === 0) {
 </section>
 
 
-          <section className="w-[35%]">
+          <section className="w-full md:w-[35%]">
 
 
           <section className="bg-white shadow-xs border-[#E2E8F0] border-2 rounded-2xl px-6 py-3">
