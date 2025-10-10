@@ -71,7 +71,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
     }
 
     try {
-      await createProjectMutation.mutateAsync(formData)
+      await createProjectMutation.mutateAsync({ data: formData, hackathon_id })
       setSuccessMessage("🎉 Project created successfully!")
       setFormData({
         title: "",
@@ -183,9 +183,10 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
         <div className="flex justify-end">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+            disabled={createProjectMutation.isPending}
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {createProjectMutation.isPending ? "Submitting..." : "Submit Project"}
+            {createProjectMutation.isPending ? "Creating..." : "Create Project"}
           </button>
         </div>
       </form>
