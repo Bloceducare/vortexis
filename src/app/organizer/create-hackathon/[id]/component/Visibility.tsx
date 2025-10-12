@@ -4,6 +4,8 @@ import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
 import useOrganizer from '@/hooks/useOrganizers';
 import SuccessModal from '@/components/SuccessModal';
+import { useQueryClient } from "@tanstack/react-query";
+
 
 interface VisibilityProps extends NavigationProps {
   data: any;

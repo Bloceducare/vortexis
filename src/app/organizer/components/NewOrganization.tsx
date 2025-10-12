@@ -2,41 +2,67 @@
 import React, { useState } from "react";
 import { X, CheckCircle, AlertCircle } from "lucide-react";
 import useOrganizer from "@/hooks/useOrganizers";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CreateOrgProps {
   onClose: () => void;
+  type: "new" | "edit";
+  existingData?: {
+    id: string;
+    name: string;
+    description: string;
+  };
 }
 
-function NewOrganization({ onClose }: CreateOrgProps) {
+function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: existingData?.name || "",
+    description: existingData?.description || "",
   });
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const { createOrganization } = useOrganizer();
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const queryClient = useQueryClient();
+  const { createOrganization, updateOrganization } = useOrganizer();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
+
+    if (name === "name" && value.length > 25) return;
+    if (name === "description" && value.length > 350) return;
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddOrganization = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!formData.name.trim()) return;
 
     try {
-      await createOrganization.mutateAsync({
-        name: formData.name,
-        description: formData.description,
+      if (type === "new") {
+        await createOrganization.mutateAsync({
+          name: formData.name,
+          description: formData.description,
+        });
+      } else if (type === "edit" && existingData?.id) {
+        await updateOrganization.mutateAsync({
+          id: existingData.id,
+          data: {
+            name: formData.name,
+            description: formData.description,
+          },
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({
+        queryKey: ["organization_byId", existingData?.id],
       });
 
       setStatus("success");
     } catch (err) {
-      console.error("Error creating organization:", err);
+      console.error("Error submitting organization:", err);
       setStatus("error");
     }
   };
@@ -52,7 +78,7 @@ function NewOrganization({ onClose }: CreateOrgProps) {
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-[#171717] text-2xl font-semibold">
-            New Organization
+            {type === "new" ? "New Organization" : "Edit Organization"}
           </h1>
 
           <button
@@ -63,11 +89,11 @@ function NewOrganization({ onClose }: CreateOrgProps) {
           </button>
         </div>
 
-        {/* Default State (Form) */}
+        {/* Form */}
         {status === "idle" && (
-          <form onSubmit={handleAddOrganization} className="space-y-4 text-start">
-            {/* Organization Name */}
-            <div className="space-y-2 flex flex-col">
+          <form onSubmit={handleSubmit} className="space-y-4 text-start">
+            {/* Name Field */}
+            <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="name"
                 className="text-[#212121] font-medium text-sm"
@@ -84,10 +110,13 @@ function NewOrganization({ onClose }: CreateOrgProps) {
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
               />
+              <div className="text-xs text-gray-500 text-right">
+                {formData.name.length}/25
+              </div>
             </div>
 
-            {/* Description */}
-            <div className="space-y-2 flex flex-col">
+            {/* Description Field */}
+            <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="description"
                 className="text-[#212121] font-medium text-sm"
@@ -102,28 +131,51 @@ function NewOrganization({ onClose }: CreateOrgProps) {
                 onChange={handleChange}
                 className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-24 focus:ring-2 focus:ring-indigo-500"
               />
+              <div className="text-xs text-gray-500 text-right">
+                {formData.description.length}/350
+              </div>
             </div>
 
+            {/* Submit Button */}
             <div className="flex justify-end">
               <button
                 type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all cursor-pointer"
+                disabled={
+                  (type === "new" && createOrganization.isPending) ||
+                  (type === "edit" && updateOrganization.isPending)
+                }
+                className={`${
+                  (type === "new" && createOrganization.isPending) ||
+                  (type === "edit" && updateOrganization.isPending)
+                    ? "bg-indigo-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                } text-white px-6 py-3 rounded-xl font-medium transition-all cursor-pointer`}
               >
-                Create organization
+                {type === "new"
+                  ? createOrganization.isPending
+                    ? "Creating..."
+                    : "Create Organization"
+                  : updateOrganization.isPending
+                  ? "Updating..."
+                  : "Update Organization"}
               </button>
             </div>
           </form>
         )}
 
+        {/* Success */}
         {status === "success" && (
           <div className="flex flex-col items-center justify-center py-12 text-center animate-fadeIn">
             <CheckCircle className="text-green-500 w-16 h-16 mb-4" />
             <h3 className="text-xl font-semibold text-gray-800">
-              Organization Created!
+              {type === "new"
+                ? "Organization Created!"
+                : "Organization Updated!"}
             </h3>
             <p className="text-gray-500 mt-2 max-w-sm">
-              Your organization has been created successfully. Please keep in
-              touch and wait for it to be approved by our team.
+              {type === "new"
+                ? "Your organization has been created successfully. Please wait for it to be approved by our team."
+                : "Your organization details have been updated successfully."}
             </p>
             <button
               onClick={handleClose}
@@ -134,7 +186,7 @@ function NewOrganization({ onClose }: CreateOrgProps) {
           </div>
         )}
 
-        {/* Error State */}
+        {/* Error */}
         {status === "error" && (
           <div className="flex flex-col items-center justify-center py-12 text-center animate-fadeIn">
             <AlertCircle className="text-red-500 w-16 h-16 mb-4" />
@@ -142,7 +194,8 @@ function NewOrganization({ onClose }: CreateOrgProps) {
               Something went wrong
             </h3>
             <p className="text-gray-500 mt-2 max-w-sm">
-              We couldn’t create your organization. Please try again later.
+              We couldn’t {type === "new" ? "create" : "update"} your
+              organization. Please try again later.
             </p>
             <button
               onClick={() => setStatus("idle")}
@@ -154,6 +207,7 @@ function NewOrganization({ onClose }: CreateOrgProps) {
         )}
       </div>
 
+      {/* Animations */}
       <style jsx>{`
         .animate-fadeIn {
           animation: fadeIn 0.3s ease forwards;
