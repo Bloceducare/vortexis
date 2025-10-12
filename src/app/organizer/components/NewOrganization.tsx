@@ -115,7 +115,6 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
               </div>
             </div>
 
-            {/* Description Field */}
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="description"

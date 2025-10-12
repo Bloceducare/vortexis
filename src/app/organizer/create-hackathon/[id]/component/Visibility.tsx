@@ -62,7 +62,6 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
         ...hackathon,
         organization_id: orgId,
       }
-      console.log(payload)
 
       await createHackathonMutation.mutateAsync(payload);
       setShowSuccessModal(true);

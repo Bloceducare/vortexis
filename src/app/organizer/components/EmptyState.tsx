@@ -38,7 +38,7 @@ function EmptyState() {
       {showNewOrg && (
         <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-            <NewOrganization onClose={() => setShowNewOrg(false)} />
+            <NewOrganization onClose={() => setShowNewOrg(false)} type="new" />
           </div>
         </div>
       )}
