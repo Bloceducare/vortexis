@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import useOrganizer from '@/hooks/useOrganizers';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import HtmlContent from '@/components/ui/HtMLContent';
 import Verified from "@/public/assets/verified.svg";
 import Image from 'next/image';
@@ -8,6 +8,7 @@ import SearchInput from "@/components/ui/SearchInput";
 import ParticipantImage from "@/public/assets/famicons_people-outline.svg";
 import { useRouter } from 'next/navigation';
 import Time from '@/public/assets/Time Outline Icon 1.svg'
+import NewOrganization from './NewOrganization';
 
 interface OrgProps {
   onClose: () => void;
@@ -18,12 +19,14 @@ interface OrgProps {
 
 
 function OrganizationList({ onClose, organizationId }: OrgProps) {
-  const { getOrganizationHackathon, getOrganizationById } = useOrganizer();
+  const { getOrganizationHackathon, getOrganizationById, } = useOrganizer();
   const id = String(organizationId);
   const router = useRouter();
+  const [showEditOrg, setShowEditOrg] = useState(false);
 
   const { data: orgData, isLoading: orgLoading, isError: orgError } = getOrganizationById(id!);
   const { data: hackathons, isLoading, isError } = getOrganizationHackathon(id!);
+
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,24 +63,25 @@ const filteredHackathons = !searchQuery.trim()
   };
 
 
+
+
   return (
     <div className="p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          {orgData?.logo && (
-            <img src={orgData.logo} alt={orgData.name} className="w-16 h-16 rounded-xl object-cover" />
-          )}
-          <div>
+  
+         
+          <div className='flex justify-between items-center w-full'>
+            <div>
             <h2 className="text-3xl font-bold flex gap-2">
               {orgData?.name}  {orgData.is_approved && (  <Image src={Verified} alt="verify" /> )}
             </h2>
-            <p className="text-gray-500">{orgData?.category}</p>
             <p className="text-sm text-gray-600 mt-1">
               Total Hackathons: <span className="font-medium">{totalHackathons}</span>
             </p>
-          </div>
-        </div>
+            </div>
+            <div>
+             <a className='cursor-pointer' onClick={() => setShowEditOrg(true)} ><Edit /></a> 
+            </div>
+
       </div>
 
       {/* Description */}
@@ -198,7 +202,7 @@ const filteredHackathons = !searchQuery.trim()
 </div>
 
 
-      {/* Pagination */}
+  
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-8">
           <button
@@ -230,6 +234,24 @@ const filteredHackathons = !searchQuery.trim()
           </button>
         </div>
       )}
+
+
+{showEditOrg && (
+            <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
+              <NewOrganization
+  onClose={() => setShowEditOrg(false)}
+  type="edit"
+  existingData={{
+    id: id,
+    name: orgData?.name,
+    description: orgData?.description,
+  }}
+/>
+
+              </div>
+            </div>
+          )}
     </div>
   );
 }

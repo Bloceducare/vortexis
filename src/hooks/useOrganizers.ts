@@ -134,18 +134,19 @@ export default function useOrganizer() {
       formData.append('end_date', data.end_date || '');
       formData.append('submission_deadline', data.submission_deadline || '');
       formData.append('grand_prize', String(data.grand_prize || 0));
-      formData.append('visibility', String(data.visibility || false));
+      formData.append('visibility', String(data.visibility ?? true));
+      formData.append('evaluation_criteria', data.evaluation_criteria || '');
   
       if (banner_image instanceof File) {
         formData.append('banner_image', banner_image);
       }
   
-      formData.append('prizes', JSON.stringify(data.prizes || []));
+      formData.append('prizes', String(data.prizes || ""));
       (data.skills ?? []).forEach((skillId: number) => {
         formData.append('skills', String(skillId));
       });
-      formData.append('judges', JSON.stringify(data.judges || []));
-      formData.append('rules', JSON.stringify(data.rules || []));
+      formData.append('judges', String(data.judges || ""));
+      formData.append('rules', String(data.rules || ""));
 
       console.log(formData)
   

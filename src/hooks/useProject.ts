@@ -44,8 +44,8 @@ export default function useProjects() {
   };
 
   const createProjectMutation = useMutation({
-    mutationFn: async (data: userProject) => {
-      const res = await fetch(`${apiUrl}/project/projects/`, {
+    mutationFn: async ({ data, hackathon_id }: { data: userProject; hackathon_id: string }) => {
+      const res = await fetch(`${apiUrl}/project/hackathons/${hackathon_id}/projects/`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
@@ -99,10 +99,10 @@ export default function useProjects() {
 
   const submitProjectMutation = useMutation({
     mutationFn: async ({ project, hackathon_id }: { project: any; hackathon_id: string }) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submissions/`, {
+      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submit-project/`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({project}),
+        body: JSON.stringify({hackathon_id}),
       });
   
       if (!res.ok) {
@@ -141,7 +141,6 @@ export default function useProjects() {
       return res.json();
     },
     onSuccess: () => {
-      // ✅ refresh project list after deletion
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     },
   });

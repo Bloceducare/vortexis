@@ -17,20 +17,22 @@ const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
 function Details({ onNext, data }: NavigationProps) {
   // const [preview, setPreview] = useState<string | null>(null);
 
-  const [localData, setLocalData] = useState(data || {});
+
   const hackathonSelector = useShallow((state: any) => ({
     title: state.title,
     preview: state.preview,
     description: state.description,
+    evaluation_criteria: state.evaluation_criteria,
     start_date: state.start_date,
     end_date: state.end_date,
     rules: state.rules,
     banner_image: state.banner_image,
     setField: state.setField,
-    setPreview: state.setPreview
+    setPreview: state.setPreview,
+
   }));
 
-  const { title, description, start_date, end_date, rules, banner_image, preview, setField } = useHackathonStore(hackathonSelector);
+  const { title, description, evaluation_criteria, start_date, end_date, rules, banner_image, preview, setField } = useHackathonStore(hackathonSelector);
 
 
 
@@ -199,9 +201,7 @@ function Details({ onNext, data }: NavigationProps) {
     value={description}
     onChange={(html) => setField("description", html)}
   />
-
   </div>
-
 </div>
 
 
@@ -212,6 +212,18 @@ function Details({ onNext, data }: NavigationProps) {
         setRules={(newRules) => setField('rules', newRules)}
       />
     </div>
+
+
+
+      <div className="mt-10">
+        <label className="text-2xl text-[#2F3036]">Evaluation Criteria</label>
+        <div >
+        <TiptapEditor
+          value={evaluation_criteria}
+          onChange={(html) => setField("evaluation_criteria", html)}
+        />
+        </div>
+      </div>
 
 
 

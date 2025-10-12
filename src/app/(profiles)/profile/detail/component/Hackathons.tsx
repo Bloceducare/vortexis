@@ -81,12 +81,12 @@ function Hackathons() {
                 className="border rounded-xl shadow-sm bg-white overflow-hidden"
               >
                 {/* Banner Image */}
-                {hackathon.banner_image ? (
+                {hackathon?.banner_image ? (
                   <Image
                     src={
                       hackathon.banner_image?.startsWith("http")
                         ? hackathon.banner_image
-                        : `https://res.cloudinary.com/dvuwy2tny/image/upload/${hackathon.banner_image}`
+                        : `https://res.cloudinary.com/dvuwy2tny/image/upload/${hackathon?.banner_image}`
                     }
                     alt={hackathon.title || "Hackathon Banner"}
                     width={400}
@@ -100,12 +100,12 @@ function Hackathons() {
                 )}
 
                 <div className="p-4">
-                  <h2 className="font-semibold text-lg">{hackathon.title}</h2>
+                  <h2 className="font-semibold text-lg">{hackathon?.title}</h2>
                   <div className="text-sm text-gray-600 line-clamp-2">
                     <HtmlContent html={hackathon?.description || ""} />
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    📍 {hackathon.venue} • 👥 {hackathon.participants_count} participants
+                    📍 {hackathon.venue} • 👥 {hackathon?.participants_count} participants
                   </p>
                   <p className="text-xs text-gray-500">
                     🏆 Prize: ${hackathon.grand_prize?.toLocaleString() ?? 0}

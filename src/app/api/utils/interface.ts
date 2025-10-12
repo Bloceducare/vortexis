@@ -7,7 +7,7 @@ export default interface Hackathon_details {
   details?: string | null;
   status?: "upcoming" | "just-created" | "active" | "finished";
   grand_prize?: number;
-  prizes?: string[];
+  prizes?: string;
   submission_deadline?: string | undefined;
   start_date?: string | undefined;
   end_date?: string | undefined;
@@ -17,12 +17,13 @@ export default interface Hackathon_details {
   organization?: number | null;
   skills?: number[];
   judges?: string[];
-  rules?: string[];
+  rules?: string;
   participants?: string[];
   submissions?: string[];
   banner_image?: File | null;
   participants_count?: number;
   submissions_count?: number;
+  evaluation_criteria?: string;
 }
 // export interface Prize {
 //   name: string;

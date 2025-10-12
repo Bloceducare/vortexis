@@ -52,7 +52,7 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
 
   const handlePrizeChange = (value: string) => {
     setLocalPrize(value);
-    setField('prizes', [value]); // Only allow one rule
+    setField('prizes', value);
   };
 
   const handleNextClick = () => {
