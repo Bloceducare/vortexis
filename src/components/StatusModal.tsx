@@ -6,9 +6,10 @@ interface StatusModalProps {
   onClose: () => void;
   type: "success" | "error";
   message: string;
+  title?: string;
 }
 
-export default function StatusModal({ isOpen, onClose, type, message }: StatusModalProps) {
+export default function StatusModal({ isOpen, onClose, type, message, title }: StatusModalProps) {
   if (!isOpen) return null; // Don't render if closed
 
   return (
@@ -19,13 +20,17 @@ export default function StatusModal({ isOpen, onClose, type, message }: StatusMo
             type === "success" ? "text-green-600" : "text-red-600"
           }`}
         >
-          {type === "success" ? "Registered 🎉" : "Oops 😢"}
+<h2 className="text-lg font-semibold">
+  {type === "success" 
+    ? (title || "Registered 🎉") 
+    : (title || "Oops 😢")}
+</h2>
         </h2>
         <p className="mb-6 text-gray-700">{message}</p>
 
         <button
           onClick={onClose}
-          className="w-full py-2 px-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+          className="w-full py-2 px-4 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition cursor-pointer"
         >
           Close
         </button>
