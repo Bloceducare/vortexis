@@ -206,7 +206,6 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
         )}
       </div>
 
-      {/* Animations */}
       <style jsx>{`
         .animate-fadeIn {
           animation: fadeIn 0.3s ease forwards;

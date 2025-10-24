@@ -305,6 +305,26 @@ export default function useOrganizer() {
       })
     }
 
+    const inviteModeratorsMutation = useMutation({
+      mutationFn: async ({ organizationId, moderators }: { organizationId: string; moderators: string[] }) => {
+        const res = await fetch(`${apiUrl}/organization/add-moderator/${organizationId}/`, {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ moderators }),
+        });
+      
+        const data = await res.json();
+      
+        if (!res.ok) {
+          const error = new Error(data?.email?.[0] || 'Failed to invite moderators');
+          (error as any).response = data;
+          throw error;
+        }
+      
+        return data;
+      }
+    })
+
   return {
     createHackathonMutation,
     updateHackathonMutation,
@@ -319,6 +339,7 @@ export default function useOrganizer() {
     updateOrganization,
     deleteOrganizationMutation,
     getOrganizationHackathon,
-    getOrganizationById
+    getOrganizationById,
+    inviteModeratorsMutation
   };
 }

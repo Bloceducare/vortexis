@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import useOrganizer from '@/hooks/useOrganizers';
-import { ChevronLeft, ChevronRight, Edit } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, PlusSquareIcon } from 'lucide-react';
 import HtmlContent from '@/components/ui/HtMLContent';
 import Verified from "@/public/assets/verified.svg";
 import Image from 'next/image';
@@ -9,6 +9,8 @@ import ParticipantImage from "@/public/assets/famicons_people-outline.svg";
 import { useRouter } from 'next/navigation';
 import Time from '@/public/assets/Time Outline Icon 1.svg'
 import NewOrganization from './NewOrganization';
+import AddModerator from './AddModerator';
+
 
 interface OrgProps {
   onClose: () => void;
@@ -22,7 +24,10 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
   const { getOrganizationHackathon, getOrganizationById, } = useOrganizer();
   const id = String(organizationId);
   const router = useRouter();
-  const [showEditOrg, setShowEditOrg] = useState(false);
+  const [showOptionsOrg, setShowOptionsOrg] = useState({
+    edit: false,
+    addModerator: false
+  });
 
   const { data: orgData, isLoading: orgLoading, isError: orgError } = getOrganizationById(id!);
   const { data: hackathons, isLoading, isError } = getOrganizationHackathon(id!);
@@ -78,11 +83,34 @@ const filteredHackathons = !searchQuery.trim()
               Total Hackathons: <span className="font-medium">{totalHackathons}</span>
             </p>
             </div>
-            <div>
-             <a className='cursor-pointer' onClick={() => setShowEditOrg(true)} ><Edit /></a> 
+            <div className='flex gap-5 items-center'>
+                        <a
+              className="cursor-pointer"
+              title="Add new moderator"
+              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
+            >
+              <PlusSquareIcon />
+            </a>
+
+            <a
+              className="cursor-pointer"
+              title="Edit organization details"
+              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, edit: true })}
+            >
+              <Edit />
+            </a>
+
             </div>
 
       </div>
+      <div>
+
+      <p>
+  Moderators: {orgData?.moderators?.length ?? 0}
+</p>
+  
+</div>
+
 
       {/* Description */}
       <div className="space-y-2">
@@ -107,7 +135,6 @@ const filteredHackathons = !searchQuery.trim()
 
 
 
-      {/* Hackathons Section */}
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold">
           {orgData?.name} Hackathons 
@@ -144,62 +171,61 @@ const filteredHackathons = !searchQuery.trim()
         )}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  {currentHackathons.length > 0 ? (
-    currentHackathons.map((hackathon: any) => {
-      const today = new Date();
-      const endDate = new Date(hackathon.end_date);
-      const diff = endDate.getTime() - today.getTime();
-      const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-      const hasEnded = diff < 0;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentHackathons.length > 0 ? (
+          currentHackathons.map((hackathon: any) => {
+            const today = new Date();
+            const endDate = new Date(hackathon.end_date);
+            const diff = endDate.getTime() - today.getTime();
+            const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            const hasEnded = diff < 0;
 
-      return (
-        <div
-          key={hackathon.id}
-          onClick={() => router.push(`/organizer/${hackathon.id}/hackathon`)}
-          className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between "
-        >
-          <img
-            src={hackathon.banner_image || "/placeholder.png"}
-            alt={hackathon.title}
-            className="w-full h-40 object-cover rounded-lg mb-3"
-          />
+            return (
+              <div
+                key={hackathon.id}
+                onClick={() => router.push(`/organizer/${hackathon.id}/hackathon`)}
+                className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between "
+              >
+                <img
+                  src={hackathon.banner_image || "/placeholder.png"}
+                  alt={hackathon.title}
+                  className="w-full h-40 object-cover rounded-lg mb-3"
+                />
 
-          <h4 className="text-lg font-medium mb-4">{hackathon.title}</h4>
+                <h4 className="text-lg font-medium mb-4">{hackathon.title}</h4>
 
-          <div className="text-sm text-gray-600 mb-10">
-            <HtmlContent html={hackathon.description?.slice(0, 250)} />
-          </div>
+                <div className="text-sm text-gray-600 mb-10">
+                  <HtmlContent html={hackathon.description?.slice(0, 250)} />
+                </div>
 
-          <div className="flex items-center mt-3 gap-3">
-            <p
-              className={`bg-[#F2F1FD] rounded-full px-3 py-1 text-xs font-medium text-[#717171]`}
-            >
-               <Image
-                src={Time}
-                alt="TimeIcon"
-                className="inline mr-2"
-              />
-              {hasEnded ? "Ended" : `${daysLeft} days left`}
-            </p>
+                <div className="flex items-center mt-3 gap-3">
+                  <p
+                    className={`bg-[#F2F1FD] rounded-full px-3 py-1 text-xs font-medium text-[#717171]`}
+                  >
+                    <Image
+                      src={Time}
+                      alt="TimeIcon"
+                      className="inline mr-2"
+                    />
+                    {hasEnded ? "Ended" : `${daysLeft} days left`}
+                  </p>
 
-            {/* 👥 Participants */}
-            <p className="bg-[#F2F1FD] rounded-full px-3 py-1 text-xs text-[#605DEC]">
-              <Image
-                src={ParticipantImage}
-                alt="participant"
-                className="inline mr-1"
-              />
-              {hackathon?.participants_count}
-            </p>
-          </div>
-        </div>
-      );
-    })
-  ) : (
-    <p className="text-gray-500">No hackathons found.</p>
-  )}
-</div>
+                  <p className="bg-[#F2F1FD] rounded-full px-3 py-1 text-xs text-[#605DEC]">
+                    <Image
+                      src={ParticipantImage}
+                      alt="participant"
+                      className="inline mr-1"
+                    />
+                    {hackathon?.participants_count}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-gray-500">No hackathons found.</p>
+        )}
+      </div>
 
 
   
@@ -236,25 +262,43 @@ const filteredHackathons = !searchQuery.trim()
       )}
 
 
-{showEditOrg && (
-            <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-              <NewOrganization
-  onClose={() => setShowEditOrg(false)}
-  type="edit"
-  existingData={{
-    id: id,
-    name: orgData?.name,
-    description: orgData?.description,
-  }}
-/>
+          {showOptionsOrg.edit && (
+                      <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
+                        <NewOrganization
+            onClose={() => setShowOptionsOrg({ ...showOptionsOrg, edit: false })}
+            type="edit"
+            existingData={{
+              id: id,
+              name: orgData?.name,
+              description: orgData?.description,
+            }}
+          />
+
+   
 
               </div>
             </div>
           )}
-    </div>
-  );
-}
+
+
+          {showOptionsOrg.addModerator && (
+                  <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+                              <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
+                                <AddModerator 
+                                  onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
+                                  orgName={orgData?.name}
+                                  orgId={id}
+                                
+                              />
+
+                                </div>
+                                </div>
+
+                )}
+              </div>
+            );
+          }
 
 export default OrganizationList;
 
