@@ -1,6 +1,7 @@
 "use client";
 
 import JudgeError from "@/components/judgeReview/JudgeError";
+import HtmlContent from "@/components/ui/HtMLContent";
 
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import { useSubmissionReview } from "@/hooks/useSubmissionReview";
@@ -128,7 +129,7 @@ export default function SubmissionsPage() {
                 {hackathonDetails.title}
               </h2>
               <p className="text-blue-700 text-sm">
-                {hackathonDetails.description}
+                <HtmlContent html={hackathonDetails.description} />
               </p>
             </div>
           )}

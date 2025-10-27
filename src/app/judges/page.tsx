@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import useUser from "@/hooks/useUserProfile";
 import { Submission } from "@/hooks/useHackathonDetails";
+import HtmlContent from "@/components/ui/HtMLContent";
 
 interface SubmissionStatusItem {
   number: number;
@@ -328,7 +329,7 @@ function Page() {
                     Title:
                   </span>
                   <span className="text-[#605DEC]">
-                    {hackathon.description}
+                    <HtmlContent html={hackathon.description} />
                   </span>
                 </div>
 
