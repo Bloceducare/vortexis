@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useWebSocket } from "./useWebSocket";
 
 interface Message {
@@ -43,14 +43,13 @@ export const useCommunications = ({
   const [seenMessageIds, setSeenMessageIds] = useState<Set<number>>(new Set());
   const [latestMessageId, setLatestMessageId] = useState(0);
 
-  // WebSocket connection - DISABLED since backend doesn't support WebSocket
-  // const wsUrl = conversationId
-  //   ? `${baseUrl.replace(
-  //       /^https?:\/\//,
-  //       baseUrl.startsWith("https") ? "wss://" : "ws://"
-  //     )}/communications/conversations/${conversationId}/`
-  //   : "";
-  const wsUrl = ""; // Disabled WebSocket
+  // WebSocket connection for real-time messaging
+  const wsUrl = conversationId
+    ? `${baseUrl.replace(
+        /^https?:\/\//,
+        baseUrl.startsWith("https") ? "wss://" : "ws://"
+      )}/communications/conversations/${conversationId}/`
+    : "";
 
   const { isConnected, connectionStatus, connect, disconnect, sendMessage } =
     useWebSocket({
@@ -70,8 +69,12 @@ export const useCommunications = ({
         console.log("WebSocket disconnected");
       },
       onError: (error) => {
-        console.error("WebSocket error:", error);
-        setError("WebSocket connection failed");
+        // WebSocket failed - that's okay, HTTP will work as fallback
+        // Don't set error state since HTTP messaging works perfectly
+        console.warn(
+          "WebSocket connection unavailable, using HTTP fallback:",
+          error
+        );
       },
     });
 
@@ -283,27 +286,46 @@ export const useCommunications = ({
     [baseUrl, token]
   );
 
-  // Load messages when conversation changes (but don't auto-connect WebSocket)
+  const wsFailedRef = useRef(false);
+
+  // Load initial message history once when conversation changes
   useEffect(() => {
     if (conversationId) {
-      // console.log("Loading messages for conversation:", conversationId); // Disabled to reduce console spam
+      // Always fetch initial history via HTTP (works perfectly)
       loadHistory();
+
+      // Try WebSocket for real-time updates, but don't block if it fails
+      // Since HTTP works perfectly, WebSocket is just a nice-to-have enhancement
+      if (wsUrl && !wsFailedRef.current) {
+        connect();
+      }
+    } else {
+      // Disconnect when conversation changes
+      disconnect();
+      wsFailedRef.current = false; // Reset on new conversation
     }
-  }, [conversationId, loadHistory]);
 
-  // Disabled auto-refresh to prevent constant reloading
-  // useEffect(() => {
-  //   if (!conversationId) return;
-  //   const interval = setInterval(() => {
-  //     loadHistory();
-  //   }, 10000);
-  //   return () => clearInterval(interval);
-  // }, [conversationId, loadHistory]);
+    // Cleanup: disconnect when component unmounts or conversation changes
+    return () => {
+      disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversationId, wsUrl]); // Only re-run when conversationId or wsUrl changes
 
-  // Manual WebSocket connection control (disabled)
+  // Track WebSocket failures to avoid repeated attempts
+  useEffect(() => {
+    if (connectionStatus === "error") {
+      wsFailedRef.current = true;
+      console.log("WebSocket unavailable, will use HTTP-only mode");
+    }
+  }, [connectionStatus]);
+
+  // Manual WebSocket connection control
   const connectWebSocket = useCallback(() => {
-    console.log("WebSocket is disabled - using REST API only");
-  }, []);
+    if (wsUrl && conversationId) {
+      connect();
+    }
+  }, [wsUrl, conversationId, connect]);
 
   return {
     messages,

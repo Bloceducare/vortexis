@@ -65,27 +65,13 @@ export const useWebSocket = ({
         setConnectionStatus("disconnected");
         onClose?.();
 
-        // Only auto-reconnect for specific close codes, not all errors
-        if (
-          event.code === 1006 && // Abnormal closure
-          reconnectAttempts.current < maxReconnectAttempts
-        ) {
-          console.log(
-            `WebSocket auto-reconnect attempt ${
-              reconnectAttempts.current + 1
-            }/${maxReconnectAttempts}`
-          );
-          reconnectAttempts.current++;
-          reconnectTimeoutRef.current = setTimeout(() => {
-            connect();
-          }, reconnectInterval);
-        } else {
-          console.log(
-            "WebSocket connection closed, not attempting reconnect:",
-            event.code,
-            event.reason
-          );
-        }
+        // Don't auto-reconnect since HTTP works perfectly as fallback
+        // WebSocket is optional enhancement, not required
+        console.log(
+          "WebSocket unavailable, will use HTTP fallback:",
+          event.code,
+          event.reason || "Connection failed"
+        );
       };
 
       ws.onerror = (error) => {
