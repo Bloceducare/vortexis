@@ -10,9 +10,24 @@ export interface Conversation {
   id: string;
   name?: string;
   type: "dm" | "team" | "judges";
-  participants?: number[];
+  participants?: number[] | ConversationParticipant[];
   created_at?: string;
   updated_at?: string;
+  hackathon_id?: number;
+  hackathon?: number; // API returns this field
+  organization?: number;
+  team?: number;
+  title?: string;
+  created_by?: number;
+}
+
+export interface ConversationParticipant {
+  id: number;
+  user: number;
+  user_username: string;
+  is_admin: boolean;
+  can_post: boolean;
+  joined_at: string;
 }
 
 export interface Message {
@@ -142,6 +157,7 @@ export class CommunicationsAPI {
         hackathon_id: hackathonId,
         include_organizers: includeOrganizers,
         include_org_members: includeOrgMembers,
+        created_by: this.config.userId, // Include current user ID
       }),
     });
   }

@@ -38,27 +38,28 @@ interface SidebarItem {
   href: string;
 }
 
-const sidebarItems = [
+// Dynamic sidebar items based on selected hackathon
+const getSidebarItems = (hackathonId: string) => [
   { icon: Dashboard, text: "Dashboard", href: "/judges" },
   {
     icon: Champ,
     text: "My Reviews",
-    href: "/judges/my-reviews",
+    href: `/judges/my-reviews/${hackathonId}`,
   },
   {
     icon: Resourcess,
     text: "Evaluation Criteria",
-    href: "/judges/evaluation-criteria",
+    href: `/judges/evaluation-criteria/${hackathonId}`,
   },
   {
     icon: Trophy,
     text: "Discussions",
-    href: "/judges/collaboration",
+    href: `/judges/collaboration/${hackathonId}`,
   },
   {
     icon: Bell,
     text: "Notifications",
-    href: "/judges/notifications",
+    href: `/judges/notifications/${hackathonId}`,
   },
 ];
 
@@ -112,7 +113,15 @@ export default function JudgesLayout({
   const selectedHackathon = useMemo(() => {
     const segments = pathname.split("/");
     const index = segments.indexOf("judges");
-    return segments[index + 1] || "";
+    // Check if we're on a hackathon-specific route like /judges/dashboard/[id]
+    if (segments[index + 1] === "dashboard" && segments[index + 2]) {
+      return segments[index + 2];
+    }
+    // Check if we're on other hackathon-specific routes like /judges/collaboration/[id]
+    if (segments[index + 2]) {
+      return segments[index + 2];
+    }
+    return "";
   }, [pathname]);
 
   // const selectedHackathonName =hackathons.map
@@ -275,47 +284,37 @@ export default function JudgesLayout({
           {/* Sidebar Items - Only show after hackathon selection */}
           {selectedHackathon && (
             <>
-              {sidebarItems.slice(1).map((item, index) => {
-                // Update href for dynamic routing based on selected hackathon
-                const dynamicHref =
-                  item.href === "/judges/my-reviews"
-                    ? `/judges/my-reviews`
-                    : item.href === "/judges/evaluation-criteria"
-                    ? `/judges/evaluation-criteria`
-                    : item.href === "/judges/collaboration"
-                    ? `/judges/collaboration`
-                    : item.href === "/judges/notifications"
-                    ? `/judges/notifications`
-                    : item.href;
+              {getSidebarItems(selectedHackathon)
+                .slice(1)
+                .map((item, index) => {
+                  const isActive = pathname === item.href;
 
-                const isActive = pathname === dynamicHref;
-
-                return (
-                  <Link
-                    key={index}
-                    href={dynamicHref}
-                    className={`flex gap-4 items-center py-4 pl-2 pr-4 hover:bg-[#F7F7FB] ${
-                      isActive
-                        ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
-                        : "text-gray-600"
-                    }`}
-                  >
-                    <Image
-                      src={item.icon}
-                      alt={item.text}
-                      width={24}
-                      height={24}
-                    />
-                    <span
-                      className={`${
-                        sidebarExpanded || isMobile ? "inline" : "hidden"
+                  return (
+                    <Link
+                      key={index}
+                      href={item.href}
+                      className={`flex gap-4 items-center py-4 pl-2 pr-4 hover:bg-[#F7F7FB] ${
+                        isActive
+                          ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
+                          : "text-gray-600"
                       }`}
                     >
-                      {item.text}
-                    </span>
-                  </Link>
-                );
-              })}
+                      <Image
+                        src={item.icon}
+                        alt={item.text}
+                        width={24}
+                        height={24}
+                      />
+                      <span
+                        className={`${
+                          sidebarExpanded || isMobile ? "inline" : "hidden"
+                        }`}
+                      >
+                        {item.text}
+                      </span>
+                    </Link>
+                  );
+                })}
             </>
           )}
         </nav>

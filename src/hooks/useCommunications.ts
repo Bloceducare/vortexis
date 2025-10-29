@@ -13,6 +13,15 @@ interface Conversation {
   id: string;
   name?: string;
   type: "dm" | "team" | "judges";
+  hackathon_id?: number;
+  hackathon?: number;
+  participants?: Array<{
+    id: number;
+    user: number;
+    user_username: string;
+    is_admin: boolean;
+    can_post: boolean;
+  }>;
 }
 
 interface UseCommunicationsOptions {
