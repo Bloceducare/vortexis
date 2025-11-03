@@ -391,9 +391,16 @@ export const useCommunications = ({
   // Delete a message
   const deleteMessage = useCallback(
     async (messageId: number) => {
+      if (!conversationId) {
+        setError("No conversation selected");
+        return false;
+      }
+
       try {
+        // Use the correct endpoint: DELETE /communications/conversations/{id}/
+        // The {id} in the path is the message ID
         const response = await fetch(
-          `${baseUrl}/communications/messages/${messageId}/`,
+          `${baseUrl}/communications/conversations/${messageId}/`,
           {
             method: "DELETE",
             headers: {
@@ -434,7 +441,81 @@ export const useCommunications = ({
         return false;
       }
     },
-    [baseUrl, token, loadHistory]
+    [baseUrl, token, conversationId, loadHistory]
+  );
+
+  // Edit a message
+  const editMessage = useCallback(
+    async (messageId: number, newContent: string) => {
+      try {
+        // Try the simpler endpoint first
+        let response = await fetch(
+          `${baseUrl}/communications/messages/${messageId}/`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ content: newContent }),
+          }
+        );
+
+        // If that fails and we have conversationId, try with conversationId
+        if (!response.ok && conversationId) {
+          response = await fetch(
+            `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/`,
+            {
+              method: "PATCH",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ content: newContent }),
+            }
+          );
+        }
+
+        if (response.ok) {
+          const updatedMessage: Message = await response.json();
+
+          // Normalize the updated message
+          const senderId =
+            updatedMessage.sender_id ||
+            (updatedMessage as any).sender?.id ||
+            (updatedMessage as any).user_id ||
+            (updatedMessage as any).user?.id ||
+            null;
+
+          const normalized: Message = {
+            id: updatedMessage.id,
+            content: newContent,
+            sender_id: senderId || updatedMessage.sender_id || 0,
+            sender_username: updatedMessage.sender_username || "Unknown",
+            created_at: updatedMessage.created_at || new Date().toISOString(),
+          };
+
+          // Update message in state
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) => (msg.id === messageId ? normalized : msg))
+          );
+          return true;
+        } else {
+          const errorText = await response.text();
+          const errorMessage = errorText
+            ? JSON.parse(errorText).detail || errorText
+            : `Failed to edit message: ${response.statusText}`;
+          setError(errorMessage);
+          return false;
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to edit message";
+        setError(errorMessage);
+        return false;
+      }
+    },
+    [baseUrl, token, conversationId]
   );
 
   const wsFailedRef = useRef(false);
@@ -487,6 +568,7 @@ export const useCommunications = ({
     sendChatMessage,
     loadHistory,
     deleteMessage,
+    editMessage,
     createOrFindDM,
     createOrFindJudgesConversation,
     createOrFindTeamConversation,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useCommunications } from "@/hooks/useCommunications";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/input";
@@ -63,18 +63,39 @@ const MessageBubble: React.FC<{
   message: Message;
   isMe: boolean;
   onDelete?: (messageId: number) => void;
+  onEdit?: (messageId: number, newContent: string) => void;
   showDaySeparator?: boolean;
   userId?: number;
-}> = ({ message, isMe, onDelete, showDaySeparator = false, userId }) => {
+}> = ({
+  message,
+  isMe,
+  onDelete,
+  onEdit,
+  showDaySeparator = false,
+  userId,
+}) => {
+  const [showActionModal, setShowActionModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showEditInput, setShowEditInput] = useState(false);
+  const [editContent, setEditContent] = useState("");
   const [showContextMenu, setShowContextMenu] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   const messageBubbleRef = useRef<HTMLDivElement>(null);
+  const editInputRef = useRef<HTMLTextAreaElement>(null);
   const [isPressed, setIsPressed] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({
     x: 0,
     y: 0,
   });
+
+  // Check if message can be edited (within 30 minutes)
+  const canEdit = useMemo(() => {
+    if (!message?.created_at || !onEdit) return false;
+    const messageTime = new Date(message.created_at).getTime();
+    const now = new Date().getTime();
+    const thirtyMinutes = 30 * 60 * 1000; // 30 minutes in milliseconds
+    return now - messageTime <= thirtyMinutes;
+  }, [message?.created_at, onEdit]);
 
   // Debug: Log message info on mount
   useEffect(() => {
@@ -117,41 +138,101 @@ const MessageBubble: React.FC<{
     setShowContextMenu(true);
   };
 
-  const handleContextMenuDelete = () => {
+  const handleContextMenuAction = () => {
     setShowContextMenu(false);
+    setShowActionModal(true);
+  };
+
+  const handleEditClick = () => {
+    setShowActionModal(false);
+    setEditContent(message?.content || "");
+    setShowEditInput(true);
+    // Focus input after modal closes
+    setTimeout(() => {
+      editInputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleDeleteClick = () => {
+    setShowActionModal(false);
     setShowDeleteConfirm(true);
   };
 
+  const handleEditSave = () => {
+    if (onEdit && message?.id && editContent.trim()) {
+      onEdit(message.id, editContent.trim());
+      setShowEditInput(false);
+      setEditContent("");
+    }
+  };
+
+  const handleEditCancel = () => {
+    setShowEditInput(false);
+    setEditContent("");
+  };
+
   // Attach native event listener directly to message bubble element
+  // Attach even if isMe is false initially - we'll check again in the handler
   useEffect(() => {
     const bubbleElement = messageBubbleRef.current;
-    if (!bubbleElement || !isMe) return;
+    if (!bubbleElement) {
+      console.log("MessageBubble: No element ref, cannot attach listener");
+      return;
+    }
 
     const handleContextMenu = (e: MouseEvent) => {
-      console.log("Native event listener: Preventing context menu", {
+      // Re-check isMe in case it wasn't set correctly initially
+      const currentIsMe =
+        message?.sender_id === userId ||
+        Number(message?.sender_id) === Number(userId) ||
+        String(message?.sender_id) === String(userId);
+
+      console.log("Native event listener fired:", {
         isMe,
+        currentIsMe,
         messageId: message?.id,
+        senderId: message?.sender_id,
+        userId,
         clientX: e.clientX,
         clientY: e.clientY,
+        message: message,
       });
 
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
+      // Only prevent default if this is the user's message
+      if (currentIsMe || isMe) {
+        console.log(
+          "NATIVE HANDLER: Preventing default context menu for user's message"
+        );
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        // Try to prevent at all levels
+        if (e.cancelable) {
+          e.preventDefault();
+        }
 
-      setContextMenuPosition({ x: e.clientX, y: e.clientY });
-      setShowContextMenu(true);
+        // Use requestAnimationFrame to ensure state update happens after DOM update
+        requestAnimationFrame(() => {
+          setContextMenuPosition({ x: e.clientX, y: e.clientY });
+          setShowContextMenu(true);
+          console.log("NATIVE HANDLER: Context menu state set to true");
+        });
 
-      return false;
+        return false;
+      } else {
+        console.log(
+          "NATIVE HANDLER: Allowing default context menu (not user's message)"
+        );
+      }
     };
 
-    // Attach native listener with capture phase
+    // Attach native listener with capture phase - attach to ALL messages for debugging
     bubbleElement.addEventListener("contextmenu", handleContextMenu, true);
 
     return () => {
       bubbleElement.removeEventListener("contextmenu", handleContextMenu, true);
     };
-  }, [isMe, message?.id]);
+  }, [isMe, message?.id, message?.sender_id, userId]);
 
   // Also add document-level listener as backup
   useEffect(() => {
@@ -164,23 +245,63 @@ const MessageBubble: React.FC<{
         target.closest("[data-message-container]");
 
       if (messageBubble) {
-        const bubbleIsMe = messageBubble.getAttribute("data-is-me") === "true";
+        const bubbleIsMeAttr = messageBubble.getAttribute("data-is-me");
+        const bubbleIsMe = bubbleIsMeAttr === "true";
+        const messageIdFromAttr = messageBubble.getAttribute("data-message-id");
 
-        if (bubbleIsMe) {
+        // Also check the actual message data
+        const actualIsMe =
+          message?.sender_id === userId ||
+          Number(message?.sender_id) === Number(userId) ||
+          String(message?.sender_id) === String(userId);
+
+        console.log("Document-level capture: Checking message", {
+          hasMessageBubble: true,
+          bubbleIsMeAttr,
+          bubbleIsMe,
+          actualIsMe,
+          messageId: message?.id,
+          messageIdFromAttr,
+          senderId: message?.sender_id,
+          userId,
+          target: target.tagName,
+          targetClass: target.className,
+        });
+
+        // If this is the user's message, prevent default
+        if (bubbleIsMe || actualIsMe) {
           console.log(
-            "Document-level capture: Preventing context menu for user's message"
+            "DOCUMENT-LEVEL: Preventing context menu for user's message"
           );
           e.preventDefault();
           e.stopPropagation();
+          e.stopImmediatePropagation();
+
+          // Try to prevent multiple times to ensure it sticks
+          if (e.cancelable) {
+            e.preventDefault();
+            e.preventDefault(); // Call multiple times to be sure
+          }
 
           // Only show our custom menu if it's a mouse event and not already shown
-          if (e instanceof MouseEvent && !showContextMenu) {
-            setContextMenuPosition({ x: e.clientX, y: e.clientY });
-            setShowContextMenu(true);
+          if (e instanceof MouseEvent) {
+            requestAnimationFrame(() => {
+              if (!showContextMenu) {
+                setContextMenuPosition({ x: e.clientX, y: e.clientY });
+                setShowContextMenu(true);
+                console.log("DOCUMENT-LEVEL: Context menu state set to true");
+              }
+            });
           }
 
           return false;
         }
+      } else {
+        console.log("Document-level capture: No message bubble found", {
+          target: target.tagName,
+          targetClass: target.className,
+          targetId: target.id,
+        });
       }
     };
 
@@ -190,7 +311,7 @@ const MessageBubble: React.FC<{
     return () => {
       document.removeEventListener("contextmenu", preventContextMenu, true);
     };
-  }, [showContextMenu]); // Include showContextMenu to check if already shown
+  }, [showContextMenu, message?.sender_id, userId]); // Include dependencies
 
   // Close context menu when clicking outside
   useEffect(() => {
@@ -220,10 +341,7 @@ const MessageBubble: React.FC<{
       onDelete(message.id);
     }
     setShowDeleteConfirm(false);
-  };
-
-  const handleDeleteCancel = () => {
-    setShowDeleteConfirm(false);
+    setShowActionModal(false);
   };
 
   // Debug: Log context menu state changes
@@ -288,35 +406,136 @@ const MessageBubble: React.FC<{
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Delete button clicked");
-                handleContextMenuDelete();
+                console.log("Action button clicked");
+                handleContextMenuAction();
               }}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-600 dark:text-red-400 cursor-pointer"
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 cursor-pointer"
             >
-              Delete Message
+              More options
             </button>
           </div>
         )}
-        {showDeleteConfirm && (
+        {/* WhatsApp-style Action Modal */}
+        {showActionModal && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-            style={{ zIndex: 10000 }}
+            className="fixed inset-0 bg-gray-900/30 flex items-end justify-center z-[10000]"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowActionModal(false);
+              }
+            }}
           >
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="bg-white dark:bg-gray-800 rounded-t-3xl w-full max-w-md shadow-2xl animate-slide-up">
+              <div className="px-4 py-3">
+                <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto"></div>
+              </div>
+              <div className="py-2">
+                {canEdit && (
+                  <button
+                    onClick={handleEditClick}
+                    className="w-full text-left px-6 py-4 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <span className="text-2xl">✏️</span>
+                      <span className="font-medium text-base">Edit</span>
+                    </div>
+                  </button>
+                )}
+                <button
+                  onClick={handleDeleteClick}
+                  className="w-full text-left px-6 py-4 text-red-600 dark:text-red-400 hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl">🗑️</span>
+                    <span className="font-medium text-base">Delete</span>
+                  </div>
+                </button>
+              </div>
+              <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setShowActionModal(false)}
+                  className="w-full py-3.5 text-center text-gray-700 dark:text-gray-300 font-semibold rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Input Modal */}
+        {showEditInput && (
+          <div
+            className="fixed inset-0 bg-gray-900/30 flex items-center justify-center z-[10001]"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                handleEditCancel();
+              }
+            }}
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl">
               <h3 className="text-lg font-semibold mb-4 dark:text-white">
-                Delete Message?
+                Edit Message
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Are you sure you want to delete this message? This action cannot
-                be undone.
-              </p>
+              <textarea
+                ref={editInputRef}
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg p-3 mb-4 resize-none dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={4}
+                placeholder="Edit your message..."
+              />
               <div className="flex gap-3 justify-end">
-                <Button onClick={handleDeleteCancel} variant="outline">
+                <Button onClick={handleEditCancel} variant="outline">
                   Cancel
                 </Button>
-                <Button onClick={handleDeleteConfirm} variant="primary">
-                  Delete
+                <Button
+                  onClick={handleEditSave}
+                  variant="primary"
+                  disabled={
+                    !editContent.trim() ||
+                    editContent.trim() === message?.content
+                  }
+                >
+                  Save
                 </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* WhatsApp-style Delete Confirmation */}
+        {showDeleteConfirm && (
+          <div
+            className="fixed inset-0 bg-gray-900/30 flex items-end justify-center z-[10000]"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowDeleteConfirm(false);
+              }
+            }}
+          >
+            <div className="bg-white dark:bg-gray-800 rounded-t-3xl w-full max-w-md shadow-2xl animate-slide-up">
+              <div className="px-4 py-3">
+                <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto"></div>
+              </div>
+              <div className="px-6 py-8">
+                <p className="text-gray-900 dark:text-white text-center font-semibold text-lg">
+                  Delete this message?
+                </p>
+              </div>
+              <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="w-full py-3.5 text-center text-red-600 dark:text-red-400 font-semibold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 active:bg-gray-100 dark:active:bg-gray-600 transition-colors"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="w-full py-3.5 text-center text-gray-700 dark:text-gray-300 font-semibold rounded-xl bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -337,6 +556,45 @@ const MessageBubble: React.FC<{
           onMouseLeave={handleLongPressEnd}
           onTouchStart={handleLongPressStart}
           onTouchEnd={handleLongPressEnd}
+          onContextMenu={(e) => {
+            console.log("REACT HANDLER: onContextMenu fired:", {
+              isMe,
+              messageId: message?.id,
+              senderId: message?.sender_id,
+              userId,
+              defaultPrevented: e.defaultPrevented,
+              cancelable: e.cancelable,
+              nativeEvent: e.nativeEvent,
+            });
+
+            if (isMe) {
+              console.log(
+                "REACT HANDLER: Preventing default for user's message"
+              );
+              // Prevent as early as possible
+              e.preventDefault();
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+
+              // Also prevent on the native event
+              const nativeEvent = e.nativeEvent;
+              if (nativeEvent && nativeEvent.preventDefault) {
+                nativeEvent.preventDefault();
+                nativeEvent.stopPropagation();
+                nativeEvent.stopImmediatePropagation();
+              }
+
+              requestAnimationFrame(() => {
+                setContextMenuPosition({ x: e.clientX, y: e.clientY });
+                setShowContextMenu(true);
+                console.log("REACT HANDLER: Context menu state set to true");
+              });
+            } else {
+              console.log(
+                "REACT HANDLER: Allowing default (not user's message)"
+              );
+            }
+          }}
         >
           <div className="text-xs opacity-70 mb-1">
             {message?.sender_username || "Unknown"} •{" "}
@@ -376,6 +634,7 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
     sendChatMessage,
     loadHistory,
     deleteMessage,
+    editMessage,
     createOrFindDM,
     createOrFindJudgesConversation,
     createOrFindTeamConversation,
@@ -443,6 +702,15 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
     if (!success) {
       // Error is already set in the hook's error state and will be displayed
       console.error("Failed to delete message:", messageId);
+    }
+  };
+
+  // Handle message editing - uses hook's editMessage function
+  const handleEditMessage = async (messageId: number, newContent: string) => {
+    const success = await editMessage(messageId, newContent);
+    if (!success) {
+      // Error is already set in the hook's error state and will be displayed
+      console.error("Failed to edit message:", messageId);
     }
   };
 
@@ -519,6 +787,7 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
               message={message}
               isMe={isMe}
               onDelete={handleDeleteMessage}
+              onEdit={handleEditMessage}
               showDaySeparator={showDaySeparator}
               userId={userId}
             />
