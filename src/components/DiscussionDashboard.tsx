@@ -64,15 +64,35 @@ const MessageBubble: React.FC<{
   isMe: boolean;
   onDelete?: (messageId: number) => void;
   showDaySeparator?: boolean;
-}> = ({ message, isMe, onDelete, showDaySeparator = false }) => {
+  userId?: number;
+}> = ({ message, isMe, onDelete, showDaySeparator = false, userId }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const messageBubbleRef = useRef<HTMLDivElement>(null);
   const [isPressed, setIsPressed] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({
     x: 0,
     y: 0,
   });
+
+  // Debug: Log message info on mount
+  useEffect(() => {
+    const computedIsMe = message?.sender_id === userId;
+    console.log("MessageBubble mounted:", {
+      messageId: message?.id,
+      senderId: message?.sender_id,
+      userId,
+      isMeProp: isMe,
+      computedIsMe,
+      match: isMe === computedIsMe,
+      senderUsername: message?.sender_username,
+      fullMessage: message,
+    });
+    if (isMe !== computedIsMe) {
+      console.warn("isMe prop mismatch! Expected:", computedIsMe, "Got:", isMe);
+    }
+  }, [message?.id, message?.sender_id, userId, isMe, message?.sender_username]);
 
   const handleLongPressStart = () => {
     if (!isMe) return;
@@ -102,38 +122,101 @@ const MessageBubble: React.FC<{
     setShowDeleteConfirm(true);
   };
 
-  // Prevent browser context menu and show our custom menu
+  // Attach native event listener directly to message bubble element
+  useEffect(() => {
+    const bubbleElement = messageBubbleRef.current;
+    if (!bubbleElement || !isMe) return;
+
+    const handleContextMenu = (e: MouseEvent) => {
+      console.log("Native event listener: Preventing context menu", {
+        isMe,
+        messageId: message?.id,
+        clientX: e.clientX,
+        clientY: e.clientY,
+      });
+
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setShowContextMenu(true);
+
+      return false;
+    };
+
+    // Attach native listener with capture phase
+    bubbleElement.addEventListener("contextmenu", handleContextMenu, true);
+
+    return () => {
+      bubbleElement.removeEventListener("contextmenu", handleContextMenu, true);
+    };
+  }, [isMe, message?.id]);
+
+  // Also add document-level listener as backup
   useEffect(() => {
     const preventContextMenu = (e: Event) => {
       const target = e.target as HTMLElement;
-      const messageBubble = target.closest("[data-message-bubble]");
 
-      if (messageBubble && isMe && e instanceof MouseEvent) {
-        e.preventDefault();
-        e.stopPropagation();
-        setContextMenuPosition({ x: e.clientX, y: e.clientY });
-        setShowContextMenu(true);
+      // Find the message bubble or container
+      const messageBubble =
+        target.closest("[data-message-bubble]") ||
+        target.closest("[data-message-container]");
+
+      if (messageBubble) {
+        const bubbleIsMe = messageBubble.getAttribute("data-is-me") === "true";
+
+        if (bubbleIsMe) {
+          console.log(
+            "Document-level capture: Preventing context menu for user's message"
+          );
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Only show our custom menu if it's a mouse event and not already shown
+          if (e instanceof MouseEvent && !showContextMenu) {
+            setContextMenuPosition({ x: e.clientX, y: e.clientY });
+            setShowContextMenu(true);
+          }
+
+          return false;
+        }
       }
     };
 
+    // Use capture phase to intercept before other handlers
     document.addEventListener("contextmenu", preventContextMenu, true);
-    return () =>
+
+    return () => {
       document.removeEventListener("contextmenu", preventContextMenu, true);
-  }, [isMe]);
+    };
+  }, [showContextMenu]); // Include showContextMenu to check if already shown
 
   // Close context menu when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
-      setShowContextMenu(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Don't close if clicking inside the context menu
+      if (!target.closest("[data-context-menu]")) {
+        setShowContextMenu(false);
+      }
     };
     if (showContextMenu) {
-      document.addEventListener("click", handleClickOutside);
-      return () => document.removeEventListener("click", handleClickOutside);
+      // Use setTimeout to avoid immediate closing when right-clicking
+      const timeout = setTimeout(() => {
+        document.addEventListener("click", handleClickOutside as any);
+        document.addEventListener("mousedown", handleClickOutside as any);
+      }, 100);
+      return () => {
+        clearTimeout(timeout);
+        document.removeEventListener("click", handleClickOutside as any);
+        document.removeEventListener("mousedown", handleClickOutside as any);
+      };
     }
   }, [showContextMenu]);
 
   const handleDeleteConfirm = () => {
-    if (onDelete) {
+    if (onDelete && message?.id) {
       onDelete(message.id);
     }
     setShowDeleteConfirm(false);
@@ -143,41 +226,82 @@ const MessageBubble: React.FC<{
     setShowDeleteConfirm(false);
   };
 
+  // Debug: Log context menu state changes
+  useEffect(() => {
+    console.log("Context menu state changed:", {
+      showContextMenu,
+      isMe,
+      messageId: message?.id,
+      contextMenuPosition,
+    });
+  }, [showContextMenu, isMe, message?.id, contextMenuPosition]);
+
   return (
     <div>
       {showDaySeparator && (
         <div className="flex items-center justify-center my-4">
           <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
           <span className="px-3 text-xs text-gray-500 dark:text-gray-400 font-medium">
-            {formatDateSeparator(new Date(message.created_at))}
+            {message?.created_at
+              ? formatDateSeparator(new Date(message.created_at))
+              : "Today"}
           </span>
           <div className="flex-1 border-t border-gray-300 dark:border-gray-600"></div>
         </div>
       )}
       <div
+        data-message-container
+        data-is-me={isMe.toString()}
+        data-message-id={message?.id?.toString() || ""}
         className={`flex ${
           isMe ? "justify-end" : "justify-start"
         } mb-2 relative`}
       >
         {showContextMenu && (
           <div
-            className="fixed bg-white dark:bg-gray-800 shadow-lg rounded-md py-1 z-50 min-w-[150px] border border-gray-200 dark:border-gray-700"
+            data-context-menu
+            className="fixed bg-white dark:bg-gray-800 shadow-xl rounded-md py-1 min-w-[150px] border border-gray-200 dark:border-gray-700 z-[99999] pointer-events-auto"
             style={{
               left: `${contextMenuPosition.x}px`,
               top: `${contextMenuPosition.y}px`,
             }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("Context menu clicked");
+            }}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            ref={(el) => {
+              if (el) {
+                console.log("Context menu rendered in DOM at position:", {
+                  x: contextMenuPosition.x,
+                  y: contextMenuPosition.y,
+                  element: el,
+                  rect: el.getBoundingClientRect(),
+                  computed: window.getComputedStyle(el),
+                });
+              }
+            }}
           >
             <button
-              onClick={handleContextMenuDelete}
-              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-600 dark:text-red-400"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("Delete button clicked");
+                handleContextMenuDelete();
+              }}
+              className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-red-600 dark:text-red-400 cursor-pointer"
             >
               Delete Message
             </button>
           </div>
         )}
         {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            style={{ zIndex: 10000 }}
+          >
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
               <h3 className="text-lg font-semibold mb-4 dark:text-white">
                 Delete Message?
@@ -198,7 +322,11 @@ const MessageBubble: React.FC<{
           </div>
         )}
         <div
+          ref={messageBubbleRef}
           data-message-bubble
+          data-is-me={isMe.toString()}
+          data-message-id={message?.id?.toString() || ""}
+          data-sender-id={message?.sender_id?.toString() || ""}
           className={`max-w-[85%] rounded-lg px-4 py-2 cursor-default ${
             isMe
               ? "bg-blue-600 text-white"
@@ -211,13 +339,15 @@ const MessageBubble: React.FC<{
           onTouchEnd={handleLongPressEnd}
         >
           <div className="text-xs opacity-70 mb-1">
-            {message.sender_username} •{" "}
-            {new Date(message.created_at).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {message?.sender_username || "Unknown"} •{" "}
+            {message?.created_at
+              ? new Date(message.created_at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : ""}
           </div>
-          <div className="whitespace-pre-wrap">{message.content}</div>
+          <div className="whitespace-pre-wrap">{message?.content || ""}</div>
         </div>
       </div>
     </div>
@@ -245,6 +375,7 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
     connectionStatus,
     sendChatMessage,
     loadHistory,
+    deleteMessage,
     createOrFindDM,
     createOrFindJudgesConversation,
     createOrFindTeamConversation,
@@ -306,28 +437,12 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
     }
   };
 
-  // Handle message deletion
+  // Handle message deletion - uses hook's deleteMessage function
   const handleDeleteMessage = async (messageId: number) => {
-    try {
-      const response = await fetch(
-        `${baseUrl}/communications/messages/${messageId}/`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        // Reload messages to reflect the deletion
-        loadHistory();
-      } else {
-        console.error("Failed to delete message:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error deleting message:", error);
+    const success = await deleteMessage(messageId);
+    if (!success) {
+      // Error is already set in the hook's error state and will be displayed
+      console.error("Failed to delete message:", messageId);
     }
   };
 
@@ -365,17 +480,47 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
         )}
 
         {messages.map((message, index) => {
-          const showDaySeparator =
+          // Skip invalid messages
+          if (!message || !message.id) {
+            console.warn("Invalid message at index", index, message);
+            return null;
+          }
+
+          const showDaySeparator: boolean =
             index === 0 ||
-            isDifferentDay(message.created_at, messages[index - 1].created_at);
+            Boolean(
+              message?.created_at &&
+                messages[index - 1]?.created_at &&
+                isDifferentDay(
+                  message.created_at,
+                  messages[index - 1].created_at
+                )
+            );
+
+          // Ensure proper type comparison for isMe
+          const senderId = message.sender_id;
+          const isMe =
+            senderId !== undefined &&
+            userId !== undefined &&
+            (Number(senderId) === Number(userId) ||
+              String(senderId) === String(userId));
+
+          console.log("Rendering MessageBubble:", {
+            messageId: message.id,
+            senderId,
+            userId,
+            isMe,
+            typeMatch: typeof senderId === typeof userId,
+          });
 
           return (
             <MessageBubble
               key={message.id}
               message={message}
-              isMe={message.sender_id === userId}
+              isMe={isMe}
               onDelete={handleDeleteMessage}
               showDaySeparator={showDaySeparator}
+              userId={userId}
             />
           );
         })}

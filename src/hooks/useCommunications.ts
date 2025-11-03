@@ -55,11 +55,40 @@ export const useCommunications = ({
     useWebSocket({
       url: wsUrl,
       token,
-      onMessage: (message: Message) => {
-        if (message.id && !seenMessageIds.has(message.id)) {
-          setSeenMessageIds((prev) => new Set([...prev, message.id]));
-          setLatestMessageId((prev) => Math.max(prev, message.id));
-          setMessages((prev) => [...prev, message]);
+      onMessage: (message: any) => {
+        // Normalize WebSocket message to ensure sender_id is properly extracted
+        const senderId =
+          message.sender_id ||
+          message.sender?.id ||
+          message.user_id ||
+          message.user?.id ||
+          message.sender ||
+          message.user ||
+          null;
+
+        const senderUsername =
+          message.sender_username ||
+          message.sender?.username ||
+          message.user?.username ||
+          message.username ||
+          "Unknown";
+
+        const normalized: Message = {
+          id: message.id,
+          content: message.content || message.message || "",
+          sender_id: senderId || 0,
+          sender_username: senderUsername,
+          created_at:
+            message.created_at ||
+            message.timestamp ||
+            message.date ||
+            new Date().toISOString(),
+        };
+
+        if (normalized.id && !seenMessageIds.has(normalized.id)) {
+          setSeenMessageIds((prev) => new Set([...prev, normalized.id]));
+          setLatestMessageId((prev) => Math.max(prev, normalized.id));
+          setMessages((prev) => [...prev, normalized]);
         }
       },
       onOpen: () => {
@@ -101,7 +130,7 @@ export const useCommunications = ({
       }
 
       const data = await response.json();
-      // console.log("Messages API response:", data); // Disabled to reduce console spam
+      console.log("Messages API response (raw):", data); // Enable to debug message structure
 
       // Handle paginated response - extract results array
       let messagesArray = [];
@@ -114,11 +143,55 @@ export const useCommunications = ({
         messagesArray = [];
       }
 
+      // Normalize messages to ensure sender_id is properly extracted
+      const normalizedMessages: Message[] = messagesArray.map((msg: any) => {
+        // Try multiple possible field names for sender ID
+        const senderId =
+          msg.sender_id ||
+          msg.sender?.id ||
+          msg.user_id ||
+          msg.user?.id ||
+          msg.sender ||
+          msg.user ||
+          null;
+
+        // Try multiple possible field names for sender username
+        const senderUsername =
+          msg.sender_username ||
+          msg.sender?.username ||
+          msg.user?.username ||
+          msg.username ||
+          "Unknown";
+
+        const normalized: Message = {
+          id: msg.id,
+          content: msg.content || msg.message || "",
+          sender_id: senderId || 0, // Default to 0 if not found
+          sender_username: senderUsername,
+          created_at:
+            msg.created_at ||
+            msg.timestamp ||
+            msg.date ||
+            new Date().toISOString(),
+        };
+
+        // Log the normalization for debugging
+        if (!senderId) {
+          console.warn("Message missing sender_id:", {
+            messageId: msg.id,
+            rawMessage: msg,
+            normalized,
+          });
+        }
+
+        return normalized;
+      });
+
       // Track seen messages and latest ID
       const newSeenIds = new Set(seenMessageIds);
       let maxId = latestMessageId;
 
-      messagesArray.forEach((msg: any) => {
+      normalizedMessages.forEach((msg: Message) => {
         if (msg.id) {
           newSeenIds.add(msg.id);
           maxId = Math.max(maxId, msg.id);
@@ -127,7 +200,7 @@ export const useCommunications = ({
 
       setSeenMessageIds(newSeenIds);
       setLatestMessageId(maxId);
-      setMessages(messagesArray);
+      setMessages(normalizedMessages);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load messages");
     } finally {
@@ -167,7 +240,36 @@ export const useCommunications = ({
           throw new Error(`HTTP ${response.status}: ${await response.text()}`);
         }
 
-        const newMessage: Message = await response.json();
+        const msgData: any = await response.json();
+
+        // Normalize the new message
+        const senderId =
+          msgData.sender_id ||
+          msgData.sender?.id ||
+          msgData.user_id ||
+          msgData.user?.id ||
+          msgData.sender ||
+          msgData.user ||
+          userId; // Fallback to current userId if not found
+
+        const senderUsername =
+          msgData.sender_username ||
+          msgData.sender?.username ||
+          msgData.user?.username ||
+          msgData.username ||
+          "Unknown";
+
+        const newMessage: Message = {
+          id: msgData.id,
+          content: msgData.content || msgData.message || "",
+          sender_id: senderId || userId, // Fallback to current userId
+          sender_username: senderUsername,
+          created_at:
+            msgData.created_at ||
+            msgData.timestamp ||
+            msgData.date ||
+            new Date().toISOString(),
+        };
 
         // Add to seen messages and update state
         setSeenMessageIds((prev) => new Set([...prev, newMessage.id]));
@@ -286,6 +388,55 @@ export const useCommunications = ({
     [baseUrl, token]
   );
 
+  // Delete a message
+  const deleteMessage = useCallback(
+    async (messageId: number) => {
+      try {
+        const response = await fetch(
+          `${baseUrl}/communications/messages/${messageId}/`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok || response.status === 204) {
+          // Optimistically remove message from state immediately
+          setMessages((prevMessages) =>
+            prevMessages.filter((msg) => msg.id !== messageId)
+          );
+          // Also remove from seen messages
+          setSeenMessageIds((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(messageId);
+            return newSet;
+          });
+          return true;
+        } else {
+          const errorText = await response.text();
+          const errorMessage = errorText
+            ? JSON.parse(errorText).detail || errorText
+            : `Failed to delete message: ${response.statusText}`;
+          setError(errorMessage);
+          // Reload to refresh state
+          loadHistory();
+          return false;
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to delete message";
+        setError(errorMessage);
+        // Reload to refresh state
+        loadHistory();
+        return false;
+      }
+    },
+    [baseUrl, token, loadHistory]
+  );
+
   const wsFailedRef = useRef(false);
 
   // Load initial message history once when conversation changes
@@ -335,6 +486,7 @@ export const useCommunications = ({
     connectionStatus,
     sendChatMessage,
     loadHistory,
+    deleteMessage,
     createOrFindDM,
     createOrFindJudgesConversation,
     createOrFindTeamConversation,
