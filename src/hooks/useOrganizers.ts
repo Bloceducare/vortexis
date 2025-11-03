@@ -168,10 +168,10 @@ export default function useOrganizer() {
   });
 
   const updateHackathonMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
-      const res = await fetch(`${apiUrl}/hackathon/${id}`, {
+    mutationFn: async ({  hackathonId, data }: {  hackathonId: string; data: Hackathon_details }) => {
+      const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/`, {
         method: 'PATCH',
-        headers: getAuthHeaders(true),
+        headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
 
@@ -306,11 +306,14 @@ export default function useOrganizer() {
     }
 
     const inviteModeratorsMutation = useMutation({
-      mutationFn: async ({ organizationId, moderators }: { organizationId: string; moderators: string[] }) => {
-        const res = await fetch(`${apiUrl}/organization/add-moderator/${organizationId}/`, {
+      mutationFn: async ({ organizationId, email, message }: { organizationId: string; email: string[], message: string }) => {
+        const res = await fetch(`${apiUrl}/organization/invite-moderator/${organizationId}/`, {
           method: 'POST',
           headers: getAuthHeaders(),
-          body: JSON.stringify({ moderators }),
+          body: JSON.stringify({ 
+            email : email,
+             mesage: message
+             }),
         });
       
         const data = await res.json();
@@ -324,6 +327,83 @@ export default function useOrganizer() {
         return data;
       }
     })
+
+    // const updateHackathonMutation = useMutation({
+    //   mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
+    //     const formData = new FormData();
+  
+    //     if (data.organization_id !== undefined) {
+    //       formData.append('organization_id', String(data.organization_id));
+    //     }
+    //     if (data.title !== undefined) {
+    //       formData.append('title', data.title);
+    //     }
+    //     if (data.description !== undefined) {
+    //       formData.append('description', data.description);
+    //     }
+    //     if (data.venue !== undefined) {
+    //       formData.append('venue', data.venue);
+    //     }
+    //     if (data.start_date !== undefined) {
+    //       formData.append('start_date', data.start_date);
+    //     }
+    //     if (data.end_date !== undefined) {
+    //       formData.append('end_date', data.end_date);
+    //     }
+    //     if (data.submission_deadline !== undefined) {
+    //       formData.append('submission_deadline', data.submission_deadline);
+    //     }
+    //     if (data.grand_prize !== undefined) {
+    //       formData.append('grand_prize', String(data.grand_prize));
+    //     }
+    //     if (data.visibility !== undefined) {
+    //       formData.append('visibility', String(data.visibility));
+    //     }
+    //     if (data.evaluation_criteria !== undefined) {
+    //       formData.append('evaluation_criteria', data.evaluation_criteria);
+    //     }
+  
+    //     if (banner_image instanceof File) {
+    //       formData.append('banner_image', banner_image);
+    //     }
+  
+    //     if (data.prizes !== undefined) {
+    //       formData.append('prizes', String(data.prizes));
+    //     }
+  
+    //     if (data.skills !== undefined) {
+    //       data.skills.forEach((skillId: number) => {
+    //         formData.append('skills', String(skillId));
+    //       });
+    //     }
+  
+    //     if (data.judges !== undefined) {
+    //       formData.append('judges', String(data.judges));
+    //     }
+  
+    //     if (data.rules !== undefined) {
+    //       formData.append('rules', String(data.rules));
+    //     }
+  
+    //     const res = await fetch(`${apiUrl}/hackathon/${id}/`, {
+    //       method: 'PATCH',
+    //       headers: getAuthHeaders(true),
+    //       body: formData,
+    //     });
+  
+    //     if (!res.ok) {
+    //       const errorData = await res.json();
+    //       throw new Error(
+    //         errorData?.non_field_errors?.[0] ||
+    //           errorData?.message ||
+    //         'Failed to update hackathon'
+    //       }
+    //     }})
+
+
+
+
+
 
   return {
     createHackathonMutation,
