@@ -3,11 +3,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { MenuIcon, ChevronDown } from "lucide-react";
-import Alarm from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
 import SearchInput from "../ui/SearchInput";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 import { usePathname } from "next/navigation";
+import { NotificationDropdown } from "@/components/NotificationDropdown";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -94,12 +94,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           className="flex items-center gap-5 md:gap-10 relative"
           ref={dropdownRef}
         >
-          <div className="relative">
-            <Image src={Alarm} alt="alarm" />
-            {user?.is_active && (
-              <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-blue-500" />
-            )}
-          </div>
+          <NotificationDropdown />
 
           <div
             className="flex items-center gap-2 cursor-pointer"
