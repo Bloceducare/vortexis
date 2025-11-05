@@ -93,14 +93,14 @@ export default function SubmissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 break-words">
             Hackathon Submissions
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm md:text-base">
             Review and evaluate all submitted projects
           </p>
 
@@ -125,12 +125,12 @@ export default function SubmissionsPage() {
 
           {hackathonDetails && (
             <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <h2 className="font-semibold text-blue-900">
+              <h2 className="font-semibold text-blue-900 mb-2">
                 {hackathonDetails.title}
               </h2>
-              <p className="text-blue-700 text-sm">
+              <div className="text-blue-700 text-sm break-words max-w-full overflow-hidden">
                 <HtmlContent html={hackathonDetails.description} />
-              </p>
+              </div>
             </div>
           )}
         </div>
@@ -225,17 +225,17 @@ export default function SubmissionsPage() {
                 <div className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                      <div className="flex items-start justify-between mb-3 gap-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-1 break-words">
                             {submission.projectName}
                           </h3>
-                          <p className="text-sm text-gray-600 mb-2">
+                          <p className="text-sm text-gray-600 mb-2 break-words max-w-full overflow-hidden">
                             {submission.description}
                           </p>
                         </div>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${
                             submission.status === "pending"
                               ? "bg-orange-100 text-orange-800"
                               : "bg-green-100 text-green-800"
