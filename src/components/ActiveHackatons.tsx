@@ -14,7 +14,7 @@ export default function ExploreActiveHackathons() {
   const activeHackathons = useMemo(() => {
     return hackathons
       .filter((h: any) => !h.end_date || new Date(h.end_date) >= new Date())
-      .slice(0, 6); // show only 12
+      .slice(0, 6); 
   }, [hackathons]);
 
   return (
@@ -119,7 +119,7 @@ export default function ExploreActiveHackathons() {
           {hackathons.length > 12 && (
             <div className="flex justify-center mt-6">
               <button
-                onClick={() => router.push("/home")}
+                onClick={() => router.push("/hackathon")}
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
               >
                 See More

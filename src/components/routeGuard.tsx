@@ -62,7 +62,7 @@ export default function RouteGuard({
   const token = useAuthStore.getState().getToken();
 
   // Public routes that don't need authentication
-  const publicRoutes = ["/", "/auth", "/forgot-password", "/reset-password","/hackathons", "/features", "/about"];
+  const publicRoutes = [ "/", "/guide", "/hackathon", "/auth", "/forgot-password", "/reset-password","/hackathons", "/features", "/about"];
 
   // Role-protected routes
   const judgeProtectedRoutes = ["/judges"];
