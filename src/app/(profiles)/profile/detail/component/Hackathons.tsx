@@ -6,6 +6,7 @@ import Image from "next/image"
 import { useUserHackathonsStore } from "@/store/useUserHackathons"
 import useParticipants from "@/hooks/useParticipants"
 import HtmlContent from "@/components/ui/HtMLContent"
+import { Trophy } from "lucide-react"
 
 const FilterOption = [
   "All Hackathons",
@@ -94,9 +95,9 @@ function Hackathons() {
                     className="w-full h-40 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-40 bg-gray-200 flex items-center justify-center text-gray-500">
-                    No Image
-                  </div>
+                  <div className="w-full h-40 flex items-center justify-center bg-gray-400">
+                  <Trophy className="w-16 h-16 text-primary/30" />
+                </div>
                 )}
 
                 <div className="p-4">

@@ -161,10 +161,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
           className="mt-4 bg-[#605DEC] w-full text-white py-3 cursor-pointer text-center rounded-sm hover:bg-[#4f4bcc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting
-            ? "Creating Account..."
-            : type === "organizers"
-            ? "Create Your Organizer Account"
-            : "Sign Up & Explore Hackathons"}
+            ? "Creating Account..." : "Sign Up & Explore Hackathons"}
         </button>
       </form>
 
@@ -208,9 +205,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
         Already have an account?
         <Link
           className="underline pl-1 text-[#2E0BF4]"
-          href={`/auth/login/${
-            type === "organizers" ? "organizer" : "participant"
-          }`}
+          href={`/auth/login`}
         >
           Login here
         </Link>

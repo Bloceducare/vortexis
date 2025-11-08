@@ -12,6 +12,7 @@ import Image from "next/image";
 import LinkImg from "@/public/assets/icon/link.svg"
 import LocationIcon from "@/public/assets/icon/location.svg"
 import Hackathons from "./component/Hackathons";
+import FirstTime from "./component/FirstTime";
 
 
 const tabs = ["Hackathons", "Activity", "Badges"]
@@ -21,10 +22,12 @@ export default function ProfileView() {
   const { getUserDetail } = useUser();
   const router = useRouter()
   const [modal, setModal] = useState(false)
+  const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
 
   const { data, error, isLoading, isError, isFetching, refetch } = getUserDetail();
 
   const setUser = useUserStore.getState().setUser
+
 
   useEffect(() => {
     if (data) {
@@ -46,7 +49,16 @@ export default function ProfileView() {
     `${user?.first_name?.[0] || ""}${user?.last_name?.[0] || ""}`
   ).toUpperCase();
 
-  // Loading state (first load)
+
+  useEffect(() => {
+    const firstTimeUser = localStorage.getItem("isFirstTime")
+
+    if(firstTimeUser) {
+      setIsFirstTimeUser(true)
+    }
+ 
+  }, []);
+ 
   if (isLoading) {
     return (
       <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
@@ -63,7 +75,7 @@ export default function ProfileView() {
     );
   }
 
-  // Error state
+  
   if (isError) {
     return (
       <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
@@ -114,6 +126,8 @@ export default function ProfileView() {
 
   return (
     <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
+
+      {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 
       <section className="flex gap-20 max-w-7xl mx-auto">
         <section className="space-y-5 w-[60%]">        

@@ -86,7 +86,7 @@ export const Hero: React.FC = () => {
   bg-gradient-to-r from-[#605DEC] to-[#8A85FF] text-white rounded-xl shadow-lg 
   transform transition-all duration-500 hover:scale-105 hover:shadow-2xl active:scale-95"
 >
-  <Link href="/auth/signin/participant">
+  <Link href="/auth/signup">
     Start Your Hackathon Journey
   </Link>
 </Button>

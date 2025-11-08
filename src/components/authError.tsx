@@ -12,7 +12,7 @@ export default function AuthErrorPage() {
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          router.push("/auth/signin/participant");
+          router.push("/auth/signup");
           return 0;
         }
         return prev - 1;
@@ -23,10 +23,10 @@ export default function AuthErrorPage() {
   }, [router]);
 
   const handleTryAgain = () => {
-    router.push("/auth/login/participant");
+    router.push("/auth/login");
   };
   const handleCreate = () => {
-    router.push("/auth/signin/participant");
+    router.push("/auth/signup");
   };
 
   return (

@@ -145,7 +145,7 @@ export const Header: React.FC = () => {
             <div className="hidden md:flex items-center space-x-3">
               {!isLoggedIn ? (
                 <>
-                  <Link href="/auth/login/participant">
+                  <Link href="/auth/login">
                     <button
                       type="button"
                       className="px-4 cursor-pointer py-2 text-sm font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
@@ -153,7 +153,7 @@ export const Header: React.FC = () => {
                       Log in
                     </button>
                   </Link>
-                  <Link href="/auth/signin/participant">
+                  <Link href="/auth/signup">
                     <button className="px-4 cursor-pointer py-2 text-sm font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
                       Sign up
                     </button>
@@ -300,7 +300,7 @@ export const Header: React.FC = () => {
                 <div className="px-4 space-y-3">
                   {!isLoggedIn ? (
                     <>
-                      <Link href="/auth/login/participant" onClick={closeMenu}>
+                      <Link href="/auth/login" onClick={closeMenu}>
                         <button
                           type="button"
                           className="w-full px-4 py-3 text-base font-medium text-[#605DEC] border border-[#605DEC] rounded-lg hover:bg-[#605DEC] hover:text-white transition-all duration-200"
@@ -308,7 +308,7 @@ export const Header: React.FC = () => {
                           Log in
                         </button>
                       </Link>
-                      <Link href="/auth/signin/participant" onClick={closeMenu}>
+                      <Link href="/auth/signup" onClick={closeMenu}>
                         <button className="w-full px-4 mt-3 py-3 text-base font-medium text-white bg-[#605DEC] rounded-lg hover:bg-[#4D4AE8] transition-all duration-200">
                           Sign up
                         </button>

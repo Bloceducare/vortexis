@@ -107,7 +107,7 @@ function AuthLogin({ type }: AuthLoginProps) {
         setUser(result.user);
       }
       // router.push("/home");
-      window.location.href = "/home";
+      window.location.href = "/hackathon";
 
       reset();
     } catch (error) {
@@ -275,7 +275,7 @@ function AuthLogin({ type }: AuthLoginProps) {
             : "Don't have a participant account?"}
           <Link
             className="underline pl-1 text-[#605DEC] hover:text-[#605DEC]"
-            href="/auth/signin/organizer"
+            href="/auth/signup"
           >
             Sign Up here
           </Link>

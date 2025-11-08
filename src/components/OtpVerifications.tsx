@@ -112,7 +112,8 @@ export default function OtpVerificationForm({
         "Account verified successfully! Redirecting to dashboard..."
       );
       reset();
-      router.push("/dashboard");
+      localStorage.setItem("isFirstTime", "false");
+      router.push("/profile/detail");
     } catch (error) {
       if (error instanceof TypeError && error.message.includes("fetch")) {
         toast.error(
