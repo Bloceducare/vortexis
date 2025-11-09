@@ -99,7 +99,7 @@ export default function GoogleCallbackPageContent() {
             <p className="mb-2 text-lg font-semibold">Authentication failed</p>
             <p>{error}</p>
             <button
-              onClick={() => router.push("/auth/signin/participant")}
+              onClick={() => router.push("/auth/signup")}
               className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
             >
               Return to login

@@ -286,7 +286,7 @@ export default function GuideCard() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => router.push('/auth/signin/participant')}
+                  onClick={() => router.push('/auth/signup')}
                   className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
                 >
                   <UserPlus className="w-5 h-5" />

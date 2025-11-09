@@ -68,7 +68,7 @@ export default function ResetPasswordPage() {
         setIsSuccess(true);
         // Redirect to login after 3 seconds
         setTimeout(() => {
-          router.push("/auth/login/participant");
+          router.push("/auth/login");
         }, 3000);
       } else {
         const data = await response.json();
