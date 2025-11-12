@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface WebSocketMessage {
-  event: string;
-  data: any;
+  event?: string;
+  type?: string;
+  data?: any;
+  [key: string]: any; // Allow additional properties
 }
 
 interface UseWebSocketOptions {
