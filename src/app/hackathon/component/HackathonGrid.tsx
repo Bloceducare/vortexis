@@ -39,7 +39,7 @@ export const HackathonGrid: React.FC<HackathonGridProps> = ({
         animate={{ opacity: 1 }}
         className="text-center py-20"
       >
-        <p className="text-xl opacity-60">
+        <p className="text-xl opacity-60 dark:opacity-70 dark:text-gray-300">
           No hackathons found matching your filters.
         </p>
       </motion.div>

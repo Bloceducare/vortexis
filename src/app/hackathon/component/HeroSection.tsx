@@ -8,7 +8,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
-    const router = useRouter();
+  const router = useRouter();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -26,10 +26,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-indigo-400/10 rounded-full"
         >
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium text-primary">
+          <Sparkles className="w-4 h-4 text-primary dark:text-indigo-400" />
+          <span className="text-sm font-medium text-primary dark:text-indigo-400">
             Join 10,000+ innovators
           </span>
         </motion.div>
@@ -39,10 +39,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-4xl md:text-6xl font-bold text-title leading-tight"
+          className="text-4xl md:text-6xl font-bold text-title dark:text-white leading-tight"
         >
           Join Game-Changing{" "}
-          <span className="text-primary">Hackathons</span> with Vortexis
+          <span className="text-primary dark:text-indigo-400">Hackathons</span>{" "}
+          with Vortexis
         </motion.h1>
 
         {/* Subtitle */}
@@ -50,7 +51,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="text-lg md:text-xl opacity-70 leading-relaxed"
+          className="text-lg md:text-xl opacity-70 dark:opacity-80 dark:text-gray-300 leading-relaxed"
         >
           Create, manage, join, and scale your hackathons — all from one
           intuitive dashboard.
@@ -75,8 +76,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium hover:bg-primary/5 transition-all"
-            onClick={() => router.push("/guide") }
+            className="border-2 border-primary dark:border-indigo-400 text-primary dark:text-indigo-400 px-6 py-3 rounded-xl font-medium hover:bg-primary/5 dark:hover:bg-indigo-400/10 transition-all"
+            onClick={() => router.push("/guide")}
           >
             View Guide
           </motion.button>

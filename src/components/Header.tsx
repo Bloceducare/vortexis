@@ -3,7 +3,7 @@ import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Moon, Sun } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { ChevronDown } from "lucide-react";
@@ -11,8 +11,6 @@ import { usePathname } from "next/navigation";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import { AnimatePresence, motion } from "framer-motion";
 import { SignOutConfirmationModal } from "./signOutModal";
-
-
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,9 +23,10 @@ export const Header: React.FC = () => {
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
-    const [showDropdown, setShowDropdown] = useState(false);
-    const [logout, setLogout] = useState(false);
-  
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [logout, setLogout] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
   const isHome = pathname.startsWith("/home");
   const isProfile = pathname.startsWith("/profile");
 
@@ -47,6 +46,35 @@ export const Header: React.FC = () => {
       window.removeEventListener("storage", checkLoginStatus);
     };
   }, []);
+
+  // Initialize dark mode
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+
+    if (newMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  };
 
   const handleLogout = () => {
     clearToken();
@@ -79,7 +107,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className="bg-white shadow-sm fixed w-full z-50 transition-all duration-300">
+      <header className="bg-white dark:bg-gray-800 shadow-sm fixed w-full z-50 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -97,21 +125,21 @@ export const Header: React.FC = () => {
 
             {isLoggedIn && (
               <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
-               <Link
+                <Link
                   href="/features"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Features
                 </Link>
                 <Link
                   href="/hackathon"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Hackathons
                 </Link>
                 <Link
                   href="/about"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   About
                 </Link>
@@ -122,19 +150,19 @@ export const Header: React.FC = () => {
               <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
                 <Link
                   href="/features"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Features
                 </Link>
                 <Link
                   href="/hackathon"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Hackathons
                 </Link>
                 <Link
                   href="/about"
-                  className="px-3 py-2 text-sm font-medium text-[#212121] hover:text-[#605DEC] transition-colors duration-200"
+                  className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   About
                 </Link>
@@ -143,6 +171,19 @@ export const Header: React.FC = () => {
 
             {/* Desktop Auth Buttons */}
             <div className="hidden md:flex items-center space-x-3">
+              {/* Dark Mode Toggle */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Toggle dark mode"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </button>
+
               {!isLoggedIn ? (
                 <>
                   <Link href="/auth/login">
@@ -161,91 +202,102 @@ export const Header: React.FC = () => {
                 </>
               ) : (
                 <div
-                className="flex items-center gap-5 md:gap-10 relative"
-                ref={dropdownRef}
-              >
-               
-      
-                <div
-                  className="flex items-center gap-2 cursor-pointer"
-                  onClick={() => setShowDropdown((prev) => !prev)}
+                  className="flex items-center gap-5 md:gap-10 relative"
+                  ref={dropdownRef}
                 >
-                  {/* Avatar */}
                   <div
-                    className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setShowDropdown((prev) => !prev)}
                   >
-                    {initials.toUpperCase()}
-                  </div>
-      
-                  <div className="text-left">
-                    <p className="text-sm font-semibold">
-                      {user?.first_name} {user?.last_name}
-                    </p>
-                  </div>
-                  <ChevronDown className="text-gray-500 w-4 h-4" />
-                </div>
-      
-                {/* Dropdown */}
-                <AnimatePresence>
-                  {showDropdown && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                    {/* Avatar */}
+                    <div
+                      className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
                     >
-                      <ul className="py-2 text-sm text-gray-700 list-none">
-                        <li>
-                          <Link
-                            href="/profile/detail"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            View Profile
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/organizer"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            Organization
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/dashboard"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            Hacker
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="/judges"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            Judges
-                          </Link>
-                        </li>
-                        <li>
-                          <p
-                          onClick={() => setLogout(true)}
-                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          >
-                            LogOut
-                          </p>
-                        </li>
-                      </ul>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                      {initials.toUpperCase()}
+                    </div>
+
+                    <div className="text-left">
+                      <p className="text-sm font-semibold">
+                        {user?.first_name} {user?.last_name}
+                      </p>
+                    </div>
+                    <ChevronDown className="text-gray-500 w-4 h-4" />
+                  </div>
+
+                  {/* Dropdown */}
+                  <AnimatePresence>
+                    {showDropdown && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-50"
+                      >
+                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-300 list-none">
+                          <li>
+                            <Link
+                              href="/profile/detail"
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              View Profile
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/organizer"
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Organization
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/dashboard"
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Hacker
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/judges"
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Judges
+                            </Link>
+                          </li>
+                          <li>
+                            <p
+                              onClick={() => setLogout(true)}
+                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                            >
+                              LogOut
+                            </p>
+                          </li>
+                        </ul>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               )}
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center md:hidden">
+            <div className="flex items-center md:hidden gap-2">
+              {/* Dark Mode Toggle - Mobile */}
+              <button
+                onClick={toggleDarkMode}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Toggle dark mode"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5 text-yellow-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                )}
+              </button>
+
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#605DEC] transition-all duration-200"
@@ -269,26 +321,26 @@ export const Header: React.FC = () => {
           }`}
         >
           {!isLoggedIn && (
-            <div className="bg-white border-t border-gray-200 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
               {/* Mobile Navigation Links */}
               <div className="pt-2 pb-3 space-y-1 px-4">
                 <Link
                   href="/features"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
                   Features
                 </Link>
                 <Link
                   href="/hackathon"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
                   Hackathons
                 </Link>
                 <Link
                   href="/about"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
                   About
@@ -296,7 +348,7 @@ export const Header: React.FC = () => {
               </div>
 
               {/* Mobile Auth Buttons */}
-              <div className="pt-4 pb-6 border-t border-gray-200">
+              <div className="pt-4 pb-6 border-t border-gray-200 dark:border-gray-700">
                 <div className="px-4 space-y-3">
                   {!isLoggedIn ? (
                     <>
@@ -330,41 +382,44 @@ export const Header: React.FC = () => {
             </div>
           )}
           {isLoggedIn && (
-            <div className="bg-white border-t border-gray-200 shadow-lg">
+            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
               {/* Mobile Navigation Links */}
               <div className="pt-2 pb-3 space-y-1 px-4">
                 <Link
                   href="/features"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
-                      Features
+                  Features
                 </Link>
                 <Link
                   href="/home"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   onClick={closeMenu}
                 >
                   Hackathons
                 </Link>
-                
-                  <Link
-                    href="/about"
-                    className="block px-3 py-3 text-base font-medium text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-50 rounded-lg transition-all duration-200"
-                    onClick={closeMenu}
-                  >
+
+                <Link
+                  href="/about"
+                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
+                  onClick={closeMenu}
+                >
                   About
-                  </Link>
+                </Link>
               </div>
             </div>
           )}
         </div>
       </header>
 
-      <SignOutConfirmationModal 
-        isOpen={logout} 
-        onClose={() => setLogout(false)} 
-        onConfirm={() => { handleLogout(); setLogout(false); }} 
+      <SignOutConfirmationModal
+        isOpen={logout}
+        onClose={() => setLogout(false)}
+        onConfirm={() => {
+          handleLogout();
+          setLogout(false);
+        }}
       />
 
       {isMenuOpen && (

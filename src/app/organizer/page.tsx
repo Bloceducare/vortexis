@@ -31,33 +31,29 @@ const Index = () => {
 
   if (isLoading) {
     return (
-
       <section>
-
         <div className="flex justify-between items-center p-6 mb-8 sticky top-0 animate-pulse">
-        <div className=" h-10 rounded-lg w-1/2 bg-gray-300 " />
+          <div className=" h-10 rounded-lg w-1/2 bg-gray-300 " />
 
-        <div className=" h-10 rounded-lg w-[35%] bg-gray-300 " />
+          <div className=" h-10 rounded-lg w-[35%] bg-gray-300 " />
         </div>
 
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 animate-pulse">
-        {[...Array(3)].map((_, index) => (
-          <div
-            key={index}
-            className="flex flex-col gap-4 items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm"
-          >
-            <div className="w-full h-40 bg-gray-300 rounded-md" />
-            <div className="h-6 w-3/4 bg-gray-300 rounded-md" />
-            <div className="h-4 w-5/6 bg-gray-200 rounded-md" />
-            <div className="h-10 w-1/2 bg-gray-300 rounded-full mt-2" />
-          </div>
-        ))}
-      </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 animate-pulse">
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-4 items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm"
+            >
+              <div className="w-full h-40 bg-gray-300 rounded-md" />
+              <div className="h-6 w-3/4 bg-gray-300 rounded-md" />
+              <div className="h-4 w-5/6 bg-gray-200 rounded-md" />
+              <div className="h-10 w-1/2 bg-gray-300 rounded-full mt-2" />
+            </div>
+          ))}
+        </div>
       </section>
     );
   }
-  
 
   if (isError) {
     return (
@@ -80,14 +76,10 @@ const Index = () => {
           <span>Back to Organizations</span>
         </button>
 
-        <OrganizationList
-          organizationId={selectedOrgId}
-          onClose={handleBack}
-        />
+        <OrganizationList organizationId={selectedOrgId} onClose={handleBack} />
       </div>
     );
   }
-
 
   return (
     <>
@@ -106,7 +98,7 @@ const Index = () => {
                   placeholder="Search organizations..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg outline-none"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors"
                 />
               </div>
 
@@ -127,11 +119,13 @@ const Index = () => {
                   <div
                     key={i}
                     onClick={() => handleOrgClick(org.id)}
-                    className="border p-4 rounded-xl hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col justify-between"
+                    className="border border-gray-200 dark:border-gray-700 p-4 rounded-xl hover:shadow-lg transition-all bg-white dark:bg-gray-800 shadow-md h-[35vh] cursor-pointer flex flex-col justify-between"
                   >
                     <div className="space-y-5">
-                      <h3 className="font-bold text-xl">{org.name}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <h3 className="font-bold text-xl dark:text-white">
+                        {org.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {org.description?.slice(0, 150) ||
                           "No description provided."}
                       </p>
@@ -150,10 +144,13 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center text-gray-500 mt-16">
+              <div className="text-center text-gray-500 dark:text-gray-400 mt-16">
                 <p className="text-lg font-medium">
                   No organization found with the name{" "}
-                  <span className="text-indigo-600">“{search}”</span>.
+                  <span className="text-indigo-600 dark:text-indigo-400">
+                    "{search}"
+                  </span>
+                  .
                 </p>
               </div>
             )}
@@ -162,8 +159,11 @@ const Index = () => {
           {/* New organization modal */}
           {showNewOrg && (
             <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-                <NewOrganization onClose={() => setShowNewOrg(false)} type="new" />
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative transition-colors">
+                <NewOrganization
+                  onClose={() => setShowNewOrg(false)}
+                  type="new"
+                />
               </div>
             </div>
           )}

@@ -6,6 +6,8 @@ import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import { useNotifications, Notification } from "@/hooks/useNotifications";
 import { Button } from "@/components/ui/Button";
 import { useState } from "react";
+import HtmlContent from "@/components/ui/HtMLContent";
+import Link from "next/link";
 
 type NotificationType =
   | "announcement"
@@ -64,26 +66,101 @@ function NotificationCard({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow p-4 flex items-start gap-4 ${
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-start gap-4 ${
         !notification.is_read ? "border-l-4 border-blue-500" : ""
       }`}
     >
       <div className="flex-shrink-0 mt-1">{getTypeIcon(notificationType)}</div>
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-1">
-          <h3 className="text-lg font-semibold text-gray-800">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
             {notification.title}
           </h3>
-          <span className="text-xs text-gray-500">{formattedDate}</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {formattedDate}
+          </span>
         </div>
-        <p className="text-gray-700 text-sm mb-2">{notification.message}</p>
+        <div className="text-gray-700 dark:text-gray-300 text-sm mb-2">
+          <HtmlContent html={notification.message} />
+        </div>
         {notification.action_url && (
-          <a
-            href={notification.action_url}
-            className="text-blue-600 hover:underline text-sm"
-          >
-            {notification.action_text || "View Details"}
-          </a>
+          <div className="mt-3">
+            {notification.action_url.startsWith("http://") ||
+            notification.action_url.startsWith("https://") ? (
+              <a
+                href={notification.action_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 text-sm font-medium text-white bg-[#605DEC] rounded-md hover:bg-[#5048E5] transition-colors"
+              >
+                {notification.action_text || "View Details"}
+              </a>
+            ) : (
+              <Link
+                href={(() => {
+                  let url = notification.action_url;
+
+                  // Handle external URLs that contain dashboard patterns
+                  // Extract hackathon ID from URLs like https://vortexis-dev.vercel.app/dashboard/33/project
+                  const externalDashboardProjectMatch = url.match(
+                    /\/dashboard\/(\d+)\/project/
+                  );
+                  if (externalDashboardProjectMatch) {
+                    const hackathonId = externalDashboardProjectMatch[1];
+                    return `/judges/dashboard/${hackathonId}`;
+                  }
+
+                  // Extract hackathon ID from external URLs like https://vortexis-dev.vercel.app/dashboard/33
+                  const externalDashboardMatch = url.match(
+                    /\/dashboard\/(\d+)(?:\/|$)/
+                  );
+                  if (externalDashboardMatch) {
+                    const hackathonId = externalDashboardMatch[1];
+                    return `/judges/dashboard/${hackathonId}`;
+                  }
+
+                  // Handle /submissions/{id} pattern
+                  const submissionsMatch = url.match(/\/submissions\/(\d+)/);
+                  if (submissionsMatch) {
+                    const hackathonFromSubmissions = url.match(/\/hackathon\/(\d+)\/submissions\/(\d+)/);
+                    if (hackathonFromSubmissions) {
+                      return `/judges/dashboard/${hackathonFromSubmissions[1]}`;
+                    }
+                    const dashboardInUrl = url.match(/\/dashboard\/(\d+)/);
+                    if (dashboardInUrl) {
+                      return `/judges/dashboard/${dashboardInUrl[1]}`;
+                    }
+                  }
+
+                  // If it's an external URL without dashboard pattern, return as-is
+                  if (url.startsWith("http://") || url.startsWith("https://")) {
+                    return url;
+                  }
+
+                  let normalized = url.replace(
+                    /^\/hackathons\//,
+                    "/hackathon/"
+                  );
+                  // Handle submission review URLs
+                  const dashboardProjectMatch = normalized.match(
+                    /\/dashboard\/(\d+)\/project/
+                  );
+                  if (dashboardProjectMatch) {
+                    return `/judges/dashboard/${dashboardProjectMatch[1]}`;
+                  }
+                  const submissionMatch =
+                    normalized.match(/\/dashboard\/(\d+)/);
+                  if (submissionMatch) {
+                    return `/judges/dashboard/${submissionMatch[1]}`;
+                  }
+                  return normalized;
+                })()}
+                className="inline-block px-4 py-2 text-sm font-medium text-white bg-[#605DEC] rounded-md hover:bg-[#5048E5] transition-colors"
+              >
+                {notification.action_text || "View Details"}
+              </Link>
+            )}
+          </div>
         )}
       </div>
       {!notification.is_read && (
@@ -141,13 +218,13 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-transparent">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
             Notifications
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-300">
             Notifications for {hackathonName} - Stay updated with important
             announcements and activities.
             {stats && (
@@ -169,8 +246,8 @@ export default function NotificationsPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+          <p className="text-red-800 dark:text-red-400 text-sm">{error}</p>
         </div>
       )}
 
@@ -178,14 +255,16 @@ export default function NotificationsPage() {
         <div className="flex items-center justify-center py-12">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#605DEC] mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading notifications...</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Loading notifications...
+            </p>
           </div>
         </div>
       ) : (
         <div className="space-y-6">
           {unreadNotifications.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
                 Unread
               </h2>
               <div className="space-y-4">
@@ -202,7 +281,9 @@ export default function NotificationsPage() {
 
           {readNotifications.length > 0 && (
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">Read</h2>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
+                Read
+              </h2>
               <div className="space-y-4">
                 {readNotifications.map((notif) => (
                   <NotificationCard
@@ -216,7 +297,7 @@ export default function NotificationsPage() {
           )}
 
           {notifications.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+            <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
               <Bell className="size-12 mb-4 opacity-50" />
               <p className="text-lg font-medium">No notifications</p>
               <p className="text-sm">You're all caught up!</p>

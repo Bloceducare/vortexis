@@ -71,7 +71,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const avatarColor = bgColors[colorIndex];
 
   return (
-    <header className="border-gray-200 md:max-w-full sm:max-w-64 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white md:px-10 px-5">
+    <header className="border-gray-200 dark:border-gray-700 md:max-w-full sm:max-w-64 sticky right-0 top-0 z-50 h-20 w-full border-b bg-white dark:bg-gray-800 md:px-10 px-5 transition-colors">
       <div className="flex h-full items-center justify-between md:pr-4">
         <div className="flex items-center">
           {/* Mobile menu button */}
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             type="button"
             aria-label="Toggle Menu"
             onClick={toggleSidebar}
-            className="hover:bg-gray-100 rounded-md p-2 focus:outline-none lg:hidden"
+            className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md p-2 focus:outline-none lg:hidden"
           >
             <MenuIcon size={20} />
           </button>
@@ -108,12 +108,14 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
             </div>
 
             <div className="text-left">
-              <p className="text-sm font-semibold">
+              <p className="text-sm font-semibold dark:text-gray-100">
                 {user?.first_name} {user?.last_name}
               </p>
-              <p className="text-sm text-[#4F5B67]">{currentDashboard}</p>
+              <p className="text-sm text-[#4F5B67] dark:text-gray-400">
+                {currentDashboard}
+              </p>
             </div>
-            <ChevronDown className="text-gray-500 w-4 h-4" />
+            <ChevronDown className="text-gray-500 dark:text-gray-400 w-4 h-4" />
           </div>
 
           {/* Dropdown */}
@@ -124,13 +126,13 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-50"
               >
-                <ul className="py-2 text-sm text-gray-700 list-none">
+                <ul className="py-2 text-sm text-gray-700 dark:text-gray-300 list-none">
                   <li>
                     <Link
                       href="/home"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       View Hackathons
                     </Link>
@@ -138,7 +140,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                   <li>
                     <Link
                       href="/profile/detail"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       View Profile
                     </Link>
@@ -146,7 +148,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                   <li>
                     <Link
                       href="/organizer"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Organization
                     </Link>
@@ -154,7 +156,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                   <li>
                     <Link
                       href="/dashboard"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Hacker
                     </Link>
@@ -162,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                   <li>
                     <Link
                       href="/judges"
-                      className="block px-4 py-2 hover:bg-gray-100"
+                      className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Judges
                     </Link>

@@ -18,8 +18,12 @@ const Page = () => {
   const { data, isLoading, refetch } = getHackathons();
 
   const [expanded, setExpanded] = useState(false);
-  const [activeTab, setActiveTab] = useState< "Active"| "Upcoming"  | "Ended">("Active");
-  const [filterType, setFilterType] = useState<"all" | "date" | "month" | "year">("all");
+  const [activeTab, setActiveTab] = useState<"Active" | "Upcoming" | "Ended">(
+    "Active"
+  );
+  const [filterType, setFilterType] = useState<
+    "all" | "date" | "month" | "year"
+  >("all");
   const [filterValue, setFilterValue] = useState("");
 
   useEffect(() => {
@@ -46,7 +50,10 @@ const Page = () => {
       type: "green" as const,
     }))
     .filter((d: any) => new Date(d.rawDate) >= new Date())
-    .sort((a: any, b: any) => new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime());
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
+    );
 
   const visibleDeadlines = expanded ? deadlines : deadlines?.slice(0, 3);
 
@@ -66,7 +73,6 @@ const Page = () => {
       } else {
         status = "Ended";
       }
-      
 
       return {
         id: hackathon.id,
@@ -78,10 +84,15 @@ const Page = () => {
         venue: hackathon.venue,
       };
     })
-    .sort((a: any, b: any) => new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime());
+    .sort(
+      (a: any, b: any) =>
+        new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime()
+    );
 
   // Apply tab filter
-  let displayedHackathons = formattedHackathons?.filter((h: any) => h.status === activeTab);
+  let displayedHackathons = formattedHackathons?.filter(
+    (h: any) => h.status === activeTab
+  );
 
   // Apply date/month/year filter
   if (filterType !== "all" && filterValue) {
@@ -89,7 +100,10 @@ const Page = () => {
       const dateObj = new Date(h.rawDate);
 
       if (filterType === "date") {
-        return dateObj.toLocaleDateString() === new Date(filterValue).toLocaleDateString();
+        return (
+          dateObj.toLocaleDateString() ===
+          new Date(filterValue).toLocaleDateString()
+        );
       }
       if (filterType === "month") {
         return (
@@ -106,19 +120,26 @@ const Page = () => {
 
   const quickActions = [
     { icon: HelpCircle, label: "Ask a Question" },
-    { icon: Plus, label: "Join New Hackathon", action: () => router.push("/home") },
+    {
+      icon: Plus,
+      label: "Join New Hackathon",
+      action: () => router.push("/home"),
+    },
   ];
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white rounded-xl p-4 space-y-8 animate-pulse">
+      <div className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-4 space-y-8 animate-pulse transition-colors">
         <div className="space-y-2">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
         </div>
         <div className="space-y-4 flex gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 bg-gray-200 rounded-lg w-full"></div>
+            <div
+              key={i}
+              className="h-40 bg-gray-200 dark:bg-gray-700 rounded-lg w-full"
+            ></div>
           ))}
         </div>
       </div>
@@ -126,13 +147,13 @@ const Page = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white rounded-xl p-4">
+    <div className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-4 transition-colors">
       <div className="w-full mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-bold text-blue-600">
+          <h1 className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">
             Welcome, {user?.first_name}!{" "}
-            <span className="text-lg font-normal text-gray-600 ml-2">
+            <span className="text-lg font-normal text-gray-600 dark:text-gray-300 ml-2">
               Ready to build something great?
             </span>
           </h1>
@@ -147,12 +168,14 @@ const Page = () => {
         {/* Tabs + Filter */}
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="flex gap-3">
-            {[ "Active", "Upcoming", "Ended"].map((tab) => (
+            {["Active", "Upcoming", "Ended"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`px-4 py-2 rounded-lg font-medium cursor-pointer ${
-                  activeTab === tab ? "bg-blue-500 text-white" : "bg-gray-200"
+                className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
+                  activeTab === tab
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                 }`}
               >
                 {tab}
@@ -164,7 +187,7 @@ const Page = () => {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-3 py-2 border rounded-lg"
+              className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
             >
               <option value="all">All</option>
               <option value="date">By Date</option>
@@ -177,7 +200,7 @@ const Page = () => {
                 type={filterType === "year" ? "number" : "date"}
                 placeholder={filterType === "year" ? "Enter year" : ""}
                 onChange={(e) => setFilterValue(e.target.value)}
-                className="px-3 py-2 border rounded-lg"
+                className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
               />
             )}
           </div>
@@ -185,14 +208,18 @@ const Page = () => {
 
         {/* Hackathons */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-green-600">{activeTab} Hackathons</h2>
+          <h2 className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {activeTab} Hackathons
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedHackathons?.length > 0 ? (
               displayedHackathons.map((hackathon: any, index: number) => (
                 <HackathonCard key={index} {...hackathon} />
               ))
             ) : (
-              <p className="text-gray-500">No {activeTab.toLowerCase()} hackathons found.</p>
+              <p className="text-gray-500 dark:text-gray-400">
+                No {activeTab.toLowerCase()} hackathons found.
+              </p>
             )}
           </div>
         </div>

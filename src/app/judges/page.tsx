@@ -158,14 +158,14 @@ function Page() {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="w-32 h-32 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full flex items-center justify-center border border-[#E4E4E4]">
+          <div className="w-32 h-32 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full flex items-center justify-center border border-[#E4E4E4] dark:border-gray-700 transition-colors">
             <div className="relative">
-              <Trophy className="w-12 h-12 text-blue-500" />
-              <Code className="w-8 h-8 text-purple-500 absolute -bottom-2 -right-2 bg-white rounded-full p-1" />
+              <Trophy className="w-12 h-12 text-blue-500 dark:text-blue-400" />
+              <Code className="w-8 h-8 text-purple-500 dark:text-purple-400 absolute -bottom-2 -right-2 bg-white dark:bg-gray-800 rounded-full p-1 transition-colors" />
             </div>
           </div>
-          <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-200 rounded-full animate-pulse"></div>
-          <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-purple-200 rounded-full animate-pulse delay-300"></div>
+          <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-200 dark:bg-blue-600 rounded-full animate-pulse"></div>
+          <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-purple-200 dark:bg-purple-600 rounded-full animate-pulse delay-300"></div>
         </motion.div>
 
         <motion.div
@@ -174,10 +174,10 @@ function Page() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h3 className="text-2xl font-bold text-gray-800 mb-3">
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
             No Hackathons Found
           </h3>
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
             There are currently no hackathons to display. Check back later or
             explore other sections to discover exciting coding competitions.
           </p>
@@ -201,10 +201,10 @@ function Page() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="space-y-2"
       >
-        <h1 className="text-3xl font-bold text-[#605DEC]">
+        <h1 className="text-3xl font-bold text-[#605DEC] dark:text-indigo-400">
           Welcome, {judgename?.username || "Judge"}!
         </h1>
-        <p className="text-gray-600 text-lg">
+        <p className="text-gray-600 dark:text-gray-300 text-lg">
           Your judging dashboard provides an overview of your assigned
           hackathons and pending reviews.
         </p>
@@ -219,7 +219,7 @@ function Page() {
         {SubmissionStatus.map((status, i) => (
           <motion.div
             key={i}
-            className={`bg-[#FFFFFF] border-[#E4E4E4] border rounded-xl p-6 hover:shadow-md transition-all duration-300 cursor-pointer group`}
+            className={`bg-[#FFFFFF] dark:bg-gray-800 border-[#E4E4E4] dark:border-gray-700 border rounded-xl p-6 hover:shadow-md transition-all duration-300 cursor-pointer group`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 * i }}
@@ -235,7 +235,7 @@ function Page() {
                 {status.number}
               </div>
             </div>
-            <h3 className="font-semibold text-[#605DEC] text-sm uppercase tracking-wide">
+            <h3 className="font-semibold text-[#605DEC] dark:text-indigo-400 text-sm uppercase tracking-wide">
               {status.status}
             </h3>
           </motion.div>
@@ -243,36 +243,38 @@ function Page() {
       </motion.div>
 
       <motion.div
-        className="bg-white border border-[#E4E4E4] rounded-xl p-6 shadow-sm"
+        className="bg-white dark:bg-gray-800 border border-[#E4E4E4] dark:border-gray-700 rounded-xl p-6 shadow-sm transition-colors"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut", delay: 0.2 }}
       >
         <div className="flex items-center gap-3 mb-6">
-          <TrendingUp className="w-6 h-6 text-[#605DEC]" />
-          <h2 className="text-xl font-bold text-gray-800">Review Progress</h2>
+          <TrendingUp className="w-6 h-6 text-[#605DEC] dark:text-indigo-400" />
+          <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+            Review Progress
+          </h2>
         </div>
 
         <div className="flex justify-between items-center mb-4">
-          <span className="text-gray-600">
+          <span className="text-gray-600 dark:text-gray-300">
             {reviewStats.completedReviews} of {reviewStats.totalSubmissions}{" "}
             reviews completed
           </span>
-          <span className="text-2xl font-bold text-[#605DEC]">
+          <span className="text-2xl font-bold text-[#605DEC] dark:text-indigo-400">
             {reviewStats.progressPercentage}%
           </span>
         </div>
 
-        <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div className="relative h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${reviewStats.progressPercentage}%` }}
             transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-            className="absolute top-0 left-0 h-full bg-[#605DEC] rounded-full shadow-sm"
+            className="absolute top-0 left-0 h-full bg-[#605DEC] dark:bg-indigo-600 rounded-full shadow-sm"
           />
         </div>
 
-        <div className="flex justify-between text-sm text-gray-500 mt-2">
+        <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mt-2">
           <span>Started</span>
           <span>In Progress</span>
           <span>Complete</span>
@@ -286,8 +288,8 @@ function Page() {
         className="space-y-6"
       >
         <div className="flex items-center gap-3">
-          <Code className="w-6 h-6 text-[#00AC4F]" />
-          <h2 className="text-2xl font-bold text-[#00AC4F]">
+          <Code className="w-6 h-6 text-[#00AC4F] dark:text-green-400" />
+          <h2 className="text-2xl font-bold text-[#00AC4F] dark:text-green-400">
             Hackathons You're Judging
           </h2>
         </div>
@@ -296,7 +298,7 @@ function Page() {
           {hackathons.map((hackathon, i) => (
             <motion.div
               key={hackathon.id}
-              className="bg-white border border-[#E4E4E4] rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
+              className="bg-white dark:bg-gray-800 border border-[#E4E4E4] dark:border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 * i }}
@@ -304,7 +306,7 @@ function Page() {
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-gray-800 group-hover:text-[#605DEC] transition-colors duration-200">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white group-hover:text-[#605DEC] dark:group-hover:text-indigo-400 transition-colors duration-200">
                     {hackathon.title}
                   </h3>
                   <div className="flex items-center gap-2">
@@ -325,18 +327,20 @@ function Page() {
 
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <span className="text-gray-600 font-medium min-w-[80px]">
+                  <span className="text-gray-600 dark:text-gray-300 font-medium min-w-[80px]">
                     Title:
                   </span>
-                  <span className="text-[#605DEC]">
+                  <span className="text-[#605DEC] dark:text-indigo-400">
                     <HtmlContent html={hackathon.description} />
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-gray-500" />
-                  <span className="text-gray-600 font-medium">Due date:</span>
-                  <span className="text-[#AC0000] font-medium">
+                  <Calendar className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                  <span className="text-gray-600 dark:text-gray-300 font-medium">
+                    Due date:
+                  </span>
+                  <span className="text-[#AC0000] dark:text-red-400 font-medium">
                     {hackathon.end_date}
                   </span>
                 </div>

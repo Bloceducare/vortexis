@@ -61,7 +61,7 @@ function Tabscontent({
               className={`text-center px-7 py-2 ${
                 activeTab === i + 1
                   ? "bg-[#605DEC] text-white"
-                  : "bg-[#F4F3FE] text-[#C5C0DB]"
+                  : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300"
               } transition-all duration-300 rounded-md `}
             >
               {tab.name}
@@ -85,20 +85,20 @@ function Tabscontent({
         </button>
 
         {isDropdownOpen && (
-          <div className="absolute top-full left-0 right-0 z-10 bg-white border border-gray-200 rounded-md shadow-lg mt-1">
+          <div className="absolute top-full left-0 right-0 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1 transition-colors">
             {tabs.map((tab, i) => (
               <button
                 key={i}
                 onClick={() => handleTabChange(tab.tab_no)}
-                className={`w-full px-4 py-3 text-left hover:bg-gray-50 ${
+                className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${
                   activeTab === tab.tab_no
-                    ? "bg-[#F4F3FE] text-[#605DEC] font-medium"
-                    : "text-gray-700"
+                    ? "bg-[#F4F3FE] dark:bg-gray-700 text-[#605DEC] dark:text-indigo-400 font-medium"
+                    : "text-gray-700 dark:text-gray-300"
                 } ${i === 0 ? "rounded-t-md" : ""} ${
                   i === tabs.length - 1
                     ? "rounded-b-md"
-                    : "border-b border-gray-100"
-                }`}
+                    : "border-b border-gray-100 dark:border-gray-700"
+                } transition-colors`}
               >
                 {tab.name}
               </button>
