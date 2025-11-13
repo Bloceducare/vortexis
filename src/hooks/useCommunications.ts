@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useWebSocket } from "./useWebSocket";
 
 interface Message {
@@ -43,13 +43,14 @@ export const useCommunications = ({
   const [seenMessageIds, setSeenMessageIds] = useState<Set<number>>(new Set());
   const [latestMessageId, setLatestMessageId] = useState(0);
 
-  // WebSocket connection for real-time messaging
-  const wsUrl = conversationId
-    ? `${baseUrl.replace(
-        /^https?:\/\//,
-        baseUrl.startsWith("https") ? "wss://" : "ws://"
-      )}/communications/conversations/${conversationId}/`
-    : "";
+  // WebSocket connection for real-time messaging - memoize to prevent constant reconnections
+  const wsUrl = useMemo(() => {
+    if (!conversationId) return "";
+    return `${baseUrl.replace(
+      /^https?:\/\//,
+      baseUrl.startsWith("https") ? "wss://" : "ws://"
+    )}/communications/conversations/${conversationId}/`;
+  }, [baseUrl, conversationId]);
 
   const { isConnected, connectionStatus, connect, disconnect, sendMessage } =
     useWebSocket({
@@ -518,39 +519,151 @@ export const useCommunications = ({
     [baseUrl, token, conversationId]
   );
 
-  const wsFailedRef = useRef(false);
+  // Polling fallback when WebSocket is not connected
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Check for new messages (only fetch if we have a latest message ID)
+  const checkForNewMessages = useCallback(async () => {
+    if (!conversationId || !latestMessageId) {
+      // If no latest message ID, do a full load
+      loadHistory();
+      return;
+    }
+
+    try {
+      // Fetch messages after the latest one we have
+      const response = await fetch(
+        `${baseUrl}/communications/conversations/${conversationId}/messages/?after_id=${latestMessageId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        let messagesArray = [];
+        if (Array.isArray(data)) {
+          messagesArray = data;
+        } else if (data && Array.isArray(data.results)) {
+          messagesArray = data.results;
+        }
+
+        if (messagesArray.length > 0) {
+          // Normalize and add new messages
+          const normalizedMessages: Message[] = messagesArray.map(
+            (msg: any) => {
+              const senderId =
+                msg.sender_id ||
+                msg.sender?.id ||
+                msg.user_id ||
+                msg.user?.id ||
+                msg.sender ||
+                msg.user ||
+                null;
+              const senderUsername =
+                msg.sender_username ||
+                msg.sender?.username ||
+                msg.user?.username ||
+                msg.username ||
+                "Unknown";
+
+              return {
+                id: msg.id,
+                content: msg.content || msg.message || "",
+                sender_id: senderId || 0,
+                sender_username: senderUsername,
+                created_at:
+                  msg.created_at ||
+                  msg.timestamp ||
+                  msg.date ||
+                  new Date().toISOString(),
+              };
+            }
+          );
+
+          // Add new messages to state
+          const newSeenIds = new Set(seenMessageIds);
+          let maxId = latestMessageId;
+
+          normalizedMessages.forEach((msg: Message) => {
+            if (msg.id && !newSeenIds.has(msg.id)) {
+              newSeenIds.add(msg.id);
+              maxId = Math.max(maxId, msg.id);
+            }
+          });
+
+          setSeenMessageIds(newSeenIds);
+          setLatestMessageId(maxId);
+          setMessages((prev) => {
+            // Only add messages we haven't seen
+            const existingIds = new Set(prev.map((m) => m.id));
+            const newMessages = normalizedMessages.filter(
+              (m) => !existingIds.has(m.id)
+            );
+            return [...prev, ...newMessages];
+          });
+        }
+      }
+    } catch (err) {
+      // Silently fail - polling is just a fallback
+      console.warn("Polling for new messages failed:", err);
+    }
+  }, [
+    conversationId,
+    latestMessageId,
+    baseUrl,
+    token,
+    seenMessageIds,
+    loadHistory,
+  ]);
+
+  useEffect(() => {
+    // If WebSocket is not connected, use polling as fallback
+    if (conversationId && !isConnected && connectionStatus !== "connecting") {
+      // Poll every 5 seconds for new messages
+      pollingIntervalRef.current = setInterval(() => {
+        if (conversationId) {
+          checkForNewMessages();
+        }
+      }, 5000);
+    } else {
+      // Clear polling when WebSocket is connected
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+    };
+  }, [conversationId, isConnected, connectionStatus, checkForNewMessages]);
 
   // Load initial message history once when conversation changes
   useEffect(() => {
     if (conversationId) {
       // Always fetch initial history via HTTP (works perfectly)
       loadHistory();
-
-      // Try WebSocket for real-time updates, but don't block if it fails
-      // Since HTTP works perfectly, WebSocket is just a nice-to-have enhancement
-      if (wsUrl && !wsFailedRef.current) {
-        connect();
-      }
+      // WebSocket will auto-connect via useWebSocket when wsUrl is set
     } else {
-      // Disconnect when conversation changes
+      // Disconnect when no conversation is selected
       disconnect();
-      wsFailedRef.current = false; // Reset on new conversation
     }
 
     // Cleanup: disconnect when component unmounts or conversation changes
     return () => {
-      disconnect();
+      if (!conversationId) {
+        disconnect();
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationId, wsUrl]); // Only re-run when conversationId or wsUrl changes
-
-  // Track WebSocket failures to avoid repeated attempts
-  useEffect(() => {
-    if (connectionStatus === "error") {
-      wsFailedRef.current = true;
-      console.log("WebSocket unavailable, will use HTTP-only mode");
-    }
-  }, [connectionStatus]);
+  }, [conversationId]); // Only re-run when conversationId changes
 
   // Manual WebSocket connection control
   const connectWebSocket = useCallback(() => {
