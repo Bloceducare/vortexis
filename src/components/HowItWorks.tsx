@@ -18,7 +18,7 @@ export default function HowItWorks() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="text-2xl font-medium text-indigo-600 text-center mb-8"
+          className="text-2xl font-bold text-indigo-600 text-center mb-8"
         >
           Platform Overview
         </motion.h1>
@@ -31,7 +31,7 @@ export default function HowItWorks() {
             transition={{ duration: 0.7, ease: "easeOut" }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-medium text-gray-800 mb-3 text-start ">
+            <h2 className="text-4xl font-bold text-gray-800 mb-3 text-start ">
               How It Works
             </h2>
             <p className="text-gray-600 text-md mb-6 ">

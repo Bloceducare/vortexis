@@ -28,7 +28,7 @@ export function HackathonCard({ title, status, progress, daysLeft, id, venue }: 
             </span>
           </div>
           
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">Progress</span>
               <span className="font-medium text-primary">{progress}%</span>
@@ -39,7 +39,7 @@ export function HackathonCard({ title, status, progress, daysLeft, id, venue }: 
                 style={{ width: `${progress}%` }}
               />
             </div>
-          </div>
+          </div> */}
           
           <div className="flex items-center gap-2 text-orange-600">
             <Clock className="w-4 h-4" />

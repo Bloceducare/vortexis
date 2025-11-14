@@ -48,7 +48,6 @@ const JudgesList: React.FC<JudgesListProps> = ({
           <tr>
             <th className="px-6 py-3">#</th>
             <th className="px-6 py-3">Name</th>
-            <th className="px-6 py-3">Email</th>
             <th className='px-6 py-3'>Action</th>
           </tr>
         </thead>
@@ -57,7 +56,6 @@ const JudgesList: React.FC<JudgesListProps> = ({
             <tr key={judge.id} className="hover:bg-gray-50">
               <td className="px-6 py-4">{index + 1}</td>
               <td className="px-6 py-4">{judge.first_name} {judge.last_name || ''}</td>
-              <td className="px-6 py-4">{judge.email}</td>
               <td className='px-6 py-4'>
                 <button className='underline cursor-pointer' onClick={() => router.push(`/profile/${judge.id}`)}>View Profile</button>
               </td>

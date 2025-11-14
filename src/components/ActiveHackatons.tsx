@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import useHackathon from "@/hooks/useHackathon";
+import { Trophy } from "lucide-react";
 
 export default function ExploreActiveHackathons() {
   const router = useRouter();
@@ -75,8 +76,9 @@ export default function ExploreActiveHackathons() {
                       loading="lazy" // ✅ better memory usage
                     />
                   ) : (
-                    <div className="rounded-lg h-40 w-full bg-gray-200" />
-                  )}
+                    <div className="w-full h-full flex items-center justify-center bg-gray-500">
+                    <Trophy className="w-16 h-16 text-primary/30" />
+                  </div>                  )}
                 </div>
 
                 {/* Content */}
@@ -120,7 +122,7 @@ export default function ExploreActiveHackathons() {
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => router.push("/hackathon")}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition cursor-pointer"
               >
                 See More
               </button>

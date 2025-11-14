@@ -366,7 +366,7 @@ const Hackathons = () => {
                     onClick={() =>
                       router.push(`/dashboard/${hackathon_id}/team`)
                     }
-                    className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25"
+                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25"
                   >
                     Manage Team
                     <ArrowRight className="w-4 h-4" />
@@ -390,7 +390,7 @@ const Hackathons = () => {
                     onClick={() =>
                       router.push(`/dashboard/${hackathon_id}/team`)
                     }
-                    className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25 cursor-pointer"
+                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25 cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                     Create Team

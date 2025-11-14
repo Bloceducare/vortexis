@@ -106,7 +106,7 @@ const Page = () => {
 
   const quickActions = [
     { icon: HelpCircle, label: "Ask a Question" },
-    { icon: Plus, label: "Join New Hackathon", action: () => router.push("/home") },
+    { icon: Plus, label: "Join New Hackathon", action: () => router.push("/hackathon") },
   ];
 
   if (isLoading) {
