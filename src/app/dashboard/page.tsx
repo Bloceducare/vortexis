@@ -123,7 +123,7 @@ const Page = () => {
     {
       icon: Plus,
       label: "Join New Hackathon",
-      action: () => router.push("/home"),
+      action: () => router.push("/hackathon"),
     },
   ];
 

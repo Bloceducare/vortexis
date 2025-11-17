@@ -205,80 +205,95 @@ export const Header: React.FC = () => {
                   className="flex items-center gap-5 md:gap-10 relative"
                   ref={dropdownRef}
                 >
-                  <div
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() => setShowDropdown((prev) => !prev)}
-                  >
-                    {/* Avatar */}
+                  <div className="relative z-30">
+                    {/* Avatar & Name */}
                     <div
-                      className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
+                      className="flex items-center gap-2 cursor-pointer"
+                      onClick={() => setShowDropdown((prev) => !prev)}
                     >
-                      {initials.toUpperCase()}
-                    </div>
-
-                    <div className="text-left">
-                      <p className="text-sm font-semibold">
-                        {user?.first_name} {user?.last_name}
-                      </p>
-                    </div>
-                    <ChevronDown className="text-gray-500 w-4 h-4" />
-                  </div>
-
-                  {/* Dropdown */}
-                  <AnimatePresence>
-                    {showDropdown && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -5 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 z-50"
+                      <div
+                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
                       >
-                        <ul className="py-2 text-sm text-gray-700 dark:text-gray-300 list-none">
-                          <li>
-                            <Link
-                              href="/profile/detail"
-                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              View Profile
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/organizer"
-                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              Organization
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/dashboard"
-                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              Hacker
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/judges"
-                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              Judges
-                            </Link>
-                          </li>
-                          <li>
-                            <p
-                              onClick={() => setLogout(true)}
-                              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                            >
-                              LogOut
-                            </p>
-                          </li>
-                        </ul>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                        {initials.toUpperCase()}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold">
+                          {user?.first_name} {user?.last_name}
+                        </p>
+                      </div>
+                      <ChevronDown className="text-gray-500 w-4 h-4" />
+                    </div>
+
+                    {/* Dropdown + Fullscreen Blur Overlay */}
+                    <AnimatePresence>
+                      {showDropdown && (
+                        <>
+                          {/* Fullscreen Blur Overlay */}
+                          <motion.div
+                            key="overlay"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setShowDropdown(false)}
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
+                          />
+
+                          {/* Dropdown Menu */}
+                          <motion.div
+                            key="dropdown"
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            transition={{ duration: 0.2 }}
+                            className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                          >
+                            <ul className="py-2 text-sm text-gray-700 list-none">
+                              <li>
+                                <Link
+                                  href="/profile/detail"
+                                  className="block px-4 py-2 hover:bg-gray-100"
+                                >
+                                  View Profile
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href="/organizer"
+                                  className="block px-4 py-2 hover:bg-gray-100"
+                                >
+                                  Organization
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href="/dashboard"
+                                  className="block px-4 py-2 hover:bg-gray-100"
+                                >
+                                  Hacker
+                                </Link>
+                              </li>
+                              <li>
+                                <Link
+                                  href="/judges"
+                                  className="block px-4 py-2 hover:bg-gray-100"
+                                >
+                                  Judges
+                                </Link>
+                              </li>
+                              <li>
+                                <p
+                                  onClick={() => setLogout(true)}
+                                  className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                >
+                                  LogOut
+                                </p>
+                              </li>
+                            </ul>
+                          </motion.div>
+                        </>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
               )}
             </div>

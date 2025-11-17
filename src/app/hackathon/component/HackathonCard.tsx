@@ -127,7 +127,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = ({
               onRegister();
             }}
             disabled={isRegistering}
-            className="w-full bg-primary dark:bg-indigo-600 text-white py-3 rounded-xl font-medium hover:opacity-90 dark:hover:bg-indigo-700 transition-all disabled:opacity-50 shadow-lg shadow-primary/25 dark:shadow-indigo-600/25"
+            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/25"
           >
             {isRegistering ? "Registering..." : "Register Now"}
           </motion.button>

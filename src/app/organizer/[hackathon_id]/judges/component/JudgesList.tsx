@@ -56,28 +56,19 @@ const JudgesList: React.FC<JudgesListProps> = ({
           <tr>
             <th className="px-6 py-3">#</th>
             <th className="px-6 py-3">Name</th>
-            <th className="px-6 py-3">Email</th>
             <th className="px-6 py-3">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {judges.map((judge, index) => (
-            <tr
-              key={judge.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">
-                {index + 1}
-              </td>
-              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">
+            <tr key={judge.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4">{index + 1}</td>
+              <td className="px-6 py-4">
                 {judge.first_name} {judge.last_name || ""}
-              </td>
-              <td className="px-6 py-4 text-gray-900 dark:text-gray-100">
-                {judge.email}
               </td>
               <td className="px-6 py-4">
                 <button
-                  className="underline cursor-pointer text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                  className="underline cursor-pointer"
                   onClick={() => router.push(`/profile/${judge.id}`)}
                 >
                   View Profile

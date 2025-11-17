@@ -76,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary dark:border-indigo-400 text-primary dark:text-indigo-400 px-6 py-3 rounded-xl font-medium hover:bg-primary/5 dark:hover:bg-indigo-400/10 transition-all"
+            className="border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium hover:bg-primary/5 transition-all cursor-pointer"
             onClick={() => router.push("/guide")}
           >
             View Guide
