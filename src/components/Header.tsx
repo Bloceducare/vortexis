@@ -31,7 +31,7 @@ export const Header: React.FC = () => {
   const isProfile = pathname.startsWith("/profile");
 
   const handleSearch = (query: string) => {
-    console.log("Search for:", query);
+    // Search functionality
   };
 
   useEffect(() => {

@@ -140,7 +140,6 @@ function Evaluation({
         const reviews: ReviewResponse[] = await response.json();
         if (reviews.length > 0) {
           const existingReview = reviews[0];
-          console.log("This is the existingReview", existingReview);
           setExistingReviewId(existingReview.id);
           setEvaluations([
             {
@@ -204,11 +203,9 @@ function Evaluation({
     };
 
     let result: ReviewResponse | null = null;
-    console.log("Hellooooooooooooooo", existingReviewId);
 
     if (existingReviewId) {
       result = await updateReview(hackathonId, existingReviewId, reviewData);
-      result ? console.log("Here is your review number", result) : null;
     } else {
       result = await submitReview(hackathonId, reviewData);
     }
@@ -219,19 +216,27 @@ function Evaluation({
   };
 
   const handleFlagForDiscussion = () => {
-    console.log("Flagged for discussion");
+    // Flagged for discussion
   };
 
   const handleDiscuss = () => {
-    console.log("Opening discussion");
+    // Opening discussion
   };
 
   if (isLoading) {
-    return <div className="text-gray-600 dark:text-gray-300">Loading existing review...</div>;
+    return (
+      <div className="text-gray-600 dark:text-gray-300">
+        Loading existing review...
+      </div>
+    );
   }
 
   if (fetchError) {
-    return <div className="text-red-500 dark:text-red-400">Error fetching review: {fetchError}</div>;
+    return (
+      <div className="text-red-500 dark:text-red-400">
+        Error fetching review: {fetchError}
+      </div>
+    );
   }
 
   return (
@@ -243,7 +248,9 @@ function Evaluation({
               <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
                 Evaluation Summary
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Overall assessment score</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Overall assessment score
+              </p>
             </div>
             <div className="text-right">
               <div className="text-2xl font-bold text-[#605DEC] dark:text-indigo-400">

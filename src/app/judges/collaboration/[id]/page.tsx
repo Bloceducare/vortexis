@@ -75,15 +75,8 @@ function CollaborationPageContent() {
   // Auto-load existing conversations when authenticated
   const initializeConversations = useCallback(async () => {
     if (!api || !hackathonId || hasInitialized.current) {
-      console.log("Skipping initialization:", {
-        api: !!api,
-        hackathonId,
-        hasInitialized: hasInitialized.current,
-      });
       return;
     }
-
-    console.log("Initializing conversations for hackathon:", hackathonId);
     setIsLoading(true);
     setError(null);
     hasInitialized.current = true;
@@ -103,10 +96,6 @@ function CollaborationPageContent() {
       let judgesConv;
 
       if (existingConv) {
-        console.log(
-          `Found existing conversation for hackathon ${hackathonId}:`,
-          existingConv
-        );
         // Check if user is already a participant
         const participants = existingConv.participants || [];
         const userIsParticipant = Array.isArray(participants)
@@ -120,16 +109,12 @@ function CollaborationPageContent() {
           judgesConv = existingConv;
         } else {
           // User not in participants, call createOrFind to add them (ONE more HTTP call)
-          console.log(`User not in participants, ensuring they're added...`);
           judgesConv = await api.createOrFindJudgesConversation(
             parseInt(hackathonId)
           );
         }
       } else {
         // No existing conversation, create one (ONE HTTP call)
-        console.log(
-          `Creating new judges conversation for hackathon ${hackathonId}...`
-        );
         judgesConv = await api.createOrFindJudgesConversation(
           parseInt(hackathonId)
         );
@@ -140,12 +125,6 @@ function CollaborationPageContent() {
           "Failed to create/find judges conversation - no ID returned"
         );
       }
-
-      console.log(
-        `Using conversation ${judgesConv.id} for hackathon ${hackathonId}`
-      );
-      console.log(`Participants:`, judgesConv.participants);
-      console.log(`Current user ID:`, userId);
 
       setJudgesConversationId(judgesConv.id);
 
@@ -166,9 +145,6 @@ function CollaborationPageContent() {
 
         // Try to create a regular conversation as fallback
         try {
-          console.log(
-            "Attempting to create regular conversation as fallback..."
-          );
           const regularConv = await api.createOrFindDM(userId!); // Create DM with self as fallback
           if (regularConv) {
             setJudgesConversationId(regularConv.id);

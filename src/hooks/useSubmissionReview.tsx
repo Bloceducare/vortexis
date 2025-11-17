@@ -43,7 +43,6 @@ export const useSubmissionReview = (id: string) => {
       const submissionData = await submissionResponse.json();
       // setcurrentSubmission(submissionData.submissions[0] || null);
       sethackathonDetails(submissionData || null);
-      console.log("Hackathon submission data:", submissionData);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -74,7 +73,6 @@ export const useSubmissionReview = (id: string) => {
       );
 
       const teamData = await submissionResponse.json();
-      console.log("project data:", teamData);
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -103,7 +101,6 @@ export const useSubmissionReview = (id: string) => {
       );
 
       const teamData = await submissionResponse.json();
-      console.log("your previous reviews", teamData);
       setReviewsData(teamData);
     } catch (err) {
       const errorMessage =

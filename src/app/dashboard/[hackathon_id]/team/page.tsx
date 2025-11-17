@@ -72,7 +72,6 @@ export default function TeamManagement() {
   const handleLeaveTeam = async (id: number) => {
     try {
       await leaveTeamMutation.mutateAsync(String(id));
-      console.log("Left team successfully");
       setFeedback({
         type: "success",
         message: `Left ${data.name} team Successfully.`,
@@ -95,7 +94,6 @@ export default function TeamManagement() {
   };
 
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
-  console.log(data);
 
   const handleAddMember = async () => {
     if (!newMember.trim()) {

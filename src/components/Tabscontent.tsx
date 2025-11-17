@@ -117,7 +117,7 @@ function Tabscontent({
             hackathonId={hackathonId}
             submissionId={currentSubmission.id}
             onSubmissionComplete={() => {
-              console.log("Review submitted successfully!");
+              // Review submitted successfully
             }}
           />
         )}

@@ -17,8 +17,6 @@ function SubmitProject() {
   const { data, isLoading, isError, refetch, isFetching } =
     useSubmissionById(hackathon_id);
 
-  console.log(data);
-
   const renderComponent = () => {
     switch (activeButton) {
       case "All Submission":

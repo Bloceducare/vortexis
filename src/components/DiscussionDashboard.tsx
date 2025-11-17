@@ -97,21 +97,10 @@ const MessageBubble: React.FC<{
     return now - messageTime <= thirtyMinutes;
   }, [message?.created_at, onEdit]);
 
-  // Debug: Log message info on mount
   useEffect(() => {
     const computedIsMe = message?.sender_id === userId;
-    console.log("MessageBubble mounted:", {
-      messageId: message?.id,
-      senderId: message?.sender_id,
-      userId,
-      isMeProp: isMe,
-      computedIsMe,
-      match: isMe === computedIsMe,
-      senderUsername: message?.sender_username,
-      fullMessage: message,
-    });
     if (isMe !== computedIsMe) {
-      console.warn("isMe prop mismatch! Expected:", computedIsMe, "Got:", isMe);
+      // isMe prop mismatch detected
     }
   }, [message?.id, message?.sender_id, userId, isMe, message?.sender_username]);
 
@@ -176,7 +165,6 @@ const MessageBubble: React.FC<{
   useEffect(() => {
     const bubbleElement = messageBubbleRef.current;
     if (!bubbleElement) {
-      console.log("MessageBubble: No element ref, cannot attach listener");
       return;
     }
 
@@ -187,22 +175,8 @@ const MessageBubble: React.FC<{
         Number(message?.sender_id) === Number(userId) ||
         String(message?.sender_id) === String(userId);
 
-      console.log("Native event listener fired:", {
-        isMe,
-        currentIsMe,
-        messageId: message?.id,
-        senderId: message?.sender_id,
-        userId,
-        clientX: e.clientX,
-        clientY: e.clientY,
-        message: message,
-      });
-
       // Only prevent default if this is the user's message
       if (currentIsMe || isMe) {
-        console.log(
-          "NATIVE HANDLER: Preventing default context menu for user's message"
-        );
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -215,14 +189,9 @@ const MessageBubble: React.FC<{
         requestAnimationFrame(() => {
           setContextMenuPosition({ x: e.clientX, y: e.clientY });
           setShowContextMenu(true);
-          console.log("NATIVE HANDLER: Context menu state set to true");
         });
 
         return false;
-      } else {
-        console.log(
-          "NATIVE HANDLER: Allowing default context menu (not user's message)"
-        );
       }
     };
 
@@ -255,24 +224,8 @@ const MessageBubble: React.FC<{
           Number(message?.sender_id) === Number(userId) ||
           String(message?.sender_id) === String(userId);
 
-        console.log("Document-level capture: Checking message", {
-          hasMessageBubble: true,
-          bubbleIsMeAttr,
-          bubbleIsMe,
-          actualIsMe,
-          messageId: message?.id,
-          messageIdFromAttr,
-          senderId: message?.sender_id,
-          userId,
-          target: target.tagName,
-          targetClass: target.className,
-        });
-
         // If this is the user's message, prevent default
         if (bubbleIsMe || actualIsMe) {
-          console.log(
-            "DOCUMENT-LEVEL: Preventing context menu for user's message"
-          );
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
@@ -289,19 +242,12 @@ const MessageBubble: React.FC<{
               if (!showContextMenu) {
                 setContextMenuPosition({ x: e.clientX, y: e.clientY });
                 setShowContextMenu(true);
-                console.log("DOCUMENT-LEVEL: Context menu state set to true");
               }
             });
           }
 
           return false;
         }
-      } else {
-        console.log("Document-level capture: No message bubble found", {
-          target: target.tagName,
-          targetClass: target.className,
-          targetId: target.id,
-        });
       }
     };
 
@@ -344,16 +290,6 @@ const MessageBubble: React.FC<{
     setShowActionModal(false);
   };
 
-  // Debug: Log context menu state changes
-  useEffect(() => {
-    console.log("Context menu state changed:", {
-      showContextMenu,
-      isMe,
-      messageId: message?.id,
-      contextMenuPosition,
-    });
-  }, [showContextMenu, isMe, message?.id, contextMenuPosition]);
-
   return (
     <div>
       {showDaySeparator && (
@@ -385,28 +321,18 @@ const MessageBubble: React.FC<{
             }}
             onClick={(e) => {
               e.stopPropagation();
-              console.log("Context menu clicked");
             }}
             onContextMenu={(e) => {
               e.preventDefault();
               e.stopPropagation();
             }}
             ref={(el) => {
-              if (el) {
-                console.log("Context menu rendered in DOM at position:", {
-                  x: contextMenuPosition.x,
-                  y: contextMenuPosition.y,
-                  element: el,
-                  rect: el.getBoundingClientRect(),
-                  computed: window.getComputedStyle(el),
-                });
-              }
+              // Context menu element reference
             }}
           >
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                console.log("Action button clicked");
                 handleContextMenuAction();
               }}
               className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 cursor-pointer"
@@ -557,20 +483,7 @@ const MessageBubble: React.FC<{
           onTouchStart={handleLongPressStart}
           onTouchEnd={handleLongPressEnd}
           onContextMenu={(e) => {
-            console.log("REACT HANDLER: onContextMenu fired:", {
-              isMe,
-              messageId: message?.id,
-              senderId: message?.sender_id,
-              userId,
-              defaultPrevented: e.defaultPrevented,
-              cancelable: e.cancelable,
-              nativeEvent: e.nativeEvent,
-            });
-
             if (isMe) {
-              console.log(
-                "REACT HANDLER: Preventing default for user's message"
-              );
               // Prevent as early as possible
               e.preventDefault();
               e.stopPropagation();
@@ -587,12 +500,7 @@ const MessageBubble: React.FC<{
               requestAnimationFrame(() => {
                 setContextMenuPosition({ x: e.clientX, y: e.clientY });
                 setShowContextMenu(true);
-                console.log("REACT HANDLER: Context menu state set to true");
               });
-            } else {
-              console.log(
-                "REACT HANDLER: Allowing default (not user's message)"
-              );
             }
           }}
         >
@@ -772,14 +680,6 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
             userId !== undefined &&
             (Number(senderId) === Number(userId) ||
               String(senderId) === String(userId));
-
-          console.log("Rendering MessageBubble:", {
-            messageId: message.id,
-            senderId,
-            userId,
-            isMe,
-            typeMatch: typeof senderId === typeof userId,
-          });
 
           return (
             <MessageBubble

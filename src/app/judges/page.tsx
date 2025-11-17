@@ -40,8 +40,6 @@ function Page() {
   // const { hackathons: submission } = useHackathon();
 
   useEffect(() => {
-    console.log(data);
-    console.log(data?.user);
     setJudgename(data?.user);
   }, [data]);
 

@@ -63,7 +63,6 @@ function Members({ items }: { items: Submission }) {
         }
 
         const data = await response.json();
-        console.log("Team details response:", data);
 
         // Handle different possible response structures
         // If the response directly contains members array, use it
@@ -103,7 +102,9 @@ function Members({ items }: { items: Submission }) {
   if (loading) {
     return (
       <div>
-        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">Team Members</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#605DEC] dark:border-indigo-400"></div>
         </div>
@@ -114,7 +115,9 @@ function Members({ items }: { items: Submission }) {
   if (error) {
     return (
       <div>
-        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">Team Members</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
         <p className="text-red-500 dark:text-red-400 mt-4">Error: {error}</p>
       </div>
     );
@@ -127,15 +130,21 @@ function Members({ items }: { items: Submission }) {
   ) {
     return (
       <div>
-        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">Team Members</p>
-        <p className="text-gray-500 dark:text-gray-400 mt-4">No team members found.</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 mt-4">
+          No team members found.
+        </p>
       </div>
     );
   }
 
   return (
     <div>
-      <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">Team Members</p>
+      <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+        Team Members
+      </p>
 
       <div className="flex flex-col md:w-[770px] gap-3 mt-4">
         {teamDetails.members.map((member) => {
@@ -218,7 +227,9 @@ function Members({ items }: { items: Submission }) {
               )}
               <div>
                 <p className="font-bold dark:text-white">{displayName}</p>
-                <p className="text-sm dark:text-gray-300">{member.role || "Team Member"}</p>
+                <p className="text-sm dark:text-gray-300">
+                  {member.role || "Team Member"}
+                </p>
               </div>
             </div>
           );

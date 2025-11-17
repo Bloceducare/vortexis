@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const user = useUserStore((state) => state.user);
 
   const handleSearch = (query: string) => {
-    console.log("Search for:", query);
+    // Search functionality
   };
 
   useEffect(() => {

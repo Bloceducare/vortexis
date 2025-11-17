@@ -69,7 +69,6 @@ export default function SubmissionsPage() {
   ).length;
 
   const handleReviewClick = (submissionId: number) => {
-    console.log(`Reviewing submission ${submissionId}`);
     // Example: router.push(`/submissions/${submissionId}/review`)
   };
 

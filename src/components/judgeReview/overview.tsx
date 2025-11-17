@@ -24,8 +24,6 @@ interface review {
 }
 
 function OtherJudges({ reviews }: review) {
-  console.log("Here are the reviews:", reviews);
-
   const [selectedJudge, setSelectedJudge] = useState<string | null>(null);
   const [filteredJudges, setFilteredJudges] = useState<JudgeEvaluation[]>([]);
 
@@ -204,7 +202,9 @@ function OtherJudges({ reviews }: review) {
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {completedJudges.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Completed</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">
+                Completed
+              </div>
             </div>
           </div>
         </div>
@@ -230,7 +230,9 @@ function OtherJudges({ reviews }: review) {
               <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
                 {inProgressJudges.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">In Progress</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">
+                In Progress
+              </div>
             </div>
           </div>
         </div>
@@ -256,7 +258,9 @@ function OtherJudges({ reviews }: review) {
               <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">
                 {notStartedJudges.length}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Not Started</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">
+                Not Started
+              </div>
             </div>
           </div>
         </div>
@@ -289,7 +293,9 @@ function OtherJudges({ reviews }: review) {
                     ).toFixed(1)
                   : "0.0"}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">Avg Score</div>
+              <div className="text-sm text-gray-600 dark:text-gray-300">
+                Avg Score
+              </div>
             </div>
           </div>
         </div>

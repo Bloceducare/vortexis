@@ -98,9 +98,6 @@ function CollaborationPageContent() {
       }
 
       // If no existing conversation, try to create one
-      console.log(
-        "No existing judges conversation found, attempting to create..."
-      );
       const judgesConv = await api.createOrFindJudgesConversation(1);
       setJudgesConversationId(judgesConv.id);
       setOrganizersConversationId(judgesConv.id);
@@ -115,9 +112,6 @@ function CollaborationPageContent() {
 
         // Try to create a regular conversation as fallback
         try {
-          console.log(
-            "Attempting to create regular conversation as fallback..."
-          );
           const regularConv = await api.createOrFindDM(userId!); // Create DM with self as fallback
           if (regularConv) {
             setJudgesConversationId(regularConv.id);

@@ -11,10 +11,6 @@ export default function CallbackPage() {
   useEffect(() => {
     const processCallback = async () => {
       try {
-        console.log("Starting callback processing...");
-        console.log("Current URL:", window.location.href);
-        console.log("Search params:", window.location.search);
-
         await handleGithubCallback();
 
         // If we get here, authentication was successful

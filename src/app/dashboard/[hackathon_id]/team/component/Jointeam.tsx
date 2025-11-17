@@ -26,8 +26,8 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
     setJoiningTeamId(teamId);
     try {
       const response = await joinTeam({ teamId, hackathon_id });
-      console.log("Joined successfully:", response);
-      window.location.reload()
+      // Joined successfully
+      window.location.reload();
       onClose();
     } catch (err: any) {
       console.error("Error joining team:", err);
@@ -117,9 +117,7 @@ export default function JoinTeam({ onClose, hackathon_id }: JoinTeamProps) {
               </div>
 
               <button
-                onClick={() =>
-                  handleJoinTeam(team.id.toString(), hackathon_id)
-                }
+                onClick={() => handleJoinTeam(team.id.toString(), hackathon_id)}
                 disabled={!!joiningTeamId}
                 className={`mt-4 px-4 py-2 rounded-lg text-white transition cursor-pointer ${
                   joiningTeamId === team.id.toString()

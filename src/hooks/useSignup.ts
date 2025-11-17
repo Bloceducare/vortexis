@@ -55,10 +55,7 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
 
   const onSubmit: SubmitHandler<CurrentFormData> = async (data) => {
     setIsSubmitting(true);
-    console.log("onSubmit: Setting isSubmitting to TRUE");
     try {
-      console.log("Raw form data:", data);
-
       // Clean up the data and map to backend expected field names
       const { confirmPassword, agreeToTerms, isOrganizer, ...cleanData } =
         data as any;
@@ -99,9 +96,6 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
         }
       });
 
-      console.log("Cleaned payload being sent:", payload);
-      console.log("Payload as JSON string:", JSON.stringify(payload, null, 2));
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/register/`,
         {
@@ -114,21 +108,13 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
         }
       );
 
-      console.log("Response status:", response.status);
-      console.log(
-        "Response headers:",
-        Object.fromEntries(response.headers.entries())
-      );
-
       const responseText = await response.text();
-      console.log("Raw response body:", responseText);
 
       let responseData: any = null;
       try {
         responseData = JSON.parse(responseText);
-        console.log("Parsed response data:", responseData);
       } catch (parseError) {
-        console.log("Response is not JSON:", responseText.substring(0, 200));
+        // Response is not JSON
       }
 
       if (!response.ok) {
@@ -172,10 +158,6 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
         );
         reset();
         const trimmedEmailForRedirect = (data as any).email.trim();
-        console.log(
-          "Redirecting to OTP page with email:",
-          trimmedEmailForRedirect
-        );
         router.push(`/auth/verify-otp?email=${trimmedEmailForRedirect}`);
       } else {
         toast.success("Account created successfully!");
@@ -192,7 +174,6 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
       }
     } finally {
       setIsSubmitting(false);
-      console.log("onSubmit: Setting isSubmitting to FALSE (finally block)");
     }
   };
 

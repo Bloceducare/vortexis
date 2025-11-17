@@ -15,7 +15,6 @@ export default function SubmissionReviewPage() {
 
   const { hackathons, loading, error, selectedHackathon } =
     useHackathon(submissionId);
-  console.log("my submission", hackathons);
 
   if (loading) {
     return (

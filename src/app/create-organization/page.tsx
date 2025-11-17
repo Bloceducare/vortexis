@@ -95,9 +95,6 @@ export default function Page() {
         description: data.about,
       };
 
-      console.log("Form data:", data);
-      console.log("API payload:", apiPayload);
-
       const headers: HeadersInit = {
         "Content-Type": "application/json",
       };
@@ -137,7 +134,6 @@ export default function Page() {
             const errorData = await response.json();
             errorMessage =
               errorData.message || errorData.detail || errorMessage;
-            console.log("Error data:", errorData);
           } else {
             const errorText = await response.text();
             console.error(
@@ -163,13 +159,11 @@ export default function Page() {
       }
 
       const result = await response.json();
-      console.log("Success response:", result);
 
       if (result.success !== false) {
         toast.success("Organization created successfully!");
         reset();
       } else {
-        console.log("Server returned success=false:", result);
         toast.error(
           result.message || "Failed to submit form. Please try again."
         );

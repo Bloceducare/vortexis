@@ -26,7 +26,6 @@ function Hackathon() {
 
   const goToStep = (index: number) => {
     setCurrentStep(index);
-    console.log("Current Step:", index);
     setActiveButton(Buttons[index]);
   };
 

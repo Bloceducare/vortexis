@@ -15,8 +15,6 @@ export default async function VerifyOtpPage({
       ? resolvedSearchParams.email.trim()
       : "") || "";
 
-  console.log("VerifyOtpPage: Email from searchParams =", email);
-
   if (!email) {
     console.error("VerifyOtpPage: Email parameter is missing from URL.");
     return (
