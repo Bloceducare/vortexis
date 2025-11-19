@@ -1,82 +1,86 @@
-'use client';
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import Hackathon_details from '@/app/api/utils/interface';
-import { useAuthStore } from '@/store/useAuthStore';
-import { useHackathonStore } from '@/store/useHackathonStore';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Hackathon_details from "@/app/api/utils/interface";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 export default function useOrganizer() {
   // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
-  const { banner_image, venue } = useHackathonStore()
-
+  const { banner_image, venue } = useHackathonStore();
 
   const getAuthHeaders = (isFormData = false) => {
     const headers: Record<string, string> = {};
-  
+
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
-  
+
     if (!isFormData) {
-      headers['Content-Type'] = 'application/json';
+      headers["Content-Type"] = "application/json";
     }
-  
+
     return headers;
   };
 
   const createOrganization = useMutation({
     mutationFn: async (data: { name: string; description: string }) => {
       const res = await fetch(`${apiUrl}/organization/create/`, {
-        method: 'POST',
+        method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
-  
+
       if (!res.ok) {
-        let errorMessage = 'Failed to create organization';
-  
+        let errorMessage = "Failed to create organization";
+
         try {
           const errorData = await res.json();
           errorMessage =
             errorData?.non_field_errors?.[0] ||
             errorData?.message ||
             errorMessage;
-        } catch (err) {
-        }
-  
+        } catch (err) {}
+
         throw new Error(errorMessage);
       }
-  
+
       return res.json();
     },
   });
 
   const getAllOrganization = useQuery({
-    queryKey: ['organizations'],
+    queryKey: ["organizations"],
     queryFn: async () => {
       const res = await fetch(`${apiUrl}/organization/my-organizations/`, {
-        headers: getAuthHeaders()
+        headers: getAuthHeaders(),
       });
-      if (!res.ok) throw new Error('Unable to fetch organizations');
+      if (!res.ok) throw new Error("Unable to fetch organizations");
       return res.json();
     },
     staleTime: Infinity,
   });
 
   const updateOrganization = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: { name?: string; description?: string } }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { name?: string; description?: string };
+    }) => {
       const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
-        method: 'PUT',
+        method: "PUT",
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
-  
+
       if (!res.ok) {
-        let errorMessage = 'Failed to update organization';
-  
+        let errorMessage = "Failed to update organization";
+
         try {
           const errorData = await res.json();
           errorMessage =
@@ -86,10 +90,10 @@ export default function useOrganizer() {
         } catch (err) {
           // fallback: keep default errorMessage
         }
-  
+
         throw new Error(errorMessage);
       }
-  
+
       return res.json();
     },
   });
@@ -100,10 +104,10 @@ export default function useOrganizer() {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
-  
+
       if (!res.ok) {
         let errorMessage = "Failed to delete organization";
-  
+
         try {
           const errorData = await res.json();
           errorMessage =
@@ -111,119 +115,127 @@ export default function useOrganizer() {
             errorData?.message ||
             errorMessage;
         } catch (err) {}
-  
+
         throw new Error(errorMessage);
       }
-  
+
       return res.json();
     },
   });
-  
-  
- 
+
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
-      console.log(data)
       const formData = new FormData();
 
-      formData.append('organization_id', String(data.organization_id || 0))
-      formData.append('title', data.title || '');
-      formData.append('description', data.description || '');
-      formData.append('venue', venue || '');
-      formData.append('start_date', data.start_date || '');
-      formData.append('end_date', data.end_date || '');
-      formData.append('submission_deadline', data.submission_deadline || '');
-      formData.append('grand_prize', String(data.grand_prize || 0));
-      formData.append('visibility', String(data.visibility ?? true));
-      formData.append('evaluation_criteria', data.evaluation_criteria || '');
-  
-      if (banner_image instanceof File) {
-        formData.append('banner_image', banner_image);
-      }
-  
-      formData.append('prizes', String(data.prizes || ""));
-      (data.skills ?? []).forEach((skillId: number) => {
-        formData.append('skills', String(skillId));
-      });
-      formData.append('judges', String(data.judges || ""));
-      formData.append('rules', String(data.rules || ""));
+      formData.append("organization_id", String(data.organization_id || 0));
+      formData.append("title", data.title || "");
+      formData.append("description", data.description || "");
+      formData.append("venue", venue || "");
+      formData.append("start_date", data.start_date || "");
+      formData.append("end_date", data.end_date || "");
+      formData.append("submission_deadline", data.submission_deadline || "");
+      formData.append("grand_prize", String(data.grand_prize || 0));
+      formData.append("visibility", String(data.visibility ?? true));
+      formData.append("evaluation_criteria", data.evaluation_criteria || "");
 
-      console.log(formData)
-  
-      const res = await fetch(`${apiUrl}/hackathon/create/`, {
-        method: 'POST',
-        headers: getAuthHeaders(true),
-        body: formData, 
+      if (banner_image instanceof File) {
+        formData.append("banner_image", banner_image);
+      }
+
+      formData.append("prizes", String(data.prizes || ""));
+      (data.skills ?? []).forEach((skillId: number) => {
+        formData.append("skills", String(skillId));
       });
-  
+      formData.append("judges", String(data.judges || ""));
+      formData.append("rules", String(data.rules || ""));
+
+      const res = await fetch(`${apiUrl}/hackathon/create/`, {
+        method: "POST",
+        headers: getAuthHeaders(true),
+        body: formData,
+      });
+
       if (!res.ok) {
         const errorData = await res.json();
         throw new Error(
           errorData?.non_field_errors?.[0] ||
-          errorData?.message ||
-          'Failed to create hackathon'
+            errorData?.message ||
+            "Failed to create hackathon"
         );
-      }     
+      }
     },
   });
 
   const updateHackathonMutation = useMutation({
-    mutationFn: async ({  hackathonId, data }: {  hackathonId: string; data: Hackathon_details }) => {
+    mutationFn: async ({
+      hackathonId,
+      data,
+    }: {
+      hackathonId: string;
+      data: Hackathon_details;
+    }) => {
       const res = await fetch(`${apiUrl}/hackathon/${hackathonId}/`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: getAuthHeaders(),
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error('Failed to update hackathon');
+      if (!res.ok) throw new Error("Failed to update hackathon");
       return res.json();
     },
   });
 
   const inviteJudgesMutation = useMutation({
-    mutationFn: async ({ hackathon_id, emails }: { hackathon_id: string; emails: string[] }) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/invite-judge/`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ emails }),
-      });
-    
+    mutationFn: async ({
+      hackathon_id,
+      emails,
+    }: {
+      hackathon_id: string;
+      emails: string[];
+    }) => {
+      const res = await fetch(
+        `${apiUrl}/hackathon/${hackathon_id}/invite-judge/`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({ emails }),
+        }
+      );
+
       const data = await res.json();
-    
+
       if (!res.ok) {
-        const error = new Error(data?.email?.[0] || 'Failed to invite judges');
+        const error = new Error(data?.email?.[0] || "Failed to invite judges");
         (error as any).response = data;
         throw error;
       }
-    
+
       return data;
-    }
-    
-    
+    },
   });
 
   const getHackathons = () => {
     return useQuery({
-      queryKey: ['organizer_hackathon'],
+      queryKey: ["organizer_hackathon"],
       queryFn: async () => {
         const res = await fetch(`${apiUrl}/hackathon/organizer/hackathons/`, {
-          headers: getAuthHeaders()
+          headers: getAuthHeaders(),
         });
-        if (!res.ok) throw new Error('Unable to fetch hackathon');
+        if (!res.ok) throw new Error("Unable to fetch hackathon");
         return res.json();
       },
       staleTime: Infinity,
-    })
-  }
+    });
+  };
 
   const getHackathonById = (hackathon_id: string) => {
     return useQuery({
-      queryKey: ['organizer_hackathon_byId', hackathon_id],
+      queryKey: ["organizer_hackathon_byId", hackathon_id],
       queryFn: async () => {
         const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/`, {
-          headers: getAuthHeaders()
+          headers: getAuthHeaders(),
         });
-        if (!res.ok) throw new Error('Unable to fetch submission');
+        if (!res.ok) throw new Error("Unable to fetch submission");
         return res.json();
       },
       enabled: !!hackathon_id,
@@ -232,178 +244,193 @@ export default function useOrganizer() {
 
   const getOrganizationHackathon = (organization_id: string) => {
     return useQuery({
-      queryKey: ['orgainzation_hackathon', organization_id],
+      queryKey: ["orgainzation_hackathon", organization_id],
       queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon/organization/${organization_id}/hackathons/`, {
-          headers: getAuthHeaders()
-        })
-        if(!res.ok) throw new Error('Unable to fetch hackathons');
-        return res.json()
-      },
-      enabled: !!organization_id
-    })
-  }
-
-  const getOrganizationById = (organization_id: string) => {
-    return useQuery({
-      queryKey: ['organization_byId', organization_id],
-      queryFn: async () => {
-        const res = await fetch(`${apiUrl}/organization/get/${organization_id}/`, {
-          headers: getAuthHeaders()
-        });
-        if (!res.ok) throw new Error('Unable to fetch organization');
+        const res = await fetch(
+          `${apiUrl}/hackathon/organization/${organization_id}/hackathons/`,
+          {
+            headers: getAuthHeaders(),
+          }
+        );
+        if (!res.ok) throw new Error("Unable to fetch hackathons");
         return res.json();
       },
       enabled: !!organization_id,
     });
-  }
+  };
 
-
-
+  const getOrganizationById = (organization_id: string) => {
+    return useQuery({
+      queryKey: ["organization_byId", organization_id],
+      queryFn: async () => {
+        const res = await fetch(
+          `${apiUrl}/organization/get/${organization_id}/`,
+          {
+            headers: getAuthHeaders(),
+          }
+        );
+        if (!res.ok) throw new Error("Unable to fetch organization");
+        return res.json();
+      },
+      enabled: !!organization_id,
+    });
+  };
 
   const useParticipants = (hackathon_id: string) => {
     return useQuery({
-      queryKey: ['hackathon_particpants_byid', hackathon_id],
+      queryKey: ["hackathon_particpants_byid", hackathon_id],
       queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/participants/`, {
-          headers: getAuthHeaders()
-        });
-        if (!res.ok) throw new Error('Inable to fetch participants');
+        const res = await fetch(
+          `${apiUrl}/hackathon/${hackathon_id}/participants/`,
+          {
+            headers: getAuthHeaders(),
+          }
+        );
+        if (!res.ok) throw new Error("Inable to fetch participants");
         return res.json();
       },
       enabled: !!hackathon_id,
     });
   };
 
+  const useSubmissionById = (hackathon_id: string) => {
+    return useQuery({
+      queryKey: ["submission", hackathon_id],
+      queryFn: async () => {
+        const res = await fetch(
+          `${apiUrl}/hackathon/${hackathon_id}/submissions/`,
+          {
+            headers: getAuthHeaders(),
+          }
+        );
+        if (!res.ok) throw new Error("Unable to fetch submission");
+        return res.json();
+      },
+      enabled: !!hackathon_id,
+    });
+  };
 
-    const useSubmissionById = (hackathon_id: string) => {
-      return useQuery({
-        queryKey: ['submission', hackathon_id],
-        queryFn: async () => {
-          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submissions/`, {
-            headers: getAuthHeaders()
-          });
-          if (!res.ok) throw new Error('Unable to fetch submission');
-          return res.json();
-        },
-        enabled: !!hackathon_id,
-      });
-    };
-
-
-    const getHackathonJudges = (hackathon_id: string) => {
-      return useQuery({
-        queryKey: ['judges', hackathon_id], 
-        queryFn: async () => {
-          const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/judges/`, {
-            headers: getAuthHeaders()
-          });
-          if (!res.ok) throw new Error('Unable to fetch submission');
-          return res.json();
-        },
-        enabled: !!hackathon_id,
-      })
-    }
-
-    const inviteModeratorsMutation = useMutation({
-      mutationFn: async ({ organizationId, email, message }: { organizationId: string; email: string[], message: string }) => {
-        const res = await fetch(`${apiUrl}/organization/invite-moderator/${organizationId}/`, {
-          method: 'POST',
+  const getHackathonJudges = (hackathon_id: string) => {
+    return useQuery({
+      queryKey: ["judges", hackathon_id],
+      queryFn: async () => {
+        const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/judges/`, {
           headers: getAuthHeaders(),
-          body: JSON.stringify({ 
-            email : email,
-             mesage: message
-             }),
         });
-      
-        const data = await res.json();
-      
-        if (!res.ok) {
-          const error = new Error(data?.email?.[0] || 'Failed to invite moderators');
-          (error as any).response = data;
-          throw error;
+        if (!res.ok) throw new Error("Unable to fetch submission");
+        return res.json();
+      },
+      enabled: !!hackathon_id,
+    });
+  };
+
+  const inviteModeratorsMutation = useMutation({
+    mutationFn: async ({
+      organizationId,
+      email,
+      message,
+    }: {
+      organizationId: string;
+      email: string[];
+      message: string;
+    }) => {
+      const res = await fetch(
+        `${apiUrl}/organization/invite-moderator/${organizationId}/`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            email: email,
+            mesage: message,
+          }),
         }
-      
-        return data;
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const error = new Error(
+          data?.email?.[0] || "Failed to invite moderators"
+        );
+        (error as any).response = data;
+        throw error;
       }
-    })
 
-    // const updateHackathonMutation = useMutation({
-    //   mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
-    //     const formData = new FormData();
-  
-    //     if (data.organization_id !== undefined) {
-    //       formData.append('organization_id', String(data.organization_id));
-    //     }
-    //     if (data.title !== undefined) {
-    //       formData.append('title', data.title);
-    //     }
-    //     if (data.description !== undefined) {
-    //       formData.append('description', data.description);
-    //     }
-    //     if (data.venue !== undefined) {
-    //       formData.append('venue', data.venue);
-    //     }
-    //     if (data.start_date !== undefined) {
-    //       formData.append('start_date', data.start_date);
-    //     }
-    //     if (data.end_date !== undefined) {
-    //       formData.append('end_date', data.end_date);
-    //     }
-    //     if (data.submission_deadline !== undefined) {
-    //       formData.append('submission_deadline', data.submission_deadline);
-    //     }
-    //     if (data.grand_prize !== undefined) {
-    //       formData.append('grand_prize', String(data.grand_prize));
-    //     }
-    //     if (data.visibility !== undefined) {
-    //       formData.append('visibility', String(data.visibility));
-    //     }
-    //     if (data.evaluation_criteria !== undefined) {
-    //       formData.append('evaluation_criteria', data.evaluation_criteria);
-    //     }
-  
-    //     if (banner_image instanceof File) {
-    //       formData.append('banner_image', banner_image);
-    //     }
-  
-    //     if (data.prizes !== undefined) {
-    //       formData.append('prizes', String(data.prizes));
-    //     }
-  
-    //     if (data.skills !== undefined) {
-    //       data.skills.forEach((skillId: number) => {
-    //         formData.append('skills', String(skillId));
-    //       });
-    //     }
-  
-    //     if (data.judges !== undefined) {
-    //       formData.append('judges', String(data.judges));
-    //     }
-  
-    //     if (data.rules !== undefined) {
-    //       formData.append('rules', String(data.rules));
-    //     }
-  
-    //     const res = await fetch(`${apiUrl}/hackathon/${id}/`, {
-    //       method: 'PATCH',
-    //       headers: getAuthHeaders(true),
-    //       body: formData,
-    //     });
-  
-    //     if (!res.ok) {
-    //       const errorData = await res.json();
-    //       throw new Error(
-    //         errorData?.non_field_errors?.[0] ||
-    //           errorData?.message ||
-    //         'Failed to update hackathon'
-    //       }
-    //     }})
+      return data;
+    },
+  });
 
+  // const updateHackathonMutation = useMutation({
+  //   mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
+  //     const formData = new FormData();
 
+  //     if (data.organization_id !== undefined) {
+  //       formData.append('organization_id', String(data.organization_id));
+  //     }
+  //     if (data.title !== undefined) {
+  //       formData.append('title', data.title);
+  //     }
+  //     if (data.description !== undefined) {
+  //       formData.append('description', data.description);
+  //     }
+  //     if (data.venue !== undefined) {
+  //       formData.append('venue', data.venue);
+  //     }
+  //     if (data.start_date !== undefined) {
+  //       formData.append('start_date', data.start_date);
+  //     }
+  //     if (data.end_date !== undefined) {
+  //       formData.append('end_date', data.end_date);
+  //     }
+  //     if (data.submission_deadline !== undefined) {
+  //       formData.append('submission_deadline', data.submission_deadline);
+  //     }
+  //     if (data.grand_prize !== undefined) {
+  //       formData.append('grand_prize', String(data.grand_prize));
+  //     }
+  //     if (data.visibility !== undefined) {
+  //       formData.append('visibility', String(data.visibility));
+  //     }
+  //     if (data.evaluation_criteria !== undefined) {
+  //       formData.append('evaluation_criteria', data.evaluation_criteria);
+  //     }
 
+  //     if (banner_image instanceof File) {
+  //       formData.append('banner_image', banner_image);
+  //     }
 
+  //     if (data.prizes !== undefined) {
+  //       formData.append('prizes', String(data.prizes));
+  //     }
 
+  //     if (data.skills !== undefined) {
+  //       data.skills.forEach((skillId: number) => {
+  //         formData.append('skills', String(skillId));
+  //       });
+  //     }
+
+  //     if (data.judges !== undefined) {
+  //       formData.append('judges', String(data.judges));
+  //     }
+
+  //     if (data.rules !== undefined) {
+  //       formData.append('rules', String(data.rules));
+  //     }
+
+  //     const res = await fetch(`${apiUrl}/hackathon/${id}/`, {
+  //       method: 'PATCH',
+  //       headers: getAuthHeaders(true),
+  //       body: formData,
+  //     });
+
+  //     if (!res.ok) {
+  //       const errorData = await res.json();
+  //       throw new Error(
+  //         errorData?.non_field_errors?.[0] ||
+  //           errorData?.message ||
+  //         'Failed to update hackathon'
+  //       }
+  //     }})
 
   return {
     createHackathonMutation,
@@ -413,13 +440,13 @@ export default function useOrganizer() {
     getHackathons,
     getHackathonJudges,
     getHackathonById,
-    useParticipants, 
-    createOrganization, 
+    useParticipants,
+    createOrganization,
     getAllOrganization,
     updateOrganization,
     deleteOrganizationMutation,
     getOrganizationHackathon,
     getOrganizationById,
-    inviteModeratorsMutation
+    inviteModeratorsMutation,
   };
 }

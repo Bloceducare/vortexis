@@ -254,7 +254,7 @@ export const getDefaultConfig = (): CommunicationsConfig => {
         userId = authStore.state.userId || 0;
       }
     } catch (e) {
-      console.log("Auth store not found, trying localStorage");
+      // Auth store not found, trying localStorage
     }
 
     // Fallback to localStorage
@@ -263,12 +263,6 @@ export const getDefaultConfig = (): CommunicationsConfig => {
       userId = parseInt(localStorage.getItem("user_id") || "0", 10);
     }
   }
-
-  console.log("getDefaultConfig Debug:", {
-    token: token ? `${token.substring(0, 20)}...` : "NO TOKEN",
-    userId,
-    baseUrl,
-  });
 
   return { baseUrl, token, userId };
 };

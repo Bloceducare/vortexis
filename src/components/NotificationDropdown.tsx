@@ -5,6 +5,7 @@ import { Bell, Info, Award, MessageSquare, Clock, Edit, X } from "lucide-react";
 import { useNotifications } from "@/hooks/useNotifications";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import HtmlContent from "@/components/ui/HtMLContent";
 
 type NotificationType =
   | "announcement"
@@ -140,6 +141,81 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {unreadNotifications.map((notif) => {
                   const notifType = getNotificationType(notif.category);
+                  // Normalize action URL
+                  const normalizeActionUrl = (
+                    url: string | null | undefined
+                  ): string | null => {
+                    if (!url) return null;
+
+                    // Handle external URLs that contain dashboard patterns
+                    // Extract hackathon ID from URLs like https://vortexis-dev.vercel.app/dashboard/33/project
+                    const externalDashboardProjectMatch = url.match(
+                      /\/dashboard\/(\d+)\/project/
+                    );
+                    if (externalDashboardProjectMatch) {
+                      const hackathonId = externalDashboardProjectMatch[1];
+                      return `/judges/dashboard/${hackathonId}`;
+                    }
+
+                    // Extract hackathon ID from external URLs like https://vortexis-dev.vercel.app/dashboard/33
+                    const externalDashboardMatch = url.match(
+                      /\/dashboard\/(\d+)(?:\/|$)/
+                    );
+                    if (externalDashboardMatch) {
+                      const hackathonId = externalDashboardMatch[1];
+                      return `/judges/dashboard/${hackathonId}`;
+                    }
+
+                    // Handle /submissions/{id} pattern - check if URL contains hackathon ID
+                    const submissionsMatch = url.match(/\/submissions\/(\d+)/);
+                    if (submissionsMatch) {
+                      // Check if URL has hackathon ID pattern like /hackathon/{id}/submissions/{id}
+                      const hackathonFromSubmissions = url.match(
+                        /\/hackathon\/(\d+)\/submissions\/(\d+)/
+                      );
+                      if (hackathonFromSubmissions) {
+                        return `/judges/dashboard/${hackathonFromSubmissions[1]}`;
+                      }
+                      // Check if URL contains dashboard pattern elsewhere
+                      const dashboardInUrl = url.match(/\/dashboard\/(\d+)/);
+                      if (dashboardInUrl) {
+                        return `/judges/dashboard/${dashboardInUrl[1]}`;
+                      }
+                      // If it's just /submissions/{id}, we can't determine hackathon ID
+                      // But we'll try to redirect to judges dashboard with the submission ID
+                      // This might need backend support to resolve hackathon ID
+                    }
+
+                    // If it's an external URL without dashboard pattern, return as-is
+                    if (
+                      url.startsWith("http://") ||
+                      url.startsWith("https://")
+                    ) {
+                      return url;
+                    }
+
+                    // Fix common route patterns
+                    let normalized = url.replace(
+                      /^\/hackathons\//,
+                      "/hackathon/"
+                    );
+                    // Handle submission review URLs
+                    const dashboardProjectMatch = normalized.match(
+                      /\/dashboard\/(\d+)\/project/
+                    );
+                    if (dashboardProjectMatch) {
+                      return `/judges/dashboard/${dashboardProjectMatch[1]}`;
+                    }
+                    const submissionMatch =
+                      normalized.match(/\/dashboard\/(\d+)/);
+                    if (submissionMatch) {
+                      return `/judges/dashboard/${submissionMatch[1]}`;
+                    }
+                    return normalized;
+                  };
+
+                  const actionUrl = normalizeActionUrl(notif.action_url);
+
                   const content = (
                     <div
                       className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
@@ -166,9 +242,9 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                               </button>
                             )}
                           </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
-                            {notif.message}
-                          </p>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
+                            <HtmlContent html={notif.message} />
+                          </div>
                           <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
                             {new Date(notif.created_at).toLocaleDateString()}{" "}
                             {new Date(notif.created_at).toLocaleTimeString([], {
@@ -181,11 +257,29 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                     </div>
                   );
 
-                  if (notif.action_url) {
+                  if (actionUrl) {
+                    // External URLs open in new tab
+                    if (
+                      actionUrl.startsWith("http://") ||
+                      actionUrl.startsWith("https://")
+                    ) {
+                      return (
+                        <a
+                          key={notif.id}
+                          href={actionUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          {content}
+                        </a>
+                      );
+                    }
+                    // Internal URLs use Next.js Link
                     return (
                       <Link
                         key={notif.id}
-                        href={notif.action_url}
+                        href={actionUrl}
                         onClick={() => setIsOpen(false)}
                       >
                         {content}
@@ -208,13 +302,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           {/* Footer */}
           <div className="border-t border-gray-200 dark:border-gray-700 p-3">
             <Link
-              href={
-                pathname.startsWith("/judges")
-                  ? pathname.match(/\/judges\/[^/]+/)
-                    ? `${pathname.match(/\/judges\/[^/]+/)![0]}/notifications`
-                    : "/judges/notifications"
-                  : "/notifications"
-              }
+              href="/notifications"
               onClick={() => setIsOpen(false)}
               className="block text-center text-sm font-medium text-[#605DEC] hover:text-[#5048E5] transition-colors"
             >

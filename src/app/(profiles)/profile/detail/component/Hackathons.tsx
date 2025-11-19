@@ -38,26 +38,26 @@ function Hackathons() {
     <section className="h-[85vh] flex flex-col">
       {/* Header */}
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
-        <h1 className="font-semibold text-lg">{selected}</h1>
+        <h1 className="font-semibold text-lg dark:text-white">{selected}</h1>
 
         {/* Filter dropdown */}
         <div className="relative">
           <button
             onClick={() => setOpen(!open)}
-            className="flex items-center gap-2 px-3 py-2 border rounded-lg bg-[#F2F1FD] shadow-sm border-[#605DEC] cursor-pointer"
+            className="flex items-center gap-2 px-3 py-2 border rounded-lg bg-[#F2F1FD] dark:bg-gray-800 shadow-sm border-[#605DEC] dark:border-indigo-600 cursor-pointer transition-colors"
           >
             <Filter className="w-4 h-4" />
-            <span className="text-sm">{selected}</span>
+            <span className="text-sm dark:text-gray-300">{selected}</span>
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-10">
+            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10 transition-colors">
               {FilterOption.map((option, index) => (
                 <div
                   key={option}
                   onClick={() => handleSelect(option)}
-                  className={`px-4 py-2 cursor-pointer text-sm hover:bg-gray-100 ${
-                    index !== FilterOption.length - 1 ? "border-b" : ""
+                  className={`px-4 py-2 cursor-pointer text-sm hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 ${
+                    index !== FilterOption.length - 1 ? "border-b border-gray-200 dark:border-gray-700" : ""
                   }`}
                 >
                   {option}
@@ -71,15 +71,15 @@ function Hackathons() {
       {/* Scrollable Content */}
       <div className="flex-1 overflow-y-auto pr-2 hide-scrollbar">
         {isLoading ? (
-          <p className="text-gray-500">Loading hackathons...</p>
+          <p className="text-gray-500 dark:text-gray-400">Loading hackathons...</p>
         ) : isError ? (
-          <p className="text-red-500">Failed to load hackathons.</p>
+          <p className="text-red-500 dark:text-red-400">Failed to load hackathons.</p>
         ) : hackathons.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {hackathons.map((hackathon) => (
               <div
                 key={hackathon.id}
-                className="border rounded-xl shadow-sm bg-white overflow-hidden"
+                className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm bg-white dark:bg-gray-800 overflow-hidden transition-colors"
               >
                 {/* Banner Image */}
                 {hackathon?.banner_image ? (
@@ -101,14 +101,14 @@ function Hackathons() {
                 )}
 
                 <div className="p-4">
-                  <h2 className="font-semibold text-lg">{hackathon?.title}</h2>
-                  <div className="text-sm text-gray-600 line-clamp-2">
+                  <h2 className="font-semibold text-lg dark:text-white">{hackathon?.title}</h2>
+                  <div className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                     <HtmlContent html={hackathon?.description || ""} />
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     📍 {hackathon.venue} • 👥 {hackathon?.participants_count} participants
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     🏆 Prize: ${hackathon.grand_prize?.toLocaleString() ?? 0}
                   </p>
                 </div>
@@ -116,7 +116,7 @@ function Hackathons() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500">No hackathons available.</p>
+          <p className="text-gray-500 dark:text-gray-400">No hackathons available.</p>
         )}
       </div>
     </section>

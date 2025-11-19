@@ -62,7 +62,7 @@ export default function ProfileView() {
   if (isLoading) {
     return (
       <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
-        <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
           <div className="h-44 bg-gray-200" />
           <div className="pt-20 px-4 sm:px-6 pb-6">
             <div className="h-6 bg-gray-200 rounded w-48 mb-2" />
@@ -79,9 +79,9 @@ export default function ProfileView() {
   if (isError) {
     return (
       <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
-        <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Unable to load profile</h2>
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Unable to load profile</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
             {error?.message || "Something went wrong while fetching the profile."}
           </p>
           <div className="flex items-center justify-center gap-3">
@@ -93,7 +93,7 @@ export default function ProfileView() {
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 border rounded-md hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
             >
               Refresh page
             </button>
@@ -107,9 +107,9 @@ export default function ProfileView() {
   if (!user) {
     return (
       <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
-        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6 text-center">
-          <h2 className="text-lg font-semibold text-gray-800">No profile found</h2>
-          <p className="text-sm text-gray-600 mt-2">We couldn't find a profile for this account.</p>
+        <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 text-center">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">No profile found</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">We couldn't find a profile for this account.</p>
           <div className="mt-4">
             <button
               onClick={() => refetch()}
@@ -125,7 +125,7 @@ export default function ProfileView() {
 
 
   return (
-    <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
+    <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24 bg-transparent">
 
       {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 
@@ -141,8 +141,8 @@ export default function ProfileView() {
               {initials || "?"}
             </div>
 
-            <h1 className="text-2xl font-bold mt-4 mb-2">{user.first_name} {user.last_name}</h1>
-            <p className="text-gray-500">@{user.username ?? "unknown"}</p>
+            <h1 className="text-2xl font-bold mt-4 mb-2 dark:text-white">{user.first_name} {user.last_name}</h1>
+            <p className="text-gray-500 dark:text-gray-400">@{user.username ?? "unknown"}</p>
 
           </div>
         <div>
@@ -164,12 +164,12 @@ export default function ProfileView() {
             {user.is_participant && <Badge className="bg-green-500 cursor-pointer" onClick={() => router.push("/dashboard")}>Participant</Badge>}
             {user.is_judge && <Badge className="bg-yellow-500 cursor-pointer"  onClick={() => router.push("/judges")}>Judge</Badge>}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
           <Image src={LocationIcon}  alt="" />                    
             {user.profile?.location}
           </div>
 
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-3 items-center text-gray-600 dark:text-gray-400">
             <FaGlobe />
           English
           </div>
@@ -177,18 +177,18 @@ export default function ProfileView() {
         </section>
         {user.profile?.bio ? (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold text-gray-800">About</h2>
-              <p className="text-gray-700 mt-1">{user.profile.bio}</p>
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">About</h2>
+              <p className="text-gray-700 dark:text-gray-300 mt-1">{user.profile.bio}</p>
             </div>
           ) : null}
 {   user.profile?.website && (
-              <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="flex gap-2 items-center text-[#605DEC]">
+              <a href={user.profile.website} target="_blank" rel="noopener noreferrer" className="flex gap-2 items-center text-[#605DEC] dark:text-indigo-400">
                 <Image src={LinkImg}  alt="" />                    
                 {user.profile?.website}
               </a>
             )}
 
-<div className="mt-6 flex gap-4 text-xl text-gray-600">
+<div className="mt-6 flex gap-4 text-xl text-gray-600 dark:text-gray-400">
             {user.profile?.github && (
               <a href={user.profile.github} target="_blank" rel="noopener noreferrer">
                 <FaGithub />
@@ -207,28 +207,28 @@ export default function ProfileView() {
          
           </div>
           <div className="mt-6 text-xl text-gray-600">
-            <h1 className="text-[#212121] font-semibold">Skill and Interests</h1>
+            <h1 className="text-[#212121] dark:text-white font-semibold">Skill and Interests</h1>
 
             {user.profile?.skills && user.profile.skills.length > 0 ? (
   <div className="flex flex-wrap gap-2 mt-5">
     {user.profile.skills.map((skill: { id: number; name: string }) => (
       <span
         key={skill.id}
-        className="px-3 py-1 bg-blue-100 text-[#605DEC] text-sm rounded-xl"
+        className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-[#605DEC] dark:text-indigo-400 text-sm rounded-xl"
       >
         {skill.name.charAt(0).toUpperCase() + skill.name.slice(1)}
       </span>
     ))}
   </div>
 ) : (
-  <p className="text-gray-500">No skills available</p>
+  <p className="text-gray-500 dark:text-gray-400">No skills available</p>
 )}
           </div>
           <div className="mt-6">
             <button
               onClick={() => refetch()}
               disabled={isFetching}
-              className="px-3 py-2 rounded-md border hover:bg-gray-50"
+              className="px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-300"
             >
               {isFetching ? "Refreshing..." : "Refresh Profile"}
             </button>
@@ -236,7 +236,7 @@ export default function ProfileView() {
         </section>
         <section className="w-full">
           <div className="flex justify-start">
-          <div className="flex gap-4 justify-start bg-[#F5F5F5] py-3 px-2 rounded-full">
+          <div className="flex gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-3 px-2 rounded-full transition-colors">
       {tabs.map((tab) => (
         <button
           key={tab}
@@ -244,7 +244,7 @@ export default function ProfileView() {
           className={`px-4 py-2 transition cursor-pointer ${
             activeTab === tab
               ? " font-semibold bg-[#605DEC] text-white rounded-full"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
           }`}
         >
           {tab}

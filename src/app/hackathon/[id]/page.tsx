@@ -68,7 +68,9 @@ function Hack() {
         setCountdown("🚀 Live Now!");
       } else {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const hours = Math.floor(
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
         setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
@@ -120,7 +122,9 @@ function Hack() {
           className="text-center"
         >
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Oops! Something went wrong</h2>
+          <h2 className="text-2xl font-bold mb-2">
+            Oops! Something went wrong
+          </h2>
           <p className="text-gray-600">Failed to load hackathon details.</p>
         </motion.div>
       </div>
@@ -131,57 +135,56 @@ function Hack() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 ">
       {/* Hero Banner */}
       <div className="relative w-full h-[70vh] overflow-hidden">
-  {/* Background Image or Default Color */}
-  {data.banner_image ? (
-    <div
-      className="absolute inset-0 bg-cover bg-center"
-      style={{ backgroundImage: `url(${data.banner_image})` }}
-    />
-  ) : (
-    <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
-      <Trophy className="w-20 h-20 text-yellow-500/80" />
-    </div>
-  )}
+        {/* Background Image or Default Color */}
+        {data.banner_image ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${data.banner_image})` }}
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
+            <Trophy className="w-20 h-20 text-yellow-500/80" />
+          </div>
+        )}
 
-  {/* Dark Overlay */}
-  <div className="absolute inset-0 bg-black/50" />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-black/50" />
 
-  {/* Hero Content */}
-  <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 md:px-16">
-    <motion.h1
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4"
-    >
-      {data.title}
-    </motion.h1>
+        {/* Hero Content */}
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 md:px-16">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4"
+          >
+            {data.title}
+          </motion.h1>
 
-    <div className="flex flex-wrap gap-4 justify-center text-white/90 mb-6">
-      <div className="flex items-center gap-2">
-        <Calendar className="w-5 h-5" />
-        <span>
-          {formatDate(data.start_date)} - {formatDate(data.end_date)}
-        </span>
+          <div className="flex flex-wrap gap-4 justify-center text-white/90 mb-6">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              <span>
+                {formatDate(data.start_date)} - {formatDate(data.end_date)}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
+              <span>{data.venue}</span>
+            </div>
+          </div>
+
+          {countdown && (
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-white font-semibold"
+            >
+              <Clock className="w-5 h-5" />
+              {countdown}
+            </motion.div>
+          )}
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        <MapPin className="w-5 h-5" />
-        <span>{data.venue}</span>
-      </div>
-    </div>
-
-    {countdown && (
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full text-white font-semibold"
-      >
-        <Clock className="w-5 h-5" />
-        {countdown}
-      </motion.div>
-    )}
-  </div>
-</div>
-
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -195,7 +198,9 @@ function Hack() {
             <div className="sticky top-24 space-y-6">
               {/* Quick Info Card */}
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
-                <h3 className="text-xl font-bold text-title mb-4">Quick Info</h3>
+                <h3 className="text-xl font-bold text-title mb-4">
+                  Quick Info
+                </h3>
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
@@ -214,7 +219,9 @@ function Hack() {
                     </div>
                     <div>
                       <p className="text-xs opacity-60">Grand Prize</p>
-                      <p className="font-semibold text-lg">${data.grand_prize}</p>
+                      <p className="font-semibold text-lg">
+                        ${data.grand_prize}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -223,7 +230,9 @@ function Hack() {
                     </div>
                     <div>
                       <p className="text-xs opacity-60">Participants</p>
-                      <p className="font-semibold">{data.participants_count || 0}</p>
+                      <p className="font-semibold">
+                        {data.participants_count || 0}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -239,7 +248,11 @@ function Hack() {
                     <>
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
                         className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
                       />
                       Registering...

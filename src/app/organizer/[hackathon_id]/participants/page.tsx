@@ -1,22 +1,21 @@
+"use client";
 
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { getCountries, Country } from '@/app/api/country/getCountries';
-import { useParams, useRouter } from 'next/navigation';
-import useOrganizer from '@/hooks/useOrganizers';
-import { 
-  ChevronDown, 
-  ChevronUp, 
-  Users, 
-  Search, 
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { getCountries, Country } from "@/app/api/country/getCountries";
+import { useParams, useRouter } from "next/navigation";
+import useOrganizer from "@/hooks/useOrganizers";
+import {
+  ChevronDown,
+  ChevronUp,
+  Users,
+  Search,
   ExternalLink,
   Trophy,
   Calendar,
-  Filter
-} from 'lucide-react';
-import TableSkeleton from '@/components/TableSkeleton';
+  Filter,
+} from "lucide-react";
+import TableSkeleton from "@/components/TableSkeleton";
 
 interface Member {
   id: number;
@@ -58,7 +57,7 @@ function Participants() {
   const teamsPerPage = 8;
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [expandedTeams, setExpandedTeams] = useState<Set<number>>(new Set());
 
@@ -73,21 +72,32 @@ function Participants() {
   // Filter teams based on search
   const filteredTeams = teams.filter((team) => {
     const teamName = team.name.toLowerCase();
-    const creatorName = `${team.creator.first_name} ${team.creator.last_name}`.toLowerCase();
+    const creatorName =
+      `${team.creator.first_name} ${team.creator.last_name}`.toLowerCase();
     const memberNames = team.members
       .map((m) => `${m.first_name} ${m.last_name}`.toLowerCase())
-      .join(' ');
-    
+      .join(" ");
+
     const search = searchTerm.toLowerCase();
-    return teamName.includes(search) || creatorName.includes(search) || memberNames.includes(search);
+    return (
+      teamName.includes(search) ||
+      creatorName.includes(search) ||
+      memberNames.includes(search)
+    );
   });
 
   const totalPages = Math.ceil(filteredTeams.length / teamsPerPage);
   const startIndex = (currentPage - 1) * teamsPerPage;
-  const paginatedTeams = filteredTeams.slice(startIndex, startIndex + teamsPerPage);
+  const paginatedTeams = filteredTeams.slice(
+    startIndex,
+    startIndex + teamsPerPage
+  );
 
   // Count total participants
-  const totalParticipants = teams.reduce((sum, team) => sum + team.members.length, 0);
+  const totalParticipants = teams.reduce(
+    (sum, team) => sum + team.members.length,
+    0
+  );
 
   const toggleTeamExpansion = (teamId: number) => {
     setExpandedTeams((prev) => {
@@ -102,18 +112,19 @@ function Participants() {
   };
 
   const handlePageChange = (page: number) => setCurrentPage(page);
-  const handleNext = () => currentPage < totalPages && handlePageChange(currentPage + 1);
+  const handleNext = () =>
+    currentPage < totalPages && handlePageChange(currentPage + 1);
   const handlePrev = () => currentPage > 1 && handlePageChange(currentPage - 1);
 
   if (isLoading) return <TableSkeleton />;
-  if (isError) return (
-    <div className="p-10 text-center">
-      <p className="text-lg text-red-500">Failed to load participants.</p>
-    </div>
-  );
+
+  if (isError)
+    return (
+      <p className="p-10 text-lg text-red-500">Failed to load participants.</p>
+    );
 
   return (
-    <section className="bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen p-6">
+    <section className="bg-gradient-to-br dark:bg-gray-800  from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -121,8 +132,12 @@ function Participants() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-title mb-2">Participant Management</h1>
-          <p className=" opacity-60">View and manage hackathon participants by teams</p>
+          <h1 className="text-4xl dark:text-indigo-400 font-bold text-title mb-2">
+            Participant Management
+          </h1>
+          <p className=" opacity-60">
+            View and manage hackathon participants by teams
+          </p>
         </motion.div>
 
         {/* Stats Cards */}
@@ -153,7 +168,9 @@ function Participants() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm  opacity-60 mb-1">Total Participants</p>
-                <p className="text-3xl font-bold text-title">{totalParticipants}</p>
+                <p className="text-3xl font-bold text-title">
+                  {totalParticipants}
+                </p>
               </div>
               <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
                 <Users className="w-7 h-7 text-green-600" />
@@ -214,19 +231,21 @@ function Participants() {
               className="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center shadow-lg border border-gray-100 dark:border-gray-700"
             >
               <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No teams found matching your search.</p>
+              <p className="text-gray-500">
+                No teams found matching your search.
+              </p>
             </motion.div>
           ) : (
             paginatedTeams.map((team, index) => {
               const isExpanded = expandedTeams.has(team.id);
               const memberColors = [
-                'bg-red-500',
-                'bg-blue-500',
-                'bg-green-500',
-                'bg-yellow-500',
-                'bg-purple-500',
-                'bg-pink-500',
-                'bg-indigo-500',
+                "bg-red-500",
+                "bg-blue-500",
+                "bg-green-500",
+                "bg-yellow-500",
+                "bg-purple-500",
+                "bg-pink-500",
+                "bg-indigo-500",
               ];
 
               return (
@@ -241,7 +260,9 @@ function Participants() {
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-2xl font-bold text-title">{team.name}</h3>
+                        <h3 className="text-2xl font-bold text-title">
+                          {team.name}
+                        </h3>
                         <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 text-sm font-semibold rounded-full">
                           {team.members.length} Members
                         </span>
@@ -249,12 +270,14 @@ function Participants() {
                       <div className="flex items-center gap-4 text-sm  opacity-60">
                         <span className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
-                          Joined {new Date(team.created_at).toLocaleDateString()}
+                          Joined{" "}
+                          {new Date(team.created_at).toLocaleDateString()}
                         </span>
                         {team.projects.length > 0 && (
                           <span className="flex items-center gap-1">
                             <Trophy className="w-4 h-4" />
-                            {team.projects.length} Project{team.projects.length > 1 ? 's' : ''}
+                            {team.projects.length} Project
+                            {team.projects.length > 1 ? "s" : ""}
                           </span>
                         )}
                       </div>
@@ -282,7 +305,8 @@ function Participants() {
                       <div
                         className={`w-8 h-8 ${memberColors[0]} rounded-full flex items-center justify-center text-white text-sm font-semibold`}
                       >
-                        {team.creator.first_name[0]}{team.creator.last_name[0]}
+                        {team.creator.first_name[0]}
+                        {team.creator.last_name[0]}
                       </div>
                       <span className="text-sm font-medium text-title">
                         {team.creator.first_name} {team.creator.last_name}
@@ -295,7 +319,7 @@ function Participants() {
                   {isExpanded && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
+                      animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       className="border-t border-gray-100 dark:border-gray-700 pt-4 mt-4"
                     >
@@ -311,13 +335,18 @@ function Participants() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: idx * 0.05 }}
-                              onClick={() => router.push(`/profile/${member.id}`)}
+                              onClick={() =>
+                                router.push(`/profile/${member.id}`)
+                              }
                               className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
                             >
                               <div
-                                className={`w-10 h-10 ${memberColors[idx % memberColors.length]} rounded-full flex items-center justify-center text-white font-semibold`}
+                                className={`w-10 h-10 ${
+                                  memberColors[idx % memberColors.length]
+                                } rounded-full flex items-center justify-center text-white font-semibold`}
                               >
-                                {member.first_name[0]}{member.last_name[0]}
+                                {member.first_name[0]}
+                                {member.last_name[0]}
                               </div>
                               <div className="flex-1">
                                 <p className="font-semibold text-title text-sm">
@@ -375,7 +404,8 @@ function Participants() {
             className="flex justify-between items-center mt-8 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
           >
             <p className="text-sm  opacity-60">
-              Showing {startIndex + 1} to {Math.min(startIndex + teamsPerPage, filteredTeams.length)} of{' '}
+              Showing {startIndex + 1} to{" "}
+              {Math.min(startIndex + teamsPerPage, filteredTeams.length)} of{" "}
               {filteredTeams.length} teams
             </p>
 
@@ -388,19 +418,21 @@ function Participants() {
                 Previous
               </button>
               <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-10 h-10 rounded-xl font-medium transition-all ${
-                      currentPage === page
-                        ? 'bg-primary text-white'
-                        : 'border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-xl font-medium transition-all ${
+                        currentPage === page
+                          ? "bg-primary text-white"
+                          : "border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
               </div>
               <button
                 onClick={handleNext}

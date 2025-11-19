@@ -21,9 +21,25 @@ export const Pagination: React.FC<PaginationProps> = ({
       if (currentPage <= 3) {
         pages.push(1, 2, 3, 4, 5, "...", totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+        pages.push(
+          1,
+          "...",
+          totalPages - 4,
+          totalPages - 3,
+          totalPages - 2,
+          totalPages - 1,
+          totalPages
+        );
       } else {
-        pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
+        pages.push(
+          1,
+          "...",
+          currentPage - 1,
+          currentPage,
+          currentPage + 1,
+          "...",
+          totalPages
+        );
       }
     }
     return pages;
@@ -40,7 +56,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         whileTap={{ scale: 0.9 }}
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="p-2 rounded-xl border border-primary/20 hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        className="p-2 rounded-xl border border-primary/20 dark:border-indigo-400/30 hover:bg-primary/5 dark:hover:bg-indigo-400/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-gray-700 dark:text-gray-300"
       >
         <ChevronLeft className="w-5 h-5" />
       </motion.button>
@@ -54,14 +70,17 @@ export const Pagination: React.FC<PaginationProps> = ({
             onClick={() => onPageChange(page)}
             className={`w-10 h-10 rounded-xl font-medium transition-all ${
               currentPage === page
-                ? "bg-primary text-white shadow-lg shadow-primary/25"
-                : "border border-primary/20 hover:bg-primary/5"
+                ? "bg-primary dark:bg-indigo-600 text-white shadow-lg shadow-primary/25 dark:shadow-indigo-600/25"
+                : "border border-primary/20 dark:border-indigo-400/30 hover:bg-primary/5 dark:hover:bg-indigo-400/10 text-gray-700 dark:text-gray-300"
             }`}
           >
             {page}
           </motion.button>
         ) : (
-          <span key={idx} className="px-2 text-base opacity-40">
+          <span
+            key={idx}
+            className="px-2 text-base opacity-40 dark:opacity-60 dark:text-gray-300"
+          >
             …
           </span>
         )
@@ -72,7 +91,7 @@ export const Pagination: React.FC<PaginationProps> = ({
         whileTap={{ scale: 0.9 }}
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-xl border border-primary/20 hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        className="p-2 rounded-xl border border-primary/20 dark:border-indigo-400/30 hover:bg-primary/5 dark:hover:bg-indigo-400/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-gray-700 dark:text-gray-300"
       >
         <ChevronRight className="w-5 h-5" />
       </motion.button>

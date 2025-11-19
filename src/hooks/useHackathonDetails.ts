@@ -138,7 +138,6 @@ export const useHackathon = (
       }
 
       const data = await response.json();
-      console.log("Hackathon judged by a judge", data);
 
       // Since the API returns an array of hackathons
       setHackathons(data);

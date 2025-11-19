@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(""); 
+    setError("");
 
     try {
       const response = await fetch(
@@ -30,7 +30,6 @@ export default function ForgotPasswordPage() {
       );
 
       const data = await response.json();
-      console.log("[v0] API response:", data);
 
       if (response.ok) {
         setIsSubmitted(true);
@@ -57,7 +56,6 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-
       {/* Main Content */}
       <main className="flex items-center justify-center min-h-screen">
         <div className="w-full shadow-md max-w-md">

@@ -44,7 +44,7 @@ export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
       );
 
       if (response.status === 403) {
-        console.log("User is not authorized");
+        // User is not authorized
         setUnauthorized(true);
       }
       if (!response.ok) {
@@ -53,7 +53,6 @@ export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
 
       const data = await response.json();
       setHackathons(data);
-      console.log(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
       console.error("Error fetching hackathons:", err);

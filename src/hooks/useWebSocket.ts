@@ -62,7 +62,6 @@ export const useWebSocket = ({
   const connect = useCallback(() => {
     // Prevent multiple simultaneous connection attempts
     if (connectionStatus === "connecting") {
-      console.log("WebSocket connection already in progress, skipping");
       return;
     }
 
@@ -73,28 +72,22 @@ export const useWebSocket = ({
     }
 
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      console.log("WebSocket already connected");
       return;
     }
 
     // If there's an existing connection in any state, close it first
     if (wsRef.current) {
-      console.log(
-        "Closing existing WebSocket connection before creating new one"
-      );
       wsRef.current.close();
       wsRef.current = null;
     }
 
     // Don't attempt connection if URL is empty or invalid
     if (!url || url.trim() === "") {
-      console.log("WebSocket URL is empty, skipping connection");
       setConnectionStatus("idle");
       return;
     }
 
     if (!token || token.trim() === "") {
-      console.log("WebSocket token is empty, skipping connection");
       setConnectionStatus("idle");
       return;
     }
@@ -103,11 +96,9 @@ export const useWebSocket = ({
 
     try {
       const wsUrl = `${url}?token=${encodeURIComponent(token)}`;
-      console.log("Attempting WebSocket connection to:", wsUrl);
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log("WebSocket connected successfully");
         setIsConnected(true);
         setConnectionStatus("connected");
         reconnectAttempts.current = 0;
@@ -117,11 +108,6 @@ export const useWebSocket = ({
       };
 
       ws.onclose = (event) => {
-        console.log("WebSocket closed:", {
-          code: event.code,
-          reason: event.reason,
-          wasClean: event.wasClean,
-        });
         setIsConnected(false);
         setConnectionStatus("disconnected");
         clearHeartbeat();
@@ -135,25 +121,16 @@ export const useWebSocket = ({
           event.code !== 1000 &&
           event.code !== 1001
         ) {
-          console.log("WebSocket closed unexpectedly, will attempt reconnect");
-
           // Schedule reconnection
           if (reconnectAttempts.current < maxReconnectAttempts) {
             reconnectAttempts.current += 1;
-            console.log(
-              `Scheduling WebSocket reconnection (${reconnectAttempts.current}/${maxReconnectAttempts})...`
-            );
 
             reconnectTimeoutRef.current = setTimeout(() => {
               if (shouldReconnectRef.current && url && token) {
                 connect();
               }
             }, reconnectInterval);
-          } else {
-            console.log("Max reconnection attempts reached");
           }
-        } else if (event.code === 1000) {
-          console.log("WebSocket closed normally (manual disconnect)");
         }
       };
 

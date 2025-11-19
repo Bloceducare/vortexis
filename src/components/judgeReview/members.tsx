@@ -63,7 +63,6 @@ function Members({ items }: { items: Submission }) {
         }
 
         const data = await response.json();
-        console.log("Team details response:", data);
 
         // Handle different possible response structures
         // If the response directly contains members array, use it
@@ -103,9 +102,11 @@ function Members({ items }: { items: Submission }) {
   if (loading) {
     return (
       <div>
-        <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
         <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#605DEC]"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#605DEC] dark:border-indigo-400"></div>
         </div>
       </div>
     );
@@ -114,8 +115,10 @@ function Members({ items }: { items: Submission }) {
   if (error) {
     return (
       <div>
-        <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
-        <p className="text-red-500 mt-4">Error: {error}</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
+        <p className="text-red-500 dark:text-red-400 mt-4">Error: {error}</p>
       </div>
     );
   }
@@ -127,15 +130,21 @@ function Members({ items }: { items: Submission }) {
   ) {
     return (
       <div>
-        <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
-        <p className="text-gray-500 mt-4">No team members found.</p>
+        <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+          Team Members
+        </p>
+        <p className="text-gray-500 dark:text-gray-400 mt-4">
+          No team members found.
+        </p>
       </div>
     );
   }
 
   return (
     <div>
-      <p className="text-[#1C1D1D] text-xl font-medium">Team Members</p>
+      <p className="text-[#1C1D1D] dark:text-white text-xl font-medium">
+        Team Members
+      </p>
 
       <div className="flex flex-col md:w-[770px] gap-3 mt-4">
         {teamDetails.members.map((member) => {
@@ -182,7 +191,7 @@ function Members({ items }: { items: Submission }) {
           return (
             <div
               key={member.id}
-              className="py-1 px-2 flex border-2 items-center border-[#605DEC] rounded-xl text-[#605DEC] gap-4"
+              className="py-1 px-2 flex border-2 items-center border-[#605DEC] dark:border-indigo-400 rounded-xl text-[#605DEC] dark:text-indigo-400 bg-white dark:bg-gray-800 transition-colors gap-4"
             >
               {member.profile_picture ? (
                 <div className="relative w-10 h-10 flex-shrink-0">
@@ -217,8 +226,10 @@ function Members({ items }: { items: Submission }) {
                 </div>
               )}
               <div>
-                <p className="font-bold">{displayName}</p>
-                <p className="text-sm">{member.role || "Team Member"}</p>
+                <p className="font-bold dark:text-white">{displayName}</p>
+                <p className="text-sm dark:text-gray-300">
+                  {member.role || "Team Member"}
+                </p>
               </div>
             </div>
           );

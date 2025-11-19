@@ -93,10 +93,10 @@ export const useCommunications = ({
         }
       },
       onOpen: () => {
-        console.log("WebSocket connected");
+        // WebSocket connected
       },
       onClose: () => {
-        console.log("WebSocket disconnected");
+        // WebSocket disconnected
       },
       onError: (error) => {
         // WebSocket failed - that's okay, HTTP will work as fallback
@@ -131,7 +131,6 @@ export const useCommunications = ({
       }
 
       const data = await response.json();
-      console.log("Messages API response (raw):", data); // Enable to debug message structure
 
       // Handle paginated response - extract results array
       let messagesArray = [];

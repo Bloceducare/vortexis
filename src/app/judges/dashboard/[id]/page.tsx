@@ -69,7 +69,6 @@ export default function SubmissionsPage() {
   ).length;
 
   const handleReviewClick = (submissionId: number) => {
-    console.log(`Reviewing submission ${submissionId}`);
     // Example: router.push(`/submissions/${submissionId}/review`)
   };
 
@@ -77,8 +76,10 @@ export default function SubmissionsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#605DEC]"></div>
-          <p className="text-gray-600">Loading submission details...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#605DEC] dark:border-indigo-400"></div>
+          <p className="text-gray-600 dark:text-gray-300">
+            Loading submission details...
+          </p>
         </div>
       </div>
     );
@@ -93,14 +94,14 @@ export default function SubmissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 transition-colors">
       <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 break-words">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2 break-words">
             Hackathon Submissions
           </h1>
-          <p className="text-gray-600 text-sm md:text-base">
+          <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base">
             Review and evaluate all submitted projects
           </p>
 
@@ -124,11 +125,11 @@ export default function SubmissionsPage() {
           )} */}
 
           {hackathonDetails && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <h2 className="font-semibold text-blue-900 mb-2">
+            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg transition-colors">
+              <h2 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
                 {hackathonDetails.title}
               </h2>
-              <div className="text-blue-700 text-sm break-words max-w-full overflow-hidden">
+              <div className="text-blue-700 dark:text-blue-300 text-sm break-words max-w-full overflow-hidden">
                 <HtmlContent html={hackathonDetails.description} />
               </div>
             </div>
@@ -137,40 +138,40 @@ export default function SubmissionsPage() {
 
         {/*  Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg border shadow-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm transition-colors">
             <div className="p-6 pb-2">
-              <h3 className="text-sm font-medium text-gray-600">
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Total Submissions
               </h3>
             </div>
             <div className="px-6 pb-6">
-              <div className="text-3xl font-bold text-blue-600">
+              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                 {totalSubmissions}
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border shadow-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm transition-colors">
             <div className="p-6 pb-2">
-              <h3 className="text-sm font-medium text-gray-600">
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Pending Reviews
               </h3>
             </div>
             <div className="px-6 pb-6">
-              <div className="text-3xl font-bold text-orange-600">
+              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                 {pendingReviews}
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg border shadow-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm transition-colors">
             <div className="p-6 pb-2">
-              <h3 className="text-sm font-medium text-gray-600">
+              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
                 Completed Reviews
               </h3>
             </div>
             <div className="px-6 pb-6">
-              <div className="text-3xl font-bold text-green-600">
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
                 {completedReviews}
               </div>
             </div>
@@ -178,7 +179,7 @@ export default function SubmissionsPage() {
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg border shadow-sm mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm mb-6 transition-colors">
           <div className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
@@ -187,14 +188,14 @@ export default function SubmissionsPage() {
                   placeholder="Search by project or team name..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full md:w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -204,7 +205,7 @@ export default function SubmissionsPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full md:w-48 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition-colors"
               >
                 <option value="all">All Categories</option>
                 <option value="General">General</option>
@@ -220,25 +221,25 @@ export default function SubmissionsPage() {
               <div
                 key={submission.id}
                 onClick={() => handleReviewClick(submission.id)}
-                className="bg-white rounded-lg border shadow-sm hover:shadow-lg transition-shadow cursor-pointer"
+                className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm hover:shadow-lg transition-all cursor-pointer"
               >
                 <div className="p-6">
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-3 gap-3">
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-1 break-words">
+                          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1 break-words">
                             {submission.projectName}
                           </h3>
-                          <p className="text-sm text-gray-600 mb-2 break-words max-w-full overflow-hidden">
+                          <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 break-words max-w-full overflow-hidden">
                             {submission.description}
                           </p>
                         </div>
                         <span
                           className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 ${
                             submission.status === "pending"
-                              ? "bg-orange-100 text-orange-800"
-                              : "bg-green-100 text-green-800"
+                              ? "bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300"
+                              : "bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300"
                           }`}
                         >
                           {submission.status === "pending"
@@ -247,7 +248,7 @@ export default function SubmissionsPage() {
                         </span>
                       </div>
 
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
                         <div className="flex items-center gap-1">
                           <span>👥</span>
                           <span className="font-medium">
@@ -274,7 +275,7 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
+                            className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                           >
                             GitHub
                           </a>
@@ -285,7 +286,7 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                            className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
                           >
                             Demo
                           </a>
@@ -296,7 +297,7 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200"
+                            className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
                           >
                             Presentation
                           </a>
@@ -304,7 +305,7 @@ export default function SubmissionsPage() {
                       </div>
 
                       <div className="mt-2">
-                        <span className="text-sm text-blue-600 font-medium">
+                        <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                           {submission.hackathon}
                         </span>
                       </div>
@@ -338,10 +339,10 @@ export default function SubmissionsPage() {
               </div>
             ))
           ) : (
-            <div className="bg-white rounded-lg border shadow-sm">
+            <div className="bg-white dark:bg-gray-800 rounded-lg border dark:border-gray-700 shadow-sm transition-colors">
               <div className="p-6">
                 <div className="text-center py-8">
-                  <p className="text-gray-500">
+                  <p className="text-gray-500 dark:text-gray-400">
                     {selectedHackathon
                       ? "No submissions found for this hackathon."
                       : "No hackathons available."}

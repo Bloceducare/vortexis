@@ -71,9 +71,6 @@ function AuthLogin({ type }: AuthLoginProps) {
         }
       );
 
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
-
       let result;
       try {
         const responseText = await response.text();
@@ -93,14 +90,12 @@ function AuthLogin({ type }: AuthLoginProps) {
       }
 
       if (!response.ok) {
-        console.log("Error response:", result);
         toast.error(result.detail || "Login failed. Please try again");
         return;
       }
 
       toast.success("Login successful! Redirecting...");
       localStorage.setItem("access_token", result.access_token);
-      console.log("Login successful:", result);
 
       if (result.access_token) {
         setToken(result.access_token, daysInSeconds);
@@ -151,19 +146,19 @@ function AuthLogin({ type }: AuthLoginProps) {
               Password
             </label>
             <div className="relative">
-            <input
-              {...register("password")}
-              type={showPassword ? "text" : "password"}
-              id="password"
-              placeholder="Input your password"
-              className={`w-full border p-3 md:p-2 rounded-sm text-base ${
-                errors.password
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-gray-300 focus:border-blue-500"
-              } focus:outline-none focus:ring-1 ${
-                errors.password ? "focus:ring-red-500" : "focus:ring-blue-500"
-              }`}
-            />
+              <input
+                {...register("password")}
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Input your password"
+                className={`w-full border p-3 md:p-2 rounded-sm text-base ${
+                  errors.password
+                    ? "border-red-500 focus:border-red-500"
+                    : "border-gray-300 focus:border-blue-500"
+                } focus:outline-none focus:ring-1 ${
+                  errors.password ? "focus:ring-red-500" : "focus:ring-blue-500"
+                }`}
+              />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -171,7 +166,7 @@ function AuthLogin({ type }: AuthLoginProps) {
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
-              </div>
+            </div>
             {errors.password && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.password.message}

@@ -98,9 +98,6 @@ function CollaborationPageContent() {
       }
 
       // If no existing conversation, try to create one
-      console.log(
-        "No existing judges conversation found, attempting to create..."
-      );
       const judgesConv = await api.createOrFindJudgesConversation(1);
       setJudgesConversationId(judgesConv.id);
       setOrganizersConversationId(judgesConv.id);
@@ -115,9 +112,6 @@ function CollaborationPageContent() {
 
         // Try to create a regular conversation as fallback
         try {
-          console.log(
-            "Attempting to create regular conversation as fallback..."
-          );
           const regularConv = await api.createOrFindDM(userId!); // Create DM with self as fallback
           if (regularConv) {
             setJudgesConversationId(regularConv.id);
@@ -204,10 +198,12 @@ function CollaborationPageContent() {
         <h1 className="text-2xl mb-3 font-semibold text-[#605DEC]">
           Judge Collaboration
         </h1>
-        <p>Collaborate with other judges and discuss submissions</p>
+        <p className="dark:text-gray-300">
+          Collaborate with other judges and discuss submissions
+        </p>
       </div>
 
-      <div className="bg-[#FFFFFF] my-3 shadow-md rounded-md border p-3 w-full max-w-[1400px] border-[#E4E4E4]">
+      <div className="bg-[#FFFFFF] dark:bg-gray-800 my-3 shadow-md rounded-md border p-3 w-full max-w-[1400px] border-[#E4E4E4] dark:border-gray-700 transition-colors">
         <div>
           {/* Desktop Tabs - Hidden on mobile */}
           <div className="hidden md:flex my-6 mt-1.5 w-full cursor-pointer gap-4">
@@ -222,7 +218,7 @@ function CollaborationPageContent() {
                     className={`flex items-center justify-center gap-2 text-center px-5 py-2 ${
                       activeTab === tab.tab_no
                         ? "bg-[#605DEC] text-white"
-                        : "bg-[#F4F3FE] text-[#C5C0DB]"
+                        : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300"
                     } transition-all duration-300 rounded-md`}
                   >
                     {tab.icon}
@@ -251,19 +247,19 @@ function CollaborationPageContent() {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute top-full left-0 right-0 z-10 bg-white border border-gray-200 rounded-md shadow-lg mt-1">
+              <div className="absolute top-full left-0 right-0 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg mt-1">
                 {tabs.map((tab, i) => (
                   <button
                     key={i}
                     onClick={() => handleTabChange(tab.tab_no)}
-                    className={`w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 ${
+                    className={`w-full flex items-center gap-2 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 ${
                       activeTab === tab.tab_no
-                        ? "bg-[#F4F3FE] text-[#605DEC] font-medium"
-                        : "text-gray-700"
+                        ? "bg-[#F4F3FE] dark:bg-gray-700 text-[#605DEC] dark:text-indigo-400 font-medium"
+                        : "text-gray-700 dark:text-gray-300"
                     } ${i === 0 ? "rounded-t-md" : ""} ${
                       i === tabs.length - 1
                         ? "rounded-b-md"
-                        : "border-b border-gray-100"
+                        : "border-b border-gray-100 dark:border-gray-700"
                     }`}
                   >
                     {tab.icon}
