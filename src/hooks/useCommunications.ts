@@ -397,10 +397,9 @@ export const useCommunications = ({
       }
 
       try {
-        // Use the correct endpoint: DELETE /communications/conversations/{id}/
-        // The {id} in the path is the message ID
+        // Use the correct endpoint: DELETE /communications/conversations/{conversation_pk}/messages/{id}/delete_message/
         const response = await fetch(
-          `${baseUrl}/communications/conversations/${messageId}/`,
+          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/delete_message/`,
           {
             method: "DELETE",
             headers: {
@@ -447,10 +446,15 @@ export const useCommunications = ({
   // Edit a message
   const editMessage = useCallback(
     async (messageId: number, newContent: string) => {
+      if (!conversationId) {
+        setError("No conversation selected");
+        return false;
+      }
+
       try {
-        // Try the simpler endpoint first
-        let response = await fetch(
-          `${baseUrl}/communications/messages/${messageId}/`,
+        // Use the correct endpoint: PATCH /communications/conversations/{conversation_pk}/messages/{id}/
+        const response = await fetch(
+          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/`,
           {
             method: "PATCH",
             headers: {
@@ -460,21 +464,6 @@ export const useCommunications = ({
             body: JSON.stringify({ content: newContent }),
           }
         );
-
-        // If that fails and we have conversationId, try with conversationId
-        if (!response.ok && conversationId) {
-          response = await fetch(
-            `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/`,
-            {
-              method: "PATCH",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ content: newContent }),
-            }
-          );
-        }
 
         if (response.ok) {
           const updatedMessage: Message = await response.json();
