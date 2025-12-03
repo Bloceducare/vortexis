@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { X, CheckCircle, AlertCircle } from "lucide-react";
+import { X, CheckCircle, AlertCircle, Upload } from "lucide-react";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -11,6 +11,12 @@ interface CreateOrgProps {
     id: string;
     name: string;
     description: string;
+    website: string;
+    logo_file: string | null;
+    custom_url: string;
+    location: string;
+    tagline: string;
+    about: string;
   };
 }
 
@@ -18,9 +24,20 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
   const [formData, setFormData] = useState({
     name: existingData?.name || "",
     description: existingData?.description || "",
+    website: existingData?.website || "",
+    custom_url: existingData?.custom_url || "",
+    location: existingData?.location || "",
+    tagline: existingData?.tagline || "",
+    about: existingData?.about || "",
   });
 
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(
+    existingData?.logo_file || null
+  );
+  const [fileError, setFileError] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  
   const queryClient = useQueryClient();
   const { createOrganization, updateOrganization } = useOrganizer();
 
@@ -31,8 +48,45 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
 
     if (name === "name" && value.length > 25) return;
     if (name === "description" && value.length > 350) return;
+    if (name === "tagline" && value.length > 100) return;
+    if (name === "about" && value.length > 1000) return;
 
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFileError("");
+
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setFileError("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setFileError("File size must be less than 2MB");
+      return;
+    }
+
+    setLogoFile(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setLogoPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setFileError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,18 +94,25 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
     if (!formData.name.trim()) return;
 
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("website", formData.website);
+      formDataToSend.append("custom_url", formData.custom_url);
+      formDataToSend.append("location", formData.location);
+      formDataToSend.append("tagline", formData.tagline);
+      formDataToSend.append("about", formData.about);
+
+      if (logoFile) {
+        formDataToSend.append("logo_file", logoFile);
+      }
+
       if (type === "new") {
-        await createOrganization.mutateAsync({
-          name: formData.name,
-          description: formData.description,
-        });
+        await createOrganization.mutateAsync(formDataToSend);
       } else if (type === "edit" && existingData?.id) {
         await updateOrganization.mutateAsync({
           id: existingData.id,
-          data: {
-            name: formData.name,
-            description: formData.description,
-          },
+          formData: formDataToSend,
         });
       }
 
@@ -74,16 +135,16 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-lg p-6 relative animate-scaleIn">
+      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative animate-scaleIn">
         {/* Header */}
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white z-10 pb-4">
           <h1 className="text-[#171717] text-2xl font-semibold">
             {type === "new" ? "New Organization" : "Edit Organization"}
           </h1>
 
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition cursor-pointer"
+            className="text-gray-400 hover:text-gray-600 transition cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -91,14 +152,64 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
 
         {/* Form */}
         {status === "idle" && (
-          <form onSubmit={handleSubmit} className="space-y-4 text-start">
+          <div className="space-y-5 text-start">
+            {/* Logo Upload */}
+            <div className="space-y-2 flex flex-col">
+              <label className="text-[#212121] font-medium text-sm">
+                Organization Logo
+              </label>
+              
+              {!logoPreview ? (
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+                  <label
+                    htmlFor="logo-upload"
+                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/50 transition-all"
+                  >
+                    <Upload className="w-10 h-10 text-gray-400 mb-2" />
+                    <span className="text-sm text-gray-600 font-medium">
+                      Click to upload logo
+                    </span>
+                    <span className="text-xs text-gray-400 mt-1">
+                      PNG, JPG up to 2MB
+                    </span>
+                  </label>
+                </div>
+              ) : (
+                <div className="relative w-40 h-40 border-2 border-gray-200 rounded-xl overflow-hidden group">
+                  <img
+                    src={logoPreview}
+                    alt="Logo preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveLogo}
+                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                  >
+                    <X className="text-white w-8 h-8" />
+                  </button>
+                </div>
+              )}
+              
+              {fileError && (
+                <span className="text-xs text-red-500">{fileError}</span>
+              )}
+            </div>
+
             {/* Name Field */}
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="name"
                 className="text-[#212121] font-medium text-sm"
               >
-                Organization Name
+                Organization Name <span className="text-red-500">*</span>
               </label>
               <input
                 id="name"
@@ -115,17 +226,40 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
               </div>
             </div>
 
+            {/* Tagline Field */}
+            <div className="space-y-1 flex flex-col">
+              <label
+                htmlFor="tagline"
+                className="text-[#212121] font-medium text-sm"
+              >
+                Tagline
+              </label>
+              <input
+                id="tagline"
+                type="text"
+                name="tagline"
+                placeholder="A short catchy phrase about your organization"
+                value={formData.tagline}
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <div className="text-xs text-gray-500 text-right">
+                {formData.tagline.length}/100
+              </div>
+            </div>
+
+            {/* Description */}
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="description"
                 className="text-[#212121] font-medium text-sm"
               >
-                Description
+                Short Description
               </label>
               <textarea
                 id="description"
                 name="description"
-                placeholder="Company's description"
+                placeholder="Brief description of your organization"
                 value={formData.description}
                 onChange={handleChange}
                 className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-24 focus:ring-2 focus:ring-indigo-500"
@@ -135,10 +269,94 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
               </div>
             </div>
 
+            {/* About */}
+            <div className="space-y-1 flex flex-col">
+              <label
+                htmlFor="about"
+                className="text-[#212121] font-medium text-sm"
+              >
+                About
+              </label>
+              <textarea
+                id="about"
+                name="about"
+                placeholder="Detailed information about your organization"
+                value={formData.about}
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-32 focus:ring-2 focus:ring-indigo-500"
+              />
+              <div className="text-xs text-gray-500 text-right">
+                {formData.about.length}/1000
+              </div>
+            </div>
+
+            {/* Website */}
+            <div className="space-y-1 flex flex-col">
+              <label
+                htmlFor="website"
+                className="text-[#212121] font-medium text-sm"
+              >
+                Website
+              </label>
+              <input
+                id="website"
+                type="url"
+                name="website"
+                placeholder="https://example.com"
+                value={formData.website}
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
+            {/* Custom URL */}
+            <div className="space-y-1 flex flex-col">
+              <label
+                htmlFor="custom_url"
+                className="text-[#212121] font-medium text-sm"
+              >
+                Custom URL
+              </label>
+              <div className="flex items-center border rounded-xl focus-within:ring-2 focus-within:ring-indigo-500">
+                <span className="px-4 text-gray-500 text-sm">
+                  yoursite.com/
+                </span>
+                <input
+                  id="custom_url"
+                  type="text"
+                  name="custom_url"
+                  placeholder="my-organization"
+                  value={formData.custom_url}
+                  onChange={handleChange}
+                  className="flex-1 py-3 pr-4 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="space-y-1 flex flex-col">
+              <label
+                htmlFor="location"
+                className="text-[#212121] font-medium text-sm"
+              >
+                Location
+              </label>
+              <input
+                id="location"
+                type="text"
+                name="location"
+                placeholder="City, Country"
+                value={formData.location}
+                onChange={handleChange}
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+
             {/* Submit Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4">
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={
                   (type === "new" && createOrganization.isPending) ||
                   (type === "edit" && updateOrganization.isPending)
@@ -159,7 +377,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
                   : "Update Organization"}
               </button>
             </div>
-          </form>
+          </div>
         )}
 
         {/* Success */}
@@ -193,7 +411,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
               Something went wrong
             </h3>
             <p className="text-gray-500 mt-2 max-w-sm">
-              We couldn’t {type === "new" ? "create" : "update"} your
+              We couldn't {type === "new" ? "create" : "update"} your
               organization. Please try again later.
             </p>
             <button

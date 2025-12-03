@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import useTeams from "@/hooks/useTeams";
 
 export default function TeamInvitationPage() {
-  const { id } = useParams(); // token in the URL
+  const { id } = useParams();
   const router = useRouter();
   const { acceptInvitation } = useTeams();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
