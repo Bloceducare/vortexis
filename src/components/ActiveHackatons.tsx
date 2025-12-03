@@ -15,12 +15,12 @@ export default function ExploreActiveHackathons() {
   const activeHackathons = useMemo(() => {
     return hackathons
       .filter((h: any) => !h.end_date || new Date(h.end_date) >= new Date())
-      .slice(0, 6); 
+      .slice(0, 6);
   }, [hackathons]);
 
   return (
-    <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-lg font-medium text-indigo-500 mb-6">
+    <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-gray-900">
+      <h2 className="text-lg font-medium text-indigo-500 dark:text-indigo-400 mb-6">
         Explore Active Hackathons
       </h2>
 
@@ -30,12 +30,12 @@ export default function ExploreActiveHackathons() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="bg-white rounded-lg shadow-sm p-4 animate-pulse"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 animate-pulse"
             >
-              <div className="h-24 w-full bg-gray-200 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/4"></div>
+              <div className="h-24 w-full bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
             </div>
           ))}
         </div>
@@ -55,7 +55,7 @@ export default function ExploreActiveHackathons() {
             {activeHackathons.map((hackathon: any) => (
               <motion.div
                 key={hackathon.id}
-                className="bg-white rounded-lg shadow-sm p-4 cursor-pointer flex flex-col"
+                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 cursor-pointer flex flex-col"
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 200, damping: 15 }}
                 variants={{
@@ -77,39 +77,42 @@ export default function ExploreActiveHackathons() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-500">
-                    <Trophy className="w-16 h-16 text-primary/30" />
-                  </div>                  )}
+                      <Trophy className="w-16 h-16 text-primary/30" />
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 font-spectral">
-                  <h3 className="font-semibold text-base text-gray-800 mb-1">
+                  <h3 className="font-semibold text-base text-gray-800 dark:text-gray-200 mb-1">
                     {hackathon.title}
                   </h3>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     By{" "}
                     <span className="font-medium">
                       {hackathon.organization?.name}
                     </span>
                   </p>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Judges: {hackathon.judges?.length || 0}
                   </p>
-                  <p className="text-xs text-gray-500 mb-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                     Team Size: {hackathon.min_team_size} -{" "}
                     {hackathon.max_team_size}
                   </p>
-                  <p className="text-xs text-gray-400 mb-2">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
                     Created:{" "}
                     {new Date(hackathon.created_at).toLocaleDateString()}
                   </p>
                   <div className="flex items-center mb-1">
-                    <div className="text-indigo-600 font-semibold">
+                    <div className="text-indigo-600 dark:text-indigo-400 font-semibold">
                       ${hackathon.grand_prize?.toLocaleString()}
                     </div>
-                    <div className="text-xs text-gray-500 ml-1">grand prize</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                      grand prize
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
                     {hackathon.participants_count} participants
                   </div>
                 </div>
@@ -122,7 +125,7 @@ export default function ExploreActiveHackathons() {
             <div className="flex justify-center mt-6">
               <button
                 onClick={() => router.push("/hackathon")}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition cursor-pointer"
+                className="px-6 py-2 bg-indigo-600 dark:bg-indigo-500 text-white rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-600 transition cursor-pointer"
               >
                 See More
               </button>

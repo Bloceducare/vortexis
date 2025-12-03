@@ -53,7 +53,7 @@ export const Hero: React.FC = () => {
 
         <motion.span
           variants={fadeUp}
-          className="block text-xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#212121] mb-4 md:mb-6 lg:mb-8"
+          className="block text-xl md:text-3xl lg:text-4xl xl:text-5xl font-semibold text-[#212121] dark:text-white mb-4 md:mb-6 lg:mb-8"
         >
           One Place.
         </motion.span>

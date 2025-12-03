@@ -1,15 +1,22 @@
-
 "use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Trophy, Rocket, CheckCircle, X, Mail, Sparkles } from "lucide-react";
+import {
+  Users,
+  Trophy,
+  Rocket,
+  CheckCircle,
+  X,
+  Mail,
+  Sparkles,
+} from "lucide-react";
 
 export default function HackathonCTA() {
   return (
     <>
-      <div className="max-w-7xl mx-auto p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-900">
         {/* Main CTA Card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -84,8 +91,9 @@ export default function HackathonCTA() {
               transition={{ delay: 0.4 }}
               className="text-lg sm:text-xl mb-10 leading-relaxed text-white/90 max-w-2xl mx-auto"
             >
-              Whether you're new to hackathons or ready to host one, we've got you covered.
-              Connect with innovators, build amazing projects, or organize your own impactful event.
+              Whether you're new to hackathons or ready to host one, we've got
+              you covered. Connect with innovators, build amazing projects, or
+              organize your own impactful event.
             </motion.p>
 
             {/* Action Buttons */}
@@ -97,7 +105,10 @@ export default function HackathonCTA() {
             >
               <Link href="/auth/signup">
                 <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: "0 10px 40px rgba(0,0,0,0.2)" }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
+                  }}
                   whileTap={{ scale: 0.95 }}
                   className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#605DEC] font-semibold rounded-xl shadow-lg hover:bg-gray-50 transition-all cursor-pointer"
                 >
@@ -117,12 +128,8 @@ export default function HackathonCTA() {
                 </motion.button>
               </Link>
             </motion.div>
-
           </div>
         </motion.div>
-
-
-
 
         {/* Stats Section */}
         <motion.div
@@ -143,15 +150,18 @@ export default function HackathonCTA() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 + index * 0.1 }}
               whileHover={{ y: -4 }}
-              className="bg-white rounded-2xl p-6 text-center shadow-lg border border-gray-100"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg border border-gray-100 dark:border-gray-700"
             >
-              <div className="text-3xl font-bold text-[#605DEC] mb-1">{stat.value}</div>
-              <div className="text-sm text-gray-600">{stat.label}</div>
+              <div className="text-3xl font-bold text-[#605DEC] dark:text-indigo-400 mb-1">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {stat.label}
+              </div>
             </motion.div>
           ))}
         </motion.div>
       </div>
-
     </>
   );
 }
