@@ -11,14 +11,14 @@ import icon4 from "@/public/assets/icon4.svg";
 
 export default function HowItWorks() {
   return (
-    <div className="w-full mx-auto p-6 bg-white">
-      <div className="max-w-7xl mx-auto p-6 bg-white">
+    <div className="w-full mx-auto p-6 bg-white dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-gray-900">
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           viewport={{ once: true }}
-          className="text-2xl font-bold text-indigo-600 text-center mb-8"
+          className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 text-center mb-8"
         >
           Platform Overview
         </motion.h1>
@@ -31,12 +31,12 @@ export default function HowItWorks() {
             transition={{ duration: 0.7, ease: "easeOut" }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-gray-800 mb-3 text-start ">
+            <h2 className="text-4xl font-bold text-gray-800 dark:text-gray-200 mb-3 text-start ">
               How It Works
             </h2>
-            <p className="text-gray-600 text-md mb-6 ">
-              Bringing organizations and developers together to
-              create, inspire, and innovate
+            <p className="text-gray-600 dark:text-gray-400 text-md mb-6 ">
+              Bringing organizations and developers together to create, inspire,
+              and innovate
             </p>
 
             <motion.div
@@ -87,11 +87,19 @@ export default function HowItWorks() {
                 className="flex"
               >
                 <div className="mr-4">
-                  <Image src={feature.icon} alt={feature.title} className="w-12 h-12" />
+                  <Image
+                    src={feature.icon}
+                    alt={feature.title}
+                    className="w-12 h-12"
+                  />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-800 text-lg">{feature.title}</h3>
-                  <p className="text-md text-gray-600">{feature.text}</p>
+                  <h3 className="font-medium text-gray-800 dark:text-gray-200 text-lg">
+                    {feature.title}
+                  </h3>
+                  <p className="text-md text-gray-600 dark:text-gray-400">
+                    {feature.text}
+                  </p>
                 </div>
               </motion.div>
             ))}
