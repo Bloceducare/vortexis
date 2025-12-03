@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import useOrganizer from '@/hooks/useOrganizers';
-import { ChevronLeft, ChevronRight, Edit, PlusSquareIcon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, PlusSquareIcon, Globe, MapPin, Link2, Building2 } from 'lucide-react';
 import HtmlContent from '@/components/ui/HtMLContent';
 import Verified from "@/public/assets/verified.svg";
 import Image from 'next/image';
@@ -16,9 +16,6 @@ interface OrgProps {
   onClose: () => void;
   organizationId: number | null;
 }
-
-
-
 
 function OrganizationList({ onClose, organizationId }: OrgProps) {
   const { getOrganizationHackathon, getOrganizationById, } = useOrganizer();
@@ -68,72 +65,128 @@ const filteredHackathons = !searchQuery.trim()
   };
 
 
-
-
   return (
     <div className="p-6">
   
          
-          <div className='flex justify-between items-center w-full'>
-            <div>
-            <h2 className="text-3xl font-bold flex gap-2">
-              {orgData?.name}  {orgData.is_approved && (  <Image src={Verified} alt="verify" /> )}
+      <div className='flex justify-between items-center w-full mb-4'>
+        <div className='flex items-center gap-4'>
+          {/* Logo */}
+          {orgData?.logo ? (
+            <img 
+              src={orgData.logo} 
+              alt={orgData.name}
+              className="w-16 h-16 rounded-xl object-cover border-2 border-gray-200"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-indigo-400" />
+            </div>
+          )}
+
+          <div>
+            <h2 className="text-3xl font-bold flex gap-2 items-center">
+              {orgData?.name}  {orgData?.is_approved && (  <Image src={Verified} alt="verify" /> )}
             </h2>
+            
+            {orgData?.tagline && (
+              <p className="text-sm text-indigo-600 font-medium mt-1">
+                {orgData.tagline}
+              </p>
+            )}
+
             <p className="text-sm text-gray-600 mt-1">
               Total Hackathons: <span className="font-medium">{totalHackathons}</span>
             </p>
-            </div>
-            <div className='flex gap-5 items-center'>
-                        <a
-              className="cursor-pointer"
-              title="Add new moderator"
-              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
-            >
-              <PlusSquareIcon />
-            </a>
+          </div>
+        </div>
 
-            <a
-              className="cursor-pointer"
-              title="Edit organization details"
-              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, edit: true })}
-            >
-              <Edit />
-            </a>
+        <div className='flex gap-5 items-center'>
+          <a
+            className="cursor-pointer"
+            title="Add new moderator"
+            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
+          >
+            <PlusSquareIcon />
+          </a>
 
-            </div>
-
+          <a
+            className="cursor-pointer"
+            title="Edit organization details"
+            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, edit: true })}
+          >
+            <Edit />
+          </a>
+        </div>
       </div>
-      <div>
 
-      <p>
-  Moderators: {orgData?.moderators?.length ?? 0}
-</p>
-  
-</div>
+      {/* Organization Info Section */}
+      <div className="mb-6 space-y-3">
+        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+          {orgData?.location && (
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-indigo-500" />
+              <span>{orgData.location}</span>
+            </div>
+          )}
 
+          {orgData?.website && (
+            <div className="flex items-center gap-2">
+              <Globe size={16} className="text-indigo-500" />
+              <a 
+                href={orgData.website} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-indigo-600 hover:underline"
+              >
+                {orgData.website}
+              </a>
+            </div>
+          )}
+
+          {orgData?.custom_url && (
+            <div className="flex items-center gap-2">
+              <Link2 size={16} className="text-indigo-500" />
+              <span className="text-gray-600">{orgData.custom_url}</span>
+            </div>
+          )}
+        </div>
+
+        <p className="text-sm text-gray-600">
+          Moderators: <span className="font-medium">{orgData?.moderators?.length ?? 0}</span>
+        </p>
+      </div>
 
       {/* Description */}
-      <div className="space-y-2">
+      <div className="space-y-2 mb-6">
         <h1 className="text-2xl font-semibold text-[#171717]">Description</h1>
-        <p className="text-gray-700 leading-relaxed mb-8">
+        <p className="text-gray-700 leading-relaxed">
           {orgData?.description || 'No description available for this organization.'}
         </p>
       </div>
 
-      {/* Search and Start Button */}
-      {orgData.is_approved && ( 
-           <section className="flex justify-between items-center mb-5">
-        <div className="w-1/2">
-          <SearchInput onSearch={handleSearch} className="bg-white" />
+      {/* About Section */}
+      {orgData?.about && (
+        <div className="space-y-2 mb-8">
+          <h1 className="text-2xl font-semibold text-[#171717]">About</h1>
+          <p className="text-gray-700 leading-relaxed">
+            {orgData.about}
+          </p>
         </div>
+      )}
 
-     <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => router.push(`/organizer/create-hackathon/${organizationId}`)}>
-          <b className="text-2xl mb-1">+</b> Start hackathon
-        </button>
-      </section>
- )}
+      {/* Search and Start Button */}
+      {orgData?.is_approved && ( 
+        <section className="flex justify-between items-center mb-5">
+          <div className="w-1/2">
+            <SearchInput onSearch={handleSearch} className="bg-white" />
+          </div>
 
-
+          <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => router.push(`/organizer/create-hackathon/${organizationId}`)}>
+            <b className="text-2xl mb-1">+</b> Start hackathon
+          </button>
+        </section>
+      )}
 
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-semibold">
@@ -171,7 +224,7 @@ const filteredHackathons = !searchQuery.trim()
         )}
       </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentHackathons.length > 0 ? (
           currentHackathons.map((hackathon: any) => {
             const today = new Date();
@@ -227,8 +280,6 @@ const filteredHackathons = !searchQuery.trim()
         )}
       </div>
 
-
-  
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-8">
           <button
@@ -261,44 +312,32 @@ const filteredHackathons = !searchQuery.trim()
         </div>
       )}
 
+      {showOptionsOrg.edit && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
+            <NewOrganization
+              onClose={() => setShowOptionsOrg({ ...showOptionsOrg, edit: false })}
+              type="edit"
+              existingData={orgData}
+            />
+          </div>
+        </div>
+      )}
 
-          {showOptionsOrg.edit && (
-                      <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-                        <NewOrganization
-            onClose={() => setShowOptionsOrg({ ...showOptionsOrg, edit: false })}
-            type="edit"
-            existingData={{
-              id: id,
-              name: orgData?.name,
-              description: orgData?.description,
-            }}
-          />
-
-   
-
-              </div>
-            </div>
-          )}
-
-
-          {showOptionsOrg.addModerator && (
-                  <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-                              <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-                                <AddModerator 
-                                  onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
-                                  orgName={orgData?.name}
-                                  orgId={id}
-                                
-                              />
-
-                                </div>
-                                </div>
-
-                )}
-              </div>
-            );
-          }
+      {showOptionsOrg.addModerator && (
+        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
+            <AddModerator 
+              onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
+              orgName={orgData?.name}
+              orgId={id}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default OrganizationList;
 

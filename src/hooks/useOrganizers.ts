@@ -5,7 +5,9 @@ import Hackathon_details from "@/app/api/utils/interface";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useHackathonStore } from "@/store/useHackathonStore";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+
+
 
 export default function useOrganizer() {
   // const queryClient = useQueryClient();
@@ -27,15 +29,17 @@ export default function useOrganizer() {
   };
 
   const createOrganization = useMutation({
-    mutationFn: async (data: { name: string; description: string }) => {
+    mutationFn: async (formData: FormData) => {
       const res = await fetch(`${apiUrl}/organization/create/`, {
-        method: "POST",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
+        method: 'POST',
+        headers: {
+          ...getAuthHeaders(true),
+        },
+        body: formData,
       });
 
       if (!res.ok) {
-        let errorMessage = "Failed to create organization";
+        let errorMessage = 'Failed to create organization';
 
         try {
           const errorData = await res.json();
@@ -43,7 +47,39 @@ export default function useOrganizer() {
             errorData?.non_field_errors?.[0] ||
             errorData?.message ||
             errorMessage;
-        } catch (err) {}
+        } catch (err) {
+          // Use default error message
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      return res.json();
+    },
+  });
+
+  const updateOrganization = useMutation({
+    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
+      const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
+        method: 'PUT',
+        headers: {
+          ...getAuthHeaders(true),
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let errorMessage = 'Failed to update organization';
+
+        try {
+          const errorData = await res.json();
+          errorMessage =
+            errorData?.non_field_errors?.[0] ||
+            errorData?.message ||
+            errorMessage;
+        } catch (err) {
+          // fallback: keep default errorMessage
+        }
 
         throw new Error(errorMessage);
       }
@@ -64,39 +100,6 @@ export default function useOrganizer() {
     staleTime: Infinity,
   });
 
-  const updateOrganization = useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: { name?: string; description?: string };
-    }) => {
-      const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
-        method: "PUT",
-        headers: getAuthHeaders(),
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        let errorMessage = "Failed to update organization";
-
-        try {
-          const errorData = await res.json();
-          errorMessage =
-            errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            errorMessage;
-        } catch (err) {
-          // fallback: keep default errorMessage
-        }
-
-        throw new Error(errorMessage);
-      }
-
-      return res.json();
-    },
-  });
 
   const deleteOrganizationMutation = useMutation({
     mutationFn: async (id: string | number) => {
@@ -122,7 +125,7 @@ export default function useOrganizer() {
       return res.json();
     },
   });
-
+  
   const createHackathonMutation = useMutation({
     mutationFn: async (data: Hackathon_details) => {
       const formData = new FormData();

@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import useOrganizer from "@/hooks/useOrganizers";
 import EmptyState from "./components/EmptyState";
-import { Plus, Search, ArrowLeft } from "lucide-react";
+import { Plus, Search, ArrowLeft, CheckCircle, Clock, Building2, MapPin } from "lucide-react";
 import NewOrganization from "./components/NewOrganization";
 import OrganizationList from "./components/OrganizationList";
 
@@ -16,7 +16,7 @@ const Index = () => {
 
   const filteredData = useMemo(() => {
     if (!data) return [];
-    return data.filter((org: any) =>
+    return data.results.filter((org: any) =>
       org.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [data, search]);
@@ -34,7 +34,6 @@ const Index = () => {
       <section>
         <div className="flex justify-between items-center p-6 mb-8 sticky top-0 animate-pulse">
           <div className=" h-10 rounded-lg w-1/2 bg-gray-300 " />
-
           <div className=" h-10 rounded-lg w-[35%] bg-gray-300 " />
         </div>
 
@@ -83,7 +82,7 @@ const Index = () => {
 
   return (
     <>
-      {data && data.length > 0 ? (
+      {data && data.results.length > 0 ? (
         <>
           {/* Top bar */}
           <div className="mb-8 sticky top-0 py-4 z-10 space-y-4 px-5 ">
@@ -119,27 +118,58 @@ const Index = () => {
                   <div
                     key={i}
                     onClick={() => handleOrgClick(org.id)}
-                    className="border border-gray-200 dark:border-gray-700 p-4 rounded-xl hover:shadow-lg transition-all bg-white dark:bg-gray-800 shadow-md h-[35vh] cursor-pointer flex flex-col justify-between"
+                    className="border rounded-xl hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col"
                   >
-                    <div className="space-y-5">
-                      <h3 className="font-bold text-xl dark:text-white">
-                        {org.name}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {org.description?.slice(0, 150) ||
-                          "No description provided."}
-                      </p>
+                    <div className="relative h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-t-xl overflow-hidden">
+                      {org.logo ? (
+                        <img
+                          src={org.logo}
+                          alt={org.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Building2 className="w-12 h-12 text-indigo-300" />
+                        </div>
+                      )}
+
+                      <div className="absolute top-2 right-2">
+                        {org.is_approved ? (
+                          <span className="flex items-center gap-1 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+                            <CheckCircle size={12} />
+                            Approved
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full">
+                            <Clock size={12} />
+                            Pending
+                          </span>
+                        )}
+                      </div>
                     </div>
 
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-md self-end mt-3 ${
-                        org.is_approved
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {org.is_approved ? "Approved" : "Waiting for approval"}
-                    </span>
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <h3 className="font-bold text-xl">{org.name}</h3>
+                        {org.tagline && (
+                          <p className="text-xs text-indigo-600 font-medium line-clamp-1">
+                            {org.tagline}
+                          </p>
+                        )}
+                        <p className="text-sm text-gray-500">
+                          {org.description?.slice(0, 100) ||
+                            "No description provided."}
+                          {org.description?.length > 100 && "..."}
+                        </p>
+                      </div>
+
+                      {org.location && (
+                        <div className="flex items-center gap-1 text-gray-500 text-xs mt-2">
+                          <MapPin size={14} className="text-indigo-500" />
+                          <span>{org.location}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -147,16 +177,12 @@ const Index = () => {
               <div className="text-center text-gray-500 dark:text-gray-400 mt-16">
                 <p className="text-lg font-medium">
                   No organization found with the name{" "}
-                  <span className="text-indigo-600 dark:text-indigo-400">
-                    "{search}"
-                  </span>
-                  .
+                  <span className="text-indigo-600">"{search}"</span>.
                 </p>
               </div>
             )}
           </div>
 
-          {/* New organization modal */}
           {showNewOrg && (
             <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative transition-colors">
