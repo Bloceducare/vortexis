@@ -74,7 +74,7 @@ export default function GuideCard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 ">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
@@ -125,9 +125,9 @@ export default function GuideCard() {
 
             <div className="flex flex-wrap justify-center gap-8 mb-8">
               {[
-                { number: "10K+", label: "Active Users" },
-                { number: "500+", label: "Organizations" },
-                { number: "2K+", label: "Hackathons" }
+                { number: "100+", label: "Active Users" },
+                { number: "10+", label: "Organizations" },
+                { number: "0", label: "Hackathons" }
               ].map((stat, i) => (
                 <motion.div
                   key={stat.label}
@@ -151,7 +151,7 @@ export default function GuideCard() {
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-3xl font-bold text-center mb-12 text-gray-800 "
+              className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
             >
               Your Journey to Success
             </motion.h2>
@@ -189,7 +189,7 @@ export default function GuideCard() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <Icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                            <h3 className="text-xl font-bold text-gray-800 ">
+                            <h3 className="text-xl font-bold text-gray-800 dark:text-white ">
                               {step.title}
                             </h3>
                           </div>

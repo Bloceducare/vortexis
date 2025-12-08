@@ -16,8 +16,7 @@ import {
 export default function HackathonCTA() {
   return (
     <>
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-white dark:bg-gray-900">
-        {/* Main CTA Card */}
+      <div className="max-w-7xl mx-auto p-4 sm:p-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,7 +44,7 @@ export default function HackathonCTA() {
             />
           </div>
 
-          {/* Decorative Icons */}
+          
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ duration: 3, repeat: Infinity }}
@@ -139,10 +138,10 @@ export default function HackathonCTA() {
           className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8"
         >
           {[
-            { value: "10K+", label: "Active Participants" },
-            { value: "500+", label: "Hackathons Hosted" },
-            { value: "100+", label: "Organizations" },
-            { value: "$2M+", label: "Prizes Awarded" },
+            { value: "0", label: "Active Participants" },
+            { value: "0", label: "Hackathons Hosted" },
+            { value: "0", label: "Organizations" },
+            { value: "$0", label: "Prizes Awarded" },
           ].map((stat, index) => (
             <motion.div
               key={index}
