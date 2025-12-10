@@ -70,10 +70,10 @@ function AddModerator({ onClose, orgName, orgId }: AddModeratorProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-lg p-6 relative animate-scaleIn">
+      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-lg p-6 relative animate-scaleIn dark:bg-gray-900">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
-          <h1 className="text-[#171717] text-2xl font-semibold">
+          <h1 className="text-[#171717] text-2xl font-semibold dark:text-white">
             Add Moderator to <b>{orgName}</b>
           </h1>
 
@@ -87,7 +87,7 @@ function AddModerator({ onClose, orgName, orgId }: AddModeratorProps) {
 
         {/* Email Input Field */}
         <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-medium mb-2">
+          <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
             Moderator Email Address
           </label>
           <input
@@ -101,7 +101,7 @@ function AddModerator({ onClose, orgName, orgId }: AddModeratorProps) {
 
         {/* Message Field */}
         <div className="mb-6">
-          <label className="block text-gray-700 text-sm font-medium mb-2">
+          <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
             Message (Optional)
           </label>
           <textarea

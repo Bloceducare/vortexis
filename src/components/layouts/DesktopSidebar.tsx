@@ -13,7 +13,6 @@ import {
 import Link from "next/link";
 import { SignOutConfirmationModal } from "../signOutModal";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/useUserStore";
 import { useAuthStore } from "@/store/useAuthStore";
 
 interface SidebarItem {
@@ -50,33 +49,6 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
   const router = useRouter();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  // const hackathons: Hackathon[] = [
-  //   {
-  //     id: 1,
-  //     name: "Arbitrum hackers",
-  //     status: "active",
-  //     total_submission: "12",
-  //     due_date: "5/15/2025",
-  //     reviews_completed: "5/12",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Stellar hackquest",
-  //     status: "active",
-  //     total_submission: "12",
-  //     due_date: "5/15/2025",
-  //     reviews_completed: "5/12",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Stylus hackathon",
-  //     status: "active",
-  //     total_submission: "12",
-  //     due_date: "5/15/2025",
-  //     reviews_completed: "5/12",
-  //   },
-  // ];
 
   const hackathons: Hackathon[] = [];
 

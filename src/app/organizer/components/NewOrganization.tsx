@@ -134,10 +134,10 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative animate-scaleIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn ">
+      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative animate-scaleIn dark:bg-gray-900">
         {/* Header */}
-        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white z-10 pb-4">
+        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white z-10 rounded-md dark:bg-gray-700 p-5 ">
           <h1 className="text-[#171717] text-2xl font-semibold">
             {type === "new" ? "New Organization" : "Edit Organization"}
           </h1>
@@ -155,7 +155,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
           <div className="space-y-5 text-start">
             {/* Logo Upload */}
             <div className="space-y-2 flex flex-col">
-              <label className="text-[#212121] font-medium text-sm">
+              <label className="text-[#212121] dark:text-white font-medium text-sm">
                 Organization Logo
               </label>
               
@@ -207,7 +207,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="name"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Organization Name <span className="text-red-500">*</span>
               </label>
@@ -230,7 +230,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="tagline"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Tagline
               </label>
@@ -252,7 +252,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="description"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Short Description
               </label>
@@ -273,7 +273,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="about"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 About
               </label>
@@ -294,7 +294,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="website"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Website
               </label>
@@ -313,7 +313,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="custom_url"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Custom URL
               </label>
@@ -337,7 +337,7 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
             <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="location"
-                className="text-[#212121] font-medium text-sm"
+                className="text-[#212121] dark:text-white font-medium text-sm"
               >
                 Location
               </label>

@@ -110,7 +110,7 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Organization grid */}
+       
           <div className="p-6">
             {filteredData.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -118,9 +118,9 @@ const Index = () => {
                   <div
                     key={i}
                     onClick={() => handleOrgClick(org.id)}
-                    className="border rounded-xl hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col"
+                    className="border rounded-xl hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col dark:bg-gray-800"
                   >
-                    <div className="relative h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-t-xl overflow-hidden">
+                    <div className="relative h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-t-xl overflow-hidden  dark:bg-gradient-to-br dark:from-primary/20 dark:to-primary/5">
                       {org.logo ? (
                         <img
                           src={org.logo}

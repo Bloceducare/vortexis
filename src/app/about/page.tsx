@@ -4,13 +4,14 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Target, Users, Zap, Heart, Award, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
+import CountUp from "@/components/CountUp";
 
 export default function AboutPage() {
   const stats = [
-    { value: "10K+", label: "Active Users" },
-    { value: "500+", label: "Hackathons" },
-    { value: "100+", label: "Organizations" },
-    { value: "$2M+", label: "Prizes Awarded" },
+    { value: 1000, label: "Active Users" },
+    { value: 500, label: "Hackathons" },
+    { value: 100, label: "Organizations" },
+    { value: 2000000, label: "Prizes Awarded" },
   ];
   const router = useRouter();
 
@@ -38,7 +39,7 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/10 dark:to-blue-900/10 py-16 px-4 sm:px-6 lg:px-8 mt-10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 px-4 sm:px-6 lg:px-8 mt-10">
       <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
         <motion.div
@@ -48,7 +49,7 @@ export default function AboutPage() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 rounded-full mb-6">
             <Globe className="w-4 h-4 text-purple-600" />
-            <span className="text-sm font-semibold text-purple-600">About Vortexis</span>
+            <span className="text-sm font-semibold text-purple-600 dark:text-white">About Vortexis</span>
           </div>
           <h1 className="text-5xl md:text-6xl font-bold text-title mb-6">
             Empowering Innovation,{" "}
@@ -63,28 +64,35 @@ export default function AboutPage() {
           </p>
         </motion.div>
 
-        {/* Stats */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
-        >
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg border border-gray-100 dark:border-gray-700"
-            >
-              <div className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-2">
-                {stat.value}
-              </div>
-              <div className="text-sm  opacity-60">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.2 }}
+  className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
+>
+  {stats.map((stat, index) => (
+    <motion.div
+      key={index}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.3 + index * 0.1 }}
+      className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg border border-gray-100 dark:border-gray-700"
+    >
+      <div className="flex items-center justify-center">
+      <CountUp 
+        end={stat.value}
+        duration={2.5}
+        className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-2"
+      /> <p         className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600 mb-2">+</p>
+
+      </div>
+
+
+      <div className="text-sm opacity-60">{stat.label}</div>
+    </motion.div>
+  ))}
+</motion.div>
+
 
         {/* Mission */}
         <motion.div

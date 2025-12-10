@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import useOrganizer from '@/hooks/useOrganizers';
-import { ChevronLeft, ChevronRight, Edit, PlusSquareIcon, Globe, MapPin, Link2, Building2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Edit, PlusSquareIcon, Globe, MapPin, Link2, Building2, Trophy } from 'lucide-react';
 import HtmlContent from '@/components/ui/HtMLContent';
 import Verified from "@/public/assets/verified.svg";
 import Image from 'next/image';
@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import Time from '@/public/assets/Time Outline Icon 1.svg'
 import NewOrganization from './NewOrganization';
 import AddModerator from './AddModerator';
+import { motion } from 'framer-motion';
 
 
 interface OrgProps {
@@ -39,8 +40,56 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
     return <div className="p-6 text-center text-red-500">Failed to load organization data.</div>;
   }
 
-  if (isLoading || orgLoading) { return  <section className="p-6 animate-pulse"> <div className="flex items-center justify-between mb-6"> <div className="flex items-center gap-4"> <div className="w-16 h-16 bg-gray-300 rounded-xl" /> <div className="space-y-3"> <div className="h-6 w-48 bg-gray-300 rounded-md" /> <div className="h-4 w-32 bg-gray-200 rounded-md" /> <div className="h-4 w-24 bg-gray-200 rounded-md" /> </div> </div> <div className="h-10 w-20 bg-gray-300 rounded-lg" /> </div> <div className="space-y-2 mb-10"> <div className="h-4 w-full bg-gray-200 rounded-md" /> <div className="h-4 w-11/12 bg-gray-200 rounded-md" /> <div className="h-4 w-10/12 bg-gray-200 rounded-md" /> </div> <div className="flex justify-between items-center mb-4"> <div className="h-6 w-48 bg-gray-300 rounded-md" /> <div className="h-6 w-32 bg-gray-200 rounded-md" /> </div> <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {[...Array(6)].map((_, index) => ( <div key={index} className="p-4 border rounded-xl bg-white shadow-sm flex flex-col" > <div className="w-full h-40 bg-gray-300 rounded-lg mb-4" /> <div className="h-5 w-3/4 bg-gray-300 rounded-md mb-2" /> <div className="h-4 w-full bg-gray-200 rounded-md mb-1" /> <div className="h-4 w-5/6 bg-gray-200 rounded-md mb-4" /> <div className="h-3 w-1/2 bg-gray-200 rounded-md self-start" /> </div> ))} </div> </section>  }
-  const allHackathons = hackathons?.hackathons || [];
+  if (isLoading || orgLoading) {
+    return (
+      <section className="p-6 animate-pulse">
+  
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-xl bg-gray-300 dark:bg-gray-700" />
+  
+            <div className="space-y-3">
+              <div className="h-6 w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
+              <div className="h-4 w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
+              <div className="h-4 w-24 rounded-md bg-gray-200 dark:bg-gray-600" />
+            </div>
+          </div>
+  
+          <div className="h-10 w-20 rounded-lg bg-gray-300 dark:bg-gray-700" />
+        </div>
+  
+        <div className="space-y-2 mb-10">
+          <div className="h-4 w-full rounded-md bg-gray-200 dark:bg-gray-600" />
+          <div className="h-4 w-11/12 rounded-md bg-gray-200 dark:bg-gray-600" />
+          <div className="h-4 w-10/12 rounded-md bg-gray-200 dark:bg-gray-600" />
+        </div>
+  
+        <div className="flex justify-between items-center mb-4">
+          <div className="h-6 w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
+          <div className="h-6 w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
+        </div>
+  
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div
+              key={index}
+              className="p-4 border rounded-xl shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 flex flex-col"
+            >
+              <div className="w-full h-40 rounded-lg mb-4 bg-gray-300 dark:bg-gray-700" />
+  
+              <div className="h-5 w-3/4 rounded-md mb-2 bg-gray-300 dark:bg-gray-700" />
+              <div className="h-4 w-full rounded-md mb-1 bg-gray-200 dark:bg-gray-600" />
+              <div className="h-4 w-5/6 rounded-md mb-4 bg-gray-200 dark:bg-gray-600" />
+  
+              <div className="h-3 w-1/2 rounded-md bg-gray-200 dark:bg-gray-600 self-start" />
+            </div>
+          ))}
+        </div>
+  
+      </section>
+    );
+  }
+    const allHackathons = hackathons?.hackathons || [];
   const totalHackathons = hackathons?.hackathons_count || 0;
 
 
@@ -159,8 +208,8 @@ const filteredHackathons = !searchQuery.trim()
 
       {/* Description */}
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-semibold text-[#171717]">Description</h1>
-        <p className="text-gray-700 leading-relaxed">
+        <h1 className="text-2xl font-semibold text-[#171717] dark:text-white">Description</h1>
+        <p className="text-gray-700 leading-relaxed dark:text-gray-300">
           {orgData?.description || 'No description available for this organization.'}
         </p>
       </div>
@@ -168,8 +217,8 @@ const filteredHackathons = !searchQuery.trim()
       {/* About Section */}
       {orgData?.about && (
         <div className="space-y-2 mb-8">
-          <h1 className="text-2xl font-semibold text-[#171717]">About</h1>
-          <p className="text-gray-700 leading-relaxed">
+          <h1 className="text-2xl font-semibold text-[#171717] dark:text-white">About</h1>
+          <p className="text-gray-700 leading-relaxed dark:text-gray-300">
             {orgData.about}
           </p>
         </div>
@@ -237,13 +286,26 @@ const filteredHackathons = !searchQuery.trim()
               <div
                 key={hackathon.id}
                 onClick={() => router.push(`/organizer/${hackathon.id}/hackathon`)}
-                className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between "
+                className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between dark:bg-gray-800"
               >
-                <img
-                  src={hackathon.banner_image || "/placeholder.png"}
-                  alt={hackathon.title}
-                  className="w-full h-40 object-cover rounded-lg mb-3"
-                />
+                      <div
+        className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
+      >
+        {hackathon.banner_image && hackathon.banner_image.trim() !== "" ? (
+          <motion.img
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.3 }}
+            src={hackathon.banner_image}
+            alt={hackathon.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Trophy className="w-16 h-16 text-primary/30" />
+          </div>
+        )}
+        </div>
+
 
                 <h4 className="text-lg font-medium mb-4">{hackathon.title}</h4>
 
@@ -253,7 +315,7 @@ const filteredHackathons = !searchQuery.trim()
 
                 <div className="flex items-center mt-3 gap-3">
                   <p
-                    className={`bg-[#F2F1FD] rounded-full px-3 py-1 text-xs font-medium text-[#717171]`}
+                    className={`bg-[#F2F1FD] rounded-full px-3 py-1 text-xs font-medium text-[#717171] dark:bg-gray-700 dark:text-gray-300`}
                   >
                     <Image
                       src={Time}
@@ -263,7 +325,7 @@ const filteredHackathons = !searchQuery.trim()
                     {hasEnded ? "Ended" : `${daysLeft} days left`}
                   </p>
 
-                  <p className="bg-[#F2F1FD] rounded-full px-3 py-1 text-xs text-[#605DEC]">
+                  <p className="bg-[#F2F1FD] rounded-full px-3 py-1 text-xs text-[#605DEC] dark:bg-gray-700 dark:text-gray-300">
                     <Image
                       src={ParticipantImage}
                       alt="participant"

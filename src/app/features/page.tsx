@@ -93,7 +93,7 @@ const features = [
 export default function FeaturesPage() {
     const router = useRouter();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-500 py-16 px-4 sm:px-6 lg:px-8 mt-10">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-500 py-16 px-4 sm:px-6 lg:px-8 mt-10  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -103,7 +103,7 @@ export default function FeaturesPage() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">
+            <span className="text-sm font-semibold text-blue-600 dark:text-white">
               Powerful Features
             </span>
           </div>
