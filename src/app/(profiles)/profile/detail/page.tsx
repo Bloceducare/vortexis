@@ -125,12 +125,12 @@ export default function ProfileView() {
 
 
   return (
-    <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24 bg-transparent">
+    <section className=" px-4 sm:px-6 lg:px-8 pt-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
 
       {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 
-      <section className="flex gap-20 max-w-7xl mx-auto">
-        <section className="space-y-5 w-[60%]">        
+      <section className="flex gap-20 max-w-7xl mx-auto flex-wrap md:flex-nowrap">
+        <section className="space-y-5 md:w-[60%]">        
         <section className="flex justify-between items-end">
           <div className=" text-start">
             <div
@@ -164,16 +164,20 @@ export default function ProfileView() {
             {user.is_participant && <Badge className="bg-green-500 cursor-pointer" onClick={() => router.push("/dashboard")}>Participant</Badge>}
             {user.is_judge && <Badge className="bg-yellow-500 cursor-pointer"  onClick={() => router.push("/judges")}>Judge</Badge>}
           </div>
-          <div className="flex items-center gap-3 text-gray-600 dark:text-gray-400">
+          <div className="flex justify-between items-center flex-wrap ">
+          <div className="flex items-center gap-1 md:gap-3 text-gray-600 dark:text-gray-400 ">
           <Image src={LocationIcon}  alt="" />                    
             {user.profile?.location}
           </div>
 
-          <div className="flex gap-3 items-center text-gray-600 dark:text-gray-400">
+          <div className="flex gap-1 md:gap-3 items-center text-gray-600 dark:text-gray-400">
             <FaGlobe />
           English
           </div>
 
+
+          </div>
+      
         </section>
         {user.profile?.bio ? (
             <div className="mt-6">
@@ -236,12 +240,12 @@ export default function ProfileView() {
         </section>
         <section className="w-full">
           <div className="flex justify-start">
-          <div className="flex gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-3 px-2 rounded-full transition-colors">
+          <div className="flex gap-2 md:gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-3 px-2 rounded-full transition-colors">
       {tabs.map((tab) => (
         <button
           key={tab}
           onClick={() => setActiveTab(tab)}
-          className={`px-4 py-2 transition cursor-pointer ${
+          className={` px-1 md:px-4 py-2 transition cursor-pointer text-sm md:text-lg ${
             activeTab === tab
               ? " font-semibold bg-[#605DEC] text-white rounded-full"
               : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"

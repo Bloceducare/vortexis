@@ -39,7 +39,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-4xl md:text-6xl font-bold text-title dark:text-white leading-tight"
+          className="text-2xl md:text-6xl font-bold text-title dark:text-white leading-tight"
         >
           Join Game-Changing{" "}
           <span className="text-primary dark:text-indigo-400">Hackathons</span>{" "}
@@ -68,7 +68,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onCreateOrg}
-            className="flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
+            className="flex items-center gap-2 bg-primary dark:bg-primary/40 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer"
           >
             <Rocket className="w-5 h-5" />
             Create Organization

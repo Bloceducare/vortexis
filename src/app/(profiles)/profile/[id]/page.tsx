@@ -88,7 +88,7 @@ function SingleProfile() {
   }
 
   return (
-    <section className="mb-14 px-4 sm:px-6 lg:px-8 pt-24">
+    <section className="px-4 sm:px-6 lg:px-8 pt-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       <section className="flex flex-col lg:flex-row gap-10 max-w-7xl mx-auto">
       
         <section className="space-y-5 w-full lg:w-[60%]">
@@ -130,8 +130,8 @@ function SingleProfile() {
           {/* About */}
           {user.profile?.bio && (
             <div className="mt-6">
-              <h2 className="text-lg font-semibold text-gray-800">About</h2>
-              <p className="text-gray-700 mt-1">{user.profile.bio}</p>
+              <h2 className="text-lg font-semibold text-gray-800  dark:text-gray-400 ">About</h2>
+              <p className="text-gray-700 mt-1  dark:text-gray-400 ">{user.profile.bio}</p>
             </div>
           )}
 
@@ -197,7 +197,7 @@ function SingleProfile() {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500 mt-1">No skills available</p>
+              <p className="text-gray-500 mt-1  dark:text-gray-400 ">No skills available</p>
             )}
           </div>
         </section>
@@ -205,12 +205,12 @@ function SingleProfile() {
         {/* 📑 Right: Tabs + Content */}
         <section className="w-full">
           <div className="flex justify-start">
-            <div className="flex gap-4 bg-[#F5F5F5] py-3 px-2 rounded-full">
+            <div className="flex gap-2 md:gap-4 bg-[#F5F5F5] py-3 px-1 md:px-2 rounded-full">
               {tabs.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 transition cursor-pointer ${
+                  className={` px-1 md:px-4 py-2 transition cursor-pointer text-sm md:text-lg  ${
                     activeTab === tab
                       ? "font-semibold bg-[#605DEC] text-white rounded-full"
                       : "text-gray-500 hover:text-gray-700"
@@ -222,7 +222,7 @@ function SingleProfile() {
             </div>
           </div>
 
-          <section className="mt-5 text-gray-600">
+          <section className="mt-5 text-gray-600  dark:text-gray-400 ">
             {activeTab === "Hackathons" && "Hackathons coming soon..."}
             {activeTab === "Activity" && "Activity coming soon..."}
             {activeTab === "Badges" && "Badges coming soon..."}

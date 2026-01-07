@@ -150,9 +150,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                    className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50 dark:bg-gray-800"
                   >
-                    <ul className="py-2 text-sm text-gray-700 list-none">
+                    <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
                       <li>
                         <Link
                           href="/profile/detail"

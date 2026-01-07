@@ -154,12 +154,12 @@ export const Header: React.FC = () => {
                 >
                   Features
                 </Link>
-                <Link
+                {/* <Link
                   href="/hackathon"
                   className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Hackathons
-                </Link>
+                </Link> */}
                 <Link
                   href="/about"
                   className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
@@ -299,7 +299,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Mobile menu button */}
-            <div className="flex items-center md:hidden gap-2">
+            <div className="flex items-center md:hidden gap-1">
               {/* Dark Mode Toggle - Mobile */}
               <button
                 onClick={toggleDarkMode}
@@ -315,16 +315,114 @@ export const Header: React.FC = () => {
 
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#605DEC] transition-all duration-200"
+                className="inline-flex items-center justify-center p-1 rounded-md text-[#4D4D4D] hover:text-[#605DEC] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#605DEC] transition-all duration-200"
                 aria-expanded="false"
               >
                 <span className="sr-only">Open main menu</span>
                 {isMenuOpen ? (
                   <X className="block h-6 w-6 transition-transform duration-200" />
                 ) : (
+                  <div className="flex items-center gap-2">
+
                   <Menu className="block h-6 w-6 transition-transform duration-200" />
+              
+                  </div>
+
                 )}
               </button>
+              {isLoggedIn && (
+                    <div
+                    className="flex items-center gap-5 md:gap-10 relative"
+                    ref={dropdownRef}
+                  >
+                    <div className="relative z-30">
+                      {/* Avatar & Name */}
+                      <div
+                        className="flex items-center gap-1 cursor-pointer"
+                        onClick={() => setShowDropdown((prev) => !prev)}
+                      >
+                        <div
+                          className={`h-7 w-7 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
+                        >
+                          {initials.toUpperCase()}
+                        </div>
+                        <ChevronDown className="text-gray-500 w-4 h-4" />
+                      </div>
+  
+                      {/* Dropdown + Fullscreen Blur Overlay */}
+                      <AnimatePresence>
+                        {showDropdown && (
+                          <>
+                            {/* Fullscreen Blur Overlay */}
+                            <motion.div
+                              key="overlay"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              onClick={() => setShowDropdown(false)}
+                              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
+                            />
+  
+                            {/* Dropdown Menu */}
+                            <motion.div
+                              key="dropdown"
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -5 }}
+                              transition={{ duration: 0.2 }}
+                              className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50 dark:bg-gray-800"
+                            >
+                              <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
+                                <li>
+                                  <Link
+                                    href="/profile/detail"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                  >
+                                    View Profile
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/organizer"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                  >
+                                    Organization
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/dashboard"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                  >
+                                    Hacker
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link
+                                    href="/judges"
+                                    className="block px-4 py-2 hover:bg-gray-100"
+                                  >
+                                    Judges
+                                  </Link>
+                                </li>
+                                <li>
+                                  <p
+                                    onClick={() => setLogout(true)}
+                                    className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                  >
+                                    LogOut
+                                  </p>
+                                </li>
+                              </ul>
+                            </motion.div>
+                          </>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                  )
+
+                  }
             </div>
           </div>
         </div>
@@ -335,7 +433,7 @@ export const Header: React.FC = () => {
             isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          {!isLoggedIn && (
+      
             <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
               {/* Mobile Navigation Links */}
               <div className="pt-2 pb-3 space-y-1 px-4">
@@ -382,49 +480,37 @@ export const Header: React.FC = () => {
                       </Link>
                     </>
                   ) : (
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        closeMenu();
-                      }}
-                      className="w-full px-4 py-3 text-base font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-all duration-200 cursor-pointer"
+                     <div
+                  className="flex items-center gap-5 md:gap-10 relative"
+                  ref={dropdownRef}
+                >
+                  <div className="relative z-30">
+                
+                    <div
+                      className="flex items-center gap-2 cursor-pointer"
                     >
-                      Logout
-                    </button>
+                      <div
+                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
+                      >
+                        {initials.toUpperCase()}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold">
+                          {user?.first_name} {user?.last_name}
+                        </p>
+                      </div>
+                     
+                    </div>
+                  </div>
+                </div>
                   )}
                 </div>
               </div>
             </div>
-          )}
-          {isLoggedIn && (
-            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg">
-              {/* Mobile Navigation Links */}
-              <div className="pt-2 pb-3 space-y-1 px-4">
-                <Link
-                  href="/features"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
-                  onClick={closeMenu}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="/home"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
-                  onClick={closeMenu}
-                >
-                  Hackathons
-                </Link>
+        
 
-                <Link
-                  href="/about"
-                  className="block px-3 py-3 text-base font-medium text-[#4D4D4D] dark:text-gray-300 hover:text-[#605DEC] hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
-                  onClick={closeMenu}
-                >
-                  About
-                </Link>
-              </div>
-            </div>
-          )}
+
+      
         </div>
       </header>
 

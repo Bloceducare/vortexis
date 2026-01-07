@@ -30,8 +30,8 @@ export function HackathonCard({
       {/* <CardContent className="p-6"> */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-medium text-primary mb-2">{title} </h3>
-          <span className="inline-block px-3 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+          <h3 className="text-sm md:text-lg font-medium text-primary mb-2">{title} </h3>
+          <span className="inline-block px-2 md:px-3 md:py-1 text-xs font-medium dark:bg-blue-700 bg-blue-100 text-blue-700 rounded-full dark:text-white">
             {status}
           </span>
         </div>
@@ -51,7 +51,7 @@ export function HackathonCard({
 
         <div className="flex items-center gap-2 text-orange-600">
           <Clock className="w-4 h-4" />
-          <span className="text-sm font-medium">{daysLeft} days left</span>
+          <span className="text-xs md:text-sm font-medium">{daysLeft} days left</span>
         </div>
       </div>
       {/* </CardContent> */}

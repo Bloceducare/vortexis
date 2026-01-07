@@ -118,13 +118,13 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
   const hasPreviewContent = formData.title && formData.description;
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/10 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/10 py-8 px-4 md:px-6 lg:px-8">
       <div className="space-y-6 max-w-none">
    
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-3xl p-8 shadow-xl text-white relative overflow-hidden"
+          className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-3xl p-3 md:p-8 shadow-xl text-white relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <div className="relative">
@@ -133,13 +133,13 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                 <Trophy className="w-6 h-6" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Create Your Project</h1>
+                <h1 className="text-lg md:text-3xl font-bold">Create Your Project</h1>
                 <p className="text-indigo-100 text-sm">
                   Showcase your innovation
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 md:inline-flex">
+            <div className="flex items-center gap-2 text-sm bg-white/10 backdrop-blur-sm rounded-xl px-2 md:px-4 py-2 md:inline-flex">
               <Sparkles className="w-4 h-4" />
               <span>Hackathon: {hackathon?.title}</span>
             </div>
@@ -155,7 +155,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-whiterounded-3xl shadow-xl p-8 border border-gray-100 dark:border-gray-700 w-full"
+          className="bg-whiterounded-3xl shadow-xl p-3 md:p-8 border border-gray-100 dark:border-gray-700 w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Title */}
@@ -394,7 +394,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
+              className="bg-white dark:bg-gray-800 rounded-3xl p-2 md:p-8 shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden"
             >
               <div className="flex items-center gap-2 mb-6">
                 <Eye className="w-5 h-5 text-indigo-500" />

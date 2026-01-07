@@ -143,12 +143,12 @@ export default function TeamManagement() {
   }
 
   return (
-    <section className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-6 transition-colors">
+    <section className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 transition-colors">
       <div>
         <h1 className="text-[#605DEC] dark:text-indigo-400 text-xl md:text-[32px] font-bold">
           Team Workspace
         </h1>
-        <p className="dark:text-gray-300">
+        <p className="dark:text-gray-300 text-sm md:text-lg">
           Collaborate with your team members!
         </p>
       </div>
@@ -157,14 +157,14 @@ export default function TeamManagement() {
       )}
 
       {data && (
-        <div className=" p-6 bg-white dark:bg-gray-800 space-y-8 mt-10 transition-colors">
+        <div className=" md:p-6 bg-white dark:bg-gray-800 space-y-8 mt-5 md:mt-10 transition-colors">
           <section className="flex gap-5 items-start flex-wrap md:flex-nowrap">
-            <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-6 py-3 w-full md:w-[54%] transition-colors">
+            <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-3 md:px-6 py-3 w-full md:w-[54%] transition-colors">
               <div className="space-y-3">
-                <h1 className="font-semibold text-2xl text-[#1E1E1E] dark:text-white">
+                <h1 className="font-semibold text-xl md:text-2xl text-[#1E1E1E] dark:text-white">
                   Team: {data.name}
                 </h1>
-                <p className="dark:text-gray-300">
+                <p className="dark:text-gray-300 text-sm md:text-lg">
                   Working on {data.hackathon ? data.hackathon.title : "N/A"}{" "}
                   hackathon
                 </p>
@@ -187,9 +187,9 @@ export default function TeamManagement() {
                         className="relative group cursor-pointer w-[48%]"
                         onClick={() => router.push(`/profile/${m.id}`)}
                       >
-                        <div className="flex gap-2 border-2 border-[#605DEC] rounded-lg px-4 py-2 items-center ">
+                        <div className="flex gap-2 border-2 border-[#605DEC] rounded-lg px-2 md:px-4 py-2 items-center ">
                           <div
-                            className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold ${color}`}
+                            className={`md:w-10 md:h-10 w-7 h-7 flex items-center justify-center rounded-full text-white font-bold ${color} text-xs md:text-lg`}
                           >
                             {initials}
                           </div>
@@ -300,10 +300,10 @@ export default function TeamManagement() {
                 <h2 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">
                   Actions
                 </h2>
-                <div className="flex justify-between items-center gap-4">
+                <div className="flex justify-between items-center gap-4 flex-wrap">
                   {isCreator && (
                     <button
-                      className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer w-[48%]"
+                      className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer md:w-[48%]"
                       onClick={() => setAddModal(true)}
                     >
                       + Invite Member
@@ -311,7 +311,7 @@ export default function TeamManagement() {
                   )}
 
                   <button
-                    className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer w-[48%]"
+                    className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer md:w-[48%]"
                     onClick={() => handleLeaveTeam(data.id)}
                   >
                     {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
@@ -369,9 +369,9 @@ export default function TeamManagement() {
       />
 
       {!data && !isLoading && (
-        <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-6 py-7 mt-4 transition-colors">
+        <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-4 md:px-6 py-7 mt-4 transition-colors">
           <div className="space-y-3">
-            <h1 className="text-[#00AC4F] dark:text-green-400 text-2xl font-semibold">
+            <h1 className="text-[#00AC4F] dark:text-green-400 text-xl md:text-2xl font-semibold">
               Create New Team
             </h1>
             <p className="dark:text-gray-300">
@@ -383,18 +383,18 @@ export default function TeamManagement() {
             <div className="flex flex-col items-center justify-center gap-4">
               <Image src={TeamIcon} alt="img-icon" />
 
-              <h1 className="text-[#212121] dark:text-white font-semibold text-2xl">
+              <h1 className="text-[#212121] dark:text-white font-semibold text-xl md:text-2xl">
                 Create New Team
               </h1>
 
-              <p className="text-[#727272] dark:text-gray-400 text-center text-lg leading-8">
+              <p className="text-[#727272] dark:text-gray-400 text-center text-sm md:text-lg leading-5 md:leading-8">
                 Create a team or join an existing one to collaborate with other{" "}
                 <br />
                 participants for the <b>{hackathonData?.title}</b> Hackathon.
               </p>
             </div>
 
-            <div className="flex gap-5 justify-center">
+            <div className="flex gap-5 justify-center flex-wrap">
               <button
                 className="px-7 py-3 bg-[#3D3ACE] text-white rounded-sm flex gap-3 items-center cursor-pointer"
                 onClick={toggleCreateTeam}

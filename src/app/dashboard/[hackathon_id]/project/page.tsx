@@ -77,7 +77,7 @@ function Project() {
 
   if (!project || project.length === 0) {
     return (
-      <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
+      <div className="p-3 md:p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
         <h2 className="text-2xl font-bold mb-4 dark:text-white">
           No Project Found
         </h2>
@@ -94,7 +94,7 @@ function Project() {
 
   if (update) {
     return (
-      <div className="p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-colors">
+      <div className="p-3 md:p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-colors">
         <UpdateProject
           onClose={() => setUpdate(false)}
           hackathon_id={hackathon_id}
@@ -143,18 +143,18 @@ function Project() {
   };
 
   return (
-    <div className="p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl transition-colors">
+    <div className="p-3 md:p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl transition-colors">
       <h1 className="text-[#605DEC] dark:text-indigo-400 font-bold text-2xl md:text-[32px]">
         Manage Your Project
       </h1>
 
       <section className="flex justify-between mt-10 gap-5 flex-wrap md:flex-nowrap">
-        <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-6 py-3 md:w-[64%] transition-colors">
+        <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-2 md:px-6 py-3 md:w-[64%] transition-colors">
           <div className="space-y-2">
             <h1 className="text-[#AC0000] dark:text-red-400 text-xl md:text-2xl font-semibold">
               Project Details
             </h1>
-            <p className="dark:text-gray-300">
+            <p className="dark:text-gray-300 text-sm md:text-lg">
               Get more Information about your project
             </p>
           </div>
@@ -233,7 +233,7 @@ function Project() {
           </div>
         </section>
 
-        <section className="w-full md:w-[35%]">
+        <section className=" md:w-[35%]">
           <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-6 py-3 transition-colors">
             <h1 className="text-[#00AC4F] dark:text-green-400 font-semibold text-2xl">
               Submission Deadline
@@ -284,7 +284,7 @@ function Project() {
         </section>
       </section>
 
-      <div className="flex gap-4 mt-10 justify-end">
+      <div className="flex gap-4 mt-10 justify-end flex-wrap">
         <button
           className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition cursor-pointer ${
             submitProjectMutation.isPending
