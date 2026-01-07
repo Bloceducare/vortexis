@@ -173,13 +173,13 @@ const Hackathons = () => {
             )}
           </div>
 
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-title mb-4">
+              <h1 className="text-2xl md:text-5xl font-bold text-title mb-4">
                 {data?.title}
               </h1>
               <div className="prose prose-lg max-w-none  opacity-80">
@@ -198,7 +198,7 @@ const Hackathons = () => {
         >
           <motion.div
             whileHover={{ y: -4 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-6 shadow-lg border border-gray-100 dark:border-gray-700"
           >
             <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mb-3">
               <MapPin className="w-6 h-6 text-green-600 dark:text-green-400" />
@@ -209,7 +209,7 @@ const Hackathons = () => {
 
           <motion.div
             whileHover={{ y: -4 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-6 shadow-lg border border-gray-100 dark:border-gray-700"
           >
             <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl flex items-center justify-center mb-3">
               <Trophy className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
@@ -220,7 +220,7 @@ const Hackathons = () => {
 
           <motion.div
             whileHover={{ y: -4 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-6 shadow-lg border border-gray-100 dark:border-gray-700"
           >
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-3">
               <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -233,7 +233,7 @@ const Hackathons = () => {
 
           <motion.div
             whileHover={{ y: -4 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-6 shadow-lg border border-gray-100 dark:border-gray-700"
           >
             <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center mb-3">
               <FileText className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -256,13 +256,13 @@ const Hackathons = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-4 md:p-8 shadow-lg border border-gray-100 dark:border-gray-700"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <FileText className="w-5 h-5 text-primary" />
                 </div>
-                <h2 className="text-2xl font-bold text-title">Rules</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-title">Rules</h2>
               </div>
               <div className="prose prose-lg max-w-none dark:prose-invert">
                 <HtmlContent html={safeParseContent(data?.rules)} />
@@ -274,13 +274,13 @@ const Hackathons = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-8 shadow-lg border border-yellow-100 dark:border-yellow-800"
+              className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-4 md:p-8 shadow-lg border border-yellow-100 dark:border-yellow-800"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center">
                   <Award className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-title">
+                <h2 className="text-xl md:text-2xl font-bold text-title">
                   Prizes & Rewards
                 </h2>
               </div>
@@ -296,7 +296,7 @@ const Hackathons = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 sticky top-6"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-3 md:p-6 shadow-lg border border-gray-100 dark:border-gray-700 sticky top-6"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">

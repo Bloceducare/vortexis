@@ -147,32 +147,33 @@ const Page = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-4 transition-colors">
+    <div className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-3 md:p-4 transition-colors">
       <div className="w-full mx-auto space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">
+        <div className="">
+          <h1 className="text-xl md:text-4xl font-bold text-blue-600 dark:text-blue-400">
             Welcome, {user?.first_name}!{" "}
-            <span className="text-lg font-normal text-gray-600 dark:text-gray-300 ml-2">
-              Ready to build something great?
-            </span>
+           
           </h1>
-          <button
+          <p className="text-xs md:text-lg font-normal text-gray-600 dark:text-gray-300 md:ml-2">
+              Ready to build something great?
+            </p>
+          {/* <button
             onClick={() => refetch()}
-            className="text-sm px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="text-sm px-2 md:px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
           >
             Refresh
-          </button>
+          </button> */}
         </div>
 
         {/* Tabs + Filter */}
         <div className="flex flex-col md:flex-row items-center gap-4">
-          <div className="flex gap-3">
+          <div className="flex gap-2 md:gap-3">
             {["Active", "Upcoming", "Ended"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`px-4 py-2 rounded-lg font-medium cursor-pointer transition-colors ${
+                className={`px-2 py-1 md:px-4 md:py-2 rounded-lg font-medium cursor-pointer transition-colors ${
                   activeTab === tab
                     ? "bg-blue-500 text-white"
                     : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
@@ -187,7 +188,7 @@ const Page = () => {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value as any)}
-              className="px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
+              className="px-2 py-1 md:px-3 md:py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors"
             >
               <option value="all">All</option>
               <option value="date">By Date</option>
@@ -208,7 +209,7 @@ const Page = () => {
 
         {/* Hackathons */}
         <div className="space-y-4">
-          <h2 className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <h2 className="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400">
             {activeTab} Hackathons
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -229,7 +230,7 @@ const Page = () => {
           {/* Deadlines */}
           <Card>
             <header className="pb-4 p-5 flex justify-between items-center">
-              <h2 className="flex items-center gap-2 text-red-600 text-xl">
+              <h2 className="flex items-center gap-2 text-red-600 md:text-xl">
                 <AlertCircle className="w-5 h-5" />
                 Upcoming Deadlines
               </h2>
@@ -255,7 +256,7 @@ const Page = () => {
           {/* Quick Actions */}
           <Card>
             <header className="pb-4 p-5">
-              <h2 className="text-green-600 text-xl">Quick Actions</h2>
+              <h2 className="text-green-600 md:text-xl">Quick Actions</h2>
             </header>
             <div className="space-y-3">
               {quickActions.map((action, index) => (
