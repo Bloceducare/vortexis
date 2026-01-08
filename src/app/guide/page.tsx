@@ -74,7 +74,7 @@ export default function GuideCard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <motion.div
@@ -108,7 +108,7 @@ export default function GuideCard() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-full mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-br from-purple-500/10 to-blue-500/10 rounded-full mb-6"
             >
               <Rocket className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               <span className="text-sm font-semibold text-purple-600 dark:text-purple-400">
@@ -116,14 +116,14 @@ export default function GuideCard() {
               </span>
             </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 bg-linear-to-br from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Build Your Hackathon Empire
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8">
+            <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-300 mb-8">
               From zero to organizing world-class hackathons in 6 simple steps
             </p>
 
-            <div className="flex flex-wrap justify-center gap-8 mb-8">
+            <div className="flex flex-wrap justify-center gap-3 md:gap-8 mb-8">
               {[
                 { number: "100+", label: "Active Users" },
                 { number: "10+", label: "Organizations" },
@@ -136,7 +136,7 @@ export default function GuideCard() {
                   transition={{ delay: 0.4 + i * 0.1 }}
                   className="text-center"
                 >
-                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
+                  <div className="text-xl md:text-3xl font-bold text-purple-600 dark:text-purple-400">
                     {stat.number}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -151,7 +151,7 @@ export default function GuideCard() {
             <motion.h2
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
+              className="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
             >
               Your Journey to Success
             </motion.h2>
@@ -178,9 +178,9 @@ export default function GuideCard() {
                       }`}
                     >
                       <div className="flex items-start gap-6">
-                        <div className="flex-shrink-0">
+                        <div className="shrink-0">
                           <div
-                            className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center text-white text-2xl font-bold shadow-lg`}
+                            className={`md:w-16 md:h-16 w-8 h-8 rounded-lg md:rounded-2xl bg-linear-to-br ${step.color} flex items-center justify-center text-white text-lg md:text-2xl font-bold shadow-lg`}
                           >
                             {index + 1}
                           </div>
@@ -189,11 +189,11 @@ export default function GuideCard() {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <Icon className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-                            <h3 className="text-xl font-bold text-gray-800 dark:text-white ">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-800 dark:text-white ">
                               {step.title}
                             </h3>
                           </div>
-                          <p className="text-gray-600 dark:text-gray-300">
+                          <p className="text-gray-600 dark:text-gray-300 text-sm md:text-lg">
                             {step.description}
                           </p>
                         </div>
@@ -229,7 +229,7 @@ export default function GuideCard() {
             transition={{ delay: 0.8 }}
             className="max-w-5xl mx-auto mb-16"
           >
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-800 ">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white">
               Why Choose Vortexis?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -244,7 +244,7 @@ export default function GuideCard() {
                     whileHover={{ y: -8 }}
                     className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all text-center"
                   >
-                    <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <div className="w-14 h-14 bg-linear-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-4">
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-800  mb-2">
@@ -265,11 +265,11 @@ export default function GuideCard() {
             transition={{ delay: 1 }}
             className="max-w-3xl mx-auto"
           >
-            <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-3xl p-8 md:p-12 text-center shadow-2xl">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <div className="bg-linear-to-br from-purple-600 to-blue-600 rounded-3xl p-8 md:p-12 text-center shadow-2xl">
+              <h2 className=" text-xl md:text-4xl font-bold text-white mb-4">
                 Ready to Get Started?
               </h2>
-              <p className="text-lg text-purple-100 mb-8">
+              <p className="text-sm md:text-lg text-purple-100 mb-8">
                 Create your organization today and start hosting amazing hackathons
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -277,7 +277,7 @@ export default function GuideCard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push('/organizer/create-hackathon')}
-                  className="flex items-center justify-center gap-2 bg-white text-purple-600 px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+                  className="flex items-center justify-center gap-2 bg-white text-purple-600 px-2 md:px-8 py-4 rounded-xl font-semibold md:text-lg shadow-lg hover:shadow-xl transition-all text-sm"
                 >
                   <Building2 className="w-5 h-5" />
                   Create Organization
@@ -287,7 +287,7 @@ export default function GuideCard() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push('/auth/signup')}
-                  className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white/10 transition-all"
+                  className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white md:px-8 px-2 py-4 rounded-xl font-semibold md:text-lg hover:bg-white/10 transition-all text-sm"
                 >
                   <UserPlus className="w-5 h-5" />
                   Sign Up First
@@ -302,7 +302,7 @@ export default function GuideCard() {
             transition={{ delay: 1.2 }}
             className="max-w-3xl mx-auto mt-16 text-center"
           >
-            <h3 className="text-2xl font-bold text-gray-800  mb-4">
+            <h3 className="text-2xl font-bold text-gray-800  mb-4 dark:text-white">
               Need Help?
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">

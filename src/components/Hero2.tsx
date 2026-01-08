@@ -20,7 +20,7 @@ export default function HackathonCTA() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative w-full bg-gradient-to-br from-[#605DEC] via-[#5046d8] to-[#4a3ec4] overflow-hidden rounded-3xl p-8 sm:p-12 shadow-2xl"
+          className="relative w-full bg-linear-to-br from-[#605DEC] via-[#5046d8] to-[#4a3ec4] overflow-hidden rounded-3xl p-4 sm:p-12 shadow-2xl"
         >
           {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
@@ -78,7 +78,7 @@ export default function HackathonCTA() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
+              className="text-2xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
             >
               Join or Host a Hackathon
             </motion.h2>
@@ -88,7 +88,7 @@ export default function HackathonCTA() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-lg sm:text-xl mb-10 leading-relaxed text-white/90 max-w-2xl mx-auto"
+              className="text-sm sm:text-xl mb-10 leading-relaxed text-white/90 max-w-2xl mx-auto"
             >
               Whether you're new to hackathons or ready to host one, we've got
               you covered. Connect with innovators, build amazing projects, or
@@ -109,7 +109,7 @@ export default function HackathonCTA() {
                     boxShadow: "0 10px 40px rgba(0,0,0,0.2)",
                   }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 bg-white text-[#605DEC] font-semibold rounded-xl shadow-lg hover:bg-gray-50 transition-all cursor-pointer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2  px-8 py-4 bg-white text-[#605DEC] font-semibold rounded-xl shadow-lg hover:bg-gray-50 transition-all cursor-pointer text-sm md:text-lg"
                 >
                   <Rocket className="w-5 h-5" />
                   Join as Participant
@@ -120,7 +120,7 @@ export default function HackathonCTA() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#605DEC] rounded-xl font-semibold transition-all cursor-pointer"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white hover:bg-white hover:text-[#605DEC] rounded-xl font-semibold transition-all cursor-pointer text-sm md:text-lg"
                 >
                   <Users className="w-5 h-5" />
                   Learn How to Host

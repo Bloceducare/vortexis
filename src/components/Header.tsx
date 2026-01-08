@@ -154,12 +154,12 @@ export const Header: React.FC = () => {
                 >
                   Features
                 </Link>
-                {/* <Link
+                <Link
                   href="/hackathon"
                   className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
                 >
                   Hackathons
-                </Link> */}
+                </Link>
                 <Link
                   href="/about"
                   className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"

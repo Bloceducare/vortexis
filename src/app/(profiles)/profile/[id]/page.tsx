@@ -38,8 +38,8 @@ function SingleProfile() {
 
   if (isLoading) {
     return (
-      <section className="px-4 sm:px-6 lg:px-8 pt-24">
-        <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
+      <section className="px-4 sm:px-6 lg:px-8 pt-24 dark:bg-gray-800">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-600  rounded-xl shadow-lg overflow-hidden animate-pulse">
           <div className="h-44 bg-gray-200" />
           <div className="pt-20 px-4 sm:px-6 pb-6">
             <div className="h-6 bg-gray-200 rounded w-48 mb-2" />
@@ -184,7 +184,7 @@ function SingleProfile() {
 
           {/* Skills */}
           <div className="mt-6">
-            <h1 className="text-[#212121] font-semibold">Skills & Interests</h1>
+            <h1 className="text-[#212121] font-semibold dark:text-white">Skills & Interests</h1>
             {user.profile?.skills?.length > 0 ? (
               <div className="flex flex-wrap gap-2 mt-3">
                 {user.profile.skills.map((skill: any) => (
@@ -205,7 +205,7 @@ function SingleProfile() {
         {/* 📑 Right: Tabs + Content */}
         <section className="w-full">
           <div className="flex justify-start">
-            <div className="flex gap-2 md:gap-4 bg-[#F5F5F5] py-3 px-1 md:px-2 rounded-full">
+            <div className="flex gap-2 md:gap-4 bg-[#F5F5F5] dark:bg-gray-800 py-3 px-1 md:px-2 rounded-full">
               {tabs.map((tab) => (
                 <button
                   key={tab}

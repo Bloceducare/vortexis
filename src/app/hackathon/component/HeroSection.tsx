@@ -17,8 +17,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
       className="relative"
     >
       {/* Background decoration */}
-      <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute -top-10 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      <div className="hidden md:block absolute -top-20 -left-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+      <div className="hidden md:block absolute -top-10 -right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
 
       <div className="relative max-w-3xl space-y-6">
         {/* Badge */}
@@ -68,7 +68,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={onCreateOrg}
-            className="flex items-center gap-2 bg-primary dark:bg-primary/40 text-white px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer"
+            className="flex items-center gap-2 bg-primary dark:bg-primary/40 text-white px-3 text-sm md:text-lg md:px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer"
           >
             <Rocket className="w-5 h-5" />
             Create Organization
@@ -76,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium hover:bg-primary/5 transition-all cursor-pointer"
+            className="border-2 border-primary text-primary px-3 md:px-6 py-3 rounded-xl text-sm md:text-lg font-medium hover:bg-primary/5 transition-all cursor-pointer"
             onClick={() => router.push("/guide")}
           >
             View Guide

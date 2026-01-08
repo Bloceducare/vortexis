@@ -35,58 +35,61 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const itemsPerPage = 6;
 
- 
+
   if (orgError || isError) {
     return <div className="p-6 text-center text-red-500">Failed to load organization data.</div>;
   }
 
   if (isLoading || orgLoading) {
     return (
-      <section className="p-6 animate-pulse">
-  
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-xl bg-gray-300 dark:bg-gray-700" />
-  
-            <div className="space-y-3">
-              <div className="h-6 w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
-              <div className="h-4 w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
-              <div className="h-4 w-24 rounded-md bg-gray-200 dark:bg-gray-600" />
-            </div>
+      <section className="p-3 sm:p-4 md:p-6 animate-pulse">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl bg-gray-300 dark:bg-gray-700" />
+
+          <div className="space-y-2">
+            <div className="h-5 sm:h-6 w-36 sm:w-44 md:w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
+            <div className="h-3.5 sm:h-4 w-28 sm:w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
+            <div className="h-3.5 sm:h-4 w-20 sm:w-24 rounded-md bg-gray-200 dark:bg-gray-600" />
           </div>
-  
-          <div className="h-10 w-20 rounded-lg bg-gray-300 dark:bg-gray-700" />
         </div>
-  
-        <div className="space-y-2 mb-10">
-          <div className="h-4 w-full rounded-md bg-gray-200 dark:bg-gray-600" />
-          <div className="h-4 w-11/12 rounded-md bg-gray-200 dark:bg-gray-600" />
-          <div className="h-4 w-10/12 rounded-md bg-gray-200 dark:bg-gray-600" />
-        </div>
-  
-        <div className="flex justify-between items-center mb-4">
-          <div className="h-6 w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
-          <div className="h-6 w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
-        </div>
-  
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, index) => (
-            <div
-              key={index}
-              className="p-4 border rounded-xl shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 flex flex-col"
-            >
-              <div className="w-full h-40 rounded-lg mb-4 bg-gray-300 dark:bg-gray-700" />
-  
-              <div className="h-5 w-3/4 rounded-md mb-2 bg-gray-300 dark:bg-gray-700" />
-              <div className="h-4 w-full rounded-md mb-1 bg-gray-200 dark:bg-gray-600" />
-              <div className="h-4 w-5/6 rounded-md mb-4 bg-gray-200 dark:bg-gray-600" />
-  
-              <div className="h-3 w-1/2 rounded-md bg-gray-200 dark:bg-gray-600 self-start" />
-            </div>
-          ))}
-        </div>
-  
-      </section>
+
+        <div className="h-9 sm:h-10 w-20 sm:w-24 rounded-lg bg-gray-300 dark:bg-gray-700 self-start sm:self-auto" />
+      </div>
+
+      {/* Description */}
+      <div className="space-y-2 mb-8">
+        <div className="h-3.5 sm:h-4 w-full rounded-md bg-gray-200 dark:bg-gray-600" />
+        <div className="h-3.5 sm:h-4 w-11/12 rounded-md bg-gray-200 dark:bg-gray-600" />
+        <div className="h-3.5 sm:h-4 w-10/12 rounded-md bg-gray-200 dark:bg-gray-600" />
+      </div>
+
+      {/* Section Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="h-5 sm:h-6 w-40 sm:w-48 rounded-md bg-gray-300 dark:bg-gray-700" />
+        <div className="h-5 sm:h-6 w-28 sm:w-32 rounded-md bg-gray-200 dark:bg-gray-600" />
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        {[...Array(6)].map((_, index) => (
+          <div
+            key={index}
+            className="p-3 sm:p-4 border rounded-xl shadow-sm bg-white dark:bg-gray-800 dark:border-gray-700 flex flex-col"
+          >
+            <div className="w-full h-32 sm:h-36 md:h-40 rounded-lg mb-4 bg-gray-300 dark:bg-gray-700" />
+
+            <div className="h-4 sm:h-5 w-3/4 rounded-md mb-2 bg-gray-300 dark:bg-gray-700" />
+            <div className="h-3.5 sm:h-4 w-full rounded-md mb-1 bg-gray-200 dark:bg-gray-600" />
+            <div className="h-3.5 sm:h-4 w-5/6 rounded-md mb-4 bg-gray-200 dark:bg-gray-600" />
+
+            <div className="h-3 w-1/2 rounded-md bg-gray-200 dark:bg-gray-600" />
+          </div>
+        ))}
+      </div>
+    </section>
+
     );
   }
     const allHackathons = hackathons?.hackathons || [];
@@ -107,23 +110,23 @@ const filteredHackathons = !searchQuery.trim()
 
   const handleNext = () => currentPage < totalPages && setCurrentPage((p) => p + 1);
   const handlePrev = () => currentPage > 1 && setCurrentPage((p) => p - 1);
- 
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setCurrentPage(1); 
+    setCurrentPage(1);
   };
 
 
   return (
-    <div className="p-6">
-  
-         
-      <div className='flex justify-between items-center w-full mb-4'>
-        <div className='flex items-center gap-4'>
+    <div className="p-1 md:p-6">
+
+
+      <div className='flex justify-between md:items-center w-full mb-4 items-start'>
+        <div className='flex items-center gap-4 flex-wrap'>
           {/* Logo */}
           {orgData?.logo ? (
-            <img 
-              src={orgData.logo} 
+            <img
+              src={orgData.logo}
               alt={orgData.name}
               className="w-16 h-16 rounded-xl object-cover border-2 border-gray-200"
             />
@@ -137,7 +140,7 @@ const filteredHackathons = !searchQuery.trim()
             <h2 className="text-3xl font-bold flex gap-2 items-center">
               {orgData?.name}  {orgData?.is_approved && (  <Image src={Verified} alt="verify" /> )}
             </h2>
-            
+
             {orgData?.tagline && (
               <p className="text-sm text-indigo-600 font-medium mt-1">
                 {orgData.tagline}
@@ -182,9 +185,9 @@ const filteredHackathons = !searchQuery.trim()
           {orgData?.website && (
             <div className="flex items-center gap-2">
               <Globe size={16} className="text-indigo-500" />
-              <a 
-                href={orgData.website} 
-                target="_blank" 
+              <a
+                href={orgData.website}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-indigo-600 hover:underline"
               >
@@ -208,8 +211,8 @@ const filteredHackathons = !searchQuery.trim()
 
       {/* Description */}
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-semibold text-[#171717] dark:text-white">Description</h1>
-        <p className="text-gray-700 leading-relaxed dark:text-gray-300">
+        <h1 className="text-xl md:text-2xl font-semibold text-[#171717] dark:text-white">Description</h1>
+        <p className="text-gray-700 leading-relaxed dark:text-gray-300 text-sm md:text-lg">
           {orgData?.description || 'No description available for this organization.'}
         </p>
       </div>
@@ -225,9 +228,9 @@ const filteredHackathons = !searchQuery.trim()
       )}
 
       {/* Search and Start Button */}
-      {orgData?.is_approved && ( 
-        <section className="flex justify-between items-center mb-5">
-          <div className="w-1/2">
+      {orgData?.is_approved && (
+        <section className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap gap-4 md:gap-0">
+          <div className=" md:w-1/2">
             <SearchInput onSearch={handleSearch} className="bg-white" />
           </div>
 
@@ -237,9 +240,9 @@ const filteredHackathons = !searchQuery.trim()
         </section>
       )}
 
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">
-          {orgData?.name} Hackathons 
+      <div className="flex justify-between items-center mb-4 flex-wrap md:flex-nowrap gap-4 md:gap-0">
+        <h3 className="md:text-xl font-semibold">
+          {orgData?.name} Hackathons
         </h3>
 
         {totalPages > 1 && (
@@ -247,7 +250,7 @@ const filteredHackathons = !searchQuery.trim()
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className={`p-2 rounded-md border cursor-pointer ${
+              className={`p-1 md:p-2 rounded-md border cursor-pointer ${
                 currentPage === 1 ? 'text-gray-300 border-gray-200' : 'text-gray-700 hover:bg-gray-100 border-gray-300'
               }`}
             >
@@ -261,7 +264,7 @@ const filteredHackathons = !searchQuery.trim()
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={`p-2 rounded-md border cursor-pointer ${
+              className={`md:p-2 p-1 rounded-md border cursor-pointer ${
                 currentPage === totalPages
                   ? 'text-gray-300 border-gray-200'
                   : 'text-gray-700 hover:bg-gray-100 border-gray-300'
@@ -289,7 +292,7 @@ const filteredHackathons = !searchQuery.trim()
                 className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between dark:bg-gray-800"
               >
                       <div
-        className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
+        className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
       >
         {hackathon.banner_image && hackathon.banner_image.trim() !== "" ? (
           <motion.img
@@ -389,7 +392,7 @@ const filteredHackathons = !searchQuery.trim()
       {showOptionsOrg.addModerator && (
         <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-            <AddModerator 
+            <AddModerator
               onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
               orgName={orgData?.name}
               orgId={id}
