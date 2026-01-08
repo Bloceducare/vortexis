@@ -93,7 +93,7 @@ const features = [
 export default function FeaturesPage() {
     const router = useRouter();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-500 py-16 px-4 sm:px-6 lg:px-8 mt-10  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-500 py-16 px-4 sm:px-6 lg:px-8 mt-10  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div
@@ -107,13 +107,13 @@ export default function FeaturesPage() {
               Powerful Features
             </span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-title mb-6">
+          <h1 className="text-2xl md:text-5xl font-bold text-title mb-6">
             Everything You Need to{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-purple-600">
               Win
             </span>
           </h1>
-          <p className="text-xl  opacity-70 max-w-3xl mx-auto">
+          <p className="text-sm md:text-xl  opacity-70 max-w-3xl mx-auto">
             Vortexis provides all the tools you need to create, participate in, and
             win hackathons. Join thousands of innovators building the future.
           </p>
@@ -134,19 +134,19 @@ export default function FeaturesPage() {
               >
                 {/* Gradient Background on Hover */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                  className={`absolute inset-0 bg-linear-to-br ${feature.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
                 ></div>
 
                 <div className="relative z-10">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
+                    className={`w-16 h-16 bg-linear-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
                   >
                     <Icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-title mb-3">
+                  <h3 className="text-xl md:text-2xl font-bold text-title mb-3">
                     {feature.title}
                   </h3>
-                  <p className=" opacity-70 mb-6">
+                  <p className="text-sm md:text-lg opacity-70 mb-6">
                     {feature.description}
                   </p>
 
@@ -172,13 +172,13 @@ export default function FeaturesPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.6 }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-center shadow-2xl"
+          className="bg-linear-to-r from-blue-600 to-purple-600 rounded-3xl p-5 md:p-12 text-center shadow-2xl"
         >
           <Trophy className="w-16 h-16 text-white mx-auto mb-6" />
-          <h2 className="text-4xl font-bold text-white mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-4">
             Ready to Start Your Journey?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Join Vortexis today and be part of a global community of innovators,
             creators, and winners.
           </p>
@@ -186,7 +186,7 @@ export default function FeaturesPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-lg cursor-pointer"
+              className="md:px-8 px-4 py-3 md:py-4 bg-white text-blue-600 rounded-xl font-semibold hover:bg-gray-100 transition-all shadow-lg cursor-pointer"
               onClick={() => router.push("/auth/signup")}
             >
               Get Started Free
@@ -194,7 +194,7 @@ export default function FeaturesPage() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold hover:bg-white/10 transition-all"
+              className="md:px-8 px-4 py-3 md:py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold hover:bg-white/10 transition-all"
             >
               View Demo
             </motion.button>

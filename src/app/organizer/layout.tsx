@@ -321,7 +321,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
         } transition-all duration-400 ease-in-out`}
       >
         <Header toggleSidebar={toggleSidebar} />
-        <main className="flex-1 p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-1 md:p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

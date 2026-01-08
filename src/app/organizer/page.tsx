@@ -32,7 +32,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <section>
-        <div className="flex justify-between items-center p-6 mb-8 sticky top-0 animate-pulse">
+        <div className="flex justify-between items-center p-6 mb-8 sticky top-0 animate-pulse ">
           <div className=" h-10 rounded-lg w-1/2 bg-gray-300 " />
           <div className=" h-10 rounded-lg w-[35%] bg-gray-300 " />
         </div>
@@ -66,7 +66,7 @@ const Index = () => {
 
   if (selectedOrgId) {
     return (
-      <div className="p-6">
+      <div className="p-4  md:p-6">
         <button
           onClick={handleBack}
           className="flex items-center gap-2 mb-6 text-indigo-600 hover:text-indigo-800"
@@ -86,7 +86,7 @@ const Index = () => {
         <>
           {/* Top bar */}
           <div className="mb-8 sticky top-0 py-4 z-10 space-y-4 px-5 ">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-center md:justify-between items-center flex-wrap md:flex-nowrap gap-8 md:gap-0">
               <div className="relative w-full md:w-1/2">
                 <Search
                   className="absolute left-3 top-2.5 text-gray-400"
@@ -103,7 +103,7 @@ const Index = () => {
 
               <button
                 onClick={() => setShowNewOrg(true)}
-                className="hidden md:flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow cursor-pointer"
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow cursor-pointer"
               >
                 <Plus size={18} /> Add New Organization
               </button>

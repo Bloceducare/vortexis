@@ -42,7 +42,7 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
 
   if (isLoading || orgLoading) {
     return (
-      <section className="p-6 animate-pulse">
+      <section className="p-1 md:p-6 animate-pulse">
   
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
@@ -115,11 +115,11 @@ const filteredHackathons = !searchQuery.trim()
 
 
   return (
-    <div className="p-6">
+    <div className="p-1 md:p-6">
   
          
-      <div className='flex justify-between items-center w-full mb-4'>
-        <div className='flex items-center gap-4'>
+      <div className='flex justify-between md:items-center w-full mb-4 items-start'>
+        <div className='flex items-center gap-4 flex-wrap'>
           {/* Logo */}
           {orgData?.logo ? (
             <img 
@@ -208,8 +208,8 @@ const filteredHackathons = !searchQuery.trim()
 
       {/* Description */}
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-semibold text-[#171717] dark:text-white">Description</h1>
-        <p className="text-gray-700 leading-relaxed dark:text-gray-300">
+        <h1 className="text-xl md:text-2xl font-semibold text-[#171717] dark:text-white">Description</h1>
+        <p className="text-gray-700 leading-relaxed dark:text-gray-300 text-sm md:text-lg">
           {orgData?.description || 'No description available for this organization.'}
         </p>
       </div>
@@ -226,8 +226,8 @@ const filteredHackathons = !searchQuery.trim()
 
       {/* Search and Start Button */}
       {orgData?.is_approved && ( 
-        <section className="flex justify-between items-center mb-5">
-          <div className="w-1/2">
+        <section className="flex justify-between items-center mb-5 flex-wrap md:flex-nowrap gap-4 md:gap-0">
+          <div className=" md:w-1/2">
             <SearchInput onSearch={handleSearch} className="bg-white" />
           </div>
 
@@ -237,8 +237,8 @@ const filteredHackathons = !searchQuery.trim()
         </section>
       )}
 
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-semibold">
+      <div className="flex justify-between items-center mb-4 flex-wrap md:flex-nowrap gap-4 md:gap-0">
+        <h3 className="md:text-xl font-semibold">
           {orgData?.name} Hackathons 
         </h3>
 
@@ -247,7 +247,7 @@ const filteredHackathons = !searchQuery.trim()
             <button
               onClick={handlePrev}
               disabled={currentPage === 1}
-              className={`p-2 rounded-md border cursor-pointer ${
+              className={`p-1 md:p-2 rounded-md border cursor-pointer ${
                 currentPage === 1 ? 'text-gray-300 border-gray-200' : 'text-gray-700 hover:bg-gray-100 border-gray-300'
               }`}
             >
@@ -261,7 +261,7 @@ const filteredHackathons = !searchQuery.trim()
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className={`p-2 rounded-md border cursor-pointer ${
+              className={`md:p-2 p-1 rounded-md border cursor-pointer ${
                 currentPage === totalPages
                   ? 'text-gray-300 border-gray-200'
                   : 'text-gray-700 hover:bg-gray-100 border-gray-300'
@@ -289,7 +289,7 @@ const filteredHackathons = !searchQuery.trim()
                 className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between dark:bg-gray-800"
               >
                       <div
-        className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
+        className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
       >
         {hackathon.banner_image && hackathon.banner_image.trim() !== "" ? (
           <motion.img

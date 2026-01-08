@@ -61,8 +61,8 @@ export default function ProfileView() {
  
   if (isLoading) {
     return (
-      <section className="mb-10 px-4 sm:px-6 lg:px-8 pt-24">
-        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
+      <section className="px-4 sm:px-6 lg:px-8 pt-24 dark:bg-gray-800">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-gray-600 rounded-xl shadow-lg overflow-hidden animate-pulse mb-10 ">
           <div className="h-44 bg-gray-200" />
           <div className="pt-20 px-4 sm:px-6 pb-6">
             <div className="h-6 bg-gray-200 rounded w-48 mb-2" />
@@ -182,7 +182,7 @@ export default function ProfileView() {
         {user.profile?.bio ? (
             <div className="mt-6">
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white">About</h2>
-              <p className="text-gray-700 dark:text-gray-300 mt-1">{user.profile.bio}</p>
+              <p className="text-gray-700 dark:text-gray-300 mt-1 text-sm md:text-lg">{user.profile.bio}</p>
             </div>
           ) : null}
 {   user.profile?.website && (
