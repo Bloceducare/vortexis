@@ -8,7 +8,7 @@ export function Provider({
   }: {
     children: React.ReactNode;
     dehydratedState?: unknown;
-  }) {
+  }) {g
     const [queryClient] = useState(() => new QueryClient());
   
     return (
