@@ -35,7 +35,10 @@ export default function SignUpForm({ type }: SignUpFormProps) {
     showPassword,
     toggleShowPassword,
     onSubmit,
+    form,
   } = useSignUpForm(type);
+
+  const agreeToTerms = form.watch("agreeToTerms");
 
   const formFields: FormField[] =
     type === "organizers" ? organizerFormFields : participantsFormFields;
@@ -78,26 +81,28 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             )}
 
             {field.eyeView && (
-              <div className="relative">
-                <input
-                  {...register(field.name as any)}
-                  type={showPassword[field.name] ? "text" : "password"}
-                  placeholder={field.placeholder}
-                  className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
-                    getFieldError(errors, field.name)
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <div
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => toggleShowPassword(field.name)}
-                >
-                  {showPassword[field.name] ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
-                  )}
+              <div>
+                <div className="relative">
+                  <input
+                    {...register(field.name as any)}
+                    type={showPassword[field.name] ? "text" : "password"}
+                    placeholder={field.placeholder}
+                    className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
+                      getFieldError(errors, field.name)
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  <div
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                    onClick={() => toggleShowPassword(field.name)}
+                  >
+                    {showPassword[field.name] ? (
+                      <EyeOff className="h-5 w-5 text-gray-500" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-500" />
+                    )}
+                  </div>
                 </div>
                 {getFieldError(errors, field.name) && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -157,7 +162,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !agreeToTerms}
           className="mt-4 bg-[#605DEC] w-full text-white py-3 cursor-pointer text-center rounded-sm hover:bg-[#4f4bcc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting
