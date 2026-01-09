@@ -112,14 +112,14 @@ function AuthLogin({ type }: AuthLoginProps) {
   };
 
   return (
-    <div className="shadow-md bg-white w-full md:max-w-[814px] mx-auto rounded-[24px] p-4 md:p-2 md:h-[633px]">
+    <div className="shadow-md bg-white dark:bg-gray-800 transition-colors duration-200 w-full md:max-w-[814px] mx-auto rounded-[24px] p-4 md:p-2 md:h-[633px]">
       <div className="w-full max-w-[798px] mx-auto flex flex-col justify-center items-center py-6 md:py-0 md:h-[555px] md:gap-[24px] md:mt-7">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full max-w-[690px] flex flex-col pt-5 text-[#2F3036] px-4"
+          className="w-full max-w-[690px] flex flex-col pt-5 text-[#2F3036] dark:text-gray-200 px-4"
         >
           <div className="mb-6 md:mb-8">
-            <label htmlFor="username" className="font-medium block mb-2">
+            <label htmlFor="username" className="font-medium block mb-2 text-gray-700 dark:text-gray-200">
               Username
             </label>
             <input
@@ -127,7 +127,7 @@ function AuthLogin({ type }: AuthLoginProps) {
               type="text"
               id="username"
               placeholder="Enter your username"
-              className={`w-full border p-3 md:p-2 rounded-sm text-base ${
+              className={`w-full border p-3 md:p-2 rounded-sm text-base bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                 errors.username
                   ? "border-red-500 focus:border-red-500"
                   : "border-gray-300 focus:border-blue-500"
@@ -142,7 +142,7 @@ function AuthLogin({ type }: AuthLoginProps) {
             )}
           </div>
           <div className="mb-4 md:mb-5">
-            <label htmlFor="password" className="block font-medium mb-2">
+            <label htmlFor="password" className="block font-medium mb-2 text-gray-700 dark:text-gray-200">
               Password
             </label>
             <div className="relative">
@@ -151,7 +151,7 @@ function AuthLogin({ type }: AuthLoginProps) {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Input your password"
-                className={`w-full border p-3 md:p-2 rounded-sm text-base ${
+                className={`w-full border p-3 md:p-2 rounded-sm text-base bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                   errors.password
                     ? "border-red-500 focus:border-red-500"
                     : "border-gray-300 focus:border-blue-500"
@@ -162,7 +162,7 @@ function AuthLogin({ type }: AuthLoginProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -179,14 +179,14 @@ function AuthLogin({ type }: AuthLoginProps) {
                 {...register("rememberMe")}
                 type="checkbox"
                 id="rememberMe"
-                className="mr-2"
+                className="mr-2 dark:bg-gray-700 dark:border-gray-600"
               />
-              <label htmlFor="rememberMe" className="text-sm md:text-base">
+              <label htmlFor="rememberMe" className="text-sm md:text-base text-gray-700 dark:text-gray-200">
                 Remember me
               </label>
             </div>
             <Link href="/forgot-password">
-              <span className="text-[#605DEC] text-sm md:text-base cursor-pointer hover:underline">
+              <span className="text-[#605DEC] dark:text-[#8b7ff0] text-sm md:text-base cursor-pointer hover:underline">
                 Forgotten Password?
               </span>
             </Link>
@@ -238,7 +238,7 @@ function AuthLogin({ type }: AuthLoginProps) {
           <Button
             onClick={signInGoogleAction}
             type="secondary"
-            className="relative flex w-full rounded-[100px] items-center justify-center h-12 md:h-auto hover:bg-gray-50 transition-colors"
+            className="relative flex w-full rounded-[100px] items-center justify-center h-12 md:h-auto hover:bg-gray-50 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-colors"
           >
             <img
               src="https://authjs.dev/img/providers/google.svg"
@@ -252,7 +252,7 @@ function AuthLogin({ type }: AuthLoginProps) {
           <Button
             onClick={signInGithubAction}
             type="secondary"
-            className="relative flex w-full rounded-[100px] items-center justify-center h-12 md:h-auto hover:bg-gray-50 transition-colors"
+            className="relative flex w-full rounded-[100px] items-center justify-center h-12 md:h-auto hover:bg-gray-50 dark:bg-white dark:text-black dark:hover:bg-gray-100 transition-colors"
           >
             <img
               src="https://authjs.dev/img/providers/github.svg"
@@ -264,12 +264,12 @@ function AuthLogin({ type }: AuthLoginProps) {
             <span className="text-sm md:text-base">Log in with GitHub</span>
           </Button>
         </div>
-        <p className="text-center font-[600] mt-6 md:mt-3 text-[#2F3036] text-sm md:text-base px-4">
+        <p className="text-center font-[600] mt-6 md:mt-3 text-[#2F3036] dark:text-gray-200 text-sm md:text-base px-4">
           {type === "organizers"
             ? "Don't have an organizer account?"
             : "Don't have a participant account?"}
           <Link
-            className="underline pl-1 text-[#605DEC] hover:text-[#605DEC]"
+            className="underline pl-1 text-[#605DEC] hover:text-[#605DEC] dark:text-[#8b7ff0] dark:hover:text-[#8b7ff0]"
             href="/auth/signup"
           >
             Sign Up here
