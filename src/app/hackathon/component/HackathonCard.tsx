@@ -76,7 +76,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = ({
       {/* Content */}
       <div className="p-5 space-y-4">
         <div onClick={onClick} className="cursor-pointer">
-          <h3 className="text-xl font-bold text-title dark:text-white hover:text-primary dark:hover:text-indigo-400 transition-colors line-clamp-2">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white hover:text-primary dark:hover:text-indigo-400 transition-colors line-clamp-2">
             {hackathon.title}
           </h3>
 
