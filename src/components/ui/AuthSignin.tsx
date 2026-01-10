@@ -35,25 +35,28 @@ export default function SignUpForm({ type }: SignUpFormProps) {
     showPassword,
     toggleShowPassword,
     onSubmit,
+    form,
   } = useSignUpForm(type);
+
+  const agreeToTerms = form.watch("agreeToTerms");
 
   const formFields: FormField[] =
     type === "organizers" ? organizerFormFields : participantsFormFields;
 
   return (
-    <div className="shadow-md bg-white md:w-full md:max-w-[798px] mx-auto w-[96%] h-full rounded-[24px] p-4 md:p-2">
-      <h1 className="text-2xl text-center py-4 text-[#2E0BF4] font-[700]">
+    <div className="shadow-md bg-white dark:bg-gray-800 md:w-full md:max-w-[798px] mx-auto w-[96%] h-full rounded-[24px] p-4 md:p-2 transition-colors duration-200">
+      <h1 className="text-2xl text-center py-4 text-[#2E0BF4] dark:text-[#8b7ff0] font-[700]">
         {type === "organizers" && "Create Your  Account"}
         {type === "participants" && "Create Your Account"}
       </h1>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="text-[#2F3036] p-2 w-[95%] mx-auto"
+        className="text-[#2F3036] dark:text-gray-200 p-2 w-[95%] mx-auto"
       >
         {formFields.map((field) => (
           <div key={field.name} className="mb-4 relative">
-            <label className="block font-[700] text-sm mb-1">
+            <label className="block font-[700] text-sm mb-1 text-gray-700 dark:text-gray-200">
               {field.label}
             </label>
 
@@ -63,7 +66,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
                   {...register(field.name as any)}
                   type={field.type}
                   placeholder={field.placeholder}
-                  className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
+                  className={`w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
                     getFieldError(errors, field.name)
                       ? "border-red-500"
                       : "border-gray-300"
@@ -78,26 +81,28 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             )}
 
             {field.eyeView && (
-              <div className="relative">
-                <input
-                  {...register(field.name as any)}
-                  type={showPassword[field.name] ? "text" : "password"}
-                  placeholder={field.placeholder}
-                  className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent ${
-                    getFieldError(errors, field.name)
-                      ? "border-red-500"
-                      : "border-gray-300"
-                  }`}
-                />
-                <div
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => toggleShowPassword(field.name)}
-                >
-                  {showPassword[field.name] ? (
-                    <EyeOff className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-500" />
-                  )}
+              <div>
+                <div className="relative">
+                  <input
+                    {...register(field.name as any)}
+                    type={showPassword[field.name] ? "text" : "password"}
+                    placeholder={field.placeholder}
+                    className={`w-full p-2 pr-10 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#1E1E1E] focus:border-transparent bg-white text-gray-900 dark:bg-gray-700 dark:text-white dark:border-gray-600 ${
+                      getFieldError(errors, field.name)
+                        ? "border-red-500"
+                        : "border-gray-300"
+                    }`}
+                  />
+                  <div
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                    onClick={() => toggleShowPassword(field.name)}
+                  >
+                    {showPassword[field.name] ? (
+                      <EyeOff className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                    ) : (
+                      <Eye className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                    )}
+                  </div>
                 </div>
                 {getFieldError(errors, field.name) && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -108,7 +113,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             )}
 
             {field.description && (
-              <span className="text-xs text-gray-500 mt-1 block">
+              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
                 {field.description}
               </span>
             )}
@@ -122,9 +127,9 @@ export default function SignUpForm({ type }: SignUpFormProps) {
               <input
                 {...register("isOrganizer" as any)}
                 type="checkbox"
-                className="md:scale-150 scale-175"
+                className="md:scale-150 scale-175 dark:bg-gray-700 dark:border-gray-600"
               />
-              <label className="text-sm">
+              <label className="text-sm text-gray-700 dark:text-gray-200">
                 I'm signing up as a Hackathon Organizer
               </label>
             </div>
@@ -142,9 +147,9 @@ export default function SignUpForm({ type }: SignUpFormProps) {
             <input
               {...register("agreeToTerms" as any)}
               type="checkbox"
-              className="md:scale-150 scale-175"
+              className="md:scale-150 scale-175 dark:bg-gray-700 dark:border-gray-600"
             />
-            <label className="text-sm">
+            <label className="text-sm text-gray-700 dark:text-gray-200">
               I agree to the Terms of Service and Privacy Policy
             </label>
           </div>
@@ -157,7 +162,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !agreeToTerms}
           className="mt-4 bg-[#605DEC] w-full text-white py-3 cursor-pointer text-center rounded-sm hover:bg-[#4f4bcc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting
@@ -173,7 +178,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
         <Button
           onClick={signInGoogleAction}
           type="secondary"
-          className="relative flex w-full items-center justify-center h-12"
+          className="relative flex w-full items-center justify-center h-12 dark:bg-white dark:text-black dark:hover:bg-gray-100"
         >
           <img
             src="https://authjs.dev/img/providers/google.svg"
@@ -188,7 +193,7 @@ export default function SignUpForm({ type }: SignUpFormProps) {
         <Button
           onClick={signInGithubAction}
           type="secondary"
-          className="relative flex w-full items-center justify-center h-12"
+          className="relative flex w-full items-center justify-center h-12 dark:bg-white dark:text-black dark:hover:bg-gray-100"
         >
           <img
             src="https://authjs.dev/img/providers/github.svg"
@@ -201,10 +206,10 @@ export default function SignUpForm({ type }: SignUpFormProps) {
         </Button>
       </div>
 
-      <p className="text-center mb-5 font-[600] mt-6 text-[#2F3036] text-sm">
+      <p className="text-center mb-5 font-[600] mt-6 text-[#2F3036] dark:text-gray-200 text-sm">
         Already have an account?
         <Link
-          className="underline pl-1 text-[#2E0BF4]"
+          className="underline pl-1 text-[#2E0BF4] dark:text-[#8b7ff0]"
           href={`/auth/login`}
         >
           Login here

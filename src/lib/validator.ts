@@ -56,7 +56,13 @@ export const organizerSchema = z
     email: z.string().email("Please enter a valid email address."),
     organization: z.string().min(2, "Organization name is required."),
     phone: z.string().optional(),
-    password: z.string().min(8, "Password must be at least 8 characters."),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters.")
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one letter and one number."
+      ),
     confirmPassword: z.string(),
     isOrganizer: z
       .boolean()
@@ -82,7 +88,13 @@ export const participantSchema = z
     lastName: z.string().min(1, "Last name is required."), // Added last name to schema
     userName: z.string().min(3, "Username must be at least 3 characters."),
     email: z.string().email("Please enter a valid email address."),
-    password: z.string().min(8, "Password must be at least 8 characters."),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters.")
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/,
+        "Password must contain at least one letter and one number."
+      ),
     confirmPassword: z.string(),
     agreeToTerms: z
       .boolean()

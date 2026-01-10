@@ -14,11 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <div
-      className="md:pt-20 py-8 bg-cover flex justify-center items-start bg-center text-white "
-      style={{
-        background:
-          "linear-gradient(135deg, #605DEC  0%, #7C3AED 50%, #6366F1 100%)",
-      }}
+      className="md:pt-20 py-8 bg-cover flex justify-center items-start bg-center text-white min-h-screen
+      bg-[linear-gradient(135deg,#605DEC_0%,#7C3AED_50%,#6366F1_100%)]
+      dark:bg-[linear-gradient(135deg,#111827_0%,#1e1b4b_50%,#312e81_100%)]"
     >
       <div>{children}</div>
     </div>

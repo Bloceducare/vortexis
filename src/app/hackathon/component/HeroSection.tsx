@@ -39,7 +39,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="text-2xl md:text-6xl font-bold text-title dark:text-white leading-tight"
+          className="text-2xl md:text-6xl font-bold text-gray-900 dark:text-white leading-tight"
         >
           Join Game-Changing{" "}
           <span className="text-primary dark:text-indigo-400">Hackathons</span>{" "}

@@ -34,7 +34,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-bold text-title dark:text-white">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
             Explore Hackathons
           </h2>
           <p className="text-base opacity-60 dark:opacity-70 dark:text-gray-300 mt-1">
@@ -54,7 +54,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
       >
         <div className="flex items-center gap-2 mb-4">
           <Filter className="w-5 h-5 text-primary dark:text-indigo-400" />
-          <h3 className="font-semibold text-title dark:text-white">Filters</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">Filters</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -65,7 +65,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={sortOption}
               onChange={(e) => onSortChange(e.target.value)}
-              className="w-full px-4 py-2.5 bg-base dark:bg-gray-700 border border-primary/20 dark:border-indigo-400/30 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary dark:focus:border-indigo-400 transition-all"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-primary/20 dark:border-indigo-400/30 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:border-primary dark:focus:border-indigo-400 transition-all"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -83,7 +83,7 @@ export const FilterSection: React.FC<FilterSectionProps> = ({
             <select
               value={selectedCountry}
               onChange={(e) => onCountryChange(e.target.value)}
-              className="w-full px-4 py-2.5 bg-base dark:bg-gray-700 border border-primary/20 dark:border-indigo-400/30 rounded-xl text-base dark:text-gray-100 focus:outline-none focus:border-primary dark:focus:border-indigo-400 transition-all"
+              className="w-full px-4 py-2.5 bg-white dark:bg-gray-700 border border-primary/20 dark:border-indigo-400/30 rounded-xl text-base dark:text-gray-100 focus:outline-none focus:border-primary dark:focus:border-indigo-400 transition-all"
             >
               <option value="">All Countries</option>
               {countries.map((c) => (
