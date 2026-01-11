@@ -132,7 +132,7 @@ function Hack() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 ">
+    <div className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800  ">
       {/* Hero Banner */}
       <div className="relative w-full h-[70vh] overflow-hidden">
         {/* Background Image or Default Color */}
@@ -142,7 +142,7 @@ function Hack() {
             style={{ backgroundImage: `url(${data.banner_image})` }}
           />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
+          <div className="absolute inset-0 bg-linear-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
             <Trophy className="w-20 h-20 text-yellow-500/80" />
           </div>
         )}
@@ -242,7 +242,7 @@ function Hack() {
                   whileTap={{ scale: 0.98 }}
                   onClick={onRegister}
                   disabled={registerMutation.isPending}
-                  className="mt-6 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-all disabled:opacity-50 shadow-lg cursor-pointer"
+                  className="mt-6 w-full flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-all disabled:opacity-50 shadow-lg cursor-pointer"
                 >
                   {registerMutation.isPending ? (
                     <>
