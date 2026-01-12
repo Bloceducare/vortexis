@@ -316,9 +316,9 @@ function OtherJudges({ reviews }: review) {
                 )
               }
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between overflow-x-auto">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#605DEC] dark:bg-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-lg">
+                  <div className="md:w-12 md:h-12 w-18 h-10 bg-[#605DEC] dark:bg-indigo-600 rounded-full flex items-center justify-center text-white font-medium text-lg">
                     {judge.judgeAvatar}
                   </div>
                   <div>
