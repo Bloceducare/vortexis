@@ -86,10 +86,31 @@ export const useCommunications = ({
             new Date().toISOString(),
         };
 
-        if (normalized.id && !seenMessageIds.has(normalized.id)) {
-          setSeenMessageIds((prev) => new Set([...prev, normalized.id]));
+        if (normalized.id) {
+          setMessages((prev) => {
+            const existingIndex = prev.findIndex((m) => m.id === normalized.id);
+            if (existingIndex !== -1) {
+              // Message exists, update it (handling edits)
+              const newMessages = [...prev];
+              newMessages[existingIndex] = {
+                ...newMessages[existingIndex],
+                ...normalized,
+              };
+              return newMessages;
+            } else {
+              // New message, add it
+              return [...prev, normalized];
+            }
+          });
+
+          // Update seen IDs and latest ID
+          setSeenMessageIds((prev) => {
+            if (!prev.has(normalized.id)) {
+              return new Set([...prev, normalized.id]);
+            }
+            return prev;
+          });
           setLatestMessageId((prev) => Math.max(prev, normalized.id));
-          setMessages((prev) => [...prev, normalized]);
         }
       },
       onOpen: () => {

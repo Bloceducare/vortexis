@@ -192,7 +192,7 @@ function Page() {
   if (loading || submissionsLoading) return <Spinner />;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 ">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -217,7 +217,7 @@ function Page() {
         {SubmissionStatus.map((status, i) => (
           <motion.div
             key={i}
-            className={`bg-[#FFFFFF] dark:bg-gray-800 border-[#E4E4E4] dark:border-gray-700 border rounded-xl p-6 hover:shadow-md transition-all duration-300 cursor-pointer group`}
+            className={`bg-[#FFFFFF] max-w-96 md:max-w-full dark:bg-gray-800 border-[#E4E4E4] dark:border-gray-700 border rounded-xl p-6 hover:shadow-md transition-all duration-300 cursor-pointer group`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 * i }}
@@ -283,7 +283,7 @@ function Page() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
-        className="space-y-6"
+        className="space-y-6 md:max-w-full"
       >
         <div className="flex items-center gap-3">
           <Code className="w-6 h-6 text-[#00AC4F] dark:text-green-400" />
@@ -296,7 +296,7 @@ function Page() {
           {hackathons.map((hackathon, i) => (
             <motion.div
               key={hackathon.id}
-              className="bg-white dark:bg-gray-800 border border-[#E4E4E4] dark:border-gray-700 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
+              className="bg-white dark:bg-gray-800 border md:max-w-full  border-[#E4E4E4] dark:border-gray-700 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 group"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 * i }}
@@ -328,7 +328,7 @@ function Page() {
                   <span className="text-gray-600 dark:text-gray-300 font-medium min-w-[80px]">
                     Title:
                   </span>
-                  <span className="text-[#605DEC] dark:text-indigo-400">
+                  <span className="text-[#605DEC] whitespace-pre-wrap text-wrap md:w-full w-60 dark:text-indigo-400">
                     <HtmlContent html={hackathon.description} />
                   </span>
                 </div>

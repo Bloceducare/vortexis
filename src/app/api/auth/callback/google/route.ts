@@ -15,7 +15,7 @@ export async function GET(request: Request) {
 
   try {
     // Exchange code for tokens with your backend
-    const response = await fetch("http://localhost:8000/api/v1/auth/google", {
+    const response = await fetch("http://spicy-cheri-web3bridge-bc3db9dc.koyeb.app/api/v1/auth/google", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

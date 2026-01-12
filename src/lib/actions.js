@@ -8,7 +8,7 @@ export async function signInGithubAction() {
     const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
     const scope = encodeURIComponent("read:user user:email");
 
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=http://localhost:3000/auth/callback&scope=${scope}`;
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=https://vortexis-dev.vercel.app//auth/callback&scope=${scope}`;
     window.location.href = githubAuthUrl;
   } catch (error) {
     console.error("GitHub sign in error:", error);

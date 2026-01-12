@@ -630,10 +630,21 @@ export const DiscussionDashboard: React.FC<DiscussionDashboardProps> = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Discussion
           </h3>
-          {isLoading && (
+          {isLoading ? (
             <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#605DEC]"></div>
               <span>Loading messages...</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-sm">
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  isConnected ? "bg-green-500" : "bg-orange-500"
+                }`}
+              ></span>
+              <span className="text-gray-500 dark:text-gray-400">
+                {isConnected ? "Live" : "Connecting..."}
+              </span>
             </div>
           )}
         </div>

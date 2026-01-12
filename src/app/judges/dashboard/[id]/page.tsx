@@ -94,7 +94,7 @@ export default function SubmissionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 transition-colors">
+    <div className="min-h-screen max-w-96 md:max-w-full bg-gray-50 dark:bg-gray-900 p-4 md:p-6 transition-colors">
       <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-6 md:mb-8">

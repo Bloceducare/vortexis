@@ -405,7 +405,7 @@ export default function JudgesLayout({
         <div className="bg-white dark:bg-gray-800 mb-2">
           <Header toggleSidebar={toggleSidebar} />
         </div>
-        <main className="min-h-[calc(100vh-64px)] w-[97%] rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:shadow-gray-900/50 overflow-y-auto p-4 mt-4 transition-colors scrollbar-hide">
+        <main className="min-h-[calc(100vh-64px)] sm:max-w-full rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:shadow-gray-900/50 overflow-y-auto p-4 mt-4 transition-colors scrollbar-hide">
           {children}
         </main>
       </div>
