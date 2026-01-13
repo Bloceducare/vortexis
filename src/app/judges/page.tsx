@@ -3,7 +3,7 @@
 import type React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import Spinner from "@/components/spinner";
 import {
@@ -14,6 +14,8 @@ import {
   CheckCircle,
   TrendingUp,
   FileText,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import useUser from "@/hooks/useUserProfile";
 import { Submission } from "@/hooks/useHackathonDetails";
@@ -31,6 +33,53 @@ interface HackathonJudged {
   description: string;
   end_date: string;
   status?: string;
+}
+
+function ExpandableDescription({ content }: { content: string }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [shouldShowButton, setShouldShowButton] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setShouldShowButton(contentRef.current.scrollHeight > 64);
+    }
+  }, [content]);
+
+  return (
+    <div className="w-full">
+      <div
+        ref={contentRef}
+        className={`relative transition-all duration-300 ${!isExpanded ? "max-h-[64px] overflow-hidden" : ""
+          }`}
+      >
+        <HtmlContent html={content} />
+        {!isExpanded && shouldShowButton && (
+          <div className="absolute bottom-0 left-0 w-full h-12 bg-linear-to-t from-white dark:from-gray-800 to-transparent" />
+        )}
+      </div>
+      {shouldShowButton && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsExpanded(!isExpanded);
+          }}
+          className="text-xs text-[#605DEC] dark:text-indigo-400 hover:underline mt-1 font-medium focus:outline-none flex items-center gap-1"
+        >
+          {isExpanded ? (
+            <>
+              Show Less <ChevronUp className="w-3 h-3" />
+            </>
+          ) : (
+            <>
+              Show More <ChevronDown className="w-3 h-3" />
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
 }
 
 function Page() {
@@ -228,9 +277,9 @@ function Page() {
                 className={`text-[#00AC4F] flex gap-2 group-hover:scale-110 transition-transform duration-200`}
               >
                 {status.icon}
-            <h3 className="font-semibold text-[#605DEC] dark:text-indigo-400 text-base uppercase tracking-wide">
-              {status.status}
-            </h3>
+                <h3 className="font-semibold text-[#605DEC] dark:text-indigo-400 text-base uppercase tracking-wide">
+                  {status.status}
+                </h3>
               </div>
               <div className={`text-2xl font-bold text-[#00AC4F]`}>
                 {status.number}
@@ -325,12 +374,13 @@ function Page() {
 
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
-                  <span className="text-gray-600 dark:text-gray-300 font-medium min-w-[80px]">
+                  <span className="text-gray-600 dark:text-gray-300 font-medium min-w-[80px] flex items-center gap-2">
+                    <FileText className="w-5.5 h-5.5" />
                     Description:
                   </span>
-                  <span className="text-[#605DEC] whitespace-pre-wrap text-wrap md:w-full w-60 dark:text-indigo-400">
-                    <HtmlContent html={hackathon.description} />
-                  </span>
+                  <div className="text-[#605DEC] text-wrap md:w-full w-60 dark:text-indigo-400 flex-1">
+                    <ExpandableDescription content={hackathon.description} />
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2">
