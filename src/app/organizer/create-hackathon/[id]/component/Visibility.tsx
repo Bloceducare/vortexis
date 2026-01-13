@@ -140,7 +140,7 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
                   htmlFor="private-checkbox"
                   className="w-5 h-5 inline-block rounded-full border border-gray-400 peer-checked:bg-blue-600 peer-checked:border-blue-600 relative cursor-pointer"
                 >
-                  <span className="hidden peer-checked:block w-[10px] h-[10px] bg-white rounded-full absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"></span>
+                  <span className="hidden peer-checked:block w-.5 h-2.5 bg-white rounded-full absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2"></span>
                 </label>
                 <label htmlFor="private-checkbox" className="cursor-pointer select-none text-sm text-[#2F4883]">Private</label>
               </div>
@@ -150,7 +150,7 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
 
           {/* Venue Input */}
           <div className="mt-10 flex-col">
-            <label className="text-2xl text-[#2F3036]">Venue</label>
+            <label className="text-2xl text-[#2F3036] dark:text-white">Venue</label>
             <input
               type="text"
               placeholder="Input Venue"
@@ -161,8 +161,8 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
           </div>
 
           {/* Access Code */}
-          <div className="mt-10 flex flex-col">
-            <label className="text-lg text-[#2F3036]">Access Code (For Private Hackathons)</label>
+          {/* <div className="mt-10 flex flex-col">
+            <label className="text-lg text-[#2F3036] ">Access Code (For Private Hackathons)</label>
             <textarea
               className={`outline-none resize-none h-52 border-2 w-full mt-3 rounded-2xl px-3 py-3 ${
                 selected === 'private' ? 'border-[#C5C6CC]' : 'border-gray-200 bg-gray-100 cursor-not-allowed'
@@ -171,13 +171,13 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
               name="access_code"
               disabled={selected !== 'private'}
             />
-          </div>
+          </div> */}
 
           {/* Notifications */}
           <div className="mt-10 space-y-4">
             {notifications.map((notif, idx) => (
               <div key={idx} className="flex items-center justify-between w-1/2 xl:w-[25%] pb-3">
-                <span className="text-gray-800">{notif.label}</span>
+                <span className="text-gray-800 dark:text-white">{notif.label}</span>
                 <button
                   onClick={() => handleToggle(idx)}
                   type="button"

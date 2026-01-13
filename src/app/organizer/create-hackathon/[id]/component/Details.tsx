@@ -116,7 +116,7 @@ function Details({ onNext, data }: NavigationProps) {
     <>
       <form onSubmit={handleContinue}>
         <div>
-          <label className="text-2xl text-[#2F3036]">Hackathon Name</label>
+          <label className="text-2xl text-[#2F3036] dark:text-white">Hackathon Name</label>
           <input
             type="text"
             placeholder="Enter Hackathon Name"
@@ -129,7 +129,7 @@ function Details({ onNext, data }: NavigationProps) {
 
         <div className="flex justify-between mt-10">
           <div className="w-[45%]">
-            <label className="text-2xl text-[#2F3036]">Start Date</label>
+            <label className="text-2xl text-[#2F3036] dark:text-white">Start Date</label>
             <input
               type="date"
               placeholder="Start Date"
@@ -141,7 +141,7 @@ function Details({ onNext, data }: NavigationProps) {
           </div>
 
           <div className="w-[45%]">
-            <label className="text-2xl text-[#2F3036]">End Date</label>
+            <label className="text-2xl text-[#2F3036] dark:text-white">End Date</label>
             <input
               type="date"
               placeholder="End date"
@@ -154,7 +154,7 @@ function Details({ onNext, data }: NavigationProps) {
         </div>
 
         <div className="mt-10">
-          <label className="text-2xl text-[#2F3036]">Hackathon Banner</label>
+          <label className="text-2xl text-[#2F3036] dark:text-white">Hackathon Banner</label>
 
           <div className="mt-3">
             <input
@@ -168,7 +168,7 @@ function Details({ onNext, data }: NavigationProps) {
 
             <label
               htmlFor="banner-upload"
-              className="flex flex-col items-center justify-center text-center gap-3 w-full border border-[#C5C6CC] rounded-2xl px-4 py-8 cursor-pointer bg-[#FAFAFA] hover:bg-[#f0f0f0] transition min-h-[200px]"
+              className="flex flex-col items-center justify-center text-center gap-3 w-full border border-[#C5C6CC] rounded-2xl px-4 py-8 cursor-pointer bg-[#FAFAFA] dark:bg-[#514343] hover:bg-[#f0f0f0] transition min-h-[200px]"
             >
               {!preview ? (
                 <>
@@ -176,7 +176,7 @@ function Details({ onNext, data }: NavigationProps) {
                     <FileImageIcon className="text-3xl" />
                   </div>
                   <div>
-                    <p className="text-[#2F3036] font-medium">
+                    <p className="text-[#2F3036] dark:text-white font-medium">
                       Click to upload banner
                     </p>
                     <p className="text-sm text-gray-500">
@@ -196,7 +196,7 @@ function Details({ onNext, data }: NavigationProps) {
         </div>
 
         <div className="mt-10">
-          <label className="text-2xl text-[#2F3036]">Description</label>
+          <label className="text-2xl text-[#2F3036] dark:text-white">Description</label>
           <div>
             <TiptapEditor
               value={description}
@@ -206,17 +206,17 @@ function Details({ onNext, data }: NavigationProps) {
         </div>
 
         <div className="mt-10">
-          <label className="text-2xl text-[#2F3036] mb-2 block">
+          <label className="text-2xl text-[#2F3036] dark:text-white mb-2 block">
             Rules & Guidelines
           </label>
           <RuleInput
-            rules={rules}
-            setRules={(newRules) => setField("rules", newRules)}
+            rule={rules}
+            setRule={(newRules: any) => setField("rules", newRules)}
           />
         </div>
 
         <div className="mt-10">
-          <label className="text-2xl text-[#2F3036]">Evaluation Criteria</label>
+          <label className="text-2xl text-[#2F3036] dark:text-white">Evaluation Criteria</label>
           <div>
             <TiptapEditor
               value={evaluation_criteria}

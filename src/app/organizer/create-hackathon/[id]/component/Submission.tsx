@@ -53,7 +53,7 @@ function Submission({ onNext, onPrev }: NavigationProps) {
       <form onSubmit={handleSubmit}>
         <div className="flex justify-between mt-10 flex-wrap gap-6">
           <div className="w-full md:w-[45%]">
-            <label className="text-lg text-[#2F3036]">
+            <label className="text-lg text-[#2F3036] dark:text-white">
               Submission Deadline
             </label>
             <input
@@ -76,7 +76,7 @@ function Submission({ onNext, onPrev }: NavigationProps) {
                 key={idx}
                 className="flex items-center justify-between w-[25%] pb-3"
               >
-                <span className="text-gray-800">{notif.label}</span>
+                <span className="text-gray-800 dark:text-white">{notif.label}</span>
                 <button
                   onClick={() => handleToggle(idx)}
                   type="button"

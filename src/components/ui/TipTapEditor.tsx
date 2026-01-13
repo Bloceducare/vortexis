@@ -100,9 +100,9 @@ const [cols, setCols] = useState(3);
   };
 
   return (
-    <div className="border border-gray-300 rounded-xl bg-white">
+    <div className="border border-gray-300 dark:border-[#574a4a] rounded-xl bg-white dark:bg-[#574a4a]">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-gray-100">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b bg-gray-100 dark:bg-[#312f2f]">
         {/* Text formatting */}
         <div className="relative group">
         <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={buttonClass(editor.isActive('bold'))}>
