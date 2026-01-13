@@ -420,7 +420,7 @@ export const useCommunications = ({
       try {
         // Use the correct endpoint: DELETE /communications/conversations/{conversation_pk}/messages/{id}/delete_message/
         const response = await fetch(
-          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/delete_message/`,
+          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/`,
           {
             method: "DELETE",
             headers: {
@@ -507,7 +507,29 @@ export const useCommunications = ({
 
           // Update message in state
           setMessages((prevMessages) =>
-            prevMessages.map((msg) => (msg.id === messageId ? normalized : msg))
+            prevMessages.map((msg) => {
+              if (msg.id === messageId) {
+                // Determine the best source for sender_id
+                // 1. If normalized has a valid ID, use it
+                // 2. If valid ID wasn't found in response, keep the existing one
+                const finalSenderId = normalized.sender_id || msg.sender_id;
+
+                // Determine the best source for sender_username
+                const finalUsername =
+                  normalized.sender_username !== "Unknown"
+                    ? normalized.sender_username
+                    : msg.sender_username;
+
+                return {
+                  ...normalized,
+                  sender_id: finalSenderId,
+                  sender_username: finalUsername,
+                  // Also preserve creation time if it looks like a default new date
+                  created_at: updatedMessage.created_at || msg.created_at
+                };
+              }
+              return msg;
+            })
           );
           return true;
         } else {
@@ -630,20 +652,12 @@ export const useCommunications = ({
   ]);
 
   useEffect(() => {
-    // If WebSocket is not connected, use polling as fallback
-    if (conversationId && !isConnected && connectionStatus !== "connecting") {
-      // Poll every 5 seconds for new messages
+    // Poll for new messages regardless of WebSocket status to ensure consistency
+    if (conversationId) {
+      // Poll every 3 seconds for new messages
       pollingIntervalRef.current = setInterval(() => {
-        if (conversationId) {
-          checkForNewMessages();
-        }
-      }, 5000);
-    } else {
-      // Clear polling when WebSocket is connected
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-        pollingIntervalRef.current = null;
-      }
+        checkForNewMessages();
+      }, 3000);
     }
 
     return () => {
@@ -652,7 +666,7 @@ export const useCommunications = ({
         pollingIntervalRef.current = null;
       }
     };
-  }, [conversationId, isConnected, connectionStatus, checkForNewMessages]);
+  }, [conversationId, checkForNewMessages]);
 
   // Load initial message history once when conversation changes
   useEffect(() => {
