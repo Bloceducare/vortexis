@@ -217,25 +217,25 @@ function Page() {
         {SubmissionStatus.map((status, i) => (
           <motion.div
             key={i}
-            className={`bg-[#FFFFFF] max-w-96 md:max-w-full dark:bg-gray-800 border-[#E4E4E4] dark:border-gray-700 border rounded-xl p-6 hover:shadow-md transition-all duration-300 cursor-pointer group`}
+            className={`bg-[#FFFFFF] max-w-96 md:max-w-full dark:bg-gray-800 border-[#E4E4E4] dark:border-gray-700 border rounded-xl p-5 hover:shadow-md transition-all duration-300 cursor-pointer group`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 * i }}
             whileHover={{ y: -2 }}
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <div
-                className={`text-[#00AC4F] group-hover:scale-110 transition-transform duration-200`}
+                className={`text-[#00AC4F] flex gap-2 group-hover:scale-110 transition-transform duration-200`}
               >
                 {status.icon}
+            <h3 className="font-semibold text-[#605DEC] dark:text-indigo-400 text-base uppercase tracking-wide">
+              {status.status}
+            </h3>
               </div>
-              <div className={`text-3xl font-bold text-[#00AC4F]`}>
+              <div className={`text-2xl font-bold text-[#00AC4F]`}>
                 {status.number}
               </div>
             </div>
-            <h3 className="font-semibold text-[#605DEC] dark:text-indigo-400 text-sm uppercase tracking-wide">
-              {status.status}
-            </h3>
           </motion.div>
         ))}
       </motion.div>
@@ -326,7 +326,7 @@ function Page() {
               <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-2">
                   <span className="text-gray-600 dark:text-gray-300 font-medium min-w-[80px]">
-                    Title:
+                    Description:
                   </span>
                   <span className="text-[#605DEC] whitespace-pre-wrap text-wrap md:w-full w-60 dark:text-indigo-400">
                     <HtmlContent html={hackathon.description} />
