@@ -553,18 +553,18 @@ export const useCommunications = ({
   // Polling fallback when WebSocket is not connected
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check for new messages (only fetch if we have a latest message ID)
+  // Check for new messages and updates (polling fallback)
   const checkForNewMessages = useCallback(async () => {
-    if (!conversationId || !latestMessageId) {
-      // If no latest message ID, do a full load
+    if (!conversationId) {
       loadHistory();
       return;
     }
 
     try {
-      // Fetch messages after the latest one we have
+      // Fetch messages without after_id to get potential edits to recent messages
+      // This ensures we sync both new messages and updates to existing ones
       const response = await fetch(
-        `${baseUrl}/communications/conversations/${conversationId}/messages/?after_id=${latestMessageId}`,
+        `${baseUrl}/communications/conversations/${conversationId}/messages/`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -583,7 +583,7 @@ export const useCommunications = ({
         }
 
         if (messagesArray.length > 0) {
-          // Normalize and add new messages
+          // Normalize incoming messages
           const normalizedMessages: Message[] = messagesArray.map(
             (msg: any) => {
               const senderId =
@@ -615,32 +615,55 @@ export const useCommunications = ({
             }
           );
 
-          // Add new messages to state
-          const newSeenIds = new Set(seenMessageIds);
-          let maxId = latestMessageId;
-
-          normalizedMessages.forEach((msg: Message) => {
-            if (msg.id && !newSeenIds.has(msg.id)) {
-              newSeenIds.add(msg.id);
-              maxId = Math.max(maxId, msg.id);
-            }
-          });
-
-          setSeenMessageIds(newSeenIds);
-          setLatestMessageId(maxId);
+          // Update state with smart merge
           setMessages((prev) => {
-            // Only add messages we haven't seen
-            const existingIds = new Set(prev.map((m) => m.id));
-            const newMessages = normalizedMessages.filter(
-              (m) => !existingIds.has(m.id)
-            );
-            return [...prev, ...newMessages];
+            // Create a map of existing messages by ID
+            const msgMap = new Map(prev.map(m => [m.id, m]));
+            let hasChanges = false;
+            let maxId = latestMessageId;
+
+            normalizedMessages.forEach(incoming => {
+              const existing = msgMap.get(incoming.id);
+              if (existing) {
+                // Check if content changed
+                if (existing.content !== incoming.content) {
+                  // Merge update, preserving sender_id if missing in incoming (safety)
+                  msgMap.set(incoming.id, {
+                    ...incoming,
+                    sender_id: incoming.sender_id || existing.sender_id,
+                    sender_username: incoming.sender_username !== "Unknown" ? incoming.sender_username : existing.sender_username
+                  });
+                  hasChanges = true;
+                }
+              } else {
+                // new message
+                msgMap.set(incoming.id, incoming);
+                hasChanges = true;
+                maxId = Math.max(maxId, incoming.id);
+              }
+            });
+
+            if (!hasChanges && msgMap.size === prev.length) {
+              return prev;
+            }
+
+            setLatestMessageId(maxId);
+
+            // Convert back to sorted array
+            return Array.from(msgMap.values()).sort((a, b) => {
+              return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+              // Fallback to ID sort if timestamps match?
+            });
           });
+
+          // Update seen IDs
+          const newSeenIds = new Set(seenMessageIds);
+          normalizedMessages.forEach(m => newSeenIds.add(m.id));
+          setSeenMessageIds(newSeenIds);
         }
       }
     } catch (err) {
-      // Silently fail - polling is just a fallback
-      console.warn("Polling for new messages failed:", err);
+      console.warn("Polling for messages failed:", err);
     }
   }, [
     conversationId,
