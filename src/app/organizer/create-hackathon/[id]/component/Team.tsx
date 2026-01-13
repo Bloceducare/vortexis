@@ -100,7 +100,7 @@ function Team({ onNext, onPrev, setData }: NavigationProps) {
         <form onSubmit={handleSubmit}>
           <div className="flex gap-6 flex-wrap">
             <div className="w-full md:w-[45%]">
-              <label className="block mb-2 text-[#2F3036] font-bold">
+              <label className="block mb-2 text-[#2F3036] dark:text-white font-bold">
                 Minimum Team Members
               </label>
 
@@ -117,7 +117,7 @@ function Team({ onNext, onPrev, setData }: NavigationProps) {
             </div>
 
             <div className="w-full md:w-[45%]">
-              <label className="block mb-2 text-[#2F3036] font-bold">
+              <label className="block mb-2 text-[#2F3036] dark:text-white font-bold">
                 Maximum Team Members
               </label>
               <div className="w-full rounded-2xl border border-[#C5C6CC] px-4 py-3 outline-none">
@@ -135,7 +135,7 @@ function Team({ onNext, onPrev, setData }: NavigationProps) {
 
           <div className="w-full mt-10">
             <div className="flex items-center justify-between mb-4">
-              <label className="text-[#2F3036] font-bold text-lg">
+              <label className="text-[#2F3036] dark:text-white font-bold text-lg">
                 Set Your Skill
               </label>
               <button
@@ -157,8 +157,8 @@ function Team({ onNext, onPrev, setData }: NavigationProps) {
                     key={skill.id}
                     className={`cursor-pointer flex items-center gap-2 p-2 rounded-lg border transition-all duration-200 ${
                       selectedSkillIds.includes(skill.id)
-                        ? "bg-blue-100 border-blue-500"
-                        : "bg-white border-gray-300"
+                        ? "bg-blue-100 border-blue-500 dark:bg-[#15342f] dark:border-[#112823"
+                        : "bg-white dark:bg-[#1b3833] dark:border-[#112823] border-gray-300"
                     }`}
                   >
                     <input

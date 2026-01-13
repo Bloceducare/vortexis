@@ -23,7 +23,7 @@ const fadeUp: Variants = {
 
 export const Hero: React.FC = () => {
   return (
-    <section className="relative w-full bg-gradient-to-br from-[#E0D9FB] via-[#D8DBFF] to-[#F4F4FF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors">
+    <section className="relative w-full bg-linear-to-br from-[#E0D9FB] via-[#D8DBFF] to-[#F4F4FF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors">
       {/* Gradient circles */}
       <div className="w-full flex gap-0 flex-row justify-center items-center h-screen absolute top-0 bottom-0 left-0 right-0">
         <div className="w-[12em] h-[12em] md:w-[15em] md:h-[15em] lg:w-[25em] lg:h-[25em] bg-[#d2bcff] rounded-full opacity-50 mix-blend-multiply absolute left-[-2em] mt-[-18em] md:left-[-2em] md:mt-[-26em] lg:left-[3em] lg:mt-[6em]" />
@@ -60,7 +60,7 @@ export const Hero: React.FC = () => {
 
         <motion.p
           variants={fadeUp}
-          className="text-sm md:text-lg lg:text-xl text-[#212121] dark:text-gray-300 font-medium leading-relaxed max-w-xs md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8 lg:mb-10 lg:mt-2 px-2 md:px-0"
+          className="text-sm md:text-lg lg:text-xl text-[#212121] dark:text-gray-100 font-medium leading-relaxed max-w-xs md:max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-8 lg:mb-10 lg:mt-2 px-2 md:px-0"
         >
           Vortexis makes it easy to{" "}
           <span className="font-semibold">host hackathons</span>,{" "}

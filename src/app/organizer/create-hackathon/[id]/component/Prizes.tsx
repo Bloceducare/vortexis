@@ -52,24 +52,25 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
 
   const handlePrizeChange = (value: string) => {
     setLocalPrize(value);
-    setField('prizes', value);
   };
+  
 
   const handleNextClick = () => {
     if (!grand_prize || grand_prize <= 0) {
-      toast.error('Please enter the grand prize amount.');
+      toast.error("Please enter the grand prize amount.");
       return;
     }
-
-    if (!localPrize || localPrize.trim() === '') {
-      toast.error('Please enter the individual prize.');
+  
+    if (!localPrize || localPrize.trim() === "") {
+      toast.error("Please enter the individual prize.");
       return;
     }
-
-    if (onNext) {
-      onNext();
-    }
+  
+    setField("prizes", localPrize); 
+  
+    onNext?.();
   };
+  
 
   return (
     <div className="space-y-6">
@@ -93,7 +94,7 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
             value={localPrize}
             onChange={handlePrizeChange}
             placeholder="Enter prize description..."
-            className="min-h-[40px] border rounded-md p-2"
+            className="min-h-10 border rounded-md p-2"
           />
         </div>
       </div>
