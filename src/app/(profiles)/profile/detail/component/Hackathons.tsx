@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Filter } from "lucide-react"
+import { Filter, Trophy } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { useUserHackathonsStore } from "@/store/useUserHackathons"
 import useParticipants from "@/hooks/useParticipants"
 import HtmlContent from "@/components/ui/HtMLContent"
-import { Trophy } from "lucide-react"
 
 const FilterOption = [
   "All Hackathons",
@@ -15,6 +15,7 @@ const FilterOption = [
 ]
 
 function Hackathons() {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [selected, setSelected] = useState(FilterOption[0])
 
@@ -33,6 +34,38 @@ function Hackathons() {
     setSelected(option)
     setOpen(false)
   }
+
+  const handleCardClick = (hackathonId: string) => {
+    router.push(`/hackathon/${hackathonId}`)
+  }
+
+  // Filter hackathons based on selected option
+  const getFilteredHackathons = () => {
+    if (!hackathons) return []
+    
+    const now = new Date()
+    
+    switch (selected) {
+      case "Ongoing Hackathons":
+        return hackathons.filter((h) => {
+          const start = new Date(h.start_date)
+          const end = new Date(h.end_date)
+          return start <= now && end >= now
+        })
+      
+      case "Ended Hackathons":
+        return hackathons.filter((h) => {
+          const end = new Date(h.end_date)
+          return end < now
+        })
+      
+      case "All Hackathons":
+      default:
+        return hackathons
+    }
+  }
+
+  const filteredHackathons = getFilteredHackathons()
 
   return (
     <section className="h-[85vh] flex flex-col">
@@ -74,12 +107,13 @@ function Hackathons() {
           <p className="text-gray-500 dark:text-gray-400">Loading hackathons...</p>
         ) : isError ? (
           <p className="text-red-500 dark:text-red-400">Failed to load hackathons.</p>
-        ) : hackathons.length > 0 ? (
+        ) : filteredHackathons.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {hackathons.map((hackathon) => (
+            {filteredHackathons.map((hackathon) => (
               <div
                 key={hackathon.id}
-                className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm bg-white dark:bg-gray-800 overflow-hidden transition-colors"
+                onClick={() => handleCardClick(hackathon.id)}
+                className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm bg-white dark:bg-gray-800 overflow-hidden transition-all cursor-pointer hover:shadow-lg hover:scale-[1.02]"
               >
                 {/* Banner Image */}
                 {hackathon?.banner_image ? (
@@ -95,9 +129,9 @@ function Hackathons() {
                     className="w-full h-40 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-40 flex items-center justify-center bg-gray-400">
-                  <Trophy className="w-16 h-16 text-primary/30" />
-                </div>
+                  <div className="w-full h-40 flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20">
+                    <Trophy className="w-16 h-16 text-indigo-400/40" />
+                  </div>
                 )}
 
                 <div className="p-4">
@@ -116,7 +150,9 @@ function Hackathons() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 dark:text-gray-400">No hackathons available.</p>
+          <p className="text-gray-500 dark:text-gray-400">
+            No {selected.toLowerCase()} available.
+          </p>
         )}
       </div>
     </section>

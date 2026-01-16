@@ -107,7 +107,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
         aria-label="Notifications"
       >
-        <Bell className="size-5 text-gray-700" />
+        <Bell className="size-4 xl:size-5 text-gray-700" />
         {stats && stats.unread_count > 0 && (
           <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
             {stats.unread_count > 9 ? "9+" : stats.unread_count}

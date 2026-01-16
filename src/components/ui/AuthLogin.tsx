@@ -187,7 +187,7 @@ function AuthLogin({ type }: AuthLoginProps) {
             </div>
             <Link href="/forgot-password">
               <span className="text-[#605DEC] dark:text-[#8b7ff0] text-sm md:text-base cursor-pointer hover:underline">
-                Forgotten Password?
+                Forgot Password?
               </span>
             </Link>
           </div>

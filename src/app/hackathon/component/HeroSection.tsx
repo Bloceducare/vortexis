@@ -59,7 +59,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
             className="text-2xl md:text-6xl font-bold text-title dark:text-white leading-tight"
           >
             Join Game-Changing{" "}
-            <span className="text-primary dark:text-indigo-400">Hackathons</span>{" "}
+          Hackathons
             with Vortexis
           </motion.h1>
 
@@ -85,7 +85,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleCreateHackathon}
-              className="flex items-center gap-2 bg-primary dark:bg-primary/40 text-white px-3 text-sm md:text-lg md:px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer"
+              className="flex items-center gap-2 bg-black dark:bg-primary/40 text-white px-3 text-sm md:text-lg md:px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer"
             >
               <Rocket className="w-5 h-5" />
               Create Hackathon

@@ -8,6 +8,7 @@ interface HackathonCardProps {
   onClick: () => void;
   onRegister: () => void;
   isRegistering: boolean;
+  registered: boolean;
 }
 
 export const HackathonCard: React.FC<HackathonCardProps> = ({
@@ -16,6 +17,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = ({
   onClick,
   onRegister,
   isRegistering,
+  registered
 }) => {
   const now = new Date();
   const start = new Date(hackathon.start_date);
@@ -48,7 +50,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = ({
     >
       {/* Image */}
       <div
-        className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
+        className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 overflow-hidden group cursor-pointer"
         onClick={onClick}
       >
         {hackathon.banner_image && hackathon.banner_image.trim() !== "" ? (
@@ -117,21 +119,31 @@ export const HackathonCard: React.FC<HackathonCardProps> = ({
           </div>
         </div>
 
-        {/* Register Button */}
-        {(isUpcoming || isActive) && (
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onRegister();
-            }}
-            disabled={isRegistering}
-            className="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/25"
-          >
-            {isRegistering ? "Registering..." : "Register Now"}
-          </motion.button>
-        )}
+     
+     {/* Registration Button / Status */}
+{(isUpcoming || isActive) && !registered && (
+  <motion.button
+    whileHover={{ scale: 1.02 }}
+    whileTap={{ scale: 0.98 }}
+    onClick={(e) => {
+      e.stopPropagation();
+      onRegister();
+    }}
+    disabled={isRegistering}
+    className="w-full bg-indigo-600 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/25"
+  >
+    {isRegistering ? "Registering..." : "Register Now"}
+  </motion.button>
+)}
+
+{registered && (
+  <div className="w-full bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-400 py-3 rounded-xl font-medium text-center flex items-center justify-center gap-2">
+    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+    </svg>
+    <span>Registered</span>
+  </div>
+)}
       </div>
     </motion.div>
   );

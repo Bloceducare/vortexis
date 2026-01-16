@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { HackathonCard } from "./HackathonCard";
 import { SkeletonCard } from "./SkeletonCard";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 interface HackathonGridProps {
   hackathons: any[];
@@ -32,6 +33,11 @@ export const HackathonGrid: React.FC<HackathonGridProps> = ({
     );
   }
 
+  const hackathonsRegisteredFor = useHackathonStore((state) => state.hackathons);
+  const registeredIds = hackathonsRegisteredFor.map(h => h.id);
+  console.log(hackathonsRegisteredFor)
+
+
   if (hackathons.length === 0) {
     return (
       <motion.div
@@ -57,7 +63,8 @@ export const HackathonGrid: React.FC<HackathonGridProps> = ({
             onClick={() => onCardClick(hackathon.id)}
             onRegister={() => onRegister(hackathon.id)}
             isRegistering={activeHackathon === hackathon.id && isRegistering}
-          />
+            registered={registeredIds.includes(hackathon.id)}
+            />
         ))}
       </AnimatePresence>
     </div>
