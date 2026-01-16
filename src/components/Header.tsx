@@ -11,6 +11,8 @@ import { usePathname } from "next/navigation";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import { AnimatePresence, motion } from "framer-motion";
 import { SignOutConfirmationModal } from "./signOutModal";
+import { NotificationDropdown } from "./NotificationDropdown";
+
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -114,7 +116,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex-shrink-0 flex items-center"
+                className="shrink-0 flex items-center"
                 onClick={closeMenu}
               >
                 <span className="text-xl font-semibold text-[#605DEC] transition-colors hover:text-[#4D4AE8]">
@@ -124,7 +126,7 @@ export const Header: React.FC = () => {
             </div>
 
             {isLoggedIn && (
-              <nav className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 space-x-8">
+              <nav className="hidden md:flex absolute left-[45%] xl:left-1/2 transform -translate-x-1/2 space-x-4 xl:space-x-8">
                 <Link
                   href="/features"
                   className="px-3 py-2 text-sm font-medium text-[#212121] dark:text-gray-300 hover:text-[#605DEC] transition-colors duration-200"
@@ -170,17 +172,26 @@ export const Header: React.FC = () => {
             )}
 
             {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex items-center space-x-3">
+            <div className="hidden md:flex items-center space-x-1">
               {/* Dark Mode Toggle */}
+
+              {isLoggedIn && (
+                          <NotificationDropdown />
+                
+              )
+
+              }
+
+
               <button
                 onClick={toggleDarkMode}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 aria-label="Toggle dark mode"
               >
                 {isDarkMode ? (
-                  <Sun className="w-5 h-5 text-yellow-500" />
+                  <Sun className="w-4 xl:w-5 xl:h-5 h-4 text-yellow-500" />
                 ) : (
-                  <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                  <Moon className="w-4 xl:w-5 xl:h-5 h-4 text-gray-700 dark:text-gray-300" />
                 )}
               </button>
 
@@ -301,6 +312,12 @@ export const Header: React.FC = () => {
             {/* Mobile menu button */}
             <div className="flex items-center md:hidden gap-1">
               {/* Dark Mode Toggle - Mobile */}
+              {isLoggedIn && (
+                          <NotificationDropdown />
+                
+              )
+
+              }
               <button
                 onClick={toggleDarkMode}
                 className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"

@@ -107,7 +107,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         className="relative p-2 hover:bg-gray-100 rounded-full transition-colors"
         aria-label="Notifications"
       >
-        <Bell className="size-5 text-gray-700" />
+        <Bell className="size-4 xl:size-5 text-gray-700" />
         {stats && stats.unread_count > 0 && (
           <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-semibold">
             {stats.unread_count > 9 ? "9+" : stats.unread_count}
@@ -116,7 +116,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-12 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[500px] flex flex-col">
+        <div className="absolute right-0 top-12 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-125 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -224,7 +224,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                       onClick={() => handleNotificationClick(notif.id)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-0.5">
+                        <div className="shrink-0 mt-0.5">
                           {getTypeIcon(notifType)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -235,7 +235,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                             {!notif.is_read && (
                               <button
                                 onClick={(e) => handleMarkAsRead(notif.id, e)}
-                                className="flex-shrink-0 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full"
+                                className="shrink-0 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full"
                                 aria-label="Mark as read"
                               >
                                 <X className="size-3 text-gray-400" />
