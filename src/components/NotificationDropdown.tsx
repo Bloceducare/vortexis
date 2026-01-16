@@ -116,7 +116,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-12 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[500px] flex flex-col">
+        <div className="absolute right-0 top-12 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-125 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -224,7 +224,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                       onClick={() => handleNotificationClick(notif.id)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 mt-0.5">
+                        <div className="shrink-0 mt-0.5">
                           {getTypeIcon(notifType)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -235,7 +235,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                             {!notif.is_read && (
                               <button
                                 onClick={(e) => handleMarkAsRead(notif.id, e)}
-                                className="flex-shrink-0 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full"
+                                className="shrink-0 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full"
                                 aria-label="Mark as read"
                               >
                                 <X className="size-3 text-gray-400" />

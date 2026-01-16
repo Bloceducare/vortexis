@@ -116,7 +116,7 @@ export const Header: React.FC = () => {
             <div className="flex items-center">
               <Link
                 href="/"
-                className="flex-shrink-0 flex items-center"
+                className="shrink-0 flex items-center"
                 onClick={closeMenu}
               >
                 <span className="text-xl font-semibold text-[#605DEC] transition-colors hover:text-[#4D4AE8]">

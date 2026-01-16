@@ -35,7 +35,7 @@ function Hackathons() {
     setOpen(false)
   }
 
-  const handleCardClick = (hackathonId: string) => {
+  const handleCardClick = (hackathonId: number | undefined) => {
     router.push(`/hackathon/${hackathonId}`)
   }
 
@@ -48,14 +48,15 @@ function Hackathons() {
     switch (selected) {
       case "Ongoing Hackathons":
         return hackathons.filter((h) => {
-          const start = new Date(h.start_date)
-          const end = new Date(h.end_date)
+          const start = h.start_date ? new Date(h.start_date) : new Date(0)
+          const end = h.end_date ? new Date(h.end_date) : new Date(0)
           return start <= now && end >= now
         })
+
       
       case "Ended Hackathons":
         return hackathons.filter((h) => {
-          const end = new Date(h.end_date)
+          const end = h.end_date ? new Date(h.end_date) : new Date(0)
           return end < now
         })
       
@@ -70,7 +71,7 @@ function Hackathons() {
   return (
     <section className="h-[85vh] flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4 flex-shrink-0">
+      <div className="flex justify-between items-center mb-4 shrink-0">
         <h1 className="font-semibold text-lg dark:text-white">{selected}</h1>
 
         {/* Filter dropdown */}
@@ -109,10 +110,10 @@ function Hackathons() {
           <p className="text-red-500 dark:text-red-400">Failed to load hackathons.</p>
         ) : filteredHackathons.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredHackathons.map((hackathon) => (
+            {filteredHackathons?.map((hackathon) => (
               <div
                 key={hackathon.id}
-                onClick={() => handleCardClick(hackathon.id)}
+                onClick={() => handleCardClick(hackathon?.id)}
                 className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm bg-white dark:bg-gray-800 overflow-hidden transition-all cursor-pointer hover:shadow-lg hover:scale-[1.02]"
               >
                 {/* Banner Image */}
@@ -129,7 +130,7 @@ function Hackathons() {
                     className="w-full h-40 object-cover"
                   />
                 ) : (
-                  <div className="w-full h-40 flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20">
+                  <div className="w-full h-40 flex items-center justify-center bg-linear-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/20 dark:to-purple-900/20">
                     <Trophy className="w-16 h-16 text-indigo-400/40" />
                   </div>
                 )}

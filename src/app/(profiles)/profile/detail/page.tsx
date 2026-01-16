@@ -125,7 +125,7 @@ export default function ProfileView() {
 
 
   return (
-    <section className=" px-4 sm:px-6 lg:px-8 pt-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <section className=" px-4 sm:px-6 lg:px-8 pt-24 bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
 
       {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 

@@ -210,7 +210,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute left-0 top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow origin-top z-[100] transition-colors"
+                  className="absolute left-0 top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow origin-top z-100 transition-colors"
                 >
                   {hackathons?.length > 0 ? (
                     hackathons.map((h) => (
@@ -318,7 +318,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
       {/* Main content */}
       <div
         className={`flex-1 ${
-          !isMobile ? (sidebarExpanded ? "lg:ml-[280px]" : "lg:ml-[120px]") : ""
+          !isMobile ? (sidebarExpanded ? "lg:ml-70" : "lg:ml-30") : ""
         } transition-all duration-400 ease-in-out`}
       >
         <Header toggleSidebar={toggleSidebar} />
