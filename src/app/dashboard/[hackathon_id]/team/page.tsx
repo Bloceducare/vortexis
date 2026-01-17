@@ -3,9 +3,7 @@
 import { useState } from "react";
 import useTeams from "@/hooks/useTeams";
 import { useParams } from "next/navigation";
-import JoinTeam from "./component/Jointeam";
 import { useRouter } from "next/navigation";
-import CreateTeam from "./component/CreateTeam";
 import TeamIcon from "@/public/assets/icon/ant-design_team-outlined.svg";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
@@ -63,7 +61,7 @@ export default function TeamManagement() {
   );
 
   const toggleJoinTeamPage = () => {
-    setPages({ ...pages, join: !pages.join });
+    router.push(`/dashboard/${hackathon_id}/team/join`);
   };
 
   const leaveTeamMutation = leaveTeam();
@@ -86,7 +84,7 @@ export default function TeamManagement() {
   };
 
   const toggleCreateTeam = () => {
-    setPages({ ...pages, create: !pages.create });
+    router.push(`/dashboard/${hackathon_id}/team/create`);
   };
 
   const goToProject = () => {
@@ -130,17 +128,6 @@ export default function TeamManagement() {
 
   const isCreator = currentMember?.is_creator;
 
-  if (pages.join) {
-    return (
-      <JoinTeam onClose={toggleJoinTeamPage} hackathon_id={hackathon_id} />
-    );
-  }
-
-  if (pages.create) {
-    return (
-      <CreateTeam onClose={toggleCreateTeam} hackathon_id={hackathon_id} />
-    );
-  }
 
   return (
     <section className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 transition-colors">
@@ -202,7 +189,7 @@ export default function TeamManagement() {
                         <div
                           className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition 
                                         bg-white dark:bg-gray-800 shadow-lg border border-gray-200 dark:border-gray-700 text-black dark:text-white rounded-lg px-3 py-2 
-                                        whitespace-nowrap z-10 w-max min-w-[120px]"
+                                        whitespace-nowrap z-10 w-max min-w-30"
                         >
                           <p className="font-semibold text-gray-800 dark:text-gray-100 text-sm">
                             {m.username}
@@ -322,7 +309,7 @@ export default function TeamManagement() {
           </section>
 
           {addModal && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-[100vh]">
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 h-screen">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg w-full max-w-md relative transition-colors">
                 <button
                   onClick={() => setAddModal(false)}

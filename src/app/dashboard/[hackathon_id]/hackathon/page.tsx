@@ -88,7 +88,7 @@ const Hackathons = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
           {/* Hero Skeleton */}
           <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg animate-pulse">
@@ -116,7 +116,7 @@ const Hackathons = () => {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-red-50">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-red-50">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -145,7 +145,7 @@ const Hackathons = () => {
   const daysLeft = calculateDaysLeft();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Hero Section */}
         <motion.div
@@ -153,8 +153,8 @@ const Hackathons = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700"
         >
-          {/* Banner Gradient */}
-          <div className="h-32 bg-gradient-to-r from-primary via-blue-500 to-purple-500 relative">
+          {/* Banner linear */}
+          <div className="h-32 bg-linear-to-r from-primary via-blue-500 to-purple-500 relative">
             <div className="absolute inset-0 bg-black/10"></div>
             {daysLeft > 0 && (
               <motion.div
@@ -274,7 +274,7 @@ const Hackathons = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-4 md:p-8 shadow-lg border border-yellow-100 dark:border-yellow-800"
+              className="bg-linear-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-2xl p-4 md:p-8 shadow-lg border border-yellow-100 dark:border-yellow-800"
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-yellow-500 rounded-xl flex items-center justify-center">
@@ -308,7 +308,7 @@ const Hackathons = () => {
               {myTeam ? (
                 <div className="space-y-6">
                   {/* Team Name */}
-                  <div className="bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl p-4">
+                  <div className="bg-linear-to-r from-primary/10 to-blue-500/10 rounded-xl p-4">
                     <div className="text-sm  opacity-60 mb-1">
                       Team Name
                     </div>
@@ -388,7 +388,7 @@ const Hackathons = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() =>
-                      router.push(`/dashboard/${hackathon_id}/team`)
+                      router.push(`/dashboard/${hackathon_id}/team/create`)
                     }
                     className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25 cursor-pointer"
                   >
@@ -400,7 +400,7 @@ const Hackathons = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() =>
-                      router.push(`/dashboard/${hackathon_id}/team`)
+                      router.push(`/dashboard/${hackathon_id}/team/join`)
                     }
                     className="w-full flex items-center justify-center gap-2 border-2 border-primary text-primary py-3 rounded-xl font-semibold hover:bg-primary/5 transition-all cursor-pointer"
                   >

@@ -149,10 +149,15 @@ export interface UserTeam {
   organizer: {
     id: number;
     username: string;
+    first_name?: string;
+    last_name?: string;
   };
   members: {
     id: number;
     username: string;
+    first_name?: string;
+    last_name?: string;
+    is_creator: boolean;
   }[];
   hackathons: {
     id: number;

@@ -14,7 +14,7 @@ export default function StatusModal({ isOpen, onClose, type, message, title }: S
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 h-full">
-      <div className="bg-white rounded-2xl p-6 shadow-lg w-[100%] max-w-sm text-center animate-fade-in">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg w-full max-w-sm text-center animate-fade-in">
         <h2
           className={`text-xl font-bold mb-4 ${
             type === "success" ? "text-green-600" : "text-red-600"
@@ -26,7 +26,7 @@ export default function StatusModal({ isOpen, onClose, type, message, title }: S
     : (title || "Oops 😢")}
 </h2>
         </h2>
-        <p className="mb-6 text-gray-700">{message}</p>
+        <p className="mb-6 text-gray-700 dark:text-white">{message}</p>
 
         <button
           onClick={onClose}

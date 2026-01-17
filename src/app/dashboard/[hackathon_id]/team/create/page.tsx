@@ -3,13 +3,12 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import useTeams from "@/hooks/useTeams";
+import { useParams } from "next/navigation";
 
-interface CreateTeamProps {
-  onClose: () => void;
-  hackathon_id: string;
-}
 
-export default function CreateTeam({ onClose, hackathon_id }: CreateTeamProps) {
+export default function CreateTeam() {
+      const params = useParams();
+        const hackathon_id = params?.hackathon_id as string;
   const { createTeamMutation } = useTeams();
 
   const [formData, setFormData] = useState({
@@ -56,14 +55,20 @@ export default function CreateTeam({ onClose, hackathon_id }: CreateTeamProps) {
         name: formData.name,
         members: formData.members,
       });
-      onClose(); 
+    
     } catch (err: any) {
       setError(err.message || "Failed to create team.");
     }
   };
 
+  const onClose = () => {
+    window.history.back();
+  }
+
   return (
-    <div className="bg-white h-[100vh] rounded-xl z-50 flex justify-center items-center">
+    <div className="bg-white h-screen rounded-xl z-50 flex justify-center items-center">
+
+
       <div className="bg-white w-full max-w-2xl sm:rounded-2xl border border-gray-200 p-8 overflow-y-auto">
         <h2 className="font-semibold mb-6 text-2xl text-gray-900 text-center">
           Create a Team
