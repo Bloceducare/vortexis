@@ -677,10 +677,10 @@ export const useCommunications = ({
   useEffect(() => {
     // Poll for new messages regardless of WebSocket status to ensure consistency
     if (conversationId) {
-      // Poll every 3 seconds for new messages
+      // Poll every 1 second for new messages
       pollingIntervalRef.current = setInterval(() => {
         checkForNewMessages();
-      }, 3000);
+      }, 1000); // Poll every 1 second
     }
 
     return () => {
