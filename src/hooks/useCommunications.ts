@@ -7,6 +7,7 @@ interface Message {
   sender_id: number;
   sender_username: string;
   created_at: string;
+  is_deleted?: boolean;
 }
 
 interface Conversation {
@@ -41,6 +42,7 @@ export const useCommunications = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [seenMessageIds, setSeenMessageIds] = useState<Set<number>>(new Set());
+  const [deletedMessageIds, setDeletedMessageIds] = useState<Set<number>>(new Set());
   const [latestMessageId, setLatestMessageId] = useState(0);
 
   // WebSocket connection for real-time messaging - memoize to prevent constant reconnections
@@ -187,13 +189,14 @@ export const useCommunications = ({
         const normalized: Message = {
           id: msg.id,
           content: msg.content || msg.message || "",
-          sender_id: senderId || 0, // Default to 0 if not found
+          sender_id: senderId || 0,
           sender_username: senderUsername,
           created_at:
             msg.created_at ||
             msg.timestamp ||
             msg.date ||
             new Date().toISOString(),
+          is_deleted: msg.is_deleted || false,
         };
 
         // Log the normalization for debugging
@@ -221,7 +224,8 @@ export const useCommunications = ({
 
       setSeenMessageIds(newSeenIds);
       setLatestMessageId(maxId);
-      setMessages(normalizedMessages);
+      // Filter out deleted messages
+      setMessages(normalizedMessages.filter(msg => !msg.is_deleted));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load messages");
     } finally {
@@ -418,9 +422,9 @@ export const useCommunications = ({
       }
 
       try {
-        // Use the correct endpoint: DELETE /communications/conversations/{conversation_pk}/messages/{id}/delete_message/
+        // Backend DELETE endpoint with /delete_message/ path
         const response = await fetch(
-          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/`,
+          `${baseUrl}/communications/conversations/${conversationId}/messages/${messageId}/delete_message/`,
           {
             method: "DELETE",
             headers: {
@@ -431,6 +435,9 @@ export const useCommunications = ({
         );
 
         if (response.ok || response.status === 204) {
+          // Track as deleted to prevent re-adding from polling
+          setDeletedMessageIds((prev) => new Set([...prev, messageId]));
+
           // Optimistically remove message from state immediately
           setMessages((prevMessages) =>
             prevMessages.filter((msg) => msg.id !== messageId)
@@ -611,6 +618,7 @@ export const useCommunications = ({
                   msg.timestamp ||
                   msg.date ||
                   new Date().toISOString(),
+                is_deleted: msg.is_deleted || false,
               };
             }
           );
@@ -623,6 +631,11 @@ export const useCommunications = ({
             let maxId = latestMessageId;
 
             normalizedMessages.forEach(incoming => {
+              // Skip if deleted locally or on server
+              if (deletedMessageIds.has(incoming.id) || incoming.is_deleted) {
+                return;
+              }
+
               const existing = msgMap.get(incoming.id);
               if (existing) {
                 // Check if content changed
@@ -671,6 +684,7 @@ export const useCommunications = ({
     baseUrl,
     token,
     seenMessageIds,
+    deletedMessageIds,
     loadHistory,
   ]);
 
