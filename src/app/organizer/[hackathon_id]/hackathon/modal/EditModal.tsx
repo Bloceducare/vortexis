@@ -175,10 +175,10 @@ function EditHackathonModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl p-6 relative animate-scaleIn max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl p-6 relative animate-scaleIn max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white pb-3 border-b">
-          <h1 className="text-[#171717] text-2xl font-semibold">
+        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white dark:bg-gray-800 pb-3 border-b">
+          <h1 className="text-[#171717] dark:text-white text-2xl font-semibold">
             Edit Hackathon Details
           </h1>
           <button
@@ -193,7 +193,7 @@ function EditHackathonModal({
         <div className="space-y-4">
           {/* Title */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
+            <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
               Title
             </label>
             <input
@@ -207,7 +207,7 @@ function EditHackathonModal({
 
           {/* Grand Prize */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
+            <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
               Grand Prize (₦)
             </label>
             <input
@@ -222,7 +222,7 @@ function EditHackathonModal({
 
           {/* Venue */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
+            <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
               Venue
             </label>
             <input
@@ -236,7 +236,7 @@ function EditHackathonModal({
 
           {/* Visibility */}
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-2">
+            <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
               Visibility
             </label>
             <select
@@ -245,7 +245,7 @@ function EditHackathonModal({
   onChange={(e) =>
     setFormData((prev) => ({ ...prev, visibility: e.target.value }))
   }
-  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+  className="w-full px-3 py-2 border border-gray-300 dark:bg-gray-800 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
 >
   <option value="true">Public</option>
   <option value="false">Private</option>
@@ -256,7 +256,7 @@ function EditHackathonModal({
           {/* Team Size */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
                 Min Team Size
               </label>
               <input
@@ -269,7 +269,7 @@ function EditHackathonModal({
               />
             </div>
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
                 Max Team Size
               </label>
               <input
@@ -286,7 +286,7 @@ function EditHackathonModal({
           {/* Dates */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
                 Submission Deadline
               </label>
               <input
@@ -298,7 +298,7 @@ function EditHackathonModal({
               />
             </div>
             <div>
-              <label className="block text-gray-700 text-sm font-medium mb-2">
+              <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
                 End Date
               </label>
               <input
@@ -313,10 +313,10 @@ function EditHackathonModal({
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-3 mt-6 sticky bottom-0 bg-white pt-3 border-t">
+        <div className="flex gap-3 mt-6 sticky bottom-0 bg-white dark:bg-gray-800 pt-3 border-t">
           <button
             onClick={onClose}
-            className="flex-1 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition cursor-pointer"
+            className="flex-1 py-2 border border-gray-300 text-gray-700 dark:text-white font-semibold rounded-lg hover:bg-gray-50 transition cursor-pointer"
           >
             Cancel
           </button>

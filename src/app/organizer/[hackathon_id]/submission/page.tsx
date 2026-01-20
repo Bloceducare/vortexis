@@ -65,32 +65,58 @@ function SubmitProject() {
   };
 
   return (
-    <section className="bg-white dark:bg-gray-800 px-10 rounded-2xl py-5 mb-10 shadow-lg transition-colors">
-      <div className="space-y-3">
-        <h1 className="text-3xl font-bold text-[#605DEC] dark:text-indigo-400">
+    <section className="bg-white dark:bg-gray-800 px-4 sm:px-6 lg:px-10 rounded-2xl py-5 mb-10 shadow-lg transition-colors">
+      {/* Header */}
+      <div className="space-y-2 mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#605DEC] dark:text-indigo-400">
           Submissions
         </h1>
-        <p className="text-[#212121] dark:text-gray-300">
+        <p className="text-sm sm:text-base text-[#212121] dark:text-gray-300">
           Review and manage hackathon submissions
         </p>
       </div>
-      <div className="flex justify-between xl:justify-start  gap-3 mb-6  mt-4">
-        {Buttons.map((btn, index) => (
-          <button
-            key={btn}
-            onClick={() => setActiveButton(btn)}
-            className={`w-[28%] xl:w-[15%] py-4 rounded-lg transition cursor-pointer ${
-              btn === activeButton
-                ? "bg-[#605DEC] text-white"
-                : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300"
-            }`}
-          >
-            {btn}
-          </button>
-        ))}
+
+      {/* Tab Buttons - Improved Mobile Responsiveness */}
+      <div className="mb-6 mt-4">
+        {/* Mobile: 2x2 Grid */}
+        <div className="grid grid-cols-2 sm:hidden gap-3">
+          {Buttons.map((btn) => (
+            <button
+              key={btn}
+              onClick={() => setActiveButton(btn)}
+              className={`py-3 px-2 rounded-lg transition cursor-pointer font-medium text-xs ${
+                btn === activeButton
+                  ? "bg-[#605DEC] text-white shadow-md"
+                  : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300 hover:bg-[#E8E7FC] dark:hover:bg-gray-600"
+              }`}
+            >
+              {btn}
+            </button>
+          ))}
+        </div>
+
+        {/* Tablet & Desktop: Horizontal Layout */}
+        <div className="hidden sm:flex flex-wrap lg:flex-nowrap gap-3">
+          {Buttons.map((btn) => (
+            <button
+              key={btn}
+              onClick={() => setActiveButton(btn)}
+              className={`flex-1 lg:flex-none lg:min-w-40 py-3 px-4 rounded-lg transition cursor-pointer font-medium text-sm ${
+                btn === activeButton
+                  ? "bg-[#605DEC] text-white shadow-md"
+                  : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300 hover:bg-[#E8E7FC] dark:hover:bg-gray-600"
+              }`}
+            >
+              {btn}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="mt-20 px-5 xl:px-10 xl:mr-20">{renderComponent()}</div>
+      {/* Content Area */}
+      <div className="mt-8 lg:mt-12">
+        {renderComponent()}
+      </div>
     </section>
   );
 }
