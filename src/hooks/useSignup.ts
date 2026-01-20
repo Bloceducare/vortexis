@@ -122,28 +122,50 @@ export function useSignUpForm<T extends AuthFormType>(type: T) {
         let errorMessage = "Failed to create account. Please try again.";
 
         if (responseData) {
-          errorMessage =
-            responseData.message ||
-            responseData.error ||
-            responseData.detail ||
-            responseData.errors ||
-            JSON.stringify(responseData);
+          const extractErrorMessage = (data: any): string => {
+            if (data.errors && typeof data.errors === "object") {
+              const errorMessages = Object.entries(data.errors)
+                .map(([field, messages]) => {
+                  const msgArray = Array.isArray(messages) ? messages : [messages];
+                  return msgArray.map(msg =>
+                    field === "non_field_errors" ? msg : `${field}: ${msg}`
+                  ).join(", ");
+                })
+                .join("; ");
+              return errorMessages;
+            }
 
-          if (responseData.errors && typeof responseData.errors === "object") {
-            const errorMessages = Object.entries(responseData.errors)
-              .map(
-                ([field, messages]) =>
-                  `${field}: ${
-                    Array.isArray(messages) ? messages.join(", ") : messages
-                  }`
-              )
-              .join("; ");
-            errorMessage = errorMessages;
-          }
+            // Check for direct field errors at root level (e.g., { email: ['error'], username: ['error'] })
+            const possibleFieldErrors = Object.keys(data).filter(key =>
+              Array.isArray(data[key]) &&
+              typeof data[key][0] === 'string' &&
+              !['message', 'error', 'detail', 'status'].includes(key)
+            );
+
+            if (possibleFieldErrors.length > 0) {
+              const errorMessages = possibleFieldErrors
+                .map(field => {
+                  const messages = data[field];
+                  return messages.map((msg: string) =>
+                    field === "non_field_errors" ? msg : `${field.charAt(0).toUpperCase() + field.slice(1)}: ${msg}`
+                  ).join(", ");
+                })
+                .join("; ");
+              return errorMessages;
+            }
+
+            if (data.message) return data.message;
+            if (data.error) return data.error;
+            if (data.detail) return data.detail;
+
+            return "Failed to create account. Please check your information and try again.";
+          };
+
+          errorMessage = extractErrorMessage(responseData);
         }
 
         if (response.status === 400) {
-          toast.error(`${errorMessage}`);
+          toast.error(errorMessage);
         } else if (response.status === 409) {
           toast.error("An account with this email already exists.");
         } else {

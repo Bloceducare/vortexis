@@ -100,15 +100,55 @@ const MessageBubble: React.FC<{
     useEffect(() => {
       const computedIsMe = message?.sender_id === userId;
       if (isMe !== computedIsMe) {
-        // isMe prop mismatch detected
+        // console.warn("⚠️ isMe mismatch:", { isMe, computedIsMe, messageId: message?.id });
       }
     }, [message?.id, message?.sender_id, userId, isMe, message?.sender_username]);
+
+    // CRITICAL: Use document-level capture listener to guarantee we catch the event
+    useEffect(() => {
+      // Only attach listener if it's my message
+      if (!isMe) return;
+
+      const handleGlobalContextMenu = (e: Event) => {
+        const target = e.target as Node;
+        const element = messageBubbleRef.current;
+
+        // Check if the click is inside OUR message bubble
+        if (element && element.contains(target)) {
+          // console.log("🎯 Document caught contextmenu ON MESSAGE", message?.id);
+
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+
+          // Mobile check: If screen is small, show action modal directly
+          if (window.innerWidth < 768) {
+            // console.log("📱 Mobile detected, opening Action Modal");
+            setShowActionModal(true);
+            setShowContextMenu(false);
+          } else {
+            // Desktop: Show custom menu at cursor
+            const mouseEvent = e as MouseEvent;
+            setContextMenuPosition({ x: mouseEvent.clientX || 0, y: mouseEvent.clientY || 0 });
+            setShowContextMenu(true);
+          }
+          return false;
+        }
+      };
+
+      // Attach to DOCUMENT with capture to intercept before anything else
+      document.addEventListener('contextmenu', handleGlobalContextMenu, { passive: false, capture: true });
+
+      return () => {
+        document.removeEventListener('contextmenu', handleGlobalContextMenu, { capture: true } as any);
+      };
+    }, [isMe, messageBubbleRef, message?.id]);
 
     const handleLongPressStart = () => {
       if (!isMe) return;
       setIsPressed(true);
       longPressTimer.current = setTimeout(() => {
-        setShowDeleteConfirm(true);
+        setShowActionModal(true);
         setIsPressed(false);
       }, 500); // 500ms for long press
     };
@@ -474,23 +514,28 @@ const MessageBubble: React.FC<{
             data-is-me={isMe.toString()}
             data-message-id={message?.id?.toString() || ""}
             data-sender-id={message?.sender_id?.toString() || ""}
-            className={`max-w-[85%] rounded-lg px-4 py-2 cursor-default ${isMe
+            className={`max-w-[85%] rounded-lg px-4 py-2 cursor-default select-none ${isMe
               ? "bg-blue-600 text-white"
               : "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
               } ${isPressed && isMe ? "opacity-70" : ""}`}
+            style={isMe ? {
+              WebkitTouchCallout: 'none' as any,
+              WebkitUserSelect: 'none' as any,
+              userSelect: 'none',
+              touchAction: 'manipulation'
+            } : undefined}
             onMouseDown={handleLongPressStart}
             onMouseUp={handleLongPressEnd}
             onMouseLeave={handleLongPressEnd}
             onTouchStart={handleLongPressStart}
             onTouchEnd={handleLongPressEnd}
+            onTouchCancel={handleLongPressEnd}
             onContextMenu={(e) => {
               if (isMe) {
-                // Prevent as early as possible
                 e.preventDefault();
                 e.stopPropagation();
                 e.nativeEvent.stopImmediatePropagation();
 
-                // Also prevent on the native event
                 const nativeEvent = e.nativeEvent;
                 if (nativeEvent && nativeEvent.preventDefault) {
                   nativeEvent.preventDefault();
@@ -498,10 +543,8 @@ const MessageBubble: React.FC<{
                   nativeEvent.stopImmediatePropagation();
                 }
 
-                requestAnimationFrame(() => {
-                  setContextMenuPosition({ x: e.clientX, y: e.clientY });
-                  setShowContextMenu(true);
-                });
+                // Don't set menu here, native listener handles it
+                return false;
               }
             }}
           >
@@ -514,7 +557,7 @@ const MessageBubble: React.FC<{
                 })
                 : ""}
             </div>
-            <div className="whitespace-pre-wrap">{message?.content || ""}</div>
+            <div className="whitespace-pre-wrap select-none">{message?.content || ""}</div>
           </div>
         </div>
       </div>
