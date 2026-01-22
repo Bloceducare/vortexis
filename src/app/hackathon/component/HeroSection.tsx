@@ -2,8 +2,9 @@
 import { motion } from "framer-motion";
 import { Sparkles, Rocket, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useOrganizer from "@/hooks/useOrganizers";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface HeroSectionProps {
   onCreateOrg: () => void;
@@ -24,6 +25,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
     setShowOrgModal(false);
     router.push(`/organizer/create-hackathon/${organizationId}`);
   };
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const token = useAuthStore.getState().getToken();
+
+    useEffect(() => {
+      const checkLoginStatus = () => {
+        setIsLoggedIn(!!token);
+      };
+  
+      checkLoginStatus();
+      window.addEventListener("storage", checkLoginStatus);
+  
+      return () => {
+        window.removeEventListener("storage", checkLoginStatus);
+      };
+    }, []);
 
   return (
     <>
@@ -81,7 +98,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
             transition={{ delay: 0.5 }}
             className="flex flex-wrap gap-4"
           >
-            <motion.button
+        {isLoggedIn && (   <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleCreateHackathon}
@@ -89,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
             >
               <Rocket className="w-5 h-5" />
               Create Hackathon
-            </motion.button>
+            </motion.button>)}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

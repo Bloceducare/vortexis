@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -12,8 +12,24 @@ import {
   Mail,
   Sparkles,
 } from "lucide-react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function HackathonCTA() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const token = useAuthStore.getState().getToken();
+
+    useEffect(() => {
+      const checkLoginStatus = () => {
+        setIsLoggedIn(!!token);
+      };
+  
+      checkLoginStatus();
+      window.addEventListener("storage", checkLoginStatus);
+  
+      return () => {
+        window.removeEventListener("storage", checkLoginStatus);
+      };
+    }, []);
   return (
     <>
       <div className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -102,7 +118,7 @@ export default function HackathonCTA() {
               transition={{ delay: 0.5 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
             >
-              <Link href="/auth/signup">
+              <Link href={isLoggedIn ? "/dashboard" : "/auth/signin"}>
                 <motion.button
                   whileHover={{
                     scale: 1.05,

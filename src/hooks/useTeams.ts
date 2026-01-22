@@ -12,6 +12,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 interface JoinTeamPayload {
   teamId: string;
   hackathon_id: string;
+  teamName: string;
 }
 
 interface addMember {
@@ -107,14 +108,14 @@ const getAvailableTeams = (hackathon_id: string) => {
 };
 const joinTeamMutation = () => {
   return useMutation({
-    mutationFn: async ({ teamId, hackathon_id }: JoinTeamPayload) => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/join-team/`, {
+    mutationFn: async ({ teamId, hackathon_id, teamName }: JoinTeamPayload) => {
+      const res = await fetch(`${apiUrl}/team/teams/${hackathon_id}/request_to_join/`, {
         method: "POST",
         headers: {
           ...getAuthHeaders(),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ team_id: teamId }),
+        body: JSON.stringify({ name: teamName }),
       });
 
       if (!res.ok) {

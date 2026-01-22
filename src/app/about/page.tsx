@@ -51,7 +51,7 @@ export default function AboutPage() {
             <Globe className="w-4 h-4 text-purple-600" />
             <span className="text-sm font-semibold text-purple-600 dark:text-white">About Vortexis</span>
           </div>
-          <h1 className="text-2xl md:text-5xl font-bold text-title mb-6">
+          <h1 className="text-2xl md:text-5xl font-bold text-title mb-6 dark:text-white">
             Empowering Innovation,{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
               One Hackathon at a Time
@@ -156,7 +156,7 @@ export default function AboutPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-5 md:px-8 py-3 md:py-4 bg-white text-purple-600 rounded-xl text-sm md:text-lg font-semibold hover:bg-gray-100 transition-all shadow-lg cursor-pointer"
-            onClick={() => router.push("/auth/signup")}
+            onClick={() => router.push("/auth/login")}
           >
             Get Started Now
           </motion.button>

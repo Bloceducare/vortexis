@@ -107,7 +107,7 @@ export default function FeaturesPage() {
               Powerful Features
             </span>
           </div>
-          <h1 className="text-2xl md:text-5xl font-bold text-title mb-6">
+          <h1 className="text-2xl md:text-5xl font-bold text-title mb-6 dark:text-white">
             Everything You Need to{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-purple-600">
               Win
@@ -191,13 +191,13 @@ export default function FeaturesPage() {
             >
               Get Started Free
             </motion.button>
-            <motion.button
+            {/* <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="md:px-8 px-4 py-3 md:py-4 bg-transparent border-2 border-white text-white rounded-xl font-semibold hover:bg-white/10 transition-all"
             >
               View Demo
-            </motion.button>
+            </motion.button> */}
           </div>
         </motion.div>
       </div>

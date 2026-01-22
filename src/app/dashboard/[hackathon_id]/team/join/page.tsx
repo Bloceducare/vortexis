@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { string } from "zod";
 
 
 
@@ -33,11 +34,11 @@ export default function JoinTeamPage() {
   const [selectedTeam, setSelectedTeam] = useState<UserTeam | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleJoinTeam = async (teamId: string) => {
+  const handleJoinTeam = async ( { teamId, teamName }: { teamId: string; teamName: string }) => {
     setError(null);
     setJoiningTeamId(teamId);
     try {
-      await joinTeam({ teamId, hackathon_id });
+      await joinTeam({ teamId, hackathon_id, teamName });
       window.location.href = `/dashboard/${hackathon_id}/team`;
     } catch (err: any) {
       console.error("Error joining team:", err);
@@ -233,7 +234,7 @@ export default function JoinTeamPage() {
                     View Details
                   </button>
                   <button
-                    onClick={() => handleJoinTeam(team.id.toString())}
+                    onClick={() => handleJoinTeam({ teamId: team.id.toString(), teamName: team.name })}
                     disabled={!!joiningTeamId}
                     className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       joiningTeamId === team.id.toString()
@@ -378,7 +379,7 @@ export default function JoinTeamPage() {
                 </button>
                 <button
                   onClick={() => {
-                    handleJoinTeam(selectedTeam.id.toString());
+                    handleJoinTeam({ teamId: selectedTeam.id.toString(), teamName: selectedTeam.name });
                     setSelectedTeam(null);
                   }}
                   disabled={!!joiningTeamId}
