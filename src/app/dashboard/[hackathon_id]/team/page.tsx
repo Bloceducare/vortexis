@@ -296,6 +296,7 @@ export default function TeamManagement() {
                       + Invite Member
                     </button>
                   )}
+                  {!isCreator && (
 
                   <button
                     className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer md:w-[48%]"
@@ -303,6 +304,7 @@ export default function TeamManagement() {
                   >
                     {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
                   </button>
+                  )}
                 </div>
               </section>
             </section>

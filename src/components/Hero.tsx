@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "./ui/Button";
 import { motion, Variants } from "framer-motion";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -22,6 +24,23 @@ const fadeUp: Variants = {
 };
 
 export const Hero: React.FC = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const token = useAuthStore.getState().getToken();
+
+        useEffect(() => {
+          const checkLoginStatus = () => {
+            setIsLoggedIn(!!token);
+          };
+      
+          checkLoginStatus();
+          window.addEventListener("storage", checkLoginStatus);
+      
+          return () => {
+            window.removeEventListener("storage", checkLoginStatus);
+          };
+        }, []);
+    
+  
   return (
     <section className="relative w-full bg-linear-to-br from-[#E0D9FB] via-[#D8DBFF] to-[#F4F4FF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors">
       {/* Gradient circles */}
@@ -86,7 +105,7 @@ export const Hero: React.FC = () => {
   bg-gradient-to-r from-[#605DEC] to-[#8A85FF] text-white rounded-xl shadow-lg 
   transform transition-all duration-500 hover:scale-105 hover:shadow-2xl active:scale-95"
           >
-            <Link href="/auth/signup">Start Your Hackathon Journey</Link>
+            <Link href={isLoggedIn ? "/hackathon" : "/auth/signup"}>Start Your Hackathon Journey</Link>
           </Button>
         </motion.div>
       </motion.div>
