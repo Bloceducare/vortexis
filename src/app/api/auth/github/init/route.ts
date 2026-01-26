@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 export async function GET() {
   try {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
+    const clientId = process.env.GITHUB_ID;
     
     if (!clientId) {
       return NextResponse.json(
