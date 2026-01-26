@@ -13,17 +13,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const clientId = process.env.GITHUB_ID;
-    const clientSecret = process.env.GITHUB_SECRET;
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-
-    if (!clientId || !clientSecret) {
-      return NextResponse.json(
-        { error: "GitHub OAuth not properly configured" },
-        { status: 500 }
-      );
-    }
-
     if (!baseUrl) {
       return NextResponse.json(
         { error: "Base URL not configured" },
@@ -31,44 +21,11 @@ export async function GET(request: Request) {
       );
     }
 
-    // Exchange authorization code for access token with GitHub
-    const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-        redirect_uri: `${baseUrl}/auth/callback`,
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const errorData = await tokenResponse.json().catch(() => ({}));
-      console.error("GitHub token exchange error:", errorData);
-      return NextResponse.json(
-        { error: "Failed to exchange authorization code for tokens" },
-        { status: 400 }
-      );
-    }
-
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenData.access_token) {
-      return NextResponse.json(
-        { error: "Access token not found in GitHub response" },
-        { status: 400 }
-      );
-    }
-
-    // Send access token to backend for user authentication
+    // Exchange code with backend
     const res = await fetch(`${baseUrl}/auth/github`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token: tokenData.access_token }),
+      body: JSON.stringify({ code }),
     });
 
     if (!res.ok) {
@@ -125,4 +82,3 @@ export async function GET(request: Request) {
     );
   }
 }
-
