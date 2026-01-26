@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export async function GET() {
   try {
-    const clientId = process.env.GITHUB_ID;
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
     
     if (!clientId) {
       return NextResponse.json(
@@ -13,7 +14,7 @@ export async function GET() {
 
     const scope = encodeURIComponent("read:user user:email");
     const redirectUri = encodeURIComponent(
-      `$"https://vortexis-dev.vercel.app"}/auth/callback`
+       "https://vortexis-dev.vercel.app/auth/callback"
     );
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
@@ -27,3 +28,4 @@ export async function GET() {
     );
   }
 }
+
