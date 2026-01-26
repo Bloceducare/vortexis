@@ -13,7 +13,7 @@ export async function GET() {
       );
     }
 
-    const redirectUri = process.env.REDIRECT_URI;
+    const redirectUri = process.env.GOOGLE_REDIRECT_URI;
     if (!redirectUri) {
       return NextResponse.json(
         { error: "Google redirect URI not configured" },
