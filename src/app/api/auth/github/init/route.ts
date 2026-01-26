@@ -12,8 +12,9 @@ export async function GET() {
     }
 
     const scope = encodeURIComponent("read:user user:email");
+    const baseUrl = "https://vortexis-dev.vercel.app";
     const redirectUri = encodeURIComponent(
-      `$"https://vortexis-dev.vercel.app"}/auth/callback`
+      `${baseUrl}/auth/callback`
     );
 
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
