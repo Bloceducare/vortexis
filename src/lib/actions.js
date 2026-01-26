@@ -5,11 +5,14 @@ const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
 export async function signInGithubAction() {
   try {
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
-    const scope = encodeURIComponent("read:user user:email");
+    const res = await fetch("/api/auth/github/init");
+    
+    if (!res.ok) {
+      throw new Error("Failed to initialize GitHub OAuth");
+    }
 
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=https://vortexis-dev.vercel.app//auth/callback&scope=${scope}`;
-    window.location.href = githubAuthUrl;
+    const data = await res.json();
+    window.location.href = data.authUrl;
   } catch (error) {
     console.error("GitHub sign in error:", error);
   }
@@ -22,27 +25,21 @@ export async function handleGithubCallback() {
 
     if (!code) throw new Error("No authorization code received");
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/github`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
-    });
+    const res = await fetch(`/api/auth/github/callback?code=${encodeURIComponent(code)}`);
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.error("Backend error:", errorData);
-      throw new Error("Failed to authenticate with backend");
+      throw new Error(errorData.error || "Failed to authenticate");
     }
 
     const data = await res.json();
 
-    if (!data.access_token?.access_token || !data.access_token?.refresh_token) {
-      console.error("Tokens not found in response:", data);
-      throw new Error("Invalid response from backend");
+    if (!data.access_token || !data.refresh_token) {
+      throw new Error("Invalid response from server");
     }
 
     const setToken = useAuthStore.getState().setToken;
-    setToken(data.access_token.access_token, threeDaysInSeconds);
+    setToken(data.access_token, threeDaysInSeconds);
 
     return true;
   } catch (error) {
@@ -53,21 +50,14 @@ export async function handleGithubCallback() {
 
 export async function signInGoogleAction() {
   try {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_ID;
-    const redirectUri = encodeURIComponent(
-      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
-    );
-    const scope = encodeURIComponent("email profile");
-    const responseType = "code";
-    const accessType = "offline";
-    const prompt = "consent";
-    const state = generateRandomState();
+    const res = await fetch("/api/auth/google/init");
+    
+    if (!res.ok) {
+      throw new Error("Failed to initialize Google OAuth");
+    }
 
-    localStorage.setItem("googleOAuthState", state);
-
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}&access_type=${accessType}&prompt=${prompt}&state=${state}`;
-
-    window.location.href = googleAuthUrl;
+    const data = await res.json();
+    window.location.href = data.authUrl;
   } catch (error) {
     console.error("Google sign in error:", error);
   }
@@ -82,55 +72,23 @@ export async function handleGoogleCallback() {
 
     if (error) throw new Error(`Google OAuth error: ${error}`);
 
-    const savedState = localStorage.getItem("googleOAuthState");
-    if (!state || state !== savedState) {
-      throw new Error("Invalid state parameter");
+    if (!code || !state) {
+      throw new Error("Missing authorization code or state");
     }
 
-    localStorage.removeItem("googleOAuthState");
-
-    if (!code) throw new Error("No authorization code received");
-
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        code,
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_ID,
-        client_secret: process.env.NEXT_PUBLIC_GOOGLE_SECRET,
-        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
-        grant_type: "authorization_code",
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const errorData = await tokenResponse.json();
-      console.error("Token exchange error:", errorData);
-      throw new Error("Failed to exchange authorization code for tokens");
-    }
-
-    const tokenData = await tokenResponse.json();
-
-    const idToken = tokenData.id_token;
-    if (!idToken)
-      throw new Error("ID token not found in token exchange response");
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token: idToken }),
-    });
+    const res = await fetch(
+      `/api/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+    );
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.error("Backend error:", errorData);
-      throw new Error(errorData.detail);
+      throw new Error(errorData.error || "Failed to authenticate");
     }
 
     const data = await res.json();
 
     if (!data.access_token || !data.refresh_token) {
-      throw new Error("Invalid response from backend");
+      throw new Error("Invalid response from server");
     }
 
     const setToken = useAuthStore.getState().setToken;
@@ -148,11 +106,4 @@ export async function signOutAction() {
   clearToken();
 
   window.location.href = "/";
-}
-
-function generateRandomState() {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
 }
