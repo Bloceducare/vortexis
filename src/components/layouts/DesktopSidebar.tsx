@@ -88,9 +88,9 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
           className={sidebarExpanded ? "rotate-180" : ""}
         />
       </button>
-      <div className="flex h-full flex-col gap-y-2">
+      <div className="flex h-full flex-col gap-y-2 cursor-pointer">
         <div
-          className={`flex text-3xl font-semibold text-blue-700 items-center justify-center px-2 py-4 ${
+          className={`flex text-3xl font-semibold text-blue-700 items-center cursor-pointer justify-center px-2 py-4 ${
             sidebarExpanded ? "py-2" : ""
           }`}
         >

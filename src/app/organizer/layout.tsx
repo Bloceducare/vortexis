@@ -136,6 +136,10 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
     }
   };
 
+  const goToHome = () => {
+    router.push("/hackathon")
+  }
+
   return (
     <div className="flex min-h-screen bg-[#f5f5f5] dark:bg-gray-900 relative transition-colors">
       {isMobile && mobileMenuOpen && (
@@ -154,7 +158,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 fixed h-screen z-50 transition-colors"
       >
-        <div className="text-blue-700 dark:text-blue-400 text-3xl font-bold text-center py-6">
+        <div className="text-blue-700 dark:text-blue-400 text-3xl font-bold text-center py-6 cursor-pointer" onClick={goToHome}>
           {sidebarExpanded || isMobile ? "Vortexis" : "V"}
         </div>
 
