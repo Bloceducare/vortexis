@@ -13,6 +13,9 @@ import { Button } from "@/components/ui/Button";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useUserStore } from "@/store/useUserStore";
 import StatusModal from "@/components/StatusModal";
+import RequestModal from "./modal/Request";
+import { Bell } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 const getRandomColor = () => {
   const colors = [
@@ -41,6 +44,8 @@ export default function TeamManagement() {
   } | null>(null);
   const [addModal, setAddModal] = useState<boolean>(false);
   const [newMember, setNewMember] = useState("");
+  const [showRequestModal, setShowRequestModal] = useState(false);
+const queryClient = useQueryClient();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewMember(e.target.value);
@@ -55,7 +60,7 @@ export default function TeamManagement() {
     message: "",
   });
 
-  const { getTeam, leaveTeam, inviteMembers } = useTeams();
+  const { getTeam, leaveTeam, inviteMembers, getOrganizerTeamJoinRequest, approveTeamJoinRequest, rejectTeamJoinRequest } = useTeams();
   const hackathonData = useUserHackathonsStore((state) =>
     state.hackathons.find((h) => h.id === Number(hackathon_id))
   );
@@ -92,6 +97,60 @@ export default function TeamManagement() {
   };
 
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
+  const {data: requestData} = getOrganizerTeamJoinRequest()
+
+const handleApprove = async (requestId: number, teamId: number, userId: number) => {
+  try {
+    await approveTeamJoinRequest.mutateAsync({
+      team_id: teamId,
+      user_id: userId,
+      join_requests_id: requestId,
+    });
+    setShowRequestModal(false); 
+    queryClient.invalidateQueries({ queryKey: ['team-join-requests'] });
+    setModal({
+      open: true,
+      type: "success",
+      message: "Request approved successfully! User has been added to the team.",
+    });
+  } catch (err: any) {
+    setShowRequestModal(false); 
+    setModal({
+      open: true,
+      type: "error",
+      message: err?.message || "Failed to approve request",
+    });
+  }
+};
+
+const handleReject = async (requestId: number, teamId: number, userId: number) => {
+  try {
+    await rejectTeamJoinRequest.mutateAsync({
+      team_id: teamId,
+      user_id: userId,
+      join_requests_id: requestId,   
+    });
+    setShowRequestModal(false);
+        queryClient.invalidateQueries({ queryKey: ['team-join-requests'] });
+
+    setModal({
+      open: true,
+      type: "success",
+      message: "Request rejected successfully.",
+    });
+  } catch (err: any) {
+    setShowRequestModal(false); 
+    setModal({
+      open: true,
+      type: "error",
+      message: err?.message || "Failed to reject request",
+    });
+  }
+};
+
+
+
+  console.log(requestData)
 
   const handleAddMember = async () => {
     if (!newMember.trim()) {
@@ -283,30 +342,46 @@ export default function TeamManagement() {
                 </div>
               </Card>
 
-              <section className="bg-white dark:bg-gray-800 shadow-xs rounded-2xl p-6 mt-3 transition-colors">
-                <h2 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">
-                  Actions
-                </h2>
-                <div className="flex justify-between items-center gap-4 flex-wrap">
-                  {isCreator && (
-                    <button
-                      className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer md:w-[48%]"
-                      onClick={() => setAddModal(true)}
-                    >
-                      + Invite Member
-                    </button>
-                  )}
-                  {!isCreator && (
-
-                  <button
-                    className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer md:w-[48%]"
-                    onClick={() => handleLeaveTeam(data.id)}
-                  >
-                    {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
-                  </button>
-                  )}
-                </div>
-              </section>
+          <section className="bg-white dark:bg-gray-800 shadow-xs rounded-2xl p-6 mt-3 transition-colors">
+  <h2 className="text-lg font-semibold text-blue-600 dark:text-blue-400 mb-3">
+    Actions
+  </h2>
+  <div className="flex justify-between items-center gap-4 flex-wrap">
+    {isCreator && (
+      <>
+        <button
+          className="px-4 py-3 border-2 border-[#605DEC] text-[#605DEC] font-bold rounded-lg cursor-pointer md:w-[48%]"
+          onClick={() => setAddModal(true)}
+        >
+          + Invite Member
+        </button>
+        
+        {/* Join Requests Button */}
+        <button
+          className="px-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg cursor-pointer md:w-[48%] flex items-center justify-center gap-2 relative transition"
+          onClick={() => setShowRequestModal(true)}
+        >
+          <Bell className="w-5 h-5" />
+          Join Requests
+          {requestData?.count > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+              {requestData.count}
+            </span>
+          )}
+        </button>
+      </>
+    )}
+    
+    {!isCreator && (
+      <button
+        className="px-4 py-3 bg-red-500 text-white rounded-lg cursor-pointer md:w-[48%]"
+        onClick={() => handleLeaveTeam(data.id)}
+      >
+        {leaveTeamMutation.isPending ? "Leaving..." : "Leave Team"}
+      </button>
+    )}
+  </div>
+</section>
             </section>
           </section>
 
@@ -425,6 +500,16 @@ export default function TeamManagement() {
           </div>
         </div>
       )}
+
+    <RequestModal
+  isOpen={showRequestModal}
+  onClose={() => setShowRequestModal(false)}
+  requests={requestData?.join_requests || []}
+  onApprove={handleApprove}
+  onReject={handleReject}
+  isApproving={approveTeamJoinRequest.isPending}
+  isRejecting={rejectTeamJoinRequest.isPending}
+/>
     </section>
   );
 }
