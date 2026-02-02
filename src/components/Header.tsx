@@ -246,7 +246,7 @@ export const Header: React.FC = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setShowDropdown(false)}
-                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
+                            className=""
                           />
 
                           {/* Dropdown Menu */}
@@ -256,21 +256,21 @@ export const Header: React.FC = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -5 }}
                             transition={{ duration: 0.2 }}
-                            className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50"
+                            className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border z-50"
                           >
-                            <ul className="py-2 text-sm text-gray-700 list-none">
+                            <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
                               <li>
                                 <Link
                                   href="/profile/detail"
-                                  className="block px-4 py-2 hover:bg-gray-100"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                 >
                                   View Profile
                                 </Link>
                               </li>
-                              <li>
+                              <li> 
                                 <Link
                                   href="/organizer"
-                                  className="block px-4 py-2 hover:bg-gray-100"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                 >
                                   Organization
                                 </Link>
@@ -278,7 +278,7 @@ export const Header: React.FC = () => {
                               <li>
                                 <Link
                                   href="/dashboard"
-                                  className="block px-4 py-2 hover:bg-gray-100"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                 >
                                   Hacker
                                 </Link>
@@ -286,7 +286,7 @@ export const Header: React.FC = () => {
                               <li>
                                 <Link
                                   href="/judges"
-                                  className="block px-4 py-2 hover:bg-gray-100"
+                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                 >
                                   Judges
                                 </Link>
@@ -294,7 +294,7 @@ export const Header: React.FC = () => {
                               <li>
                                 <p
                                   onClick={() => setLogout(true)}
-                                  className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                  className="block px-4 py-2 hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-400"
                                 >
                                   LogOut
                                 </p>
@@ -377,7 +377,7 @@ export const Header: React.FC = () => {
                               animate={{ opacity: 1 }}
                               exit={{ opacity: 0 }}
                               onClick={() => setShowDropdown(false)}
-                              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
+                              className=""
                             />
   
                             {/* Dropdown Menu */}
@@ -393,7 +393,7 @@ export const Header: React.FC = () => {
                                 <li>
                                   <Link
                                     href="/profile/detail"
-                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                   >
                                     View Profile
                                   </Link>
@@ -401,7 +401,7 @@ export const Header: React.FC = () => {
                                 <li>
                                   <Link
                                     href="/organizer"
-                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                   >
                                     Organization
                                   </Link>
@@ -409,7 +409,7 @@ export const Header: React.FC = () => {
                                 <li>
                                   <Link
                                     href="/dashboard"
-                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                   >
                                     Hacker
                                   </Link>
@@ -417,7 +417,7 @@ export const Header: React.FC = () => {
                                 <li>
                                   <Link
                                     href="/judges"
-                                    className="block px-4 py-2 hover:bg-gray-100"
+                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
                                   >
                                     Judges
                                   </Link>
@@ -425,7 +425,7 @@ export const Header: React.FC = () => {
                                 <li>
                                   <p
                                     onClick={() => setLogout(true)}
-                                    className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                    className="block px-4 py-2 hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-400"
                                   >
                                     LogOut
                                   </p>
