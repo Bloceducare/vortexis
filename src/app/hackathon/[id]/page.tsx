@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import useHackathon from "@/hooks/useHackathon";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import HtmlContent from "@/components/ui/HtMLContent";
 import {
   MapPin,
@@ -16,11 +16,14 @@ import {
   Clock,
   Award,
   Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import StatusModal from "@/components/StatusModal";
+import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
 function Hack() {
   const { id } = useParams();
+  const router = useRouter();
   const { getHackathonById, registerUserForHackathon } = useHackathon();
   const { data, isLoading, error } = getHackathonById(id as string);
   const [countdown, setCountdown] = useState("");
@@ -34,6 +37,13 @@ function Hack() {
     type: "success",
     message: "",
   });
+
+  const { hackathons } = useUserHackathonsStore();
+
+  // Check if user is already registered
+  const isRegistered = hackathons.some(
+    (hackathon) => hackathon.id === Number(id)
+  );
 
   function safeParseContent(content: string | null | undefined): string {
     if (!content) return "";
@@ -80,6 +90,11 @@ function Hack() {
   }, [data?.start_date]);
 
   const onRegister = () => {
+    if (isRegistered) {
+      router.push(`/dashboard/${id}/hackathon`);
+      return;
+    }
+
     registerMutation.mutate(id as string, {
       onSuccess: () => {
         setModal({
@@ -132,10 +147,9 @@ function Hack() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800  ">
+    <div className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Banner */}
       <div className="relative w-full h-[70vh] overflow-hidden">
-        {/* Background Image or Default Color */}
         {data.banner_image ? (
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -147,10 +161,8 @@ function Hack() {
           </div>
         )}
 
-        {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/50" />
 
-        {/* Hero Content */}
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 md:px-16">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -237,12 +249,28 @@ function Hack() {
                   </div>
                 </div>
 
+                {/* Registration Status Badge */}
+                {isRegistered && (
+                  <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
+                    <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="font-semibold text-sm">
+                        Already Registered
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onRegister}
                   disabled={registerMutation.isPending}
-                  className="mt-6 w-full flex items-center justify-center gap-2 bg-linear-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl font-semibold hover:opacity-90 transition-all disabled:opacity-50 shadow-lg cursor-pointer"
+                  className={`mt-6 w-full flex items-center justify-center cursor-pointer gap-2 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 shadow-lg cursor-pointer ${
+                    isRegistered
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90"
+                  }`}
                 >
                   {registerMutation.isPending ? (
                     <>
@@ -257,6 +285,11 @@ function Hack() {
                       />
                       Registering...
                     </>
+                  ) : isRegistered ? (
+                    <>
+                      <ArrowRight className="w-5 h-5" />
+                      View Dashboard
+                    </>
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5" />
@@ -264,6 +297,12 @@ function Hack() {
                     </>
                   )}
                 </motion.button>
+
+                {isRegistered && (
+                  <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
+                    Manage your team and projects in the dashboard
+                  </p>
+                )}
               </div>
             </div>
           </motion.div>

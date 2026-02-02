@@ -5,17 +5,14 @@ import { Card } from "@/components/ui/card";
 import { HackathonCard } from "@/components/dashboard/HackathonCard";
 import { DeadlineItem } from "@/components/dashboard/DeadlineItem";
 import { QuickActionButton } from "@/components/dashboard/QuickActionButton";
-import useParticipants from "@/hooks/useParticipants";
 import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
 const Page = () => {
   const user = useUserStore((state) => state.user);
-  const { getHackathons } = useParticipants();
   const router = useRouter();
-  const { hackathons, setHackathons } = useUserHackathonsStore();
-  const { data, isLoading, refetch } = getHackathons();
+  const { hackathons } = useUserHackathonsStore();
 
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<"Active" | "Upcoming" | "Ended">(
@@ -26,11 +23,7 @@ const Page = () => {
   >("all");
   const [filterValue, setFilterValue] = useState("");
 
-  useEffect(() => {
-    if (data) {
-      setHackathons(data);
-    }
-  }, [data, setHackathons]);
+
 
   const calculateDaysLeft = (date: string) => {
     const today = new Date();
@@ -127,7 +120,7 @@ const Page = () => {
     },
   ];
 
-  if (isLoading) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-4 space-y-8 animate-pulse transition-colors">
         <div className="space-y-2">

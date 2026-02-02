@@ -187,23 +187,23 @@ function Project() {
               )}
             </div>
 
-            <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+            <div className="mt-3 flex justify-center gap-3 flex-wrap">
               {project?.github_url && (
-                <div>
+                <div className="w-[45%]">
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
                     GitHub
                   </h3>
                   <LinkPreview
                     url={project?.github_url}
                     width="100%"
-                    descriptionLength={80}
+                    descriptionLength={50}
                     className="rounded-lg shadow"
                   />
                 </div>
               )}
 
               {project?.live_link && (
-                <div>
+                <div className="w-[45%]">
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
                     Live Link
                   </h3>

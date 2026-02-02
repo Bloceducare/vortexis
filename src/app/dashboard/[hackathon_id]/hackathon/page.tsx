@@ -334,7 +334,7 @@ const Hackathons = () => {
                               whileHover={{ x: 4 }}
                               className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
                               onClick={() =>
-                                router.push(`/profile/${myTeam.id}`)
+                                router.push(`/profile/${m.id}`)
                               }
                             >
                               <div
