@@ -19,7 +19,7 @@ const fadeUp: Variants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 1.2, ease: "easeInOut" }, // ✅ valid easing
+    transition: { duration: 1.2, ease: "easeInOut" },
   },
 };
 

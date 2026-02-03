@@ -16,7 +16,7 @@ export function DeadlineItem({ title, subtitle, daysLeft, date, type }: Deadline
   };
 
   return (
-    <div className="flex items-start gap-1 md:gap-3  rounded-lg hover:bg-gray-50 transition-colors p-3 md:p-5">
+    <div className="flex items-start gap-1 md:gap-3  rounded-lg  transition-colors p-3 md:p-5">
       <div className="mt-1">
         <FileText className={`w-5 h-5 ${colorClasses[type]}`} />
       </div>
