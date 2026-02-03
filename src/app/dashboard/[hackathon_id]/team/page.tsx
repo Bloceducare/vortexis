@@ -187,6 +187,12 @@ const handleReject = async (requestId: number, teamId: number, userId: number) =
 
   const isCreator = currentMember?.is_creator;
 
+  const filteredRequests = requestData?.join_requests?.filter(
+  (req: any) => Number(req.team.hackathon.id) === Number(hackathon_id)
+) || [];
+
+const requestCount = filteredRequests.length;
+
 
   return (
     <section className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 transition-colors">
@@ -357,18 +363,18 @@ const handleReject = async (requestId: number, teamId: number, userId: number) =
         </button>
         
         {/* Join Requests Button */}
-        <button
-          className="px-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg cursor-pointer md:w-[48%] flex items-center justify-center gap-2 relative transition"
-          onClick={() => setShowRequestModal(true)}
-        >
-          <Bell className="w-5 h-5" />
-          Join Requests
-          {requestData?.count > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-              {requestData.count}
-            </span>
-          )}
-        </button>
+       <button
+  className="px-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg cursor-pointer md:w-[48%] flex items-center justify-center gap-2 relative transition"
+  onClick={() => setShowRequestModal(true)}
+>
+  <Bell className="w-5 h-5" />
+  Join Requests
+  {requestCount > 0 && (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+      {requestCount}
+    </span>
+  )}
+</button>
       </>
     )}
     
@@ -479,7 +485,7 @@ const handleReject = async (requestId: number, teamId: number, userId: number) =
         </section>
       )}
 
-      {/* Feedback Modal */}
+    
       {feedback && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
@@ -504,7 +510,12 @@ const handleReject = async (requestId: number, teamId: number, userId: number) =
     <RequestModal
   isOpen={showRequestModal}
   onClose={() => setShowRequestModal(false)}
-  requests={requestData?.join_requests || []}
+
+  requests={
+    requestData?.join_requests?.filter(
+      (req: any) => Number(req.team.hackathon.id) === Number(hackathon_id)
+    ) || []
+  }
   onApprove={handleApprove}
   onReject={handleReject}
   isApproving={approveTeamJoinRequest.isPending}

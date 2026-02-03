@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Target, Users, Zap, Heart, Award, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CountUp from "@/components/CountUp";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AboutPage() {
   const stats = [
@@ -14,7 +15,21 @@ export default function AboutPage() {
     { value: 2000000, label: "Prizes Awarded" },
   ];
   const router = useRouter();
-
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
+        const token = useAuthStore.getState().getToken();
+  
+          useEffect(() => {
+            const checkLoginStatus = () => {
+              setIsLoggedIn(!!token);
+            };
+        
+            checkLoginStatus();
+            window.addEventListener("storage", checkLoginStatus);
+        
+            return () => {
+              window.removeEventListener("storage", checkLoginStatus);
+            };
+          }, []);
   const values = [
     {
       icon: Target,
@@ -156,7 +171,7 @@ export default function AboutPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-5 md:px-8 py-3 md:py-4 bg-white text-purple-600 rounded-xl text-sm md:text-lg font-semibold hover:bg-gray-100 transition-all shadow-lg cursor-pointer"
-            onClick={() => router.push("/auth/login")}
+            onClick={() => router.push(isLoggedIn ? "/dashboard" : "/auth/signup")}
           >
             Get Started Now
           </motion.button>

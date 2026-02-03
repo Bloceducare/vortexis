@@ -114,7 +114,7 @@ const handleRegister = (hackathon_id: string) => {
             resultsCount={filteredHackathons.length}
           />
 
-          {/* Hackathon Grid */}
+     
           <HackathonGrid
             hackathons={paginatedHackathons}
             isLoading={isLoading}
