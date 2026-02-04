@@ -37,7 +37,7 @@ export async function GET(request: Request) {
     }
 
     const clientId = process.env.GOOGLE_ID;
-    
+
     const clientSecret = process.env.GOOGLE_SECRET;
     const redirectUri = process.env.GOOGLE_REDIRECT_URI;
 
@@ -115,7 +115,7 @@ export async function GET(request: Request) {
 
     // Set secure HTTP-only cookies for tokens
     const threeDaysInSeconds = 3 * 24 * 60 * 60;
-    
+
     cookieStore.set("access_token", data.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -132,12 +132,13 @@ export async function GET(request: Request) {
       path: "/",
     });
 
-    // Return token in response for client-side storage (backward compatibility)
+    // Return token and user data in response for client-side storage
     // The token is also stored in HTTP-only cookies for security
     return NextResponse.json({
       success: true,
       access_token: data.access_token,
       refresh_token: data.refresh_token,
+      user: data.user, // Include user data from backend response
     });
   } catch (error) {
     console.error("Google callback error:", error);

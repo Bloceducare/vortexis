@@ -54,9 +54,7 @@ export default function GoogleCallbackPageContent() {
           const success = await handleGoogleCallback();
           if (success) {
             setStatus("success");
-            setTimeout(() => {
-              router.push("/");
-            }, 1000);
+            window.location.href = "/hackathon";
           }
         } else if (errorParam) {
           setStatus("error");
