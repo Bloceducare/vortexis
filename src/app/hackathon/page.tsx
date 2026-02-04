@@ -18,6 +18,7 @@ function Home() {
   const [countries, setCountries] = useState<Country[]>([]);
   const { data: hackathons = [], isLoading } = getAllHackathon();
   const registerMutation = registerUserForHackathon();
+  
 
   const [activeHackathon, setActiveHackathon] = useState<string | null>(null);
   const [modal, setModal] = useState<{
@@ -33,7 +34,6 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
-  // Custom hook for filters
   const {
     sortOption,
     setSortOption,
@@ -55,26 +55,31 @@ function Home() {
     setCurrentPage(1);
   };
 
-  const handleRegister = (hackathon_id: string) => {
-    setActiveHackathon(hackathon_id);
-    registerMutation.mutate(hackathon_id, {
-      onSuccess: () => {
-        setModal({
-          open: true,
-          type: "success",
-          message: "You have successfully registered!",
-        });
-      },
-      onError: (error: any) => {
-        setModal({
-          open: true,
-          type: "error",
-          message: error?.message || "Something went wrong. Please try again.",
-        });
-      },
-    });
-  };
+const handleRegister = (hackathon_id: string) => {
+  setActiveHackathon(hackathon_id);
+  
+  registerMutation.mutate(hackathon_id, {
+    onSuccess: () => {
+      setModal({
+        open: true,
+        type: "success",
+        message: "Success!",
+      });
 
+      setTimeout(() => {
+        router.push(`/dashboard/${hackathon_id}/hackathon`);
+      }, 2000); 
+    },
+    onError: (error: any) => {
+      // Logic stops here. router.push is NOT called.
+      setModal({
+        open: true,
+        type: "error",
+        message: error?.message || "Error occurred",
+      });
+    },
+  });
+};
   // Pagination
   const totalPages = Math.ceil(filteredHackathons.length / itemsPerPage);
   const paginatedHackathons = filteredHackathons.slice(
@@ -109,7 +114,7 @@ function Home() {
             resultsCount={filteredHackathons.length}
           />
 
-          {/* Hackathon Grid */}
+     
           <HackathonGrid
             hackathons={paginatedHackathons}
             isLoading={isLoading}

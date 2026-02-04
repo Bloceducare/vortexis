@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   UserPlus, 
   Building2, 
@@ -16,10 +16,29 @@ import {
   Target
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function GuideCard() {
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
+          const token = useAuthStore.getState().getToken();
+    
+            useEffect(() => {
+              const checkLoginStatus = () => {
+                setIsLoggedIn(!!token);
+              };
+          
+              checkLoginStatus();
+              window.addEventListener("storage", checkLoginStatus);
+          
+              return () => {
+                window.removeEventListener("storage", checkLoginStatus);
+              };
+            }, []);
+
+  
 
   const steps = [
     {
@@ -211,7 +230,7 @@ export default function GuideCard() {
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="absolute -bottom-8 left-1/2 transform -translate-x-1/2"
+                          className="absolute -bottom-6 left-1/2 transform -translate-x-1/2"
                         >
                           <ArrowRight className="w-6 h-6 text-purple-400 rotate-90" />
                         </motion.div>
@@ -276,22 +295,22 @@ export default function GuideCard() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => router.push('/organizer/create-hackathon')}
-                  className="flex items-center justify-center gap-2 bg-white text-purple-600 px-2 md:px-8 py-4 rounded-xl font-semibold md:text-lg shadow-lg hover:shadow-xl transition-all text-sm"
+            onClick={() => router.push(isLoggedIn ? "/organizer/create-hackathon" : "/auth/signup")}
+                  className="flex items-center justify-center gap-2 bg-white text-purple-600 px-2 md:px-8 py-4 rounded-xl font-semibold md:text-lg shadow-lg hover:shadow-xl transition-all text-sm cursor-pointer"
                 >
                   <Building2 className="w-5 h-5" />
                   Create Organization
                   <ArrowRight className="w-5 h-5" />
                 </motion.button>
-                <motion.button
+           {!isLoggedIn && (     <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => router.push('/auth/signup')}
-                  className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white md:px-8 px-2 py-4 rounded-xl font-semibold md:text-lg hover:bg-white/10 transition-all text-sm"
+                  className="flex items-center justify-center gap-2 bg-transparent border-2 border-white text-white md:px-8 px-2 py-4 rounded-xl font-semibold md:text-lg hover:bg-white/10 transition-all text-sm cursor-pointer"
                 >
                   <UserPlus className="w-5 h-5" />
                   Sign Up First
-                </motion.button>
+                </motion.button>)}
               </div>
             </div>
           </motion.div>
@@ -306,18 +325,18 @@ export default function GuideCard() {
               Need Help?
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Have questions? Check our documentation or contact our support team.
+              Have questions? Contact our support team.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <motion.button
+              {/* <motion.button
                 whileHover={{ scale: 1.05 }}
                 className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
               >
                 📚 Documentation
-              </motion.button>
+              </motion.button> */}
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                className="px-6 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-all cursor-pointer"
               >
                 💬 Contact Support
               </motion.button>

@@ -42,7 +42,7 @@ export default function LinkPreview({
   if (loading) {
     return (
       <div
-        className={`border rounded-lg p-3 h-[45vh] animate-pulse ${className}`}
+        className={`border rounded-lg p-3  animate-pulse ${className}`}
         style={{ width }}
       >
         <div className="w-full h-40 bg-gray-200 rounded mb-3"></div>
@@ -106,10 +106,10 @@ export default function LinkPreview({
     href={url}
     target="_blank"
     rel="noopener noreferrer"
-    className={`block border rounded-lg p-3 h-[45vh] hover:shadow-md transition ${className}`}
+    className={`block border rounded-lg p-3  hover:shadow-md transition ${className}`}
     style={{ width }}
   >
-    <div className="h-[20vh]">
+    <div className="h-[10vh]">
       {meta.image?.url && (
         <img
           src={meta.image.url}
@@ -121,10 +121,10 @@ export default function LinkPreview({
   
     <div className="space-y-3 mt-3">
       <h3 className="font-bold text-sm text-gray-900 w-full break-words whitespace-normal">
-        {meta.title}
+        {meta.title.slice(0, 15)}...
       </h3>
   
-      <p className="text-sm text-gray-600 break-words whitespace-normal">
+      <p className="text-xs text-gray-600 break-words whitespace-normal">
         {meta.description
           ? meta.description.length > descriptionLength
             ? meta.description.slice(0, descriptionLength) + "..."
@@ -132,9 +132,7 @@ export default function LinkPreview({
           : "No description available"}
       </p>
   
-      <span className="text-xs text-blue-600 mt-2 block break-words whitespace-normal">
-        {url}
-      </span>
+    
     </div>
   </a>
   
