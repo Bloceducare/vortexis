@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MenuIcon, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
+import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { usePathname } from "next/navigation";
 import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -33,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   };
 
   const user = useUserStore((state) => state.user);
+  const { canAccessJudges, canAccessOrganizer, canAccessDashboard, loading } = useRoleAccess();
 
   const handleSearch = (query: string) => {
     // Search functionality
@@ -65,9 +67,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     )?.[1] || "Dashboard";
 
   // ✅ User initials
-  const initials = `${user?.first_name?.[0] ?? ""}${
-    user?.last_name?.[0] ?? ""
-  }`;
+  const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""
+    }`;
 
   // ✅ Avatar background color logic
   const bgColors = [
@@ -161,30 +162,39 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                           View Profile
                         </Link>
                       </li>
-                      <li>
-                        <Link
-                          href="/organizer"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Organization
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/dashboard"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Hacker
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/judges"
-                          className="block px-4 py-2 hover:bg-gray-100"
-                        >
-                          Judges
-                        </Link>
-                      </li>
+                      {/* Only show Organization link if backend verifies organizer access */}
+                      {!loading && canAccessOrganizer && (
+                        <li>
+                          <Link
+                            href="/organizer"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Organization
+                          </Link>
+                        </li>
+                      )}
+                      {/* Only show Hacker link if backend verifies participant access */}
+                      {!loading && canAccessDashboard && (
+                        <li>
+                          <Link
+                            href="/dashboard"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Hacker
+                          </Link>
+                        </li>
+                      )}
+                      {/* Only show Judges link if backend verifies judge access (prevents 403 errors) */}
+                      {!loading && canAccessJudges && (
+                        <li>
+                          <Link
+                            href="/judges"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            Judges
+                          </Link>
+                        </li>
+                      )}
                       <li>
                         <p
                           onClick={() => setLogout(true)}
