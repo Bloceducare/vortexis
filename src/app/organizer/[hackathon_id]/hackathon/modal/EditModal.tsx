@@ -17,7 +17,7 @@ interface EditHackathonModalProps {
     max_team_size?: number;
     submission_deadline?: string;
     end_date?: string;
-    visibility?: boolean; // ✅ boolean type
+    visibility?: boolean; 
   };
 }
 

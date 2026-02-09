@@ -138,41 +138,57 @@ export default function CreateTeam() {
   };
 
   return (
-    <>
-      <div className="bg-white dark:bg-gray-900 h-screen rounded-xl z-50 flex justify-center items-center">
-        <div className="bg-white dark:bg-gray-800 w-full max-w-2xl sm:rounded-2xl border border-gray-200 dark:border-gray-700 p-8 overflow-y-auto">
-          <h2 className="font-semibold mb-6 text-2xl text-gray-900 dark:text-white text-center">
-            Create a Team
-          </h2>
+<>
+  <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Header Section */}
+      <div className="mb-10">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          Create a Team
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          Form a team for your hackathon and invite members. Members will receive an invitation email to join.
+        </p>
+      </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            {/* Team Name */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Team Name <span className="text-red-500">*</span>
-              </label>
-              <Input
-                name="name"
-                value={formData.name}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setFormData((prev) => ({ ...prev, name: e.target.value }))
-                }
-                placeholder="Enter team name"
-                className="mt-2 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
-              />
-            </div>
-
-            {/* Members */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Members (Optional)
-              </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
-                Add team members by email. They will receive an invitation.
-              </p>
-              <div className="flex gap-2 mt-2">
+      {/* Form Card */}
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+        <form onSubmit={handleSubmit} className="divide-y divide-gray-200 dark:divide-gray-700">
+          {/* Team Name Section */}
+          <div className="p-8">
+            <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  Team Name <span className="text-red-500">*</span>
+                </label>
                 <Input
-                  name="members"
+                  name="name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  placeholder="Enter your team name"
+                  className="w-full border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-900 dark:text-white rounded-lg"
+                />
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  Give your team a unique and memorable name.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Team Members Section */}
+          <div className="p-8">
+            <div>
+              <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
+                Team Members <span className="text-gray-400 font-normal">(Optional)</span>
+              </label>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                Add team members by email. They will receive an invitation to join your team.
+              </p>
+
+              <div className="flex gap-3">
+                <Input
                   value={memberInput}
                   onChange={(e) => setMemberInput(e.target.value)}
                   onKeyPress={(e) => {
@@ -181,73 +197,98 @@ export default function CreateTeam() {
                       handleAddMember();
                     }
                   }}
-                  placeholder="Enter member email"
-                  className="border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="team.member@example.com"
+                  type="email"
+                  className="flex-1 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-900 dark:text-white rounded-lg"
                 />
                 <button
                   type="button"
                   onClick={handleAddMember}
                   disabled={!memberInput.trim()}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   Add
                 </button>
               </div>
 
-              {/* Member chips */}
+              {/* Member List */}
               {formData.members.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {formData.members.map((email) => (
-                    <span
-                      key={email}
-                      className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-sm border border-green-200 dark:border-green-700"
-                    >
-                      {email}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveMember(email)}
-                        className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-bold"
+                <div className="mt-6 space-y-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Added Members ({formData.members.length})
+                  </p>
+                  <div className="space-y-2">
+                    {formData.members.map((email) => (
+                      <div
+                        key={email}
+                        className="flex items-center justify-between px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 group hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
                       >
-                        ×
-                      </button>
-                    </span>
-                  ))}
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                            <span className="text-green-700 dark:text-green-400 font-medium text-sm">
+                              {email.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-900 dark:text-gray-100 font-medium">
+                            {email}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMember(email)}
+                          className="text-gray-400 dark:text-gray-500 hover:text-red-600 dark:hover:text-red-400 transition-colors p-1"
+                          title="Remove member"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+          {/* Action Buttons */}
+          <div className="px-8 py-6 bg-gray-50 dark:bg-gray-900/50 rounded-b-lg">
+            <div className="flex justify-end gap-3">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={createTeamMutation.isPending}
-                className="px-5 py-2.5 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 dark:border-gray-600"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={createTeamMutation.isPending}
-                className="px-6 py-2.5 rounded-lg bg-green-600 text-white hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                className="px-6 py-2.5 cursor-pointer rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {createTeamMutation.isPending && (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
                 )}
-                {createTeamMutation.isPending ? "Creating..." : "Create Team"}
+                {createTeamMutation.isPending ? "Creating Team..." : "Create Team"}
               </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
+    </div>
+  </div>
 
-      <StatusModal
-        isOpen={modal.open}
-        onClose={handleModalClose}
-        type={modal.type}
-        message={modal.message}
-        title={modal.title}
-      />
-    </>
+  <StatusModal
+    isOpen={modal.open}
+    onClose={handleModalClose}
+    type={modal.type}
+    message={modal.message}
+    title={modal.title}
+  />
+</>
   );
 }

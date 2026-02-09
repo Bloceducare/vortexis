@@ -69,7 +69,6 @@ function Participants() {
 
   const teams: Team[] = data ?? [];
 
-  // Filter teams based on search
   const filteredTeams = teams.filter((team) => {
     const teamName = team.name.toLowerCase();
     const creatorName =
@@ -371,7 +370,7 @@ function Participants() {
                       {team.projects.length > 0 && (
                         <div>
                           <h4 className="text-sm font-semibold  opacity-60 mb-3">
-                            Projects ({team.projects.length})
+                            Project
                           </h4>
                           <div className="space-y-2">
                             {team.projects.map((project) => (

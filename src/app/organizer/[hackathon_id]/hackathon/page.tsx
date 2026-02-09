@@ -18,6 +18,8 @@ import {
   Users,
   FileText,
   Clock,
+    ExternalLink,
+
 } from "lucide-react";
 
 function Page() {
@@ -94,6 +96,10 @@ function Page() {
     });
   };
 
+  const viewProfiles = (id: any) => {
+    router.push(`/profile/${id}`)
+  }
+
   if (isLoading) {
     return (
       <section className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 p-6 transition-colors">
@@ -128,7 +134,13 @@ function Page() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="bg-gradient-to-r from-[#605DEC] to-[#8B5CF6] p-8 text-white">
+<div
+  className="
+bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to-[#8B5CF6]
+    dark:text-white
+    p-8
+  "
+>
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-4">
@@ -137,13 +149,13 @@ function Page() {
                   >
                     {status.label}
                   </Badge>
-                  <Badge className="bg-white/20 text-white px-3 py-1 text-xs">
-                    {data?.visibility ? "Public" : "Private"}
-                  </Badge>
+               <Badge className=" bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20  dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
+              {data?.visibility ? "Public" : "Private"}
+            </Badge>
                 </div>
                 <h1 className="text-4xl font-bold mb-3">{data?.title}</h1>
                 <div className="text-white/90 max-w-3xl">
-                  <HtmlContent html={data?.description} />
+                  <HtmlContent html={data?.description}  />
                 </div>
               </div>
               <button
@@ -352,17 +364,28 @@ function Page() {
                       .toUpperCase();
 
                     return (
+                        <motion.div
+                              key={index}
+                              whileHover={{ x: 4 }}
+                              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl  transition-colors cursor-pointer"
+                              onClick={() => viewProfiles(judge.id)}
+                            >
                       <div
                         key={index}
-                        className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                        className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700  transition-colors cursor-pointer"
                       >
+                      
                         <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#605DEC] to-[#8B5CF6] flex items-center justify-center text-white font-bold text-sm">
                           {initials}
                         </div>
                         <p className="font-medium text-gray-800 dark:text-white">
                           {judge.username}
                         </p>
-                      </div>
+                                              </div>
+
+
+                         <ExternalLink className="w-4 h-4  opacity-40" />
+</motion.div>
                     );
                   })}
                 </div>

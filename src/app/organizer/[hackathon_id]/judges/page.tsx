@@ -5,6 +5,7 @@ import Invitation from "./component/Invitation";
 import JudgesList from "./component/JudgesList";
 import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
+import { motion } from "framer-motion";
 
 const tab = ["Judges List", "Invite Judges"];
 
@@ -74,21 +75,36 @@ function Judges() {
   return (
     <section className="bg-white dark:bg-gray-800 px-10 rounded-2xl py-5 transition-colors">
       {/* Tabs */}
-      <div className="flex space-x-4 mb-6">
-        {tab.map((item) => (
-          <button
-            key={item}
-            onClick={() => setActiveTab(item)}
-            className={`px-8 py-4 rounded-lg transition cursor-pointer ${
-              activeTab === item
-                ? "bg-[#605DEC] text-white"
-                : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300"
-            }`}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
+<div className="flex gap-2 mb-6 bg-[#F4F3FE] dark:bg-gray-900 p-2 rounded-xl w-fit">
+  {tab.map((item) => {
+    const isActive = activeTab === item;
+
+    return (
+      <button
+        key={item}
+        onClick={() => setActiveTab(item)}
+        className="relative px-6 py-2.5 rounded-lg text-sm font-medium z-10 cursor-pointer"
+      >
+        {isActive && (
+          <motion.div
+            layoutId="activeTab"
+            className="absolute inset-0 bg-[#605DEC] rounded-lg"
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          />
+        )}
+
+        <span
+          className={`relative z-10 transition-colors ${
+            isActive ? "text-white" : "text-[#6B66A3] dark:text-gray-300"
+          }`}
+        >
+          {item}
+        </span>
+      </button>
+    );
+  })}
+</div>
+
 
       {/* Content */}
       <div>

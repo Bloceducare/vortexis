@@ -8,7 +8,7 @@ const HtmlContent: React.FC<HtmlContentProps> = ({ html }) => {
   return (
     <div
       className="prose rich-text break-words whitespace-normal
-        text-gray-900 
+        text-black
         
         dark:text-white
         

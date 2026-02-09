@@ -38,46 +38,94 @@ const Invitation: React.FC<getHackathonIdProps> = ({ hackathon_id }) => {
 
   return (
     <>
-      <section>
-        <div className="space-y-3 mb-6">
-          <h1 className="text-2xl font-bold">Invite Judges</h1>
-          <p>Add judges to evaluate submissions for your hackathon.</p>
-        </div>
+    <section className="max-w-2xl">
+  {/* Header */}
+  <div className="mb-8 space-y-2">
+    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+      Invite Judges
+    </h1>
+    <p className="text-gray-600 dark:text-gray-400">
+      Invite judges to review submissions for{" "}
+      <span className="font-semibold text-[#605DEC]">
+        {hackathon?.title || "this hackathon"}
+      </span>
+    </p>
+  </div>
 
-        {inviteJudgesMutation.isError && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md mb-4">
-            {errorMessage}
-          </div>
-        )}
+  {/* Error */}
+  {inviteJudgesMutation.isError && (
+    <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+      {errorMessage}
+    </div>
+  )}
 
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label className='text-lg font-bold text-[#2F3036]'>Invite by Email</label>
-            <EmailInput emails={emails} setEmails={setEmails} limit={inviteLimit} />
-          </div>
+  {/* Card */}
+  <form
+    onSubmit={handleSubmit}
+    className="rounded-2xl border border-gray-200 dark:border-gray-700 
+               bg-white dark:bg-gray-800 p-6 shadow-sm space-y-8"
+  >
+    {/* Email input */}
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+        Invite by email
+      </label>
 
-          <div className='mt-10 flex flex-col'>
-            <label className='text-lg text-[#2F3036]'>Instructions for Judges</label>
-            <textarea
-              className='outline-none resize-none h-24 border-2 w-full border-[#C5C6CC] mt-3 rounded-2xl px-3 py-3'
-              placeholder='Enter any specific instructions or criteria for judges...'
-              name='rules'
-            />
-          </div>
+      <EmailInput
+        emails={emails}
+        setEmails={setEmails}
+        limit={inviteLimit}
+      />
 
-          <button
-            type="submit"
-            disabled={inviteJudgesMutation.isPending || emails.length === 0}
-            className={`bg-[#0B40EE] text-white py-2 px-8 rounded mt-10 transition
-              ${inviteJudgesMutation.isPending || emails.length === 0
-                ? 'opacity-50 cursor-not-allowed'
-                : 'hover:opacity-90 cursor-pointer'}
-            `}
-          >
-            {inviteJudgesMutation.isPending ? 'Sending Invites...' : 'Send Invites'}
-          </button>
-        </form>
-      </section>
+      <p className="text-xs text-gray-500">
+        You can invite up to {inviteLimit} judges at once.
+      </p>
+    </div>
+
+    {/* Instructions */}
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+        Instructions for judges
+      </label>
+
+      <textarea
+        className="w-full h-28 rounded-xl border border-gray-300 dark:border-gray-600 
+                   bg-transparent px-4 py-3 text-sm outline-none 
+                   focus:ring-2 focus:ring-[#605DEC]/40 
+                   transition resize-none"
+        placeholder="Add evaluation criteria, rules, or anything judges should know…"
+        name="rules"
+      />
+
+      <p className="text-xs text-gray-500">
+        This will be included in the invitation email.
+      </p>
+    </div>
+
+    {/* CTA */}
+    <div className="flex items-center justify-between">
+      <p className="text-xs text-gray-400">
+        Invites will be sent immediately
+      </p>
+
+      <button
+        type="submit"
+        disabled={inviteJudgesMutation.isPending || emails.length === 0}
+        className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 
+          text-sm font-semibold text-white transition-all
+          ${
+            inviteJudgesMutation.isPending || emails.length === 0
+              ? "bg-[#605DEC]/50 cursor-not-allowed"
+              : "bg-[#605DEC] hover:shadow-lg hover:-translate-y-0.5"
+          }`}
+      >
+        {inviteJudgesMutation.isPending ? "Sending…" : "Send Invites"}
+      </button>
+    </div>
+  </form>
+
+
+</section>
 
       {inviteJudgesMutation.isSuccess && showSuccessModal && (
         <SuccessModal

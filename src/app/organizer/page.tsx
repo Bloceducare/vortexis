@@ -29,6 +29,17 @@ const Index = () => {
     setSelectedOrgId(null);
   };
 
+  const ITEMS_PER_PAGE = 6;
+
+const [currentPage, setCurrentPage] = useState(1);
+
+const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
+const paginatedData = filteredData.slice(
+  (currentPage - 1) * ITEMS_PER_PAGE,
+  currentPage * ITEMS_PER_PAGE
+);
+
   if (isLoading) {
     return (
       <section>
@@ -113,8 +124,9 @@ const Index = () => {
        
           <div className="p-6">
             {filteredData.length > 0 ? (
+              <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredData.map((org: any, i: number) => (
+               {paginatedData.map((org: any, i: number) => (
                   <div
                     key={i}
                     onClick={() => handleOrgClick(org.id)}
@@ -172,7 +184,59 @@ const Index = () => {
                     </div>
                   </div>
                 ))}
+
+         
+
               </div>
+                     {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-10 ">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer
+                            bg-gray-100 dark:bg-gray-700
+                            disabled:opacity-40 disabled:cursor-not-allowed
+                            hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  Prev
+                </button>
+
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+                  const isActive = page === currentPage;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition cursor-pointer
+                        ${
+                          isActive
+                            ? "bg-indigo-600 text-white shadow"
+                            : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer
+                            bg-gray-100 dark:bg-gray-700
+                            disabled:opacity-40 disabled:cursor-not-allowed
+                            hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+            </div>
             ) : (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-16">
                 <p className="text-lg font-medium">
@@ -181,6 +245,8 @@ const Index = () => {
                 </p>
               </div>
             )}
+
+
           </div>
 
           {showNewOrg && (
