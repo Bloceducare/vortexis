@@ -2,12 +2,15 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useUserStore } from "@/store/useUserStore";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 
 export default function useHackathon() {
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
+  const setUser = useUserStore((state) => state.setUser);
 
   const getAuthHeaders = (isFormData = false) => {
     const headers: Record<string, string> = {};
@@ -17,6 +20,7 @@ export default function useHackathon() {
 
     return headers;
   };
+
 
   const getAllHackathon = () => {
     return useQuery({
@@ -64,8 +68,25 @@ export default function useHackathon() {
 
         return res.json();
       },
-      onSuccess: () => {
+      onSuccess: async () => {
         queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
+
+        // Refresh user profile to update roles (enable dashboard access)
+        try {
+          const userId = useUserStore.getState().user?.id;
+          if (userId) {
+            const userRes = await fetch(`${apiUrl}/auth/users/${userId}/`, {
+              headers: getAuthHeaders(),
+            });
+
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              setUser(userData);
+            }
+          }
+        } catch (error) {
+          console.error("Failed to refresh user profile after registration:", error);
+        }
       },
     });
   };
