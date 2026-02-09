@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 
-const Countdown = ({ startDate }) => {
+interface CountdownProps {
+  startDate: string | Date;
+}
+
+const Countdown: React.FC<CountdownProps> = ({ startDate }) => {
   const [countdown, setCountdown] = useState("");
 
   useEffect(() => {
@@ -19,9 +23,7 @@ const Countdown = ({ startDate }) => {
         const hours = Math.floor(
           (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
         );
-        const minutes = Math.floor(
-          (diff % (1000 * 60 * 60)) / (1000 * 60)
-        );
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
         setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
@@ -31,11 +33,7 @@ const Countdown = ({ startDate }) => {
     return () => clearInterval(interval);
   }, [startDate]);
 
-  return (
-    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-      {countdown}
-    </span>
-  );
+  return <span>{countdown}</span>;
 };
 
 export default Countdown;
