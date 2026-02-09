@@ -21,6 +21,13 @@ export const useRoleAccess = (): RoleAccess => {
 
     useEffect(() => {
         const verifyAccess = async () => {
+            // console.log("🔄 [useRoleAccess] Re-running check. User roles:", {
+            //     id: user?.id,
+            //     judge: user?.is_judge,
+            //     organizer: user?.is_organizer,
+            //     participant: user?.is_participant
+            // });
+
             if (!user || !token) {
                 setAccess({
                     canAccessJudges: false,
@@ -46,8 +53,8 @@ export const useRoleAccess = (): RoleAccess => {
 
             // Check each role by attempting to access their respective endpoints
             const judgeUrl = `${baseUrl}/hackathon/judge/hackathons/`;
-            const organizerUrl = `${baseUrl}/organizers/hackathons/`;
-            const participantUrl = `${baseUrl}/participants/hackathons/`;
+            const organizerUrl = `${baseUrl}/hackathon/organizer/hackathons/`;
+            const participantUrl = `${baseUrl}/hackathon/my-registrations/`;
 
             const checks = await Promise.all([
                 // Check judge access - use singular "judge" to match backend
@@ -83,7 +90,7 @@ export const useRoleAccess = (): RoleAccess => {
         // Only run verification once when user or token changes
         verifyAccess();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id, token]); // Only re-run if user ID or token changes
+    }, [user?.id, token, user?.is_judge, user?.is_organizer, user?.is_participant]); // Re-run if roles change
 
     return access;
 };
