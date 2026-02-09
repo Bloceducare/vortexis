@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "./ui/Button";
 import { motion, Variants } from "framer-motion";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useIsLoggedIn } from "@/lib/logged-In";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -24,26 +25,11 @@ const fadeUp: Variants = {
 };
 
 export const Hero: React.FC = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-      const token = useAuthStore.getState().getToken();
-
-        useEffect(() => {
-          const checkLoginStatus = () => {
-            setIsLoggedIn(!!token);
-          };
-      
-          checkLoginStatus();
-          window.addEventListener("storage", checkLoginStatus);
-      
-          return () => {
-            window.removeEventListener("storage", checkLoginStatus);
-          };
-        }, []);
-    
+    const isLoggedIn = useIsLoggedIn();
+     
   
   return (
     <section className="relative w-full bg-linear-to-br from-[#E0D9FB] via-[#D8DBFF] to-[#F4F4FF] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors">
-      {/* Gradient circles */}
       <div className="w-full flex gap-0 flex-row justify-center items-center h-screen absolute top-0 bottom-0 left-0 right-0">
         <div className="w-[12em] h-[12em] md:w-[15em] md:h-[15em] lg:w-[25em] lg:h-[25em] bg-[#d2bcff] rounded-full opacity-50 mix-blend-multiply absolute left-[-2em] mt-[-18em] md:left-[-2em] md:mt-[-26em] lg:left-[3em] lg:mt-[6em]" />
         <div className="w-[20em] h-[20em] md:w-[25em] md:h-[24em] lg:w-[35em] lg:h-[35em] bg-[#ffffff] rounded-full opacity-50 mt-[-2em] md:mt-[-12em] lg:mt-[24em]" />
