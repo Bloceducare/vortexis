@@ -17,6 +17,8 @@ import UpdateProject from "./components/UpdateProject";
 import LinkPreview from "@/components/LinkPreview";
 import useHackathon from "@/hooks/useHackathon";
 import { useTeamStore } from "@/store/useTeamStore";
+import Countdown from "@/components/ui/Countdown";
+
 
 function Project() {
   const params = useParams();
@@ -187,24 +189,24 @@ function Project() {
               )}
             </div>
 
-            <div className="mt-3 flex justify-center gap-3 flex-wrap">
+            <div className="mt-3 flex justify-center gap-3 flex-col flex-wrap">
               {project?.github_url && (
-                <div className="w-[45%]">
-                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
+                <div className="">
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     GitHub
                   </h3>
                   <LinkPreview
                     url={project?.github_url}
                     width="100%"
-                    descriptionLength={50}
+                    descriptionLength={80}
                     className="rounded-lg shadow"
                   />
                 </div>
               )}
 
               {project?.live_link && (
-                <div className="w-[45%]">
-                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
+                <div className="">
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     Live Link
                   </h3>
                   <LinkPreview
@@ -218,7 +220,7 @@ function Project() {
 
               {project?.presentation_link && (
                 <div>
-                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 text-center">
+                  <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     Presentation
                   </h3>
                   <LinkPreview
@@ -257,7 +259,7 @@ function Project() {
               </p>
 
               <p className="text-[#AC0000] dark:text-red-400">
-                Deadline: {formatDeadline(hackathonData?.submission_deadline)}
+              <Countdown startDate={hackathonData?.submission_deadline} />
               </p>
             </div>
           </section>

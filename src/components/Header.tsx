@@ -13,12 +13,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SignOutConfirmationModal } from "./signOutModal";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
+import { useIsLoggedIn } from "@/lib/logged-In";
 
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const router = useRouter();
+   const isLoggedIn = useIsLoggedIn();
+     const router = useRouter();
   const clearToken = useAuthStore((state) => state.clearToken);
   const clearUser = useUserStore((state) => state.clearUser);
   const token = useAuthStore.getState().getToken();
@@ -30,25 +31,7 @@ export const Header: React.FC = () => {
   const [logout, setLogout] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
-  const isHome = pathname.startsWith("/home");
-  const isProfile = pathname.startsWith("/profile");
 
-  const handleSearch = (query: string) => {
-    // Search functionality
-  };
-
-  useEffect(() => {
-    const checkLoginStatus = () => {
-      setIsLoggedIn(!!token);
-    };
-
-    checkLoginStatus();
-    window.addEventListener("storage", checkLoginStatus);
-
-    return () => {
-      window.removeEventListener("storage", checkLoginStatus);
-    };
-  }, []);
 
   // Initialize dark mode
   useEffect(() => {
@@ -82,14 +65,12 @@ export const Header: React.FC = () => {
   const handleLogout = () => {
     clearToken();
     clearUser();
-    setIsLoggedIn(false);
-    router.push("/");
+    window.location.href = "/";
   };
 
   const closeMenu = () => setIsMenuOpen(false);
 
-  const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? ""
-    }`;
+  const initials = `${user?.first_name?.[0] ?? ""}${user?.last_name?.[0] ?? "" }`;
 
   const bgColors = [
     "bg-red-500",
@@ -106,7 +87,7 @@ export const Header: React.FC = () => {
   const avatarColor = bgColors[colorIndex];
 
   const { unauthorized } = useJudgedHackathons();
-  const { canAccessJudges, canAccessOrganizer, canAccessDashboard, loading } = useRoleAccess();
+  const { canAccessJudges, loading } = useRoleAccess();
 
   return (
     <>
@@ -269,7 +250,7 @@ export const Header: React.FC = () => {
                                 </Link>
                               </li>
                               {/* Only show Organization link if backend verifies organizer access */}
-                              {!loading && canAccessOrganizer && (
+                            
                                 <li>
                                   <Link
                                     href="/organizer"
@@ -278,9 +259,7 @@ export const Header: React.FC = () => {
                                     Organization
                                   </Link>
                                 </li>
-                              )}
-                              {/* Only show Hacker link if backend verifies participant access */}
-                              {!loading && canAccessDashboard && (
+                            
                                 <li>
                                   <Link
                                     href="/dashboard"
@@ -289,7 +268,6 @@ export const Header: React.FC = () => {
                                     Hacker
                                   </Link>
                                 </li>
-                              )}
                               {/* Only show Judges link if backend verifies judge access */}
                               {!loading && canAccessJudges && (
                                 <li>
@@ -408,8 +386,7 @@ export const Header: React.FC = () => {
                                   View Profile
                                 </Link>
                               </li>
-                              {/* Only show Organization link if backend verifies organizer access */}
-                              {!loading && canAccessOrganizer && (
+                            
                                 <li>
                                   <Link
                                     href="/organizer"
@@ -418,9 +395,7 @@ export const Header: React.FC = () => {
                                     Organization
                                   </Link>
                                 </li>
-                              )}
-                              {/* Only show Hacker link if backend verifies participant access */}
-                              {!loading && canAccessDashboard && (
+                            
                                 <li>
                                   <Link
                                     href="/dashboard"
@@ -429,7 +404,6 @@ export const Header: React.FC = () => {
                                     Hacker
                                   </Link>
                                 </li>
-                              )}
                               {/* Only show Judges link if backend verifies judge access */}
                               {!loading && canAccessJudges && (
                                 <li>

@@ -159,24 +159,31 @@ export default function ProfileView() {
         </div>
         </section>
         <section className="flex justify-between items-center">
-        <div className="flex flex-wrap gap-2">
-            {user.is_organizer && <Badge className="bg-blue-500 cursor-pointer"  onClick={() => router.push("/organizer")}>Organizer</Badge>}
-            {user.is_participant && <Badge className="bg-green-500 cursor-pointer" onClick={() => router.push("/dashboard")}>Participant</Badge>}
-            {user.is_judge && <Badge className="bg-yellow-500 cursor-pointer"  onClick={() => router.push("/judges")}>Judge</Badge>}
-          </div>
-          <div className="flex justify-between items-center flex-wrap ">
-          <div className="flex items-center gap-1 md:gap-3 text-gray-600 dark:text-gray-400 ">
-          <Image src={LocationIcon}  alt="" />                    
-            {user.profile?.location}
-          </div>
+         {/* Badges + Info */}
+        <section className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center gap-3">
+  {/* Badges */}
+  <div className="flex flex-wrap gap-2">
+    {user.is_organizer && <Badge className="bg-blue-500">Organizer</Badge>}
+    {user.is_participant && <Badge className="bg-green-500">Participant</Badge>}
+    {user.is_judge && <Badge className="bg-yellow-500">Judge</Badge>}
+  </div>
 
-          <div className="flex gap-1 md:gap-3 items-center text-gray-600 dark:text-gray-400">
-            <FaGlobe />
-          English
-          </div>
+  {/* Location */}
+  {user.profile?.location && (
+    <div className="flex items-center gap-2 text-gray-600 mt-2 sm:mt-0">
+      <Image src={LocationIcon} alt="location" className="w-4 h-4" />
+      <span>{user.profile.location}</span>
+    </div>
+  )}
 
+  {/* Language */}
+  <div className="flex gap-2 items-center text-gray-600 mt-2 sm:mt-0">
+    <FaGlobe />
+    <span>English</span>
+  </div>
+</section>
 
-          </div>
+     
       
         </section>
         {user.profile?.bio ? (

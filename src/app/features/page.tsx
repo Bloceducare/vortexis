@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useIsLoggedIn } from "@/lib/logged-In";
 
 const features = [
   {
@@ -93,22 +94,8 @@ const features = [
 
 export default function FeaturesPage() {
     const router = useRouter();
-
-     const [isLoggedIn, setIsLoggedIn] = useState(false);
-            const token = useAuthStore.getState().getToken();
-      
-              useEffect(() => {
-                const checkLoginStatus = () => {
-                  setIsLoggedIn(!!token);
-                };
-            
-                checkLoginStatus();
-                window.addEventListener("storage", checkLoginStatus);
-            
-                return () => {
-                  window.removeEventListener("storage", checkLoginStatus);
-                };
-              }, []);
+    const isLoggedIn = useIsLoggedIn();
+    
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-500 py-16 px-4 sm:px-6 lg:px-8 mt-10  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto">

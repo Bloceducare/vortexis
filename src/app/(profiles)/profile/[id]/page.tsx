@@ -110,22 +110,29 @@ function SingleProfile() {
           </section>
 
           {/* Badges + Info */}
-          <section className="flex flex-wrap justify-between items-center gap-3">
-            <div className="flex flex-wrap gap-2">
-              {user.is_organizer && <Badge className="bg-blue-500">Organizer</Badge>}
-              {user.is_participant && <Badge className="bg-green-500">Participant</Badge>}
-              {user.is_judge && <Badge className="bg-yellow-500">Judge</Badge>}
-            </div>
-            {user.profile?.location && (
-              <div className="flex items-center gap-2 text-gray-600">
-                <Image src={LocationIcon} alt="location" />
-                {user.profile.location}
-              </div>
-            )}
-            <div className="flex gap-2 items-center text-gray-600">
-              <FaGlobe /> English
-            </div>
-          </section>
+        <section className="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center gap-3">
+  {/* Badges */}
+  <div className="flex flex-wrap gap-2">
+    {user.is_organizer && <Badge className="bg-blue-500">Organizer</Badge>}
+    {user.is_participant && <Badge className="bg-green-500">Participant</Badge>}
+    {user.is_judge && <Badge className="bg-yellow-500">Judge</Badge>}
+  </div>
+
+  {/* Location */}
+  {user.profile?.location && (
+    <div className="flex items-center gap-2 text-gray-600 mt-2 sm:mt-0">
+      <Image src={LocationIcon} alt="location" className="w-4 h-4" />
+      <span>{user.profile.location}</span>
+    </div>
+  )}
+
+  {/* Language */}
+  <div className="flex gap-2 items-center text-gray-600 mt-2 sm:mt-0">
+    <FaGlobe />
+    <span>English</span>
+  </div>
+</section>
+
 
           {/* About */}
           {user.profile?.bio && (
