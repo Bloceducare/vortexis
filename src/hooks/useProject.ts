@@ -102,7 +102,7 @@ export default function useProjects() {
       const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/submit-project/`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({hackathon_id}),
+        body: JSON.stringify({project_id: project}),
       });
   
       if (!res.ok) {

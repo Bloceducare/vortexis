@@ -106,7 +106,7 @@ export default function LinkPreview({
     href={url}
     target="_blank"
     rel="noopener noreferrer"
-    className={`block border rounded-lg p-3  hover:shadow-md transition ${className}`}
+    className={`block border rounded-lg p-3 flex  gap-5  hover:shadow-md transition ${className}`}
     style={{ width }}
   >
     <div className="h-[10vh]">
@@ -120,11 +120,11 @@ export default function LinkPreview({
     </div>
   
     <div className="space-y-3 mt-3">
-      <h3 className="font-bold text-sm text-gray-900 w-full break-words whitespace-normal">
+      <h3 className="font-bold text-sm text-gray-900 w-full break-words whitespace-normal dark:text-white">
         {meta.title.slice(0, 15)}...
       </h3>
   
-      <p className="text-xs text-gray-600 break-words whitespace-normal">
+      <p className="text-xs text-gray-600 dark:text-white/80 break-words whitespace-normal">
         {meta.description
           ? meta.description.length > descriptionLength
             ? meta.description.slice(0, descriptionLength) + "..."

@@ -207,39 +207,44 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
               <ChevronsUpDown className="w-4 h-4 text-gray-600 dark:text-gray-400 ml-2" />
             </button>
 
-            <AnimatePresence>
-              {isDropdownOpen && (
-                <motion.ul
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute left-0 top-full mt-1 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow origin-top z-100 transition-colors"
-                >
-                  {hackathons?.length > 0 ? (
-                    hackathons.map((h) => (
-                      <li
-                        key={h.id}
-                        onClick={() => handleSelect(h.id)}
-                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm text-gray-700 dark:text-gray-300 transition-colors"
-                      >
-                        {h.title}
-                      </li>
-                    ))
-                  ) : (
-                    <div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                      <p className="text-[#a09393]">No hackathon created</p>
-                      <a
-                        href="/home"
-                        className="inline-block mt-3 px-1 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded text-sm"
-                      >
-                        Join hackathon
-                      </a>
-                    </div>
-                  )}
-                </motion.ul>
-              )}
-            </AnimatePresence>
+     <AnimatePresence>
+  {isDropdownOpen && (
+    <motion.ul
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+      className="absolute left-0 top-full mt-1 w-full 
+                 max-h-60 overflow-y-auto
+                 bg-white dark:bg-gray-800 
+                 border border-gray-200 dark:border-gray-700 
+                 rounded shadow origin-top z-100 transition-colors"
+    >
+      {hackathons?.length > 0 ? (
+        hackathons.map((h) => (
+          <li
+            key={h.id}
+            onClick={() => handleSelect(h.id)}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm text-gray-700 dark:text-gray-300 transition-colors"
+          >
+            {h.title}
+          </li>
+        ))
+      ) : (
+        <div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-[#a09393]">No hackathon created</p>
+          <a
+            href="/home"
+            className="inline-block mt-3 px-1 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded text-sm"
+          >
+            Join hackathon
+          </a>
+        </div>
+      )}
+    </motion.ul>
+  )}
+    </AnimatePresence>
+
           </div>
 
           {/* Nav links */}

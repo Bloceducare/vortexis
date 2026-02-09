@@ -335,14 +335,14 @@ const requestCount = filteredRequests.length;
                       className="w-full flex justify-start gap-3 h-12"
                     >
                       <FileText className="w-5 h-5" />
-                      Project Docs
+                      Demo Video
                     </Button>
                     <Button
                       variant="outline"
                       className="w-full flex justify-start gap-3 h-12"
                     >
                       <Book className="w-5 h-5" />
-                      API Documentation
+                      Presentation
                     </Button>
                   </div>
                 </div>
