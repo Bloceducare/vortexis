@@ -3,6 +3,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useHackathonStore } from '@/store/useHackathonStore';
+import { useUserHackathonsStore } from "@/store/useUserHackathons";
+
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
@@ -10,6 +12,8 @@ export default function useParticipants() {
   // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
   const { banner_image, venue } = useHackathonStore()
+      const { setHackathons } = useUserHackathonsStore();
+  
 
 
   const getAuthHeaders = (isFormData = false) => {
@@ -26,13 +30,6 @@ export default function useParticipants() {
     return headers;
   };
   
-  
- 
-
-
-
-
-  
 
   const getHackathons = () => {
     return useQuery({
@@ -47,6 +44,11 @@ export default function useParticipants() {
       staleTime: Infinity,
     })
   }
+
+
+  // const data = await res.json(); 
+        
+  //       setHackathons(data);      
 
 
   return {

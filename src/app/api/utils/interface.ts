@@ -44,6 +44,10 @@ export interface Judge {
   first_name: string;
   last_name?: string;
   is_judge: boolean;
+  profile?: {
+    profile_picture: string
+  },
+  hackathons: string[]
 }
 
 export interface ReactQueryState {

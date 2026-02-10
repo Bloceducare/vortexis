@@ -380,39 +380,54 @@ const All: React.FC<SubmissionProps> = ({
                     setSelectedSubmission(null);
                     setShowFull(false);
                   }}
-                  className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all duration-200 backdrop-blur-sm"
+                  className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-all duration-200 backdrop-blur-sm cursor-pointer"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 </button>
+<div className="pr-12 space-y-4">
+  {/* Title */}
+  <h2 className="text-2xl md:text-3xl font-bold text-white">
+    {selectedSubmission.project.title}
+  </h2>
 
-                <div className="pr-12">
-                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                    {selectedSubmission.project.title}
-                  </h2>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-                      {selectedSubmission.team.name}
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-                      {new Date(selectedSubmission.created_at).toLocaleDateString()}
-                    </span>
-                    <span
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
-                        selectedSubmission.approved
-                          ? "bg-green-500/90 text-white"
-                          : "bg-orange-500/90 text-white"
-                      }`}
-                    >
-                      {selectedSubmission.approved ? "✓ Approved" : "⊗ Not Approved"}
-                    </span>
-                    <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
-                      {selectedSubmission.status}
-                    </span>
-                  </div>
-                </div>
+  {/* Metadata */}
+  <div className="flex flex-wrap items-center gap-3 text-sm text-white/80">
+    <div className="flex items-center gap-2">
+      <span className="text-white/60">Created by</span>
+      <span className="px-3 py-1 rounded-full font-semibold bg-white/20 text-white backdrop-blur-sm">
+        {selectedSubmission.team.name}
+      </span>
+    </div>
+
+    <div className="flex items-center gap-2">
+      <span className="text-white/60">Date</span>
+      <span className="px-3 py-1 rounded-full font-semibold bg-white/20 text-white backdrop-blur-sm">
+        {new Date(selectedSubmission.created_at).toLocaleDateString()}
+      </span>
+    </div>
+  </div>
+
+  {/* Status Section */}
+  <div className="flex flex-wrap items-center gap-3">
+    <span
+      className={`px-3 py-1.5 rounded-full text-xs font-semibold ${
+        selectedSubmission.approved
+          ? "bg-green-500/90 text-white"
+          : "bg-orange-500/90 text-white"
+      }`}
+    >
+      {selectedSubmission.approved ? "✓ Approved" : "⊗ Not Approved"}
+    </span>
+
+    <span className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm">
+      {selectedSubmission.status}
+    </span>
+  </div>
+</div>
+
               </div>
 
               {/* Modal Body */}

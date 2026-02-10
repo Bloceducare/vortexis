@@ -20,10 +20,12 @@ import {
 } from "lucide-react";
 import StatusModal from "@/components/StatusModal";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Hack() {
   const { id } = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient()
   const { getHackathonById, registerUserForHackathon } = useHackathon();
   const { data, isLoading, error } = getHackathonById(id as string);
   const [countdown, setCountdown] = useState("");
@@ -38,12 +40,13 @@ function Hack() {
     message: "",
   });
 
-  const { hackathons } = useUserHackathonsStore();
+  const { hackathons, addHackathon } = useUserHackathonsStore();
 
-  // Check if user is already registered
-  const isRegistered = hackathons.some(
-    (hackathon) => hackathon.id === Number(id)
-  );
+
+  const [isRegisteredState, setIsRegisteredState] = useState(
+  hackathons.some((h) => h?.id === Number(id))
+);
+
 
   function safeParseContent(content: string | null | undefined): string {
     if (!content) return "";
@@ -90,28 +93,32 @@ function Hack() {
   }, [data?.start_date]);
 
   const onRegister = () => {
-    if (isRegistered) {
-      router.push(`/dashboard/${id}/hackathon`);
-      return;
-    }
+  if (isRegisteredState) {
+    router.push(`/dashboard/${id}/hackathon`);
+    return;
+  }
 
-    registerMutation.mutate(id as string, {
-      onSuccess: () => {
-        setModal({
-          open: true,
-          type: "success",
-          message: "You have successfully registered!",
-        });
-      },
-      onError: (error: any) => {
-        setModal({
-          open: true,
-          type: "error",
-          message: error?.message || "Something went wrong. Please try again.",
-        });
-      },
-    });
-  };
+  registerMutation.mutate(id as string, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
+      setIsRegisteredState(true); 
+      addHackathon(data.hackathon);
+     
+      setModal({
+        open: true,
+        type: "success",
+        message: "You have successfully registered!",
+      });
+    },
+    onError: (error: any) => {
+      setModal({
+        open: true,
+        type: "error",
+        message: error?.message || "Something went wrong. Please try again.",
+      });
+    },
+  });
+};
 
   if (isLoading) {
     return (
@@ -250,7 +257,7 @@ function Hack() {
                 </div>
 
                 {/* Registration Status Badge */}
-                {isRegistered && (
+                {isRegisteredState && (
                   <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
                     <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
                       <CheckCircle className="w-5 h-5" />
@@ -267,7 +274,7 @@ function Hack() {
                   onClick={onRegister}
                   disabled={registerMutation.isPending}
                   className={`mt-6 w-full flex items-center justify-center cursor-pointer gap-2 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 shadow-lg cursor-pointer ${
-                    isRegistered
+                    isRegisteredState
                       ? "bg-green-600 hover:bg-green-700 text-white"
                       : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90"
                   }`}
@@ -285,7 +292,7 @@ function Hack() {
                       />
                       Registering...
                     </>
-                  ) : isRegistered ? (
+                  ) : isRegisteredState ? (
                     <>
                       <ArrowRight className="w-5 h-5" />
                       View Dashboard
@@ -298,7 +305,7 @@ function Hack() {
                   )}
                 </motion.button>
 
-                {isRegistered && (
+                {isRegisteredState && (
                   <p className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">
                     Manage your team and projects in the dashboard
                   </p>

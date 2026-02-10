@@ -1,6 +1,7 @@
 import React from "react";
 import { Judge, ReactQueryState } from "@/app/api/utils/interface";
 import { useRouter } from "next/navigation";
+import { ExternalLink } from "lucide-react";
 
 interface JudgesListProps extends ReactQueryState {
   judges: Judge[] | undefined;
@@ -13,6 +14,27 @@ const JudgesList: React.FC<JudgesListProps> = ({
   isError,
   refetch,
 }) => {
+
+  const getInitials = (first = "", last = "") =>
+  `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
+
+const avatarColors = [
+  "bg-red-500",
+  "bg-blue-500",
+  "bg-green-500",
+  "bg-purple-500",
+  "bg-orange-500",
+  "bg-pink-500",
+  "bg-teal-500",
+];
+
+const getAvatarColor = (id: number) =>
+  avatarColors[id % avatarColors.length];
+
+
+
+
+
   if (isLoading) {
     return (
       <div className="text-center py-10 text-gray-600 dark:text-gray-400">
@@ -45,40 +67,61 @@ const JudgesList: React.FC<JudgesListProps> = ({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg shadow relative">
-      {isFetching && (
-        <div className="absolute top-0 right-0 m-2 text-xs text-gray-400">
-          Refreshing...
+   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {judges.map((judge) => (
+    <div
+      key={judge.id}
+      className="rounded-xl border border-gray-200 dark:border-gray-700 
+                 bg-white dark:bg-gray-800 p-5 shadow-sm 
+                 hover:shadow-md transition"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        {/* Avatar */}
+        {judge.profile?.profile_picture ? (
+          <img
+            src={judge.profile.profile_picture}
+            alt={judge.username}
+            className="h-12 w-12 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className={`h-12 w-12 rounded-full flex items-center 
+                        justify-center text-white font-bold 
+                        ${getAvatarColor(judge.id)}`}
+          >
+            {getInitials(judge.first_name, judge.last_name)}
+          </div>
+        )}
+
+        {/* Name */}
+        <div>
+          <p className="font-semibold text-gray-900 dark:text-white">
+            {judge.first_name} {judge.last_name}
+          </p>
+          <p className="text-xs text-gray-500">@{judge.username}</p>
         </div>
-      )}
-      <table className="min-w-full text-sm text-left">
-        <thead className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-xs transition-colors">
-          <tr>
-            <th className="px-6 py-3">#</th>
-            <th className="px-6 py-3">Name</th>
-            <th className="px-6 py-3">Action</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-          {judges.map((judge, index) => (
-            <tr key={judge.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4">{index + 1}</td>
-              <td className="px-6 py-4">
-                {judge.first_name} {judge.last_name || ""}
-              </td>
-              <td className="px-6 py-4">
-                <button
-                  className="underline cursor-pointer"
-                  onClick={() => router.push(`/profile/${judge.id}`)}
-                >
-                  View Profile
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      </div>
+
+      {/* Hackathons */}
+      <div className="mt-4">
+          <p className="text-xs text-gray-400">
+             Assigned to this Hackathon
+          </p>
+      </div>
+
+      {/* Action */}
+      <button
+        onClick={() => router.push(`/profile/${judge.id}`)}
+        className="mt-4 inline-flex items-center gap-1 cursor-pointer
+                   text-sm text-blue-600 hover:underline"
+      >
+        View Profile <ExternalLink size={14} />
+      </button>
     </div>
+  ))}
+</div>
+
   );
 };
 

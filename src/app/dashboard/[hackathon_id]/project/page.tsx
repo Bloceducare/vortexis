@@ -18,6 +18,7 @@ import LinkPreview from "@/components/LinkPreview";
 import useHackathon from "@/hooks/useHackathon";
 import { useTeamStore } from "@/store/useTeamStore";
 import Countdown from "@/components/ui/Countdown";
+import StatusModal from "@/components/StatusModal";
 
 
 function Project() {
@@ -37,10 +38,17 @@ function Project() {
   } = getHackathonById(hackathon_id);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
-    message: string;
-  } | null>(null);
+    const [modal, setModal] = useState<{
+      open: boolean;
+      type: "success" | "error";
+      message: string;
+      title?: string;
+    }>({
+      open: false,
+      type: "success",
+      message: "",
+    });
+  
 
   const handleSubmitProject = async (project_id: number) => {
     try {
@@ -48,15 +56,18 @@ function Project() {
         project: project_id,
         hackathon_id,
       });
-
-      setFeedback({
+  setModal({
+        open: true,
         type: "success",
-        message: "Project submitted successfully.",
+        message: `Project has been submitted successfully!`,
+        title: "Team Created! 🎉",
       });
     } catch (error: any) {
-      setFeedback({
+      setModal({
+        open: true,
         type: "error",
-        message: error?.message || "Failed to submit project.",
+        message: `${error}`,
+        title: "Unable to submit Project🎉",
       });
     }
   };
@@ -108,19 +119,28 @@ function Project() {
   const handleDelete = async () => {
     try {
       await deleteProjectMutation.mutateAsync(project.id);
-      setFeedback({
+     setModal({
+        open: true,
         type: "success",
-        message: "Project deleted successfully.",
+        message: `Project has been deleted successfully!`,
+        title: "Team Created! 🎉",
       });
     } catch (error: any) {
-      setFeedback({
+      setModal({
+        open: true,
         type: "error",
-        message: error.message || "Failed to delete project.",
+        message: `${error}`,
+        title: "Unable to delete 🎉",
       });
     } finally {
       setShowDeleteModal(false);
     }
   };
+
+    const handleModalClose = () => {
+    setModal((prev) => ({ ...prev, open: false }));
+  };
+
 
   const getDeadlineMessage = (deadlineString: string) => {
     const deadline = new Date(deadlineString);
@@ -347,7 +367,17 @@ function Project() {
           </div>
         </div>
       )}
+
+       <StatusModal
+          isOpen={modal.open}
+          onClose={handleModalClose}
+          type={modal.type}
+          message={modal.message}
+          title={modal.title}
+        />
     </div>
+
+    
   );
 }
 
