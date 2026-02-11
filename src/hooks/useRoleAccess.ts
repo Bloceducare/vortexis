@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
+import { useRoleAccessStore } from "@/store/useRoleAccessStore";
 
 interface RoleAccess {
     canAccessJudges: boolean;
@@ -12,22 +13,12 @@ interface RoleAccess {
 export const useRoleAccess = (): RoleAccess => {
     const token = useAuthStore((state) => state.token);
     const user = useUserStore((state) => state.user);
-    const [access, setAccess] = useState<RoleAccess>({
-        canAccessJudges: false,
-        canAccessOrganizer: false,
-        canAccessDashboard: false,
-        loading: true,
-    });
+
+    // Read from cached store
+    const { canAccessJudges, canAccessOrganizer, canAccessDashboard, loading, lastChecked, setAccess } = useRoleAccessStore();
 
     useEffect(() => {
         const verifyAccess = async () => {
-            // console.log("🔄 [useRoleAccess] Re-running check. User roles:", {
-            //     id: user?.id,
-            //     judge: user?.is_judge,
-            //     organizer: user?.is_organizer,
-            //     participant: user?.is_participant
-            // });
-
             if (!user || !token) {
                 setAccess({
                     canAccessJudges: false,
@@ -35,6 +26,11 @@ export const useRoleAccess = (): RoleAccess => {
                     canAccessDashboard: false,
                     loading: false,
                 });
+                return;
+            }
+
+            // If we have cached data and user hasn't changed, skip API calls
+            if (lastChecked !== null) {
                 return;
             }
 
@@ -57,7 +53,7 @@ export const useRoleAccess = (): RoleAccess => {
             const participantUrl = `${baseUrl}/hackathon/my-registrations/`;
 
             const checks = await Promise.all([
-                // Check judge access - use singular "judge" to match backend
+                // Check judge access
                 user.is_judge
                     ? fetch(judgeUrl, {
                         headers: { Authorization: `Bearer ${token}` },
@@ -87,10 +83,9 @@ export const useRoleAccess = (): RoleAccess => {
             });
         };
 
-        // Only run verification once when user or token changes
         verifyAccess();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id, token, user?.is_judge, user?.is_organizer, user?.is_participant]); // Re-run if roles change
 
-    return access;
+    return { canAccessJudges, canAccessOrganizer, canAccessDashboard, loading };
 };

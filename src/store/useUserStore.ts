@@ -13,11 +13,16 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       user: null,
       setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
+      clearUser: () => {
+        set({ user: null });
+        // Clear role access cache when user is cleared
+        const { useRoleAccessStore } = require('@/store/useRoleAccessStore');
+        useRoleAccessStore.getState().clearAccess();
+      },
     }),
     {
-      name: 'user-storage', 
-      partialize: (state) => ({ user: state.user }), 
+      name: 'user-storage',
+      partialize: (state) => ({ user: state.user }),
     }
   )
 );
