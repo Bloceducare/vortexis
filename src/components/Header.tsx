@@ -14,6 +14,7 @@ import { SignOutConfirmationModal } from "./signOutModal";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { useIsLoggedIn } from "@/lib/logged-In";
+import Image from "next/image";
 
 
 export const Header: React.FC = () => {
@@ -198,101 +199,113 @@ export const Header: React.FC = () => {
                   className="flex items-center gap-5 md:gap-10 relative"
                   ref={dropdownRef}
                 >
-                  <div className="relative z-30">
-                    {/* Avatar & Name */}
-                    <div
-                      className="flex items-center gap-2 cursor-pointer"
-                      onClick={() => setShowDropdown((prev) => !prev)}
-                    >
-                      <div
-                        className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
-                      >
-                        {initials.toUpperCase()}
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm font-semibold">
-                          {user?.first_name} {user?.last_name}
-                        </p>
-                      </div>
-                      <ChevronDown className="text-gray-500 w-4 h-4" />
-                    </div>
+              <div className="relative z-30">
+  {/* Avatar & Name */}
+<div
+  className="flex items-center gap-2 cursor-pointer"
+  onClick={() => setShowDropdown((prev) => !prev)}
+>
+  <div
+    className={`h-10 w-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-400 ${avatarColor}`}
+  >
+    {user?.profile?.profile_picture ? (
+      <Image
+        src={user.profile.profile_picture}
+        alt="profile_img"
+        width={40}
+        height={40} // make width = height to be perfectly square
+        className="object-cover w-full h-full"
+      />
+    ) : (
+      <span className="text-white font-semibold text-sm">
+        {initials.toUpperCase()}
+      </span>
+    )}
+  </div>
 
-                    {/* Dropdown + Fullscreen Blur Overlay */}
-                    <AnimatePresence>
-                      {showDropdown && (
-                        <>
-                          {/* Fullscreen Blur Overlay */}
-                          <motion.div
-                            key="overlay"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setShowDropdown(false)}
-                            className=""
-                          />
+  <div className="text-left">
+    <p className="text-sm font-semibold">
+      {user?.first_name} {user?.last_name}
+    </p>
+  </div>
 
-                          {/* Dropdown Menu */}
-                          <motion.div
-                            key="dropdown"
-                            initial={{ opacity: 0, y: -5 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -5 }}
-                            transition={{ duration: 0.2 }}
-                            className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border z-50"
-                          >
-                            <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
-                              <li>
-                                <Link
-                                  href="/profile/detail"
-                                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
-                                >
-                                  View Profile
-                                </Link>
-                              </li>
-                              {/* Only show Organization link if backend verifies organizer access */}
-                            
-                                <li>
-                                  <Link
-                                    href="/organizer"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
-                                  >
-                                    Organization
-                                  </Link>
-                                </li>
-                            
-                                <li>
-                                  <Link
-                                    href="/dashboard"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
-                                  >
-                                    Hacker
-                                  </Link>
-                                </li>
-                              {/* Only show Judges link if backend verifies judge access */}
-                              {!loading && canAccessJudges && (
-                                <li>
-                                  <Link
-                                    href="/judges"
-                                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
-                                  >
-                                    Judges
-                                  </Link>
-                                </li>
-                              )}
-                              <li>
-                                <p
-                                  onClick={() => setLogout(true)}
-                                  className="block px-4 py-2 hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-400"
-                                >
-                                  LogOut
-                                </p>
-                              </li>
-                            </ul>
-                          </motion.div>
-                        </>
-                      )}
-                    </AnimatePresence>
-                  </div>
+  <ChevronDown className="text-gray-500 w-4 h-4" />
+</div>
+
+
+  {/* Dropdown + Fullscreen Blur Overlay */}
+  <AnimatePresence>
+    {showDropdown && (
+      <>
+        {/* Fullscreen Blur Overlay */}
+        <motion.div
+          key="overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setShowDropdown(false)}
+          className=""
+        />
+
+        {/* Dropdown Menu */}
+        <motion.div
+          key="dropdown"
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -5 }}
+          transition={{ duration: 0.2 }}
+          className="absolute top-16 right-0 w-48 bg-white dark:bg-gray-800 shadow-lg rounded-lg border z-50"
+        >
+          <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
+            <li>
+              <Link
+                href="/profile/detail"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
+              >
+                View Profile
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/organizer"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
+              >
+                Organization
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard"
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
+              >
+                Hacker
+              </Link>
+            </li>
+            {!loading && canAccessJudges && (
+              <li>
+                <Link
+                  href="/judges"
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-400"
+                >
+                  Judges
+                </Link>
+              </li>
+            )}
+            <li>
+              <p
+                onClick={() => setLogout(true)}
+                className="block px-4 py-2 hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-400"
+              >
+                LogOut
+              </p>
+            </li>
+          </ul>
+        </motion.div>
+      </>
+    )}
+  </AnimatePresence>
+</div>
+
                 </div>
               )}
             </div>
@@ -349,8 +362,19 @@ export const Header: React.FC = () => {
                       <div
                         className={`h-7 w-7 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
                       >
-                        {initials.toUpperCase()}
-                      </div>
+ {user?.profile?.profile_picture ? (
+      <Image
+        src={user.profile.profile_picture}
+        alt="profile_img"
+        width={40}
+        height={40} 
+        className="object-cover w-full h-full rounded-full"
+      />
+    ) : (
+      <span className="text-white font-semibold text-sm">
+        {initials.toUpperCase()}
+      </span>
+    )}                      </div>
                       <ChevronDown className="text-gray-500 w-4 h-4" />
                     </div>
 

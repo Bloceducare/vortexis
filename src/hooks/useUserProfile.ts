@@ -96,7 +96,6 @@ export default function useUser() {
     });
   };
 
-  /** 📌 Update user profile */
   const updateUserProfile = () => {
     return useMutation({
       mutationFn: async ({ data }: { data: Record<string, any> }) => {

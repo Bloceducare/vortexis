@@ -12,7 +12,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 export default function useOrganizer() {
   // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
-  const { banner_image, venue } = useHackathonStore();
+  const { banner_image_file, venue } = useHackathonStore();
 
   const getAuthHeaders = (isFormData = false) => {
     const headers: Record<string, string> = {};
@@ -28,65 +28,93 @@ export default function useOrganizer() {
     return headers;
   };
 
-  const createOrganization = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await fetch(`${apiUrl}/organization/create/`, {
-        method: 'POST',
-        headers: {
-          ...getAuthHeaders(true),
-        },
-        body: formData,
-      });
+const createOrganization = useMutation({
+  mutationFn: async (payload: {
+    name: string;
+    description: string;
+    website?: string;
+    custom_url?: string;
+    location?: string;
+    tagline?: string;
+    about?: string;
+    logo_file?: string | null;
+  }) => {
+    const res = await fetch(`${apiUrl}/organization/create/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(true),
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!res.ok) {
-        let errorMessage = 'Failed to create organization';
+    if (!res.ok) {
+      let errorMessage = "Failed to create organization";
 
-        try {
-          const errorData = await res.json();
-          errorMessage =
-            errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            errorMessage;
-        } catch (err) {
-          // Use default error message
-        }
-
-        throw new Error(errorMessage);
+      try {
+        const errorData = await res.json();
+        errorMessage =
+          errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          errorMessage;
+      } catch {
+        // fallback to default message
       }
 
-      return res.json();
-    },
-  });
+      throw new Error(errorMessage);
+    }
 
-  const updateOrganization = useMutation({
-    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
-      const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
-        method: 'PUT',
-        headers: {
-          ...getAuthHeaders(true),
-        },
-        body: formData,
-      });
+    return res.json();
+  },
+});
 
-      if (!res.ok) {
-        let errorMessage = 'Failed to update organization';
 
-        try {
-          const errorData = await res.json();
-          errorMessage =
-            errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            errorMessage;
-        } catch (err) {
-          // fallback: keep default errorMessage
-        }
+ const updateOrganization = useMutation({
+  mutationFn: async ({
+    id,
+    payload,
+  }: {
+    id: string;
+    payload: {
+      name: string;
+      description: string;
+      website?: string;
+      custom_url?: string;
+      location?: string;
+      tagline?: string;
+      about?: string;
+      logo_file?: string | null;
+    };
+  }) => {
+    const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(true),
+      },
+      body: JSON.stringify(payload),
+    });
 
-        throw new Error(errorMessage);
+    if (!res.ok) {
+      let errorMessage = "Failed to update organization";
+
+      try {
+        const errorData = await res.json();
+        errorMessage =
+          errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          errorMessage;
+      } catch {
+        // fallback: default error message
       }
 
-      return res.json();
-    },
-  });
+      throw new Error(errorMessage);
+    }
+
+    return res.json();
+  },
+});
+
 
   const getAllOrganization = useQuery({
     queryKey: ["organizations"],
@@ -126,48 +154,36 @@ export default function useOrganizer() {
     },
   });
   
-  const createHackathonMutation = useMutation({
-    mutationFn: async (data: Hackathon_details) => {
-      const formData = new FormData();
+const createHackathonMutation = useMutation({
+  mutationFn: async (data: Hackathon_details) => {
+   
+    const payload: Hackathon_details = {
+      ...data,
+      banner_image_file: data.banner_image_file ?? null,
+    };
 
-      formData.append("organization_id", String(data.organization_id || 0));
-      formData.append("title", data.title || "");
-      formData.append("description", data.description || "");
-      formData.append("venue", venue || "");
-      formData.append("start_date", data.start_date || "");
-      formData.append("end_date", data.end_date || "");
-      formData.append("submission_deadline", data.submission_deadline || "");
-      formData.append("grand_prize", String(data.grand_prize || 0));
-      formData.append("visibility", String(data.visibility ?? true));
-      formData.append("evaluation_criteria", data.evaluation_criteria || "");
+    const res = await fetch(`${apiUrl}/hackathon/create/`, {
+      method: "POST",
+      headers: {
+        ...getAuthHeaders(true),
+        "Content-Type": "application/json", // JSON, not FormData
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (banner_image instanceof File) {
-        formData.append("banner_image", banner_image);
-      }
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(
+        errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          "Failed to create hackathon"
+      );
+    }
 
-      formData.append("prizes", String(data.prizes || ""));
-      (data.skills ?? []).forEach((skillId: number) => {
-        formData.append("skills", String(skillId));
-      });
-      formData.append("judges", String(data.judges || ""));
-      formData.append("rules", String(data.rules || ""));
+    return res.json(); // optionally return response data
+  },
+});
 
-      const res = await fetch(`${apiUrl}/hackathon/create/`, {
-        method: "POST",
-        headers: getAuthHeaders(true),
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(
-          errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            "Failed to create hackathon"
-        );
-      }
-    },
-  });
 
   const updateHackathonMutation = useMutation({
     mutationFn: async ({

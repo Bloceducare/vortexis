@@ -1,3 +1,5 @@
+import { StaticImageData } from "next/image";
+
 export default interface Hackathon_details {
   organization_id?: number | null;
   id?: string;
@@ -20,7 +22,8 @@ export default interface Hackathon_details {
   rules?: string;
   participants?: string[];
   submissions?: string[];
-  banner_image?: File | null;
+  banner_image_file: string | null; 
+  banner_image?: string | null;
   participants_count?: number;
   submissions_count?: number;
   evaluation_criteria?: string;
@@ -114,7 +117,7 @@ export interface UserProfile {
   twitter: string | null;
   website: string | null;
   location: string | null;
-  profile_picture: string;
+  profile_picture: string | StaticImageData;
   skills: string[];
 }
 

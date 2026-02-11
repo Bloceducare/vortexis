@@ -300,7 +300,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
             <span>{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
           </button>
           <Link
-            href="/profile/edit"
+            href="/profile/detail"
             className="flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 py-2 px-2 rounded transition-colors"
           >
             <Settings size={20} />

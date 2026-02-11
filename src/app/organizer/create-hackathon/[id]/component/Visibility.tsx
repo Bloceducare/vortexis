@@ -60,7 +60,8 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
     try {
       const payload = {
         ...hackathon,
-        organization_id: orgId,
+         organization_id: orgId,
+         banner_image_file: hackathon.banner_image_file ?? null,
       }
 
       await createHackathonMutation.mutateAsync(payload);
@@ -159,20 +160,7 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
               className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
             />
           </div>
-
-          {/* Access Code */}
-          {/* <div className="mt-10 flex flex-col">
-            <label className="text-lg text-[#2F3036] ">Access Code (For Private Hackathons)</label>
-            <textarea
-              className={`outline-none resize-none h-52 border-2 w-full mt-3 rounded-2xl px-3 py-3 ${
-                selected === 'private' ? 'border-[#C5C6CC]' : 'border-gray-200 bg-gray-100 cursor-not-allowed'
-              }`}
-              placeholder="Create an access code"
-              name="access_code"
-              disabled={selected !== 'private'}
-            />
-          </div> */}
-
+          
           {/* Notifications */}
           <div className="mt-10 space-y-4">
             {notifications.map((notif, idx) => (
