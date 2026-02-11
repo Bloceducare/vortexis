@@ -170,7 +170,7 @@ function Project() {
         Manage Your Project
       </h1>
 
-      <section className="flex justify-between mt-10 gap-5 flex-wrap md:flex-nowrap">
+      <section className="flex justify-between mt-10 gap-5 flex-wrap-reverse md:flex-nowrap">
         <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-2 md:px-6 py-3 md:w-[64%] transition-colors">
           <div className="space-y-2">
             <h1 className="text-[#AC0000] dark:text-red-400 text-xl md:text-2xl font-semibold">
@@ -273,15 +273,22 @@ function Project() {
               </div>
             </section>
 
-            <div className="mt-5 space-y-2">
-              <p className="text-[#605DEC] dark:text-indigo-400 font-semibold text-xl">
-                {hackathonData?.title}
-              </p>
+       <div className="mt-5 space-y-2">
+  <p className="text-[#605DEC] dark:text-indigo-400 font-semibold text-xl">
+    {hackathonData?.title}
+  </p>
 
-              <p className="text-[#AC0000] dark:text-red-400">
-              <Countdown startDate={hackathonData?.submission_deadline} />
-              </p>
-            </div>
+  <p className="text-[#AC0000] dark:text-red-400 font-medium">
+    {hackathonData?.submission_deadline ? (
+      <>
+        Time left to submit: <Countdown startDate={hackathonData.submission_deadline} />
+      </>
+    ) : (
+      "Submission deadline not available"
+    )}
+  </p>
+</div>
+
           </section>
 
           <section className="bg-white dark:bg-gray-800 shadow-xs border-[#E2E8F0] dark:border-gray-700 border-2 rounded-2xl px-6 py-5 mt-10 transition-colors">
@@ -307,7 +314,7 @@ function Project() {
       </section>
 
       <div className="flex gap-4 mt-10 justify-end flex-wrap">
-        <button
+    {!project.is_submitted && (  <button
           className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition cursor-pointer ${
             submitProjectMutation.isPending
               ? "bg-gray-400 cursor-not-allowed"
@@ -317,7 +324,7 @@ function Project() {
           disabled={submitProjectMutation.isPending}
         >
           {submitProjectMutation.isPending ? "Submitting..." : "Submit Project"}
-        </button>
+        </button>)}
 
         <button
           onClick={() => setUpdate(true)}

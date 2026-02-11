@@ -58,7 +58,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
   }
 
   const isValidUrl = (url: string) => {
-    if (!url) return true // allow empty optional fields
+    if (!url) return true 
     try {
       new URL(url)
       return true

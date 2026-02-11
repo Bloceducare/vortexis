@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import useUser from "@/hooks/useUserProfile";
 import { FaGithub, FaLinkedin, FaTwitter, FaGlobe, FaPen, FaSpinner } from "react-icons/fa";
-import Link from "next/link";
 import { useMemo, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
@@ -133,13 +132,24 @@ export default function ProfileView() {
         <section className="space-y-5 md:w-[60%]">        
         <section className="flex justify-between items-end">
           <div className=" text-start">
-            <div
-              className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center rounded-full border-4 border-white shadow-lg text-white text-3xl sm:text-4xl font-bold"
-              style={{ backgroundColor: avatarColor }}
-              title={`${user.first_name ?? ""} ${user.last_name ?? ""}`}
-            >
-              {initials || "?"}
-            </div>
+           <div
+  className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center rounded-full border-4 border-white shadow-lg text-white text-3xl sm:text-4xl font-bold overflow-hidden"
+  style={{ backgroundColor: avatarColor }}
+  title={`${user.first_name ?? ""} ${user.last_name ?? ""}`}
+>
+  {user.profile?.profile_picture ? (
+    <Image
+      src={user.profile.profile_picture}
+      width={200}
+      height={200}
+      alt="Profile Picture"
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    initials || "?"
+  )}
+</div>
+
 
             <h1 className="text-2xl font-bold mt-4 mb-2 dark:text-white">{user.first_name} {user.last_name}</h1>
             <p className="text-gray-500 dark:text-gray-400">@{user.username ?? "unknown"}</p>

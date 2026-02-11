@@ -10,6 +10,7 @@ import { NotificationDropdown } from "@/components/NotificationDropdown";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useRouter } from "next/navigation";
 import { SignOutConfirmationModal } from "../signOutModal";
+import Image from "next/image";
 
 interface HeaderProps {
   toggleSidebar: () => void;
@@ -119,8 +120,19 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
               <div
                 className={`h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${avatarColor}`}
               >
-                {initials.toUpperCase()}
-              </div>
+ {user?.profile?.profile_picture ? (
+      <Image
+        src={user.profile.profile_picture}
+        alt="profile_img"
+        width={40}
+        height={40} 
+        className="object-cover w-full h-full rounded-full"
+      />
+    ) : (
+      <span className="text-white font-semibold text-sm">
+        {initials.toUpperCase()}
+      </span>
+    )}              </div>
               <div className="text-left">
                 <p className="text-sm font-semibold">
                   {user?.first_name} {user?.last_name}

@@ -138,12 +138,14 @@ function Page() {
   className="
 bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to-[#8B5CF6]
     dark:text-white
-    p-8
+    md:p-8 p-3
   "
 >
             <div className="flex justify-between items-start">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
+              <div className="md:flex-1">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 mb-4">
+
                   <Badge
                     className={`${status.color} text-white px-3 py-1 text-xs font-semibold`}
                   >
@@ -152,20 +154,28 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                <Badge className=" bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20  dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
               {data?.visibility ? "Public" : "Private"}
             </Badge>
-                </div>
-                <h1 className="text-4xl font-bold mb-3">{data?.title}</h1>
-                <div className="text-white/90 max-w-3xl">
-                  <HtmlContent html={data?.description}  />
-                </div>
-              </div>
-              <button
+                              </div>
+
+
+                  <button
                 onClick={() => setShowEditModal(true)}
-                className="flex items-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
+                className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
               >
                 <Edit size={18} />
                 <span>Edit</span>
               </button>
+                </div>
+              
+              </div>
+          
+     
             </div>
+                <div className="mt-5">
+     <h1 className="text-2xl md:text-4xl font-bold mb-3">{data?.title}</h1>
+                <div className=" ">
+                  <HtmlContent html={data?.description}  />
+                </div>
+              </div>
           </div>
         </motion.div>
 
@@ -336,7 +346,9 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
               <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
                 <Image
-                  src={data?.banner || Hacks}
+                  src={data?.banner_image || Hacks}
+                  width={200}
+                  height={200}
                   alt="hackathon"
                   className="w-full h-full object-cover"
                 />

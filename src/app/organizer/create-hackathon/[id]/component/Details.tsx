@@ -8,13 +8,13 @@ import { useHackathonStore } from "@/store/useHackathonStore";
 import { useShallow } from "zustand/shallow";
 import RuleInput from "./RuleInput";
 import dynamic from "next/dynamic";
+import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
 
 const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
   ssr: false,
 });
 
 function Details({ onNext, data }: NavigationProps) {
-  // const [preview, setPreview] = useState<string | null>(null);
 
   const hackathonSelector = useShallow((state: any) => ({
     title: state.title,
@@ -24,7 +24,8 @@ function Details({ onNext, data }: NavigationProps) {
     start_date: state.start_date,
     end_date: state.end_date,
     rules: state.rules,
-    banner_image: state.banner_image,
+   banner_image_file: state.banner_image_file, 
+
     setField: state.setField,
     setPreview: state.setPreview,
   }));
@@ -36,7 +37,8 @@ function Details({ onNext, data }: NavigationProps) {
     start_date,
     end_date,
     rules,
-    banner_image,
+    banner_image_file,
+    
     preview,
     setField,
   } = useHackathonStore(hackathonSelector);
@@ -97,20 +99,26 @@ function Details({ onNext, data }: NavigationProps) {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
 
-      reader.onloadend = () => {
-        const previewUrl = reader.result as string;
-        setField("preview", previewUrl);
-        setField("banner_image", file);
-      };
+const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file || !file.type.startsWith("image/")) return;
 
-      reader.readAsDataURL(file);
-    }
-  };
+  const previewUrl = URL.createObjectURL(file);
+  setField("preview", previewUrl);
+
+  try {
+    const imageUrl = await uploadToCloudinary(file);
+
+   
+    setField("banner_image_file", imageUrl);
+  } catch (err) {
+    console.error("Upload failed", err);
+    setField("preview", null);
+    setField("banner_image_file", null);
+  }
+};
+
 
   return (
     <>
@@ -123,6 +131,7 @@ function Details({ onNext, data }: NavigationProps) {
             value={title}
             onChange={(e) => setField("title", e.target.value)}
             name="title"
+            maxLength={80}
             className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
           />
         </div>
