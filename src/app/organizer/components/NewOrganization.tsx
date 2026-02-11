@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { X, CheckCircle, AlertCircle, Upload } from "lucide-react";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useQueryClient } from "@tanstack/react-query";
+import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
 
 interface CreateOrgProps {
   onClose: () => void;
@@ -31,7 +32,8 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
     about: existingData?.about || "",
   });
 
-  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+const [isUploading, setIsUploading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
     existingData?.logo_file || null
   );
@@ -54,79 +56,88 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    setFileError("");
 
-    if (!file) return;
+const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  setFileError("");
+  if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith("image/")) {
-      setFileError("Please upload an image file");
-      return;
-    }
+  if (!file.type.startsWith("image/")) {
+    setFileError("Please upload an image file");
+    return;
+  }
 
-    // Validate file size (2MB = 2 * 1024 * 1024 bytes)
-    const maxSize = 2 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setFileError("File size must be less than 2MB");
-      return;
-    }
+  const maxSize = 2 * 1024 * 1024;
+  if (file.size > maxSize) {
+    setFileError("File size must be less than 2MB");
+    return;
+  }
 
-    setLogoFile(file);
+  setLogoPreview(URL.createObjectURL(file));
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setLogoPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  setIsUploading(true);
+  try {
+    const uploadedUrl = await uploadToCloudinary(file);
+    setLogoUrl(uploadedUrl);
+  } catch (err) {
+    console.error("Upload failed", err);
+    setFileError("Failed to upload image");
+    setLogoPreview("");
+    setLogoUrl(null);
+  } finally {
+    setIsUploading(false);
+  }
+};
+
+const handleRemoveLogo = () => {
+  setLogoPreview("");
+  setLogoUrl(null);
+};
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!formData.name.trim()) return;
+
+  const payload = {
+    name: formData.name,
+    description: formData.description,
+    website: formData.website,
+    custom_url: formData.custom_url,
+    location: formData.location,
+    tagline: formData.tagline,
+    about: formData.about,
+    logo_file: logoUrl, // <-- send Cloudinary URL
   };
 
-  const handleRemoveLogo = () => {
-    setLogoFile(null);
-    setLogoPreview(null);
-    setFileError("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name.trim()) return;
-
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("website", formData.website);
-      formDataToSend.append("custom_url", formData.custom_url);
-      formDataToSend.append("location", formData.location);
-      formDataToSend.append("tagline", formData.tagline);
-      formDataToSend.append("about", formData.about);
-
-      if (logoFile) {
-        formDataToSend.append("logo_file", logoFile);
-      }
-
-      if (type === "new") {
-        await createOrganization.mutateAsync(formDataToSend);
-      } else if (type === "edit" && existingData?.id) {
-        await updateOrganization.mutateAsync({
-          id: existingData.id,
-          formData: formDataToSend,
-        });
-      }
-
-      queryClient.invalidateQueries({ queryKey: ["organizations"] });
-      queryClient.invalidateQueries({
-        queryKey: ["organization_byId", existingData?.id],
-      });
-
-      setStatus("success");
-    } catch (err) {
-      console.error("Error submitting organization:", err);
-      setStatus("error");
+  try {
+    if (type === "new") {
+      await createOrganization.mutateAsync(payload);
+    } else if (type === "edit" && existingData?.id) {
+      await updateOrganization.mutate({
+  id: existingData?.id,
+  payload: {
+    name: formData.name,
+    description: formData.description,
+    website: formData.website,
+    custom_url: formData.custom_url,
+    location: formData.location,
+    tagline: formData.tagline,
+    about: formData.about,
+    logo_file: logoUrl,
+  },
+});
     }
-  };
+
+    queryClient.invalidateQueries({ queryKey:["organizations"]});
+    queryClient.invalidateQueries({ queryKey:["organization_byId", existingData?.id]});
+
+    setStatus("success");
+  } catch (err) {
+    console.error("Error submitting organization:", err);
+    setStatus("error");
+  }
+};
 
   const handleClose = () => {
     setStatus("idle");
@@ -154,54 +165,60 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
         {status === "idle" && (
           <div className="space-y-5 text-start">
             {/* Logo Upload */}
-            <div className="space-y-2 flex flex-col">
-              <label className="text-[#212121] dark:text-white font-medium text-sm">
-                Organization Logo
-              </label>
-              
-              {!logoPreview ? (
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="logo-upload"
-                  />
-                  <label
-                    htmlFor="logo-upload"
-                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/50 transition-all"
-                  >
-                    <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-600 font-medium">
-                      Click to upload logo
-                    </span>
-                    <span className="text-xs text-gray-400 mt-1">
-                      PNG, JPG up to 2MB
-                    </span>
-                  </label>
-                </div>
-              ) : (
-                <div className="relative w-40 h-40 border-2 border-gray-200 rounded-xl overflow-hidden group">
-                  <img
-                    src={logoPreview}
-                    alt="Logo preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleRemoveLogo}
-                    className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                  >
-                    <X className="text-white w-8 h-8" />
-                  </button>
-                </div>
-              )}
-              
-              {fileError && (
-                <span className="text-xs text-red-500">{fileError}</span>
-              )}
-            </div>
+        <div className="space-y-2 flex flex-col">
+  <label className="text-[#212121] dark:text-white font-medium text-sm">
+    Organization Logo
+  </label>
+
+  {!logoPreview ? (
+    <div className="relative">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        id="logo-upload"
+      />
+      <label
+        htmlFor="logo-upload"
+        className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/50 transition-all"
+      >
+        <Upload className="w-10 h-10 text-gray-400 mb-2" />
+        <span className="text-sm text-gray-600 font-medium">
+          Click to upload logo
+        </span>
+        <span className="text-xs text-gray-400 mt-1">
+          PNG, JPG up to 2MB
+        </span>
+      </label>
+    </div>
+  ) : (
+    <div className="relative w-40 h-40 border-2 border-gray-200 rounded-xl overflow-hidden group">
+      <img
+        src={logoPreview}
+        alt="Logo preview"
+        className="w-full h-full object-cover"
+      />
+      <button
+        type="button"
+        onClick={handleRemoveLogo}
+        className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+      >
+        <X className="text-white w-8 h-8" />
+      </button>
+      {isUploading && (
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-semibold">
+          Uploading...
+        </div>
+      )}
+    </div>
+  )}
+
+  {fileError && (
+    <span className="text-xs text-red-500">{fileError}</span>
+  )}
+</div>
+
 
             {/* Name Field */}
             <div className="space-y-1 flex flex-col">

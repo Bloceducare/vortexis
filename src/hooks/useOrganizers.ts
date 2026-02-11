@@ -28,65 +28,93 @@ export default function useOrganizer() {
     return headers;
   };
 
-  const createOrganization = useMutation({
-    mutationFn: async (formData: FormData) => {
-      const res = await fetch(`${apiUrl}/organization/create/`, {
-        method: 'POST',
-        headers: {
-          ...getAuthHeaders(true),
-        },
-        body: formData,
-      });
+const createOrganization = useMutation({
+  mutationFn: async (payload: {
+    name: string;
+    description: string;
+    website?: string;
+    custom_url?: string;
+    location?: string;
+    tagline?: string;
+    about?: string;
+    logo_file?: string | null;
+  }) => {
+    const res = await fetch(`${apiUrl}/organization/create/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(true),
+      },
+      body: JSON.stringify(payload),
+    });
 
-      if (!res.ok) {
-        let errorMessage = 'Failed to create organization';
+    if (!res.ok) {
+      let errorMessage = "Failed to create organization";
 
-        try {
-          const errorData = await res.json();
-          errorMessage =
-            errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            errorMessage;
-        } catch (err) {
-          // Use default error message
-        }
-
-        throw new Error(errorMessage);
+      try {
+        const errorData = await res.json();
+        errorMessage =
+          errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          errorMessage;
+      } catch {
+        // fallback to default message
       }
 
-      return res.json();
-    },
-  });
+      throw new Error(errorMessage);
+    }
 
-  const updateOrganization = useMutation({
-    mutationFn: async ({ id, formData }: { id: string; formData: FormData }) => {
-      const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
-        method: 'PUT',
-        headers: {
-          ...getAuthHeaders(true),
-        },
-        body: formData,
-      });
+    return res.json();
+  },
+});
 
-      if (!res.ok) {
-        let errorMessage = 'Failed to update organization';
 
-        try {
-          const errorData = await res.json();
-          errorMessage =
-            errorData?.non_field_errors?.[0] ||
-            errorData?.message ||
-            errorMessage;
-        } catch (err) {
-          // fallback: keep default errorMessage
-        }
+ const updateOrganization = useMutation({
+  mutationFn: async ({
+    id,
+    payload,
+  }: {
+    id: string;
+    payload: {
+      name: string;
+      description: string;
+      website?: string;
+      custom_url?: string;
+      location?: string;
+      tagline?: string;
+      about?: string;
+      logo_file?: string | null;
+    };
+  }) => {
+    const res = await fetch(`${apiUrl}/organization/update/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(true),
+      },
+      body: JSON.stringify(payload),
+    });
 
-        throw new Error(errorMessage);
+    if (!res.ok) {
+      let errorMessage = "Failed to update organization";
+
+      try {
+        const errorData = await res.json();
+        errorMessage =
+          errorData?.non_field_errors?.[0] ||
+          errorData?.message ||
+          errorMessage;
+      } catch {
+        // fallback: default error message
       }
 
-      return res.json();
-    },
-  });
+      throw new Error(errorMessage);
+    }
+
+    return res.json();
+  },
+});
+
 
   const getAllOrganization = useQuery({
     queryKey: ["organizations"],
