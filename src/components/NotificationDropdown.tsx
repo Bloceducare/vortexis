@@ -116,7 +116,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-12 w-80 md:w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-125 flex flex-col">
+        <div className="fixed inset-x-0 top-16 md:absolute md:right-0 md:top-12 md:inset-x-auto w-full md:w-96 bg-white dark:bg-gray-800 rounded-none md:rounded-lg shadow-xl border-t md:border border-gray-200 dark:border-gray-700 z-50 max-h-[calc(100vh-4rem)] md:max-h-125 flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -218,9 +218,8 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 
                   const content = (
                     <div
-                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
-                        !notif.is_read ? "bg-blue-50 dark:bg-blue-900/10" : ""
-                      }`}
+                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${!notif.is_read ? "bg-blue-50 dark:bg-blue-900/10" : ""
+                        }`}
                       onClick={() => handleNotificationClick(notif.id)}
                     >
                       <div className="flex items-start gap-3">
