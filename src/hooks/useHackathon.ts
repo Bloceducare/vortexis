@@ -10,7 +10,6 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export default function useHackathon() {
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
-  const setUser = useUserStore((state) => state.setUser);
 
   const getAuthHeaders = (isFormData = false) => {
     const headers: Record<string, string> = {};
@@ -68,25 +67,21 @@ export default function useHackathon() {
 
         return res.json();
       },
-      onSuccess: async () => {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
 
-        // Refresh user profile to update roles (enable dashboard access)
-        try {
-          const userId = useUserStore.getState().user?.id;
-          if (userId) {
-            const userRes = await fetch(`${apiUrl}/auth/users/${userId}/`, {
-              headers: getAuthHeaders(),
-            });
-
-            if (userRes.ok) {
-              const userData = await userRes.json();
-              setUser(userData);
-            }
-          }
-        } catch (error) {
-          console.error("Failed to refresh user profile after registration:", error);
+        // Optimistically update user's participant flag (safe approach)
+        const currentUser = useUserStore.getState().user;
+        if (currentUser) {
+          useUserStore.getState().setUser({
+            ...currentUser,
+            is_participant: true,
+          });
         }
+
+        // Clear role access cache to trigger fresh permission check
+        const { useRoleAccessStore } = require('@/store/useRoleAccessStore');
+        useRoleAccessStore.getState().clearAccess();
       },
     });
   };

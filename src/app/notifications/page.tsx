@@ -149,27 +149,26 @@ function NotificationCard({
 
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-start gap-4 ${
-        !notification.is_read ? "border-l-4 border-blue-500" : ""
-      }`}
+      className={`bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-start gap-4 overflow-hidden ${!notification.is_read ? "border-l-4 border-blue-500" : ""
+        }`}
     >
       <div className="flex-shrink-0 mt-1">{getTypeIcon(notificationType)}</div>
       <div className="flex-grow">
         <div className="flex justify-between items-center mb-1">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 break-words max-w-[calc(100%-100px)]">
             {notification.title}
           </h3>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {formattedDate}
           </span>
         </div>
-        <div className="text-gray-700 dark:text-gray-300 text-sm mb-2">
+        <div className="text-gray-700 dark:text-gray-300 text-sm mb-2 break-words overflow-x-auto">
           <HtmlContent html={notification.message} />
         </div>
         {actionUrl && (
           <div className="mt-3">
             {actionUrl.startsWith("http://") ||
-            actionUrl.startsWith("https://") ? (
+              actionUrl.startsWith("https://") ? (
               <a
                 href={actionUrl}
                 target="_blank"
@@ -232,16 +231,16 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-6 transition-colors">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+    <div className="h-screen overflow-y-auto bg-gray-50 dark:bg-gray-900 transition-colors">
+      <div className="max-w-4xl mx-auto p-4 md:p-6 pb-24">
+        <div className="flex justify-between items-center my-16">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-2">
               Notifications
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
               Stay updated with important announcements and activities.
-              {stats && (
+              {stats && stats.unread_count !== undefined && stats.total_count !== undefined && (
                 <span className="ml-2 text-sm">
                   ({stats.unread_count} unread of {stats.total_count} total)
                 </span>
