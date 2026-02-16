@@ -12,6 +12,7 @@ interface Hackathon {
   id: string;
   title: string;
   start_date: string;
+  banner_image_file: string;
   end_date: string;
   venue: string;
   country: string;

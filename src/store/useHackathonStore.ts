@@ -14,6 +14,9 @@ interface HackathonState extends Omit<Hackathon_details, "banner_image_file"> {
 
   selectedHackathonId: string | null;
   setSelectedHackathonId: (id: string) => void;
+
+  activeHackathon: Hackathon_details | null;
+  setActiveHackathon: (hackathon: Hackathon_details) => void;
 }
 
 export const useHackathonStore = create<HackathonState>()(
@@ -40,6 +43,9 @@ export const useHackathonStore = create<HackathonState>()(
 
       // Actions
       setField: (key, value) => set((state) => ({ ...state, [key]: value })),
+
+    activeHackathon: null,
+      setActiveHackathon: (hackathon) => set({ activeHackathon: hackathon }),
 
       clearHackathon: () =>
         set({

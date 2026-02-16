@@ -10,7 +10,6 @@ import {
   FileText,
   Calendar,
   Users,
-  DollarSign,
   Clock,
   Award,
   ArrowRight,
@@ -21,11 +20,14 @@ import {
 import useTeams from "@/hooks/useTeams";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useEffect, useMemo } from "react";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 const Hackathons = () => {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
-  const router = useRouter();
+
+
+    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;
+    const router = useRouter();
 
   const { getTeam } = useTeams();
   const { data: myTeam } = getTeam(hackathon_id);

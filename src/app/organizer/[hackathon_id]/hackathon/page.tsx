@@ -21,10 +21,13 @@ import {
     ExternalLink,
 
 } from "lucide-react";
+import { useHackathonStore } from "@/store/useHackathonStore";
+
 
 function Page() {
   const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+      const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
 

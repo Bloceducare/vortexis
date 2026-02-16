@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import useTeams from "@/hooks/useTeams";
-import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import TeamIcon from "@/public/assets/icon/ant-design_team-outlined.svg";
 import Image from "next/image";
@@ -16,6 +15,7 @@ import StatusModal from "@/components/StatusModal";
 import RequestModal from "./modal/Request";
 import { Bell } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 const getRandomColor = () => {
   const colors = [
@@ -31,9 +31,9 @@ const getRandomColor = () => {
 };
 
 export default function TeamManagement() {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
-  const router = useRouter();
+    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;  
+    const router = useRouter();
   const [pages, setPages] = useState({
     join: false,
     create: false,

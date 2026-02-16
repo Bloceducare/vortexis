@@ -17,14 +17,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { string } from "zod";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 
 
 export default function JoinTeamPage() {
-    const params = useParams();
-    const hackathon_id = params?.hackathon_id as string;
-  const { getAvailableTeams, joinTeamMutation } = useTeams();
+const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;  
+      const { getAvailableTeams, joinTeamMutation } = useTeams();
 
   const { data, isLoading } = getAvailableTeams(hackathon_id);
   const { mutateAsync: joinTeam } = joinTeamMutation();

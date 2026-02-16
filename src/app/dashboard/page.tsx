@@ -9,10 +9,12 @@ import { useUserStore } from "@/store/useUserStore";
 import { useRouter } from "next/navigation";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 
+
 const Page = () => {
   const user = useUserStore((state) => state.user);
   const router = useRouter();
   const { hackathons } = useUserHackathonsStore();
+  
 
   // --- States ---
   const [expanded, setExpanded] = useState(false);
@@ -42,11 +44,7 @@ const Page = () => {
   const deadlines = hackathons
     ?.map((hackathon: any) => ({
       title: "Submission Deadline",
-      subtitle: hackathon.title,
-      daysLeft: calculateDaysLeft(hackathon.submission_deadline),
-      date: new Date(hackathon.submission_deadline).toLocaleDateString(),
-      rawDate: hackathon.submission_deadline,
-      type: "green" as const,
+      
     }))
     .filter((d: any) => new Date(d.rawDate) >= new Date())
     .sort((a: any, b: any) => new Date(a.rawDate).getTime() - new Date(b.rawDate).getTime());
@@ -73,6 +71,7 @@ const Page = () => {
         status,
         rawDate: hackathon.end_date,
         venue: hackathon.venue,
+        submission_deadline: hackathon.submission_deadline
       };
     });
 
@@ -180,7 +179,7 @@ const Page = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {currentHackathons.length > 0 ? (
               currentHackathons.map((hackathon: any) => (
-                <HackathonCard key={hackathon.id} {...hackathon} />
+                <HackathonCard key={hackathon.id} hackathon={hackathon} />
               ))
             ) : (
               <div className="col-span-full py-12 text-center border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl">

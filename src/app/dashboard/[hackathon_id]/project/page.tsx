@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import useProjects from "@/hooks/useProject";
 import CreateProject from "./components/CreateProject";
 import {
@@ -19,12 +18,13 @@ import useHackathon from "@/hooks/useHackathon";
 import { useTeamStore } from "@/store/useTeamStore";
 import Countdown from "@/components/ui/Countdown";
 import StatusModal from "@/components/StatusModal";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 
 function Project() {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
-  const { getProject, deleteProjectMutation, submitProjectMutation } =
+const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;  
+      const { getProject, deleteProjectMutation, submitProjectMutation } =
     useProjects();
   const [update, setUpdate] = useState(false);
 
