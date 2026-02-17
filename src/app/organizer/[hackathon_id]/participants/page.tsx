@@ -2,8 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { getCountries, Country } from "@/app/api/country/getCountries";
-import { useParams, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
 import {
   ChevronDown,
@@ -16,6 +15,7 @@ import {
   Filter,
 } from "lucide-react";
 import TableSkeleton from "@/components/TableSkeleton";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 interface Member {
   id: number;
@@ -58,12 +58,11 @@ function Participants() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [expandedTeams, setExpandedTeams] = useState<Set<number>>(new Set());
 
   const { useParticipants } = useOrganizer();
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+       const hackathon_id = activeHackathon?.id as string;
 
   const { data, isLoading, isError } = useParticipants(hackathon_id);
 

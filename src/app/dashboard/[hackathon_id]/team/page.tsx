@@ -16,6 +16,8 @@ import RequestModal from "./modal/Request";
 import { Bell } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
+import { User } from "@/app/api/utils/interface";
+import { slugify } from "@/lib/utils";
 
 const getRandomColor = () => {
   const colors = [
@@ -32,6 +34,8 @@ const getRandomColor = () => {
 
 export default function TeamManagement() {
     const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+   const setclickedUser = useUserStore((state) => state.setclickedUser)
+
     const hackathon_id = activeHackathon?.id as string;  
     const router = useRouter();
   const [pages, setPages] = useState({
@@ -64,9 +68,10 @@ const queryClient = useQueryClient();
   const hackathonData = useUserHackathonsStore((state) =>
     state.hackathons.find((h) => h.id === Number(hackathon_id))
   );
-
+  const slugged = slugify(activeHackathon?.title ?? "")
   const toggleJoinTeamPage = () => {
-    router.push(`/dashboard/${hackathon_id}/team/join`);
+  
+    router.push(`/dashboard/${slugged}/team/join`);
   };
 
   const leaveTeamMutation = leaveTeam();
@@ -89,11 +94,11 @@ const queryClient = useQueryClient();
   };
 
   const toggleCreateTeam = () => {
-    router.push(`/dashboard/${hackathon_id}/team/create`);
+    router.push(`/dashboard/${slugged}/team/create`);
   };
 
   const goToProject = () => {
-    router.push(`/dashboard/${hackathon_id}/project`);
+    router.push(`/dashboard/${slugged}/project`);
   };
 
   const { data, error: myTeamError, isLoading } = getTeam(hackathon_id);
@@ -193,6 +198,12 @@ const handleReject = async (requestId: number, teamId: number, userId: number) =
 
 const requestCount = filteredRequests.length;
 
+ const viewProfiles = (user: User) => {
+      setclickedUser(user)
+      const slug = slugify(user.first_name)
+      router.push(`/profile/${slug}`)
+    }
+
 
   return (
     <section className="min-h-screen bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 transition-colors">
@@ -237,7 +248,7 @@ const requestCount = filteredRequests.length;
                       <div
                         key={m.id}
                         className="relative group cursor-pointer w-[48%]"
-                        onClick={() => router.push(`/profile/${m.id}`)}
+                        onClick={() => viewProfiles(m)}
                       >
                         <div className="flex gap-2 border-2 border-[#605DEC] rounded-lg px-2 md:px-4 py-2 items-center ">
                           <div
@@ -264,7 +275,7 @@ const requestCount = filteredRequests.length;
 
                           <button
                             className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs font-medium mt-1 cursor-pointer"
-                            onClick={() => router.push(`/profile/${m.id}`)}
+                            onClick={() => viewProfiles(m)}
                           >
                             View Profile
                           </button>
