@@ -4,6 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Calendar, MapPin, Trophy, Users, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useHackathonStore } from "@/store/useHackathonStore";
+import { slugify } from "@/lib/utils";
 
 interface Hackathon {
   id: string;
@@ -13,6 +15,7 @@ interface Hackathon {
   venue: string;
   country: string;
   banner_image?: string;
+  banner_image_file: string
   grand_prize?: number;
   participants_count?: number;
 }
@@ -29,6 +32,7 @@ interface HackathonCardProps {
 export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
   ({ hackathon, index, onClick, onRegister, isRegistering, registered }) => {
     const router = useRouter();
+    const { setActiveHackathon } = useHackathonStore();
 
     const now = new Date();
     const start = new Date(hackathon.start_date);
@@ -48,18 +52,27 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
       ? { text: "Active", color: "bg-green-500" }
       : { text: "Upcoming", color: "bg-blue-500" };
 
-    /** Handle async registration + redirect */
     const handleRegister = async (e: React.MouseEvent) => {
       e.stopPropagation();
-      await onRegister(hackathon.id);
-      router.push(`/dashboard/${hackathon.id}/hackathon`);
+         onRegister(hackathon.id);
+       setActiveHackathon(hackathon);
+         const slug = slugify(hackathon.title);
+      router.push(`/dashboard/${slug}/hackathon`);
     };
 
-    /** View dashboard for already registered hackathon */
+  
     const handleViewDashboard = (e: React.MouseEvent) => {
       e.stopPropagation();
-      router.push(`/dashboard/${hackathon.id}/hackathon`);
+        setActiveHackathon(hackathon);
+         const slug = slugify(hackathon.title);
+      router.push(`/dashboard/${slug}/hackathon`);
     };
+
+    const handleNavigation = (hackathon: any) => {
+  setActiveHackathon(hackathon);
+ const slug = slugify(hackathon.title);
+  router.push(`/hackathon/${slug}`);
+};
 
     return (
       <motion.div
@@ -71,10 +84,9 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
         whileHover={{ y: -8 }}
         className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700"
       >
-        {/* Image */}
         <div
           className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 cursor-pointer"
-          onClick={() => onClick(hackathon.id)}
+          onClick={() => handleNavigation(hackathon)}
         >
           {hackathon.banner_image ? (
             <motion.img

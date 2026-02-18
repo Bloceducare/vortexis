@@ -6,6 +6,10 @@ interface UserState {
   user: User | null;
   setUser: (user: User) => void;
   clearUser: () => void;
+
+
+  clickedUser: User | null;
+   setclickedUser: (user: User) => void;
 }
 
 export const useUserStore = create<UserState>()(
@@ -18,7 +22,12 @@ export const useUserStore = create<UserState>()(
         // Clear role access cache when user is cleared
         const { useRoleAccessStore } = require('@/store/useRoleAccessStore');
         useRoleAccessStore.getState().clearAccess();
+
+
+       
       },
+        clickedUser: null,
+      setclickedUser: (user) => set({ clickedUser: user }),
     }),
     {
       name: 'user-storage',

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import useHackathon from "@/hooks/useHackathon";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import HtmlContent from "@/components/ui/HtMLContent";
 import {
   MapPin,
@@ -21,13 +21,12 @@ import {
 import StatusModal from "@/components/StatusModal";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useQueryClient } from "@tanstack/react-query";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 function Hack() {
-  const { id } = useParams();
   const router = useRouter();
   const queryClient = useQueryClient()
   const { getHackathonById, registerUserForHackathon } = useHackathon();
-  const { data, isLoading, error } = getHackathonById(id as string);
   const [countdown, setCountdown] = useState("");
   const registerMutation = registerUserForHackathon();
   const [modal, setModal] = useState<{
@@ -40,11 +39,17 @@ function Hack() {
     message: "",
   });
 
+  const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+  const hackathonId = activeHackathon?.id;
+
+  const { data, isLoading, error } = getHackathonById(hackathonId as string);
+
+
   const { hackathons, addHackathon } = useUserHackathonsStore();
 
 
   const [isRegisteredState, setIsRegisteredState] = useState(
-  hackathons.some((h) => h?.id === Number(id))
+  hackathons.some((h) => h?.id === Number(hackathonId))
 );
 
 
@@ -94,11 +99,11 @@ function Hack() {
 
   const onRegister = () => {
   if (isRegisteredState) {
-    router.push(`/dashboard/${id}/hackathon`);
+    router.push(`/dashboard/${hackathonId}/hackathon`);
     return;
   }
 
-  registerMutation.mutate(id as string, {
+  registerMutation.mutate(hackathonId as string, {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
       setIsRegisteredState(true); 

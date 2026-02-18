@@ -10,7 +10,6 @@ import {
   FileText,
   Calendar,
   Users,
-  DollarSign,
   Clock,
   Award,
   ArrowRight,
@@ -21,11 +20,19 @@ import {
 import useTeams from "@/hooks/useTeams";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useEffect, useMemo } from "react";
+import { useHackathonStore } from "@/store/useHackathonStore";
+import { User } from "@/app/api/utils/interface";
+import { useUserStore } from "@/store/useUserStore";
+import { slugify } from "@/lib/utils";
 
 const Hackathons = () => {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
-  const router = useRouter();
+
+
+    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+       const setclickedUser = useUserStore((state) => state.setclickedUser)
+    
+    const hackathon_id = activeHackathon?.id as string;
+    const router = useRouter();
 
   const { getTeam } = useTeams();
   const { data: myTeam } = getTeam(hackathon_id);
@@ -143,6 +150,12 @@ const Hackathons = () => {
   }
 
   const daysLeft = calculateDaysLeft();
+
+    const viewProfiles = (user: User) => {
+      setclickedUser(user)
+      const slug = slugify(user.first_name)
+      router.push(`/profile/${slug}`)
+    }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 py-8 px-4 sm:px-6 lg:px-8">
@@ -333,9 +346,7 @@ const Hackathons = () => {
                               key={m.id}
                               whileHover={{ x: 4 }}
                               className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                              onClick={() =>
-                                router.push(`/profile/${m.id}`)
-                              }
+                              onClick={() => viewProfiles(m)}
                             >
                               <div
                                 className={`w-10 h-10 flex items-center justify-center rounded-full text-white font-bold text-sm ${memberColors[m.id]}`}

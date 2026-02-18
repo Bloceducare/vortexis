@@ -8,12 +8,15 @@ import LinkImg from "@/public/assets/icon/link.svg";
 import LocationIcon from "@/public/assets/icon/location.svg";
 import { Badge } from "@/components/ui/badge";
 import useUser from "@/hooks/useUserProfile";
+import { useUserStore } from "@/store/useUserStore";
 
 const tabs = ["Hackathons", "Activity", "Badges"];
 
 function SingleProfile() {
   const params = useParams();
-  const userId = params?.id as string;
+         const clickedUser = useUserStore((state) => state.clickedUser)
+
+  const userId = String(clickedUser?.id);
 
   const { getPublicUser } = useUser();
   const { data, error, isLoading, isError, refetch } = getPublicUser(userId);

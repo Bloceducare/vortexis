@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import useProjects from "@/hooks/useProject";
 import CreateProject from "./components/CreateProject";
 import {
@@ -19,12 +18,13 @@ import useHackathon from "@/hooks/useHackathon";
 import { useTeamStore } from "@/store/useTeamStore";
 import Countdown from "@/components/ui/Countdown";
 import StatusModal from "@/components/StatusModal";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 
 function Project() {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
-  const { getProject, deleteProjectMutation, submitProjectMutation } =
+const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;  
+      const { getProject, deleteProjectMutation, submitProjectMutation } =
     useProjects();
   const [update, setUpdate] = useState(false);
 
@@ -326,12 +326,15 @@ function Project() {
           {submitProjectMutation.isPending ? "Submitting..." : "Submit Project"}
         </button>)}
 
-        <button
-          onClick={() => setUpdate(true)}
-          className="flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition cursor-pointer"
-        >
-          <Pencil size={18} /> Update
-        </button>
+      {new Date(hackathonData?.submission_deadline) > new Date() && (
+  <button
+    onClick={() => setUpdate(true)}
+    className="flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 text-white font-medium shadow hover:bg-blue-700 transition cursor-pointer"
+  >
+    <Pencil size={18} /> Update
+  </button>
+)}
+
         <button
           onClick={() => setShowDeleteModal(true)}
           className="flex items-center gap-2 px-5 py-2 rounded-lg bg-red-600 text-white font-medium shadow hover:bg-red-700 transition cursor-pointer"

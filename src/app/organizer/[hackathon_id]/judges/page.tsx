@@ -6,6 +6,7 @@ import JudgesList from "./component/JudgesList";
 import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
 import { motion } from "framer-motion";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 const tab = ["Judges List", "Invite Judges"];
 
@@ -33,8 +34,8 @@ function Judges() {
 
   const { getHackathonJudges } = useOrganizer();
 
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+       const hackathon_id = activeHackathon?.id as string;
 
   const { data, isLoading, isFetching, isError, refetch } =
     getHackathonJudges(hackathon_id);

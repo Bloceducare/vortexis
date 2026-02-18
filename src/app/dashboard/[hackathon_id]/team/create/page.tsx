@@ -3,14 +3,15 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import useTeams from "@/hooks/useTeams";
-import { useParams, useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import StatusModal from "@/components/StatusModal";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 export default function CreateTeam() {
-  const params = useParams();
   const router = useRouter();
-  const hackathon_id = params?.hackathon_id as string;
-  const { createTeamMutation } = useTeams();
+const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathon_id = activeHackathon?.id as string;  
+      const { createTeamMutation } = useTeams();
 
   const [formData, setFormData] = useState({
     name: "",

@@ -23,6 +23,8 @@ import useOrganizer from "@/hooks/useOrganizers";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { SignOutConfirmationModal } from "@/components/signOutModal";
 import { useAuthStore } from "@/store/useAuthStore";
+import { slugify } from "@/lib/utils";
+
 
 interface OrganizerLayoutProps {
   children: React.ReactNode;
@@ -65,26 +67,34 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   }, [data, setHackathons]);
 
   const hackathons = useHackathonStore((state) => state.hackathons);
+  const { setActiveHackathon } = useHackathonStore();
 
-  const selectedHackathon = useMemo(() => {
-    const segments = pathname.split("/");
-    const index = segments.indexOf("organizer");
-    return segments[index + 1] || "";
-  }, [pathname]);
+const selectedHackathonSlug = useMemo(() => {
+  const segments = pathname.split("/");
+  const index = segments.indexOf("organizer");
+  return segments[index + 1] || "";
+}, [pathname]);
 
-  const selectedHackathonName =
-    hackathons?.find((h) => String(h.id) === String(selectedHackathon))
-      ?.title || "Select Hackathon";
+ const selectedHackathonName = useMemo(() => {
+  if (!hackathons) return "Select Hackathon";
+  
+  const match = hackathons.find((h) => slugify(h.title ?? "") === selectedHackathonSlug);
+  
+  return match ? match.title : "Select Hackathon";
+}, [hackathons, selectedHackathonSlug]);
 
-  const handleSelect = (id: string | undefined) => {
-    if (!id) return;
+  const handleSelect = (h: any) => {
+    if (!h) return;
     const segments = pathname.split("/");
     const index = segments.indexOf("organizer");
     const currentSubpath =
       segments.length > index + 2 ? segments[index + 2] : "";
+      setActiveHackathon(h);
+               const slug = slugify(h.title);
+
     const newPath = currentSubpath
-      ? `/organizer/${id}/${currentSubpath}`
-      : `/organizer/${id}/hackathon`;
+      ? `/organizer/${slug}/${currentSubpath}`
+      : `/organizer/${slug}/hackathon`;
 
     if (newPath !== pathname) {
       router.push(newPath);
@@ -200,7 +210,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
             </label>
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="w-full p-2 border border-gray-200 dark:border-gray-700 rounded flex justify-between items-center text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 transition-colors"
+              className="w-full p-2 border border-gray-200 cursor-pointer dark:border-gray-700 rounded flex justify-between items-center text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 transition-colors"
             >
               {selectedHackathonName}
               <ChevronsUpDown className="w-4 h-4 text-gray-600 dark:text-gray-400 ml-2" />
@@ -224,7 +234,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
         hackathons.map((h) => (
           <li
             key={h.id}
-            onClick={() => handleSelect(h.id)}
+            onClick={() => handleSelect(h)}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 
                        cursor-pointer text-sm 
                        text-gray-700 dark:text-gray-300 
@@ -253,10 +263,10 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
           </div>
 
           {/* Nav links */}
-          {selectedHackathon && (
+          {selectedHackathonSlug && (
             <div>
               {navLinks.map((link, index) => {
-                const fullPath = `/organizer/${selectedHackathon}/${link.path}`;
+                const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;
                 const isActive =
                   pathname === fullPath || pathname?.includes(link.path);
 

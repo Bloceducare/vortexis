@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Hacks from "@/public/assets/hackathon.svg";
 import { Badge } from "@/components/ui/badge";
-import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
 import HtmlContent from "@/components/ui/HtMLContent";
 import { useRouter } from "next/navigation";
@@ -18,13 +17,18 @@ import {
   Users,
   FileText,
   Clock,
-    ExternalLink,
-
+  ExternalLink,
 } from "lucide-react";
+import { useHackathonStore } from "@/store/useHackathonStore";
+import { slugify } from "@/lib/utils";
+import { useUserStore } from "@/store/useUserStore";
+import { User } from '@/app/api/utils/interface';
+
 
 function Page() {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+   const setclickedUser = useUserStore((state) => state.setclickedUser)
+      const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -58,13 +62,14 @@ function Page() {
   };
 
   const status = getHackathonStatus(data?.start_date, data?.end_date);
+  const title = slugify(activeHackathon?.title ?? "")
 
   const ActiveHackathons = [
     {
       id: 1,
       number: data?.submissions_count,
       icon: FileText,
-      link: `/organizer/${hackathon_id}/submission`,
+      link: `/organizer/${title}/submission`,
       type: "Submissions",
       color: "bg-purple-50 text-purple-600",
     },
@@ -72,7 +77,7 @@ function Page() {
       id: 2,
       number: data?.participants_count,
       icon: Users,
-      link: `/organizer/${hackathon_id}/participants`,
+      link: `/organizer/${title}/participants`,
       type: "Participants",
       color: "bg-blue-50 text-blue-600",
     },
@@ -80,7 +85,7 @@ function Page() {
       id: 3,
       number: data?.judges?.length || 0,
       icon: Users,
-      link: `/organizer/${hackathon_id}/judges`,
+      link: `/organizer/${title}/judges`,
       type: "Judges",
       color: "bg-green-50 text-green-600",
     },
@@ -96,8 +101,10 @@ function Page() {
     });
   };
 
-  const viewProfiles = (id: any) => {
-    router.push(`/profile/${id}`)
+  const viewProfiles = (user: User) => {
+    setclickedUser(user)
+    const slug = slugify(user.first_name)
+    router.push(`/profile/${slug}`)
   }
 
   if (isLoading) {
@@ -380,7 +387,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                               key={index}
                               whileHover={{ x: 4 }}
                               className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl  transition-colors cursor-pointer"
-                              onClick={() => viewProfiles(judge.id)}
+                              onClick={() => viewProfiles(judge)}
                             >
                       <div
                         key={index}

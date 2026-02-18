@@ -2,11 +2,11 @@
 import React from "react";
 import All from "./component/All";
 import useOrganizer from "@/hooks/useOrganizers";
-import { useParams } from "next/navigation";
+import { useHackathonStore } from "@/store/useHackathonStore";
 
 function SubmitProject() {
-  const params = useParams();
-  const hackathon_id = params?.hackathon_id as string;
+   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+      const hackathon_id = activeHackathon?.id as string;
 
   const { useSubmissionById } = useOrganizer();
   const { data, isLoading, isError, refetch, isFetching } =

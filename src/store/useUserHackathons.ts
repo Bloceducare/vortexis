@@ -16,7 +16,6 @@ export interface Hackathon {
   end_date?: string;
 }
 
-// Zustand store interface
 interface UserHackathons {
   hackathons: Hackathon[];
   addHackathon: (hackathon: Hackathon) => void;
@@ -25,7 +24,6 @@ interface UserHackathons {
   clearHackathons: () => void;
 }
 
-// Store
 export const useUserHackathonsStore = create<UserHackathons>()(
   persist(
     (set) => ({
