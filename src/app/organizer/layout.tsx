@@ -69,15 +69,19 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const hackathons = useHackathonStore((state) => state.hackathons);
   const { setActiveHackathon } = useHackathonStore();
 
-  const selectedHackathon = useMemo(() => {
-    const segments = pathname.split("/");
-    const index = segments.indexOf("organizer");
-    return segments[index + 1] || "";
-  }, [pathname]);
+const selectedHackathonSlug = useMemo(() => {
+  const segments = pathname.split("/");
+  const index = segments.indexOf("organizer");
+  return segments[index + 1] || "";
+}, [pathname]);
 
-  const selectedHackathonName =
-    hackathons?.find((h) => String(h.id) === String(selectedHackathon))
-      ?.title || "Select Hackathon";
+ const selectedHackathonName = useMemo(() => {
+  if (!hackathons) return "Select Hackathon";
+  
+  const match = hackathons.find((h) => slugify(h.title ?? "") === selectedHackathonSlug);
+  
+  return match ? match.title : "Select Hackathon";
+}, [hackathons, selectedHackathonSlug]);
 
   const handleSelect = (h: any) => {
     if (!h) return;
@@ -259,10 +263,10 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
           </div>
 
           {/* Nav links */}
-          {selectedHackathon && (
+          {selectedHackathonSlug && (
             <div>
               {navLinks.map((link, index) => {
-                const fullPath = `/organizer/${selectedHackathon}/${link.path}`;
+                const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;
                 const isActive =
                   pathname === fullPath || pathname?.includes(link.path);
 

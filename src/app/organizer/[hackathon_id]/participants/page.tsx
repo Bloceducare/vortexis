@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useHackathonStore } from "@/store/useHackathonStore";
+import { useUserStore } from "@/store/useUserStore";
+import { slugify } from "@/lib/utils";
+import { User } from "@/app/api/utils/interface";
 
 interface Member {
   id: number;
@@ -62,6 +65,7 @@ function Participants() {
 
   const { useParticipants } = useOrganizer();
     const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const setclickedUser = useUserStore((state) => state.setclickedUser )
        const hackathon_id = activeHackathon?.id as string;
 
   const { data, isLoading, isError } = useParticipants(hackathon_id);
@@ -108,6 +112,11 @@ function Participants() {
       return newSet;
     });
   };
+      const viewProfiles = (user: any) => {
+          setclickedUser(user)
+          const slug = slugify(user.first_name)
+          router.push(`/profile/${slug}`)
+        }
 
   const handlePageChange = (page: number) => setCurrentPage(page);
   const handleNext = () =>
@@ -120,6 +129,8 @@ function Participants() {
     return (
       <p className="p-10 text-lg text-red-500">Failed to load participants.</p>
     );
+
+ 
 
   return (
     <section className="bg-gradient-to-br dark:bg-gray-800  from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 min-h-screen p-6">
@@ -297,7 +308,7 @@ function Participants() {
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-sm  opacity-60">Team Lead:</span>
                     <div
-                      onClick={() => router.push(`/profile/${team.creator.id}`)}
+                      onClick={() => viewProfiles(team.creator)}
                       className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors cursor-pointer"
                     >
                       <div
@@ -333,9 +344,7 @@ function Participants() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: idx * 0.05 }}
-                              onClick={() =>
-                                router.push(`/profile/${member.id}`)
-                              }
+                              onClick={() => viewProfiles(member)}
                               className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
                             >
                               <div
