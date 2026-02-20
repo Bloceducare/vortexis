@@ -41,12 +41,47 @@ export async function handleGithubCallback() {
     const setToken = useAuthStore.getState().setToken;
     setToken(data.access_token, threeDaysInSeconds);
 
+    // Store access token in localStorage
+    localStorage.setItem("access_token", data.access_token);
+
+    // Fetch and store user profile (same as Google OAuth flow)
+    try {
+      const { decodeJWTUserId } = await import("@/lib/communications");
+      const userId = decodeJWTUserId(data.access_token);
+
+      if (!userId) {
+        throw new Error("Could not decode user ID from token");
+      }
+
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+      const userRes = await fetch(`${baseUrl}/auth/users/${userId}/`, {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!userRes.ok) {
+        throw new Error(`Failed to fetch user data: ${userRes.status}`);
+      }
+
+      const userData = await userRes.json();
+      const actualUserData = userData.user || userData;
+
+      const { useUserStore } = await import("@/store/useUserStore");
+      const setUser = useUserStore.getState().setUser;
+      setUser(actualUserData);
+    } catch (profileError) {
+      // Don't throw - allow login to proceed even if profile fetch fails
+      console.error("Failed to fetch/store GitHub user profile:", profileError);
+    }
+
     return true;
   } catch (error) {
-    // console.error("GitHub callback error:", error);
     throw error;
   }
 }
+
 
 export async function signInGoogleAction() {
   try {
