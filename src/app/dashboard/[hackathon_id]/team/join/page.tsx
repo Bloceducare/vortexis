@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useHackathonStore } from "@/store/useHackathonStore";
+import { slugify } from "@/lib/utils";
 
 
 
@@ -38,7 +39,8 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
     setJoiningTeamId(teamId);
     try {
       await joinTeam({ teamId, hackathon_id, teamName });
-      window.location.href = `/dashboard/${hackathon_id}/team`;
+      const slug = slugify(teamName)
+      window.location.href = `/dashboard/${teamName}/team`;
     } catch (err: any) {
       console.error("Error joining team:", err);
       setError(err.message || "Something went wrong. Please try again.");
@@ -235,7 +237,7 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
                   <button
                     onClick={() => handleJoinTeam({ teamId: team.id.toString(), teamName: team.name })}
                     disabled={!!joiningTeamId}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full py-3 px-4 rounded-xl font-semibold cursor-pointer transition-all flex items-center justify-center gap-2 cursor-pointer ${
                       joiningTeamId === team.id.toString()
                         ? "bg-blue-400 cursor-wait"
                         : "bg-blue-600 hover:bg-blue-700 text-white"

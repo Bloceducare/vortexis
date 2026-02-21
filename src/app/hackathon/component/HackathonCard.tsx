@@ -112,7 +112,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
         {/* Content */}
         <div className="p-5 space-y-4">
           <div
-            onClick={() => onClick(hackathon.id)}
+          onClick={() => handleNavigation(hackathon)}
             className="cursor-pointer"
           >
             <h3 className="text-xl font-bold hover:text-primary transition-colors line-clamp-2">
