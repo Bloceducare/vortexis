@@ -157,6 +157,9 @@ const Hackathons = () => {
       router.push(`/profile/${slug}`)
     }
 
+          const slug = slugify(data?.title)
+
+
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-purple-900/10 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
@@ -399,7 +402,7 @@ const Hackathons = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() =>
-                      router.push(`/dashboard/${hackathon_id}/team/create`)
+                      router.push(`/dashboard/${slug}/team/create`)
                     }
                     className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25 cursor-pointer"
                   >
@@ -411,7 +414,7 @@ const Hackathons = () => {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() =>
-                      router.push(`/dashboard/${hackathon_id}/team/join`)
+                      router.push(`/dashboard/${slug}/team/join`)
                     }
                     className="w-full flex items-center justify-center gap-2 border-2 border-primary text-primary py-3 rounded-xl font-semibold hover:bg-primary/5 transition-all cursor-pointer"
                   >

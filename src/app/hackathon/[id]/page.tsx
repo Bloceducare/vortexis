@@ -22,6 +22,7 @@ import StatusModal from "@/components/StatusModal";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
+import { slugify } from "@/lib/utils";
 
 function Hack() {
   const router = useRouter();
@@ -99,7 +100,8 @@ function Hack() {
 
   const onRegister = () => {
   if (isRegisteredState) {
-    router.push(`/dashboard/${hackathonId}/hackathon`);
+    const slug = slugify(data?.title)
+    router.push(`/dashboard/${slug}/hackathon`);
     return;
   }
 

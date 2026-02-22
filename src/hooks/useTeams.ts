@@ -98,6 +98,9 @@ export default function useTeams() {
         return res.json();
       },
     });
+
+
+
    
 
 const getAvailableTeams = (hackathon_id: string) => {
@@ -142,7 +145,7 @@ const joinTeamMutation = () => {
   });
 };
 
-const getTeamJoinRequests = () => {
+const getmyJoinRequests = () => {
   return useQuery({
     queryKey: ['my-join-requests'],
     queryFn: async () => {
@@ -337,6 +340,6 @@ const getTeamJoinRequests = () => {
         getOrganizerTeamJoinRequest,
         approveTeamJoinRequest,
         rejectTeamJoinRequest,
-        getTeamJoinRequests
+        getmyJoinRequests
     };
 }
