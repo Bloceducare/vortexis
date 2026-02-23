@@ -42,8 +42,10 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
   });
 
   const hackathon = useUserHackathonsStore((state) =>
-    state.hackathons.find((h) => h.id === Number(hackathon_id))
-  );
+      state.hackathons.find(
+        (h) => h && h.id === Number(hackathon_id)
+      )
+    );
 
   const [errors, setErrors] = useState<
     Partial<Record<keyof userProject, string>>
