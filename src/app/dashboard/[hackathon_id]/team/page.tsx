@@ -179,9 +179,11 @@ export default function TeamManagement() {
 
   const { getTeam, leaveTeam, inviteMembers, getOrganizerTeamJoinRequest, approveTeamJoinRequest, rejectTeamJoinRequest, getmyJoinRequests } = useTeams();
 
-  const hackathonData = useUserHackathonsStore((state) =>
-    state.hackathons.find((h) => h.id === Number(hackathon_id))
-  );
+    const hackathonData = useUserHackathonsStore((state) =>
+      state.hackathons.find(
+        (h) => h && h.id === Number(hackathon_id)
+      )
+    );
   const slugged = slugify(activeHackathon?.title ?? "");
 
   const leaveTeamMutation   = leaveTeam();

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useAuthStore } from "@/store/useAuthStore";
+import Image from "next/image";
+import Plane from "@/public/assets/PlaneCircle.svg";
 
 interface HeroSectionProps {
   onCreateOrg: () => void;
@@ -135,7 +137,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
               </h2>
               <button
                 onClick={() => setShowOrgModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
               </button>
@@ -156,8 +158,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
                     Failed to load organizations
                   </p>
                 </div>
-              ) : !data || data.length === 0 ? (
+              ) : !data || data.results.length === 0 ? (
                 <div className="text-center py-12">
+
+                    <motion.div
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        className="mb-6"
+      >
+        <Image
+          src={Plane}
+          alt="Rocket illustration"
+          width={120}
+          height={120}
+          className="mx-auto"
+        />
+      </motion.div>
+
+
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     You don't have any organizations yet
                   </p>
@@ -166,9 +184,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
                       setShowOrgModal(false);
                       onCreateOrg();
                     }}
-                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+                    className="px-6 py-2  cursor-pointer text-white rounded-lg bg-indigo-600 hover:bg-indigo-700 transition-colors"
                   >
-                    Create Organization
+                  +  Create Organization
                   </button>
                 </div>
               ) : (

@@ -40,7 +40,7 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
     try {
       await joinTeam({ teamId, hackathon_id, teamName });
       const slug = slugify(teamName)
-      window.location.href = `/dashboard/${teamName}/team`;
+      window.location.href = `/dashboard/${slug}/team`;
     } catch (err: any) {
       console.error("Error joining team:", err);
       setError(err.message || "Something went wrong. Please try again.");
@@ -52,6 +52,9 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
   const filteredTeams = data?.filter((team: UserTeam) =>
     team.name.toLowerCase().includes(search.toLowerCase())
   );
+const slug = activeHackathon?.title
+  ? slugify(activeHackathon.title)
+  : "";
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -60,7 +63,7 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
-              href={`/dashboard/${hackathon_id}`}
+              href={`/dashboard/${slug}/team`}
               className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft size={20} />

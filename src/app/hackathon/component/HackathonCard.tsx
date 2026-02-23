@@ -82,7 +82,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3, delay: index * 0.05 }}
         whileHover={{ y: -8 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700"
+        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 cursor-pointer"
       >
         <div
           className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 cursor-pointer"
@@ -184,7 +184,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
       whileTap={{ scale: 0.98 }}
       onClick={handleRegister}
       disabled={isRegistering}
-      className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold disabled:opacity-50 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none"
+      className="w-full bg-indigo-600 text-white cursor-pointer py-3 rounded-xl font-bold disabled:opacity-50 hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 dark:shadow-none"
     >
       {isRegistering ? (
         <span className="flex items-center justify-center gap-2">
