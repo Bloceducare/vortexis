@@ -92,7 +92,6 @@ const handleRegister = (hackathon_id: string) => {
     },
   });
 };
-  // Pagination
   const totalPages = Math.ceil(filteredHackathons.length / itemsPerPage);
   const paginatedHackathons = filteredHackathons.slice(
     (currentPage - 1) * itemsPerPage,
