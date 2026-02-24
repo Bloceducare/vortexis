@@ -138,7 +138,7 @@ function Hackathons() {
                 <div className="p-4">
                   <h2 className="font-semibold text-lg dark:text-white">{hackathon?.title}</h2>
                   <div className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                    <HtmlContent html={hackathon?.description || ""} />
+                    <HtmlContent html={hackathon?.description?.slice(0, 250) || ""} />
                   </div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                     📍 {hackathon.venue} • 👥 {hackathon?.participants_count} participants

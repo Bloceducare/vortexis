@@ -129,8 +129,8 @@ export default function ProfileView() {
       {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 
       <section className="flex gap-20 max-w-7xl mx-auto flex-wrap md:flex-nowrap">
-        <section className="space-y-5 md:w-[60%]">        
-        <section className="flex justify-between items-end">
+        <section className="space-y-5 w-full md:w-[60%]">        
+        <section className="flex justify-between items-center md:items-end">
           <div className=" text-start">
            <div
   className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center rounded-full border-4 border-white shadow-lg text-white text-3xl sm:text-4xl font-bold overflow-hidden"
@@ -157,14 +157,14 @@ export default function ProfileView() {
           </div>
         <div>
         <button
-              className={`inline-flex items-center gap-2  hover:bg-[#8987ef] px-3 py-2 bg-[#605DEC] text-white rounded-full mb-4 ${
+              className={`inline-flex items-center gap-2  hover:bg-[#8987ef] px-3 py-2 md:bg-[#605DEC] text-white rounded-full mb-4 ${
                 isFetching ? "opacity-60 pointer-events-none" : ""
               }`}
               title="Edit Profile"
               onClick={() => setModal(true)}
             >
               <FaPen className="w-4 h-4" />
-              <span className="text-sm font-medium">Edit Profile</span>
+              <span className="text-sm font-medium hidden md:inline-block">Edit Profile</span>
             </button>
         </div>
         </section>
