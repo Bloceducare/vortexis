@@ -9,9 +9,7 @@ import { useUserHackathonsStore } from "@/store/useUserHackathons";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 
 export default function useParticipants() {
-  // const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
-  const { banner_image, venue } = useHackathonStore()
       const { setHackathons } = useUserHackathonsStore();
   
 
@@ -31,24 +29,30 @@ export default function useParticipants() {
   };
   
 
-  const getHackathons = () => {
-    return useQuery({
-      queryKey: ['participant_hackathon'],
-      queryFn: async () => {
-        const res = await fetch(`${apiUrl}/hackathon/my-registrations/`, {
-          headers: getAuthHeaders()
-        });
-        if (!res.ok) throw new Error('Unable to fetch hackathon');
-        return res.json();
-      },
-      staleTime: Infinity,
-    })
-  }
+ const getHackathons = () => {
+  return useQuery({
+    queryKey: ['participant_hackathon'],
+    queryFn: async () => {
+      const res = await fetch(`${apiUrl}/hackathon/my-registrations/`, {
+        headers: getAuthHeaders()
+      });
 
+      if (!res.ok) throw new Error('Unable to fetch hackathon');
 
-  // const data = await res.json(); 
-        
-  //       setHackathons(data);      
+      const data = await res.json(); 
+      
+      console.log(data);
+
+    
+      setHackathons(data);
+
+      return data; 
+    },
+    staleTime: Infinity,
+  });
+};
+
+ 
 
 
   return {

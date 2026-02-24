@@ -6,6 +6,7 @@ import { Calendar, MapPin, Trophy, Users, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Hackathon {
   id: string;
@@ -33,6 +34,7 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
   ({ hackathon, index, onClick, onRegister, isRegistering, registered }) => {
     const router = useRouter();
     const { setActiveHackathon } = useHackathonStore();
+    const queryClient = useQueryClient()
 
     const now = new Date();
     const start = new Date(hackathon.start_date);
@@ -52,13 +54,28 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
       ? { text: "Active", color: "bg-green-500" }
       : { text: "Upcoming", color: "bg-blue-500" };
 
-    const handleRegister = async (e: React.MouseEvent) => {
-      e.stopPropagation();
-         onRegister(hackathon.id);
-       setActiveHackathon(hackathon);
-         const slug = slugify(hackathon.title);
+const handleRegister = async (e: React.MouseEvent) => {
+  e.stopPropagation();
+  
+  try {
+    setActiveHackathon(hackathon);
+
+    
+    await onRegister(hackathon.id);
+
+    setTimeout(async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["participant_hackathon"],
+      });
+      
+      const slug = slugify(hackathon.title);
       router.push(`/dashboard/${slug}/hackathon`);
-    };
+    }, 500); 
+
+  } catch (error) {
+    console.error("Registration failed, staying on current page:", error);
+  }
+};
 
   
     const handleViewDashboard = (e: React.MouseEvent) => {
