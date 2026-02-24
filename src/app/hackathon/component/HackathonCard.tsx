@@ -57,24 +57,10 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
 const handleRegister = async (e: React.MouseEvent) => {
   e.stopPropagation();
   
-  try {
     setActiveHackathon(hackathon);
-
     
     await onRegister(hackathon.id);
-
-    setTimeout(async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["participant_hackathon"],
-      });
-      
-      const slug = slugify(hackathon.title);
-      router.push(`/dashboard/${slug}/hackathon`);
-    }, 500); 
-
-  } catch (error) {
-    console.error("Registration failed, staying on current page:", error);
-  }
+  
 };
 
   

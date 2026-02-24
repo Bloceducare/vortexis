@@ -212,7 +212,6 @@ function SingleProfile() {
           </div>
         </section>
 
-        {/* 📑 Right: Tabs + Content */}
         <section className="w-full">
           <div className="flex justify-start">
             <div className="flex gap-2 md:gap-4 bg-[#F5F5F5] dark:bg-gray-800 py-3 px-1 md:px-2 rounded-full">

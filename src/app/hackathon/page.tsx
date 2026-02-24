@@ -11,6 +11,8 @@ import { FilterSection } from "./component/FilterSection";
 import { HackathonGrid } from "./component/HackathonGrid";
 import { Pagination } from "@/components/Pagination";
 import { useHackathonFilters } from "./component/HackathonFilters";
+import { useQueryClient } from "@tanstack/react-query";
+import { slugify } from "@/lib/utils";
 
 function Home() {
   const router = useRouter();
@@ -18,6 +20,7 @@ function Home() {
   const [countries, setCountries] = useState<Country[]>([]);
   const { data: hackathons = [], isLoading } = getAllHackathon();
   const registerMutation = registerUserForHackathon();
+  const queryClient = useQueryClient()
   
 
   const [activeHackathon, setActiveHackathon] = useState<string | null>(null);
@@ -59,24 +62,33 @@ const handleRegister = (hackathon_id: string) => {
   setActiveHackathon(hackathon_id);
   
   registerMutation.mutate(hackathon_id, {
-    onSuccess: () => {
+    onSuccess: async () => {
+      // 1. Show Success Modal
       setModal({
         open: true,
         type: "success",
-        message: "Success!",
+        message: "Successfully registered!",
+      });
+
+      await queryClient.invalidateQueries({
+        queryKey: ["participant_hackathon"],
       });
 
       setTimeout(() => {
-        router.push(`/dashboard/${hackathon_id}/hackathon`);
-      }, 2000); 
+        const hackathon = hackathons.find((h: any) => h.id === hackathon_id);
+        if (hackathon) {
+          const slug = slugify(hackathon.title);
+          router.push(`/dashboard/${slug}/hackathon`);
+        }
+      }, 1200); 
     },
     onError: (error: any) => {
-      // Logic stops here. router.push is NOT called.
       setModal({
         open: true,
         type: "error",
-        message: error?.message || "Error occurred",
+        message: error?.response?.data?.message || "Registration failed. Please try again.",
       });
+    
     },
   });
 };
