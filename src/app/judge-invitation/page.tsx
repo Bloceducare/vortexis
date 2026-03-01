@@ -43,21 +43,34 @@ export default function JudgeInvitationPage() {
       if (response.ok) {
         setStatus("success");
       } else {
-        const errorData = await response.json();
-        // Backend may return errors in different shapes:
-        // { error: "msg" } | { detail: "msg" } | { token: ["msg"] } | { fieldName: ["msg"] }
-        const message =
-          errorData.error ||
-          errorData.detail ||
-          (Array.isArray(errorData.token)
-            ? errorData.token[0]
-            : undefined) ||
-          Object.values(errorData)
-            .flat()
-            .filter((v) => typeof v === "string")[0] ||
-          "An error occurred. Please try again.";
+        let errorData;
+        let message = "An error occurred. Please try again.";
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // If response is not JSON
+          try {
+            errorData = await response.text();
+          } catch (err) { }
+        }
+
+        if (typeof errorData === "string" && errorData.trim() !== "") {
+          message = errorData;
+        } else if (typeof errorData === "object" && errorData !== null) {
+          if (errorData.error) message = errorData.error;
+          else if (errorData.detail) message = errorData.detail;
+          else if (Array.isArray(errorData.token)) message = errorData.token[0];
+          else if (errorData.message) message = errorData.message;
+          else {
+            const firstString = Object.values(errorData)
+              .flat()
+              .find((v) => typeof v === "string");
+            if (firstString) message = firstString as string;
+          }
+        }
+
         setStatus("error");
-        setErrorMessage(message as string);
+        setErrorMessage(message);
       }
     } catch (error) {
       setStatus("error");
