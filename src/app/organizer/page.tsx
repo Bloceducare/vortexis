@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useOrganizer from "@/hooks/useOrganizers";
 import EmptyState from "./components/EmptyState";
 import { Plus, Search, ArrowLeft, CheckCircle, Clock, Building2, MapPin } from "lucide-react";
@@ -39,6 +39,7 @@ const paginatedData = filteredData.slice(
   (currentPage - 1) * ITEMS_PER_PAGE,
   currentPage * ITEMS_PER_PAGE
 );
+
 
   if (isLoading) {
     return (

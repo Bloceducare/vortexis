@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { NavigationProps } from "@/components/Interface";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { useShallow } from "zustand/react/shallow";
+import { CalendarIcon, ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 function Submission({ onNext, onPrev }: NavigationProps) {
   const initialNotifications = [
@@ -50,25 +51,62 @@ function Submission({ onNext, onPrev }: NavigationProps) {
         <p>Configure how participants will submit their projects.</p>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="flex justify-between mt-10 flex-wrap gap-6">
-          <div className="w-full md:w-[45%]">
-            <label className="text-lg text-[#2F3036] dark:text-white">
-              Submission Deadline
-            </label>
-            <input
-              type="date"
-              required
-              name="submission_deadline"
-              value={submission_deadline ?? ""}
-              onChange={handleDeadlineChange}
-              className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
-            />
-          </div>
-        </div>
+  <form onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-10">
+  {/* Deadline Section */}
+  <div className="bg-gray-50/50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/10">
+    <div className="w-full md:w-[48%]">
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider flex items-center gap-2">
+        <span className="p-1.5 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg">
+          <CalendarIcon className="text-sm" /> 
+        </span>
+        Submission Deadline
+      </label>
+      
+      <div className="relative mt-3 group">
+        <input
+          type="date"
+          required
+          name="submission_deadline"
+          value={submission_deadline ?? ""}
+          onChange={handleDeadlineChange}
+          className="w-full rounded-xl py-3 px-4 border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent focus:ring-2 focus:ring-[#0B40EE] focus:border-transparent outline-none transition-all cursor-pointer hover:border-gray-300 dark:hover:border-gray-500"
+        />
+      </div>
+      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+        Participants must submit their projects before 11:59 PM on this date.
+      </p>
+    </div>
+  </div>
 
-        {/* Toggle Section */}
-        <div className="mt-10">
+  {/* Navigation Actions */}
+  <div className="flex items-center justify-between pt-8 border-t border-gray-100 dark:border-gray-800">
+    <button
+      type="button"
+      onClick={previousButton}
+      className="flex items-center gap-2 text-gray-600 dark:text-gray-300 font-medium px-6 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+    >
+      <ArrowLeftIcon />
+      Back
+    </button>
+
+    <button
+      type="submit"
+      className="bg-[#0B40EE] hover:bg-[#0835C4] text-white font-bold py-3 px-12 rounded-xl transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 active:scale-95 cursor-pointer flex items-center gap-2"
+    >
+      Continue
+      <ArrowRightIcon />
+    </button>
+  </div>
+</form>
+    </section>
+  );
+}
+
+export default Submission;
+
+
+  {/* Toggle Section */}
+        {/* <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4">Notification Settings</h2>
           <div className="space-y-4">
             {notifications.map((notif, idx) => (
@@ -93,28 +131,4 @@ function Submission({ onNext, onPrev }: NavigationProps) {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="mt-10 flex justify-between">
-          <button
-            className="border-[#0B40EE] border text-[#0B40EE] py-2 px-8 rounded cursor-pointer"
-            type="button"
-            onClick={previousButton}
-          >
-            Previous
-          </button>
-
-          <button
-            className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer"
-            type="submit"
-          >
-            Next
-          </button>
-        </div>
-      </form>
-    </section>
-  );
-}
-
-export default Submission;
+        </div> */}

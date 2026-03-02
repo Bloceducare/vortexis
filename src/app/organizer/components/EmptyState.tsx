@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Plane from "@/public/assets/PlaneCircle.svg";
@@ -7,6 +7,17 @@ import NewOrganization from "./NewOrganization";
 
 function EmptyState() {
   const [showNewOrg, setShowNewOrg] = useState(false);
+
+   useEffect(() => {
+  const isNewOrg = localStorage.getItem("newOrganizer");
+  
+  if (isNewOrg) {
+    setShowNewOrg(true);
+  }
+
+  localStorage.removeItem("newOrganizer");
+}, []);
+
 
   return (
     <motion.div

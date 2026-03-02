@@ -108,7 +108,7 @@ function Hackathon() {
   };
 
   return (
-    <section className="bg-white dark:bg-gray-800 px-10 rounded-2xl py-5 transition-colors">
+    <section className="bg-white dark:bg-gray-800 px-4 md:px-10 rounded-2xl py-5 transition-colors">
       <ToastContainer position="top-right" autoClose={5000} />
 
       <div className="space-y-3">
@@ -119,12 +119,13 @@ function Hackathon() {
           Enter the basic information about your hackathon.
         </p>
       </div>
-      <div className="flex gap-3 mb-6 flex-wrap mt-4">
+      <section className="w-full overflow-x-auto">
+ <div className="flex gap-3 mb-6 flex-wrap mt-4">
         {Buttons.map((btn, index) => (
           <button
             key={btn}
             onClick={() => goToStep(index)}
-            className={`px-8 py-4 rounded-lg transition cursor-pointer ${
+            className={`px-4 md:px-8 py-3 md:py-4 rounded-lg transition cursor-pointer ${
               currentStep === index
                 ? "bg-[#605DEC] text-white"
                 : "bg-[#F4F3FE] dark:bg-gray-700 text-[#C5C0DB] dark:text-gray-300"
@@ -134,6 +135,8 @@ function Hackathon() {
           </button>
         ))}
       </div>
+      </section>
+     
 
       <div className="mt-4">{renderComponent()}</div>
     </section>
