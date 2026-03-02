@@ -172,25 +172,25 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
   );
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex flex-col gap-3">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex flex-col gap-3 transition-colors">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
           {review.submissionName}
         </h3>
-        <span className="text-sm text-gray-500">{formattedDate}</span>
+        <span className="text-sm text-gray-500 dark:text-gray-400">{formattedDate}</span>
       </div>
-      <p className="text-gray-600 text-sm">
+      <p className="text-gray-600 dark:text-gray-300 text-sm">
         <span className="font-medium">Hackathon:</span> {review.hackathonName}
       </p>
-      <div className="flex items-center justify-between text-sm text-gray-700">
+      <div className="flex items-center justify-between text-sm text-gray-700 dark:text-gray-300">
         <span className="font-medium">Overall Score:</span>
-        <span className="font-bold text-blue-600">
+        <span className="font-bold text-blue-600 dark:text-blue-400">
           {review.totalScore} / {review.maxTotalScore} ({scorePercentage}%)
         </span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
         <div
-          className="bg-blue-600 h-2.5 rounded-full"
+          className="bg-blue-600 dark:bg-blue-500 h-2.5 rounded-full"
           style={{ width: `${scorePercentage}%` }}
           role="progressbar"
           aria-valuenow={scorePercentage}
@@ -199,8 +199,8 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
         ></div>
       </div>
       <div className="mt-2">
-        <p className="font-medium text-gray-700 text-sm mb-1">Breakdown:</p>
-        <ul className="space-y-1.5 text-sm text-gray-600">
+        <p className="font-medium text-gray-700 dark:text-gray-300 text-sm mb-1">Breakdown:</p>
+        <ul className="space-y-1.5 text-sm text-gray-600 dark:text-gray-400">
           {review.scores.map((s, idx) => (
             <li key={idx} className="flex justify-between">
               <span>{s.criterion}:</span>
@@ -212,8 +212,8 @@ function ReviewCard({ review }: { review: ReviewSummary }) {
         </ul>
       </div>
       <div className="mt-3">
-        <p className="font-medium text-gray-700 text-sm mb-1">Comments:</p>
-        <p className="text-gray-700 text-sm italic bg-gray-50 p-3 rounded-md border border-gray-200">
+        <p className="font-medium text-gray-700 dark:text-gray-300 text-sm mb-1">Comments:</p>
+        <p className="text-gray-700 dark:text-gray-300 text-sm italic bg-gray-50 dark:bg-gray-700 p-3 rounded-md border border-gray-200 dark:border-gray-600 transition-colors">
           {review.comments || "No comments provided."}
         </p>
       </div>

@@ -162,7 +162,7 @@ function NotificationCard({
             {formattedDate}
           </span>
         </div>
-        <div className="text-gray-700 dark:text-gray-300 text-sm mb-2 break-words overflow-x-auto">
+        <div className="text-gray-700 dark:text-gray-300 text-sm mb-2 break-words line-clamp-3">
           <HtmlContent html={notification.message} />
         </div>
         {actionUrl && (

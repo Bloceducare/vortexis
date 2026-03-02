@@ -41,6 +41,16 @@ export default function JudgeInvitationPage() {
       );
 
       if (response.ok) {
+        // Automatically update the user's role in the local store
+        const { useUserStore } = await import("@/store/useUserStore");
+        const { useRoleAccessStore } = await import("@/store/useRoleAccessStore");
+        const currentUser = useUserStore.getState().user;
+        if (currentUser) {
+          useUserStore.getState().setUser({ ...currentUser, is_judge: true });
+        }
+        // Clear role access cache to force a re-check
+        useRoleAccessStore.getState().clearAccess();
+
         setStatus("success");
       } else {
         let errorData;
@@ -48,7 +58,6 @@ export default function JudgeInvitationPage() {
         try {
           errorData = await response.json();
         } catch (e) {
-          // If response is not JSON
           try {
             errorData = await response.text();
           } catch (err) { }
@@ -56,17 +65,23 @@ export default function JudgeInvitationPage() {
 
         if (typeof errorData === "string" && errorData.trim() !== "") {
           message = errorData;
-        } else if (typeof errorData === "object" && errorData !== null) {
-          if (errorData.error) message = errorData.error;
-          else if (errorData.detail) message = errorData.detail;
-          else if (Array.isArray(errorData.token)) message = errorData.token[0];
-          else if (errorData.message) message = errorData.message;
+        } else if (errorData !== null && typeof errorData === "object") {
+          if (errorData.error) message = String(errorData.error);
+          else if (errorData.token) message = String(Array.isArray(errorData.token) ? errorData.token[0] : errorData.token);
+          else if (errorData.detail) message = String(errorData.detail);
+          else if (errorData.message) message = String(errorData.message);
           else {
             const firstString = Object.values(errorData)
               .flat()
               .find((v) => typeof v === "string");
-            if (firstString) message = firstString as string;
+            if (firstString) {
+              message = firstString as string;
+            } else {
+              message = JSON.stringify(errorData);
+            }
           }
+        } else {
+          message = String(errorData || "Unknown backend error");
         }
 
         setStatus("error");

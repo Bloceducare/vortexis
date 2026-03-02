@@ -241,7 +241,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
                               </button>
                             )}
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
+                          <div className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2 [&>p]:line-clamp-2 [&>div]:line-clamp-2">
                             <HtmlContent html={notif.message} />
                           </div>
                           <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">

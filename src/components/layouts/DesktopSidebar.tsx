@@ -90,9 +90,8 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
       </button>
       <div className="flex h-full flex-col gap-y-2 cursor-pointer">
         <div
-          className={`flex text-3xl font-semibold text-blue-700 items-center cursor-pointer justify-center px-2 py-4 ${
-            sidebarExpanded ? "py-2" : ""
-          }`}
+          className={`flex text-3xl font-semibold text-blue-700 items-center cursor-pointer justify-center px-2 py-4 ${sidebarExpanded ? "py-2" : ""
+            }`}
         >
           Vortexis
         </div>
@@ -103,11 +102,10 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
           {sidebarItems.map((item, index) => (
             <div key={index} className="relative">
               <div
-                className={`py-4 pl-5 hover:bg-[#F7F7FB] ${
-                  pathname === item.href
-                    ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
-                    : "text-gray-600"
-                } flex relative items-center justify-between`}
+                className={`py-4 pl-5 hover:bg-[#F7F7FB] ${pathname === item.href
+                  ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
+                  : "text-gray-600"
+                  } flex relative items-center justify-between`}
               >
                 {item.dropdown ? (
                   <div
@@ -120,17 +118,21 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
                         alt={item.text}
                         width={24}
                         height={24}
-                        className="object-contain"
+                        className={`object-contain ${pathname !== item.href ? "dark:invert" : ""}`}
+                        style={{
+                          filter: pathname === item.href
+                            ? "brightness(0) saturate(100%) invert(35%) sepia(50%) saturate(5432%) hue-rotate(227deg) brightness(96%) contrast(92%)"
+                            : ""
+                        }}
                       />
                       {sidebarExpanded && (
-                        <span className="ml-4">{item.text}</span>
+                        <span className="ml-4 text-sm font-medium">{item.text}</span>
                       )}
                     </div>
                     {sidebarExpanded && (
                       <ChevronDown
-                        className={`absolute right-1 text-sm cursor-pointer transition-transform duration-200 ${
-                          dropdownOpen ? "rotate-180" : ""
-                        }`}
+                        className={`absolute right-1 text-sm cursor-pointer transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""
+                          }`}
                         size={20}
                       />
                     )}
@@ -142,10 +144,15 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
                       alt={item.text}
                       width={24}
                       height={24}
-                      className="object-contain"
+                      className={`object-contain ${pathname !== item.href ? "dark:invert" : ""}`}
+                      style={{
+                        filter: pathname === item.href
+                          ? "brightness(0) saturate(100%) invert(35%) sepia(50%) saturate(5432%) hue-rotate(227deg) brightness(96%) contrast(92%)"
+                          : ""
+                      }}
                     />
                     {sidebarExpanded && (
-                      <span className="ml-4">{item.text}</span>
+                      <span className="ml-4 text-sm font-medium">{item.text}</span>
                     )}
                   </Link>
                 )}
@@ -224,11 +231,10 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
           {settingPage && (
             <Link
               href="/profile/edit"
-              className={`flex items-center py-4 pl-10 ${
-                pathname === settingPage
-                  ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
-                  : "text-gray-600"
-              }`}
+              className={`flex items-center py-4 pl-10 ${pathname === settingPage
+                ? "text-gray-900 border-r-4 border-[#605DEC] bg-[#F7F7FB]"
+                : "text-gray-600"
+                }`}
             >
               <Settings size={24} />
               {sidebarExpanded && <span className="ml-4">Settings</span>}
@@ -247,7 +253,7 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
         isOpen={showSignOutModal}
         onClose={() => setShowSignOutModal(false)}
         onConfirm={handleLogout}
-      />   
+      />
     </motion.aside>
   );
 };
