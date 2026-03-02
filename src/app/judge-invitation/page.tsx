@@ -41,11 +41,51 @@ export default function JudgeInvitationPage() {
       );
 
       if (response.ok) {
+        // Automatically update the user's role in the local store
+        const { useUserStore } = await import("@/store/useUserStore");
+        const { useRoleAccessStore } = await import("@/store/useRoleAccessStore");
+        const currentUser = useUserStore.getState().user;
+        if (currentUser) {
+          useUserStore.getState().setUser({ ...currentUser, is_judge: true });
+        }
+        // Clear role access cache to force a re-check
+        useRoleAccessStore.getState().clearAccess();
+
         setStatus("success");
       } else {
-        const errorData = await response.json();
+        let errorData;
+        let message = "An error occurred. Please try again.";
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          try {
+            errorData = await response.text();
+          } catch (err) { }
+        }
+
+        if (typeof errorData === "string" && errorData.trim() !== "") {
+          message = errorData;
+        } else if (errorData !== null && typeof errorData === "object") {
+          if (errorData.error) message = String(errorData.error);
+          else if (errorData.token) message = String(Array.isArray(errorData.token) ? errorData.token[0] : errorData.token);
+          else if (errorData.detail) message = String(errorData.detail);
+          else if (errorData.message) message = String(errorData.message);
+          else {
+            const firstString = Object.values(errorData)
+              .flat()
+              .find((v) => typeof v === "string");
+            if (firstString) {
+              message = firstString as string;
+            } else {
+              message = JSON.stringify(errorData);
+            }
+          }
+        } else {
+          message = String(errorData || "Unknown backend error");
+        }
+
         setStatus("error");
-        setErrorMessage(errorData.error);
+        setErrorMessage(message);
       }
     } catch (error) {
       setStatus("error");
@@ -61,7 +101,7 @@ export default function JudgeInvitationPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
           <div className="text-center">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -82,7 +122,7 @@ export default function JudgeInvitationPage() {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-linear-to-br from-green-50 to-emerald-100 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md w-full">
           <div className="text-center">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -97,7 +137,7 @@ export default function JudgeInvitationPage() {
             </p>
             <button
               onClick={() => (window.location.href = "/dashboard")}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-md"
+              className="w-full bg-linear-to-r from-blue-600 to-indigo-600 text-white py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-semibold shadow-md"
             >
               Enter Judge Dashboard
             </button>
@@ -108,9 +148,9 @@ export default function JudgeInvitationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-8 text-center">
+        <div className="bg-linear-to-r from-blue-600 to-indigo-600 px-8 py-8 text-center">
           <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white text-3xl">⚖️</span>
           </div>
@@ -144,7 +184,7 @@ export default function JudgeInvitationPage() {
             <button
               onClick={handleAcceptInvitation}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-linear-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
             >
               {isLoading ? (
                 <span className="flex items-center justify-center">

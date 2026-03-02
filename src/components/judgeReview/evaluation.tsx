@@ -4,6 +4,7 @@ import { ReviewResponse, useReviewSubmission } from "@/lib/submission-reviews";
 import type React from "react";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface EvaluationItem {
   section: string;
@@ -61,9 +62,8 @@ const CustomSlider: React.FC<CustomSliderProps> = ({
         />
 
         <div
-          className={`absolute top-1/2 w-4 h-4 bg-white dark:bg-gray-200 border-2 border-[#605DEC] dark:border-indigo-400 rounded-full shadow-md transform -translate-y-1/2 -translate-x-1/2 cursor-pointer transition-all duration-200 ${
-            isDragging ? "scale-125 shadow-lg" : "hover:scale-110"
-          }`}
+          className={`absolute top-1/2 w-4 h-4 bg-white dark:bg-gray-200 border-2 border-[#605DEC] dark:border-indigo-400 rounded-full shadow-md transform -translate-y-1/2 -translate-x-1/2 cursor-pointer transition-all duration-200 ${isDragging ? "scale-125 shadow-lg" : "hover:scale-110"
+            }`}
           style={{ left: `${value * 10}%` }}
         />
       </div>
@@ -215,12 +215,14 @@ function Evaluation({
     }
   };
 
+  const router = useRouter();
+
   const handleFlagForDiscussion = () => {
     // Flagged for discussion
   };
 
   const handleDiscuss = () => {
-    // Opening discussion
+    router.push(`/judges/collaboration/${hackathonId}`);
   };
 
   if (isLoading) {
@@ -284,10 +286,10 @@ function Evaluation({
                   {evaluation.grade >= 8
                     ? "Excellent"
                     : evaluation.grade >= 6
-                    ? "Good"
-                    : evaluation.grade >= 4
-                    ? "Fair"
-                    : "Needs Improvement"}
+                      ? "Good"
+                      : evaluation.grade >= 4
+                        ? "Fair"
+                        : "Needs Improvement"}
                 </p>
               </div>
             </div>

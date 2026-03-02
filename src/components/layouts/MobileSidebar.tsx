@@ -126,11 +126,10 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
                       <>
                         <div
                           onClick={toggleDropdown}
-                          className={`flex items-center justify-between rounded-lg px-4 py-3 cursor-pointer ${
-                            pathname === item.href
-                              ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
-                              : "hover:bg-[#F7F7FB]"
-                          }`}
+                          className={`flex items-center justify-between rounded-lg px-4 py-3 cursor-pointer ${pathname === item.href
+                            ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                            : "hover:bg-[#F7F7FB]"
+                            }`}
                         >
                           <div className="flex items-center">
                             <Image
@@ -138,22 +137,25 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
                               alt={item.text}
                               width={24}
                               height={24}
-                              className="object-contain"
+                              className={`object-contain ${pathname !== item.href ? "dark:invert" : ""}`}
+                              style={{
+                                filter: pathname === item.href
+                                  ? "brightness(0) saturate(100%) invert(35%) sepia(50%) saturate(5432%) hue-rotate(227deg) brightness(96%) contrast(92%)"
+                                  : ""
+                              }}
                             />
                             <span
-                              className={`ml-3 whitespace-nowrap ${
-                                pathname === item.href
-                                  ? "text-[#605DEC]"
-                                  : "text-gray-600"
-                              }`}
+                              className={`ml-3 whitespace-nowrap ${pathname === item.href
+                                ? "text-[#605DEC]"
+                                : "text-gray-600"
+                                }`}
                             >
                               {item.text}
                             </span>
                           </div>
                           <ChevronDown
-                            className={`text-sm cursor-pointer transition-transform duration-200 ${
-                              dropdownOpen ? "rotate-180" : ""
-                            }`}
+                            className={`text-sm cursor-pointer transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""
+                              }`}
                             size={16}
                           />
                         </div>
@@ -227,11 +229,10 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
                     ) : (
                       <Link
                         href={item.href}
-                        className={`flex items-center rounded-lg px-4 py-3 ${
-                          pathname === item.href
-                            ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
-                            : "hover:bg-[#F7F7FB]"
-                        }`}
+                        className={`flex items-center rounded-lg px-4 py-3 ${pathname === item.href
+                          ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                          : "hover:bg-[#F7F7FB]"
+                          }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         <Image
@@ -239,14 +240,18 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
                           alt={item.text}
                           width={24}
                           height={24}
-                          className="object-contain"
+                          className={`object-contain ${pathname !== item.href ? "dark:invert" : ""}`}
+                          style={{
+                            filter: pathname === item.href
+                              ? "brightness(0) saturate(100%) invert(35%) sepia(50%) saturate(5432%) hue-rotate(227deg) brightness(96%) contrast(92%)"
+                              : ""
+                          }}
                         />
                         <span
-                          className={`ml-3 whitespace-nowrap ${
-                            pathname === item.href
-                              ? "text-[#605DEC]"
-                              : "text-gray-600"
-                          }`}
+                          className={`ml-3 whitespace-nowrap ${pathname === item.href
+                            ? "text-[#605DEC]"
+                            : "text-gray-600"
+                            }`}
                         >
                           {item.text}
                         </span>
@@ -258,11 +263,10 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
               <div className="mt-auto">
                 <Link
                   href="/profile/edit"
-                  className={`mb-1 flex items-center rounded-lg px-4 py-3 ${
-                    pathname === "/profile/edit"
-                      ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
-                      : "hover:bg-[#F7F7FB]"
-                  }`}
+                  className={`mb-1 flex items-center rounded-lg px-4 py-3 ${pathname === "/profile/edit"
+                    ? "border-l-4 border-[#605DEC] bg-[#F7F7FB]"
+                    : "hover:bg-[#F7F7FB]"
+                    }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Settings size={24} />

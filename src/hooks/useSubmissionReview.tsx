@@ -117,8 +117,8 @@ export const useSubmissionReview = (id: string) => {
   useEffect(() => {
     if (id) {
       hackathon(id);
-      // Only fetch reviews if needed (uncomment if needed)
-      // review();
+      // Fetch reviews data as it's needed for the my-reviews page
+      review();
     }
     // Don't fetch team data with hardcoded ID
     // team("2");
