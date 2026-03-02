@@ -107,7 +107,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     location: formData.location,
     tagline: formData.tagline,
     about: formData.about,
-    logo_file: logoUrl, // <-- send Cloudinary URL
+    logo_file: logoUrl, 
   };
 
   try {
@@ -120,7 +120,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     name: formData.name,
     description: formData.description,
     website: formData.website,
-    custom_url: formData.custom_url,
+    // custom_url: formData.custom_url,
     location: formData.location,
     tagline: formData.tagline,
     about: formData.about,
@@ -327,7 +327,7 @@ const handleSubmit = async (e: React.FormEvent) => {
             </div>
 
             {/* Custom URL */}
-            <div className="space-y-1 flex flex-col">
+            {/* <div className="space-y-1 flex flex-col">
               <label
                 htmlFor="custom_url"
                 className="text-[#212121] dark:text-white font-medium text-sm"
@@ -348,7 +348,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   className="flex-1 py-3 pr-4 outline-none"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Location */}
             <div className="space-y-1 flex flex-col">

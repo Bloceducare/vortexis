@@ -122,127 +122,113 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   return (
     <>
-      <form onSubmit={handleContinue}>
-        <div>
-          <label className="text-2xl text-[#2F3036] dark:text-white">Hackathon Name</label>
-          <input
-            type="text"
-            placeholder="Enter Hackathon Name"
-            value={title}
-            onChange={(e) => setField("title", e.target.value)}
-            name="title"
-            maxLength={80}
-            className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3"
-          />
-        </div>
+   <form onSubmit={handleContinue} className="max-w-4xl mx-auto space-y-8">
+  {/* Section: Basic Info */}
+  <div className="space-y-6">
+    <div>
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+        Hackathon Name
+      </label>
+      <input
+        type="text"
+        placeholder="e.g. Global Web3 Buildathon"
+        value={title}
+        onChange={(e) => setField("title", e.target.value)}
+        name="title"
+        maxLength={80}
+        className="w-full mt-2 rounded-xl py-3 px-4 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5 focus:bg-white dark:focus:bg-transparent focus:ring-2 focus:ring-[#0B40EE] focus:border-transparent outline-none transition-all"
+      />
+    </div>
 
-        <div className="flex justify-between mt-10">
-          <div className="w-[45%]">
-            <label className="text-2xl text-[#2F3036] dark:text-white">Start Date</label>
-            <input
-              type="date"
-              placeholder="Start Date"
-              value={start_date}
-              onChange={(e) => setField("start_date", e.target.value)}
-              name="start_date"
-              className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3 cursor-pointer"
-            />
+    {/* Date Grid */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          Start Date
+        </label>
+        <input
+          type="date"
+          value={start_date}
+          onChange={(e) => setField("start_date", e.target.value)}
+          className="w-full rounded-xl py-3 px-4 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5 focus:ring-2 focus:ring-[#0B40EE] outline-none cursor-pointer"
+        />
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+          End Date
+        </label>
+        <input
+          type="date"
+          value={end_date}
+          onChange={(e) => setField("end_date", e.target.value)}
+          className="w-full rounded-xl py-3 px-4 border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-white/5 focus:ring-2 focus:ring-[#0B40EE] outline-none cursor-pointer"
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* Section: Visuals */}
+  <div>
+    <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+      Hackathon Banner
+    </label>
+    <div className="mt-2">
+      <input
+        type="file"
+        id="banner-upload"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      <label
+        htmlFor="banner-upload"
+        className="group relative flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-2xl p-8 cursor-pointer bg-gray-50/30 dark:bg-white/5 hover:border-[#0B40EE] hover:bg-gray-50 dark:hover:bg-white/10 transition-all min-h-[180px]"
+      >
+        {!preview ? (
+          <div className="text-center">
+            <div className="mx-auto w-12 h-12 mb-4 text-[#0B40EE] bg-[#0B40EE]/10 flex justify-center items-center rounded-xl group-hover:scale-110 transition-transform">
+              <FileImageIcon className="text-2xl" />
+            </div>
+            <p className="text-gray-900 dark:text-white font-medium">Click to upload banner</p>
+            <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 10MB</p>
           </div>
-
-          <div className="w-[45%]">
-            <label className="text-2xl text-[#2F3036] dark:text-white">End Date</label>
-            <input
-              type="date"
-              placeholder="End date"
-              value={end_date}
-              onChange={(e) => setField("end_date", e.target.value)}
-              name="end_date"
-              className="w-full rounded-2xl py-3 px-3 border outline-none border-[#C5C6CC] mt-3 cursor-pointer"
-            />
+        ) : (
+          <div className="relative w-full">
+            <img src={preview} alt="Preview" className="max-h-60 w-full object-cover rounded-xl" />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
+               <p className="text-white text-sm font-medium">Change Image</p>
+            </div>
           </div>
-        </div>
+        )}
+      </label>
+    </div>
+  </div>
 
-        <div className="mt-10">
-          <label className="text-2xl text-[#2F3036] dark:text-white">Hackathon Banner</label>
+  {/* Section: Content Editor */}
+  <div className="grid gap-8">
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Description</label>
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden focus-within:ring-2 focus-within:ring-[#0B40EE]">
+        <TiptapEditor value={description} onChange={(html) => setField("description", html)} />
+      </div>
+    </div>
 
-          <div className="mt-3">
-            <input
-              type="file"
-              name="banner"
-              id="banner-upload"
-              accept="image/png, image/jpeg, image/jpg"
-              className="hidden"
-              onChange={handleFileChange}
-            />
+    <div className="space-y-2">
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">Rules & Guidelines</label>
+      <RuleInput rule={rules} setRule={(newRules: any) => setField("rules", newRules)} />
+    </div>
+  </div>
 
-            <label
-              htmlFor="banner-upload"
-              className="flex flex-col items-center justify-center text-center gap-3 w-full border border-[#C5C6CC] rounded-2xl px-4 py-8 cursor-pointer bg-[#FAFAFA] dark:bg-[#514343] hover:bg-[#f0f0f0] transition min-h-[200px]"
-            >
-              {!preview ? (
-                <>
-                  <div className="text-[#0B40EE] bg-[#0B40EE1A] p-3 flex justify-center items-center rounded-full">
-                    <FileImageIcon className="text-3xl" />
-                  </div>
-                  <div>
-                    <p className="text-[#2F3036] dark:text-white font-medium">
-                      Click to upload banner
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Accepts PNG, JPG, JPEG
-                    </p>
-                  </div>
-                </>
-              ) : (
-                <img
-                  src={preview}
-                  alt="Banner Preview"
-                  className="max-h-48 w-full object-contain rounded-xl"
-                />
-              )}
-            </label>
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <label className="text-2xl text-[#2F3036] dark:text-white">Description</label>
-          <div>
-            <TiptapEditor
-              value={description}
-              onChange={(html) => setField("description", html)}
-            />
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <label className="text-2xl text-[#2F3036] dark:text-white mb-2 block">
-            Rules & Guidelines
-          </label>
-          <RuleInput
-            rule={rules}
-            setRule={(newRules: any) => setField("rules", newRules)}
-          />
-        </div>
-
-        <div className="mt-10">
-          <label className="text-2xl text-[#2F3036] dark:text-white">Evaluation Criteria</label>
-          <div>
-            <TiptapEditor
-              value={evaluation_criteria}
-              onChange={(html) => setField("evaluation_criteria", html)}
-            />
-          </div>
-        </div>
-
-        <div className="mt-10">
-          <button
-            className="bg-[#0B40EE] text-white py-2 px-8 rounded cursor-pointer"
-            type="submit"
-          >
-            Next
-          </button>
-        </div>
-      </form>
+  {/* Footer Action */}
+  <div className="pt-6 border-t border-gray-100 dark:border-gray-800 flex justify-end">
+    <button
+      type="submit"
+      className="bg-[#0B40EE] hover:bg-[#0835C4] text-white font-bold py-3 px-10 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer"
+    >
+      Continue to Next Step
+    </button>
+  </div>
+</form>
     </>
   );
 }

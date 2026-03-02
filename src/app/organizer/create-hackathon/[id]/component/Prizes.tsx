@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import dynamic from "next/dynamic";
+import { ArrowLeftIcon, TrophyIcon } from 'lucide-react';
 
 const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
   ssr: false,
@@ -73,49 +74,71 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
   
 
   return (
-    <div className="space-y-6">
-      {/* Grand Prize Field */}
-      <div>
-        <label className="block text-lg font-medium mb-1">Grand Prize</label>
+ <div className="max-w-4xl mx-auto space-y-10">
+  {/* Grand Prize Card */}
+  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-[#0B40EE]/5 dark:to-transparent p-8 rounded-3xl border border-blue-100 dark:border-white/10 shadow-sm">
+    <div className="max-w-md">
+      <label className="text-sm font-semibold text-blue-700 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 mb-4">
+        <span className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+          <TrophyIcon className="text-lg" />
+        </span>
+        Total Prize Pool
+      </label>
+      
+      <div className="relative group">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400 group-focus-within:text-[#0B40EE] transition-colors">
+          $
+        </span>
         <input
           type="text"
           value={displayGrandPrize}
           onChange={handleGrandPrizeChange}
-          className="w-full rounded-md border p-2 outline-none placeholder:text-gray-400"
-          placeholder="Set your grand price"
+          className="w-full pl-10 pr-4 py-4 text-3xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0B40EE] outline-none transition-all placeholder:text-gray-300"
+          placeholder="0.00"
         />
       </div>
-
-      {/* Individual Prize */}
-      <div>
-        <label className="block text-lg font-medium mb-2">Individual Prize</label>
-        <div className="w-full">
-          <TiptapEditor
-            value={localPrize}
-            onChange={handlePrizeChange}
-            placeholder="Enter prize description..."
-            className="min-h-10 border rounded-md p-2"
-          />
-        </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between mt-6">
-        <button
-          className="border-[#0B40EE] border text-[#0B40EE] py-2 px-8 rounded cursor-pointer"
-          onClick={onPrev}
-        >
-          Previous
-        </button>
-        <button
-          type="button"
-          onClick={handleNextClick}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Next
-        </button>
-      </div>
+      <p className="mt-3 text-xs text-blue-600/70 dark:text-gray-400 italic">
+        This is the total amount distributed across all winners.
+      </p>
     </div>
+  </div>
+
+  {/* Detailed Prize Breakdown */}
+  <div className="space-y-4">
+    <div className="flex items-center gap-2">
+      <label className="text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+        Individual Prize Breakdown
+      </label>
+    </div>
+    
+    <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/5 overflow-hidden focus-within:ring-2 focus-within:ring-[#0B40EE] transition-all">
+      <TiptapEditor
+        value={localPrize}
+        onChange={handlePrizeChange}
+        placeholder="e.g. 1st Place: $5,000 + Swag bag..."
+      />
+    </div>
+  </div>
+
+  {/* Navigation Actions */}
+  <div className="flex items-center justify-between pt-8 border-t border-gray-100 dark:border-gray-800">
+    <button
+      onClick={onPrev}
+      className="flex items-center gap-2 text-gray-500 font-medium hover:text-gray-800 dark:hover:text-white transition-all px-4 py-2"
+    >
+      <ArrowLeftIcon />
+      Back
+    </button>
+
+    <button
+      type="button"
+      onClick={handleNextClick}
+      className="bg-[#0B40EE] hover:bg-[#0835C4] text-white font-bold py-3 px-12 rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+    >
+      Continue
+    </button>
+  </div>
+</div>
   );
 }
 

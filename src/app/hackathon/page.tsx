@@ -98,11 +98,18 @@ const handleRegister = (hackathon_id: string) => {
     currentPage * itemsPerPage
   );
 
+  const createOrganization = () => {
+    localStorage.setItem("newOrganizer", "true");
+    setTimeout(() => {
+    router.push("/organizer");
+    }, 500);
+  }
+
   return (
     <main className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors w-full">
       <div className="w-full md:max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-24 pb-16">
         {/* Hero Section */}
-        <HeroSection onCreateOrg={() => router.push("/create-organization")} />
+        <HeroSection onCreateOrg={createOrganization} />
 
         {/* Explore Section */}
         <motion.div
