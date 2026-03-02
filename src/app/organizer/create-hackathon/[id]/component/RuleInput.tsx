@@ -17,7 +17,7 @@ export default function RuleInput({ rule, setRule }: RuleInputProps) {
     <div>
       <TiptapEditor
         value={rule}
-        onChange={setRule} // ✅ single source of truth
+        onChange={setRule} 
         placeholder="Enter rules & guidelines..."
       />
 
