@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/useUserStore";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Eye, EyeOff } from "lucide-react";
+import api from "@/lib/api";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
@@ -60,39 +61,8 @@ function AuthLogin({ type }: AuthLoginProps) {
         password: data.password,
       };
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      let result;
-      try {
-        const responseText = await response.text();
-        if (
-          responseText.trim().startsWith("{") ||
-          responseText.trim().startsWith("[")
-        ) {
-          result = JSON.parse(responseText);
-        } else {
-          toast.error("Server error. Please try again later");
-          return;
-        }
-      } catch (parseError) {
-        console.error("JSON parse error:", parseError);
-        toast.error("Server error. Please try again later");
-        return;
-      }
-
-      if (!response.ok) {
-        toast.error(result.detail || "Login failed. Please try again");
-        return;
-      }
+      const response = await api.post("/auth/login/", payload);
+      const result = response.data;
 
       toast.success("Login successful! Redirecting...");
       localStorage.setItem("access_token", result.access_token);
@@ -101,13 +71,18 @@ function AuthLogin({ type }: AuthLoginProps) {
         setToken(result.access_token, daysInSeconds);
         setUser(result.user);
       }
-      // router.push("/home");
-      window.location.href = "/hackathon";
+      const redirectUrl = localStorage.getItem("redirectUrl");
+      if (redirectUrl) {
+        localStorage.removeItem("redirectUrl");
+        window.location.href = redirectUrl;
+      } else {
+        window.location.href = "/hackathon";
+      }
 
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast.error("Network error. Please check your connection and try again");
+      toast.error(error.response?.data?.detail || "Network error. Please check your connection and try again");
     }
   };
 

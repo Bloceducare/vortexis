@@ -23,6 +23,7 @@ import { useHackathonStore } from "@/store/useHackathonStore";
 import { SignOutConfirmationModal } from "@/components/signOutModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import { slugify } from "@/lib/utils";
+import { useThemeStore } from "@/store/useThemeStore";
 
 interface OrganizerLayoutProps {
   children: React.ReactNode;
@@ -42,7 +43,7 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logout, setLogout] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const { isDarkMode, toggleDarkMode } = useThemeStore();
   const { getHackathons } = useParticipants();
   const setHackathons = useHackathonStore((state) => state.setHackathons);
   const clearToken = useAuthStore((state) => state.clearToken);
@@ -108,33 +109,7 @@ const selectedHackathonName = useMemo(() => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Dark mode initialization and toggle
-  useEffect(() => {
-    const stored = localStorage.getItem("darkMode");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    const shouldBeDark = stored ? stored === "true" : prefersDark;
-    setIsDarkMode(shouldBeDark);
 
-    if (shouldBeDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    localStorage.setItem("darkMode", String(newMode));
-
-    if (newMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
 
   const toggleSidebar = () => {
     if (isMobile) {

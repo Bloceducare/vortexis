@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation";
 import { Provider } from "./provider";
 import RouteGuard from "@/components/routeGuard";
 import { useEffect } from "react";
+import { useThemeStore } from "@/store/useThemeStore";
+import SessionHandler from "@/components/SessionExpired";
 
 export default function RootLayout({
   children,
@@ -20,25 +22,19 @@ export default function RootLayout({
   const isJudgesRoute = pathname.includes("/judges");
   const isDashboardRoute = pathname.includes("/dashboard");
 
+  const { initTheme } = useThemeStore();
+
   // Initialize dark mode globally
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-
-    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
+    initTheme();
+  }, [initTheme]);
 
   return (
     <html lang="en">
       <Provider>
         <body className="flex flex-col min-h-screen bg-white dark:bg-gray-900 transition-colors">
-          <RouteGuard>
+          <SessionHandler>
+            <RouteGuard>
             {!isJudgesRoute && !isDashboardRoute && !isOrganizerRoute && (
               <Header />
             )}
@@ -49,7 +45,8 @@ export default function RootLayout({
             {!isOrganizerRoute && !isDashboardRoute && !isJudgesRoute && (
               <Footer />
             )}
-          </RouteGuard>
+            </RouteGuard>
+          </SessionHandler>
         </body>
       </Provider>
     </html>

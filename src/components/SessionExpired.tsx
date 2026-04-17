@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import StatusModal from "@/components/StatusModal"; // Adjust path as needed
+import { useAuthStore } from "@/store/useAuthStore";
+
 
 export default function SessionHandler({ children }: { children: React.ReactNode }) {
   const [isExpired, setIsExpired] = useState(false);
@@ -20,7 +22,11 @@ export default function SessionHandler({ children }: { children: React.ReactNode
 
   const handleRedirect = () => {
     setIsExpired(false);
-    router.push("/signin");
+    useAuthStore.getState().clearToken();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("access_token");
+    }
+    router.push("/auth/login");
   };
 
   return (

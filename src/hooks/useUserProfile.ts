@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useUserStore } from '@/store/useUserStore';
 import { useShallow } from 'zustand/shallow';
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+import api from '@/lib/api';
 
 export default function useUser() {
   const queryClient = useQueryClient();
@@ -18,31 +18,19 @@ export default function useUser() {
     }))
   );
 
-  const getAuthHeaders = (isFormData = false) => {
-    const headers: Record<string, string> = {};
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    if (!isFormData) {
-      headers['Content-Type'] = 'application/json';
-    }
-
-    return headers;
-  };
 
   const getUserProfile = () => {
     return useQuery({
       queryKey: ['userProfile', user?.id],
       queryFn: async () => {
         if (!user?.id) throw new Error('User ID is missing');
-        const res = await fetch(`${apiUrl}/auth/profiles/${user.id}/`, {
-          headers: getAuthHeaders(),
-        });
-        if (!res.ok) throw new Error('Unable to fetch profile');
-        const data = await res.json();
-        return data;
+        try {
+          const res = await api.get(`/auth/profiles/${user.id}/`);
+          return res.data;
+        } catch (error: any) {
+          throw new Error('Unable to fetch profile');
+        }
       },
       enabled: !!user?.id, 
     });
@@ -53,11 +41,12 @@ export default function useUser() {
       queryKey: ["publicUser", userId],
       queryFn: async () => {
         if (!userId) throw new Error("User ID is missing");
-        const res = await fetch(`${apiUrl}/auth/users/public/${userId}/`, {
-          headers: getAuthHeaders(), 
-        }); 
-        if (!res.ok) throw new Error("Unable to fetch public user profile");
-        return res.json();
+        try {
+          const res = await api.get(`/auth/users/public/${userId}/`);
+          return res.data;
+        } catch (error: any) {
+          throw new Error("Unable to fetch public user profile");
+        }
       },
       enabled: !!userId,
     });
@@ -68,12 +57,12 @@ export default function useUser() {
       queryKey: ['userDetail', user?.id],
       queryFn: async () => {
         if (!user?.id) throw new Error('User ID is missing');
-        const res = await fetch(`${apiUrl}/auth/users/${user.id}/`, {
-          headers: getAuthHeaders(),
-        });
-        if (!res.ok) throw new Error('Unable to fetch profile');
-        const data = await res.json();
-        return data;
+        try {
+          const res = await api.get(`/auth/users/${user.id}/`);
+          return res.data;
+        } catch (error: any) {
+          throw new Error('Unable to fetch profile');
+        }
       },
       enabled: !!user?.id, 
     });
@@ -82,13 +71,12 @@ export default function useUser() {
   const updateUserDetail = () => {
     return useMutation({
       mutationFn: async ({ data }: { data: Record<string, any> }) => {
-        const res = await fetch(`${apiUrl}/auth/users/${user?.id}/update/`, {
-          method: 'PUT',
-          headers: getAuthHeaders(),
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error('Unable to update profile');
-        return res.json();
+        try {
+          const res = await api.put(`/auth/users/${user?.id}/update/`, data);
+          return res.data;
+        } catch (error: any) {
+          throw new Error('Unable to update profile');
+        }
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['detail'] });
@@ -99,13 +87,12 @@ export default function useUser() {
   const updateUserProfile = () => {
     return useMutation({
       mutationFn: async ({ data }: { data: Record<string, any> }) => {
-        const res = await fetch(`${apiUrl}/auth/profiles/${user?.id}/update/`, {
-          method: 'PUT',
-          headers: getAuthHeaders(),
-          body: JSON.stringify(data),
-        });
-        if (!res.ok) throw new Error('Unable to update profile');
-        return res.json();
+        try {
+          const res = await api.put(`/auth/profiles/${user?.id}/update/`, data);
+          return res.data;
+        } catch (error: any) {
+          throw new Error('Unable to update profile');
+        }
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['profile'] });

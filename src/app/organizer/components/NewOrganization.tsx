@@ -148,8 +148,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/30 backdrop-blur-sm animate-fadeIn ">
       <div className="bg-white backdrop-blur-lg border border-white/40 shadow-2xl rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative animate-scaleIn dark:bg-gray-900">
         {/* Header */}
-        <div className="flex justify-between items-center mb-5 sticky top-0 bg-white z-10 rounded-md dark:bg-gray-700 p-5 ">
-          <h1 className="text-[#171717] text-2xl font-semibold">
+        <div className="flex justify-between items-center mb-5 sticky dark:text-white top-0 bg-white z-10 rounded-md dark:bg-gray-700 p-5 ">
+          <h1 className="text-[#171717] dark:text-white text-2xl font-semibold">
             {type === "new" ? "New Organization" : "Edit Organization"}
           </h1>
 
@@ -236,7 +236,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 dark:placeholder:text-white/70"
               />
               <div className="text-xs text-gray-500 text-right">
                 {formData.name.length}/25
@@ -258,7 +258,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 placeholder="A short catchy phrase about your organization"
                 value={formData.tagline}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500  dark:placeholder:text-white/70"
               />
               <div className="text-xs text-gray-500 text-right">
                 {formData.tagline.length}/100
@@ -279,7 +279,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 placeholder="Brief description of your organization"
                 value={formData.description}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-24 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-24 focus:ring-2 focus:ring-indigo-500  dark:placeholder:text-white/70"
               />
               <div className="text-xs text-gray-500 text-right">
                 {formData.description.length}/350
@@ -300,7 +300,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 placeholder="Detailed information about your organization"
                 value={formData.about}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-32 focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none resize-none h-32 focus:ring-2 focus:ring-indigo-500 dark:placeholder:text-white/70"
               />
               <div className="text-xs text-gray-500 text-right">
                 {formData.about.length}/1000
@@ -322,7 +322,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 placeholder="https://example.com"
                 value={formData.website}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500  dark:placeholder:text-white/70"
               />
             </div>
 
@@ -365,7 +365,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 placeholder="City, Country"
                 value={formData.location}
                 onChange={handleChange}
-                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500  dark:placeholder:text-white/70"
               />
             </div>
 
