@@ -142,12 +142,12 @@ const filteredHackathons = !searchQuery.trim()
             </h2>
 
             {orgData?.tagline && (
-              <p className="text-sm text-indigo-600 font-medium mt-1">
+              <p className="text-sm text-indigo-600 dark:text-gray-400 font-medium mt-1">
                 {orgData.tagline}
               </p>
             )}
 
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Total Hackathons: <span className="font-medium">{totalHackathons}</span>
             </p>
           </div>

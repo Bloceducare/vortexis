@@ -148,13 +148,13 @@ const paginatedData = filteredData.slice(
 
                       <div className="absolute top-2 right-2">
                         {org.is_approved ? (
-                          <span className="flex items-center gap-1 bg-green-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                            <CheckCircle size={12} />
+                          <span className="flex items-center gap-1.5 bg-green-100/90 text-green-700 dark:bg-green-500/20 dark:text-green-400 dark:border dark:border-green-500/30 backdrop-blur-sm text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm transition-colors">
+                            <CheckCircle size={14} />
                             Approved
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 bg-yellow-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                            <Clock size={12} />
+                          <span className="flex items-center gap-1.5 bg-yellow-100/90 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border dark:border-yellow-500/30 backdrop-blur-sm text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm transition-colors">
+                            <Clock size={14} />
                             Pending
                           </span>
                         )}

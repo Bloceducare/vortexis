@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
+import api from "@/lib/api";
 
 export interface Notification {
   id: string;
@@ -48,18 +49,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
     setError(null);
 
     try {
-      const response = await fetch(`${baseUrl}/notifications/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-      }
-
-      const data = await response.json();
+      const response = await api.get("/notifications/");
+      const data = response.data;
 
       // Handle paginated response
       let notificationsArray: Notification[] = [];
@@ -92,18 +83,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
     }
 
     try {
-      const response = await fetch(`${baseUrl}/notifications/stats/`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-      }
-
-      const data: NotificationStats = await response.json();
+      const response = await api.get("/notifications/stats/");
+      const data: NotificationStats = response.data;
       setStats(data);
       return data;
     } catch (err) {
@@ -125,18 +106,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
       }
 
       try {
-        const response = await fetch(`${baseUrl}/notifications/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
-
-        const data: Notification = await response.json();
+        const response = await api.get(`/notifications/${id}/`);
+        const data: Notification = response.data;
         return data;
       } catch (err) {
         const errorMessage =
@@ -158,21 +129,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
       }
 
       try {
-        const response = await fetch(
-          `${baseUrl}/notifications/${id}/mark_read/`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({}),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
+        await api.post(`/notifications/${id}/mark_read/`, {});
 
         // Optimistically update local state
         setNotifications((prev) =>
@@ -213,21 +170,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
 
       try {
         const body = category ? { category } : {};
-        const response = await fetch(
-          `${baseUrl}/notifications/mark_all_read/`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-        }
+        await api.post("/notifications/mark_all_read/", body);
 
         // Optimistically update local state
         setNotifications((prev) =>

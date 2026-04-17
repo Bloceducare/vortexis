@@ -4,10 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Team } from '@/app/api/utils/interface';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useTeamStore } from '@/store/useTeamStore';
-import { apiClient } from './apiClient';
-import { TURBOPACK_CLIENT_MIDDLEWARE_MANIFEST } from 'next/dist/shared/lib/constants';
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+import api from '@/lib/api';
 
 
 interface JoinTeamPayload {
@@ -33,38 +30,19 @@ export default function useTeams() {
      const { setTeam,  } = useTeamStore()
     
     
-      const getAuthHeaders = (isFormData = false) => {
-        const headers: Record<string, string> = {};
-      
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
-      
-        if (!isFormData) {
-          headers['Content-Type'] = 'application/json';
-        }
-      
-        return headers;
-      };
-      
+
     
       const getTeam = (hackathon_id: string) => {
         return useQuery({
           queryKey: ['team', hackathon_id],
           queryFn: async () => {
-            const res = await fetch(
-              `${apiUrl}/team/teams/by_hackathon/?hackathon_id=${hackathon_id}`,
-              { headers: getAuthHeaders() }
-            );
-      
-            if (!res.ok) {
-              const errorData = await res.json().catch(() => ({}));
-              throw new Error(errorData?.message || "Unable to fetch team");
+            try {
+              const res = await api.get(`/team/teams/by_hackathon/?hackathon_id=${hackathon_id}`);
+              setTeam(res.data);
+              return res.data;
+            } catch (error: any) {
+              throw new Error(error.response?.data?.message || "Unable to fetch team");
             }
-      
-            const data = await res.json();
-            setTeam(data);
-            return data; // ✅ return parsed JSON
           },
           enabled: !!hackathon_id,
         });
@@ -73,29 +51,18 @@ export default function useTeams() {
     
     const createTeamMutation = useMutation({
       mutationFn: async (data: Team) => {
-        const res = await fetch(`${apiUrl}/team/teams/`, {
-          method: "POST",
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-    
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-    
-          // Handle Django-style error responses
+        try {
+          const res = await api.post("/team/teams/", data);
+          return res.data;
+        } catch (error: any) {
+          const errorData = error.response?.data;
           const errorMessage =
-            errorData?.non_field_errors?.[0] || // grab first non_field_error
-            errorData?.detail || // sometimes APIs use "detail"
-            errorData?.message || // fallback to "message"
+            errorData?.non_field_errors?.[0] ||
+            errorData?.detail ||
+            errorData?.message ||
             "Unable to create team";
-    
           throw new Error(errorMessage);
         }
-    
-        return res.json();
       },
     });
 
@@ -107,40 +74,30 @@ const getAvailableTeams = (hackathon_id: string) => {
   return useQuery({
     queryKey: ['available-hackathons', hackathon_id], 
     queryFn: async () => {
-      const res = await fetch(`${apiUrl}/hackathon/${hackathon_id}/available-teams/`, {
-        headers: getAuthHeaders(),
-      });
-
-      if (!res.ok) throw new Error('Unable to fetch available teams');
-      return res.json();
+      try {
+        const res = await api.get(`/hackathon/${hackathon_id}/available-teams/`);
+        return res.data;
+      } catch (error: any) {
+        throw new Error('Unable to fetch available teams');
+      }
     },
   });
 };
 const joinTeamMutation = () => {
   return useMutation({
     mutationFn: async ({ teamId, hackathon_id, teamName }: JoinTeamPayload) => {
-      const res = await fetch(`${apiUrl}/team/teams/request_to_join/`, {
-        method: "POST",
-        headers: {
-          ...getAuthHeaders(),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ team_id: teamId }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        // ✅ Look for backend error keys
+      try {
+        const res = await api.post("/team/teams/request_to_join/", { team_id: teamId });
+        return res.data;
+      } catch (error: any) {
+        const errorData = error.response?.data;
         const message =
           errorData?.message ||
           errorData?.detail ||
           errorData?.non_field_errors?.[0] ||
           "Unable to join team";
-
         throw new Error(message);
       }
-
-      return res.json();
     },
   });
 };
@@ -149,16 +106,12 @@ const getmyJoinRequests = () => {
   return useQuery({
     queryKey: ['my-join-requests'],
     queryFn: async () => {
-      const res = await fetch(`${apiUrl}/team/teams/my_join_requests/`, {
-        headers: getAuthHeaders(),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Unable to fetch join requests");
+      try {
+        const res = await api.get("/team/teams/my_join_requests/");
+        return res.data;
+      } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Unable to fetch join requests");
       }
-
-      return res.json();
     }
   });
 }
@@ -166,71 +119,47 @@ const getmyJoinRequests = () => {
       return useQuery({
         queryKey: ["team-join-requests"],
         queryFn: async () => {
-          const res = await fetch(`${apiUrl}/team/teams/join_requests/`, {
-            headers: getAuthHeaders()
-          });
-            if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Unable to fetch join requests");
-      }
-
-      return res.json();
-
+          try {
+            const res = await api.get("/team/teams/join_requests/")
+            return res.data;
+          } catch(error: any) {
+            throw new Error(error.response?.data?.message || "Unable to fetch join requests");
+          }
         }
       })
     }
 
       const approveTeamJoinRequest = useMutation({
       mutationFn: async (data: approveOrReject) => {
-        const res = await fetch(`${apiUrl}/team/teams/approve_join_request/`, {
-          method: "POST",
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-           if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-    
-          // Handle Django-style error responses
+        try {
+          const res = await api.post("/team/teams/approve_join_request/", data);
+          return res.data;
+        } catch(error: any) {
+          const errorData = error.response?.data;
           const errorMessage =
-            errorData?.non_field_errors?.[0] || // grab first non_field_error
-            errorData?.detail || // sometimes APIs use "detail"
-            errorData?.message || // fallback to "message"
+            errorData?.non_field_errors?.[0] ||
+            errorData?.detail ||
+            errorData?.message ||
             "Unable to create team";
-    
           throw new Error(errorMessage);
         }
-    
-        return res.json();
       }
     })
 
   const rejectTeamJoinRequest = useMutation({
       mutationFn: async (data: approveOrReject) => {
-        const res = await fetch(`${apiUrl}/team/teams/reject_join_request/`, {
-          method: "POST",
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        })
-           if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-    
-          // Handle Django-style error responses
+        try {
+          const res = await api.post("/team/teams/reject_join_request/", data);
+          return res.data;
+        } catch(error: any) {
+          const errorData = error.response?.data;
           const errorMessage =
-            errorData?.non_field_errors?.[0] || // grab first non_field_error
-            errorData?.detail || // sometimes APIs use "detail"
-            errorData?.message || // fallback to "message"
+            errorData?.non_field_errors?.[0] ||
+            errorData?.detail ||
+            errorData?.message ||
             "Unable to create team";
-    
           throw new Error(errorMessage);
         }
-    
-        return res.json();
       }
     })
    
@@ -239,17 +168,12 @@ const getmyJoinRequests = () => {
    const deleteTeamMutation = () => {
     return useMutation({
       mutationFn: async (id: string) => {
-        const res = await fetch(`${apiUrl}/team/${id}/`, {
-          method: "DELETE",
-          headers: getAuthHeaders(),
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData?.message || "Unable to delete team");
+        try {
+          const res = await api.delete(`/team/${id}/`);
+          return res.data;
+        } catch(error: any) {
+          throw new Error(error.response?.data?.message || "Unable to delete team");
         }
-
-        return res.json();
       },
     });
   };
@@ -257,24 +181,17 @@ const getmyJoinRequests = () => {
   const leaveTeam = () => {
     return useMutation({
       mutationFn: async (teamId: string) => {
-        const res = await fetch(`${apiUrl}/team/teams/${teamId}/leave_team/`, {
-          method: "POST", 
-          headers: {
-            ...getAuthHeaders(),
-            "Content-Type": "application/json",
-          },
-        });
-  
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
+        try {
+          const res = await api.post(`/team/teams/${teamId}/leave_team/`);
+          return res.data;
+        } catch(error: any) {
+          const errorData = error.response?.data;
           throw new Error(
             errorData?.message ||
               errorData?.non_field_errors?.[0] ||
               "Unable to leave team"
           );
         }
-  
-        return res.json();
       },
     });
   };
@@ -282,48 +199,30 @@ const getmyJoinRequests = () => {
   const inviteMembers = () => {
     return useMutation({
       mutationFn: async ({team_id, member_email } : addMember ) => {
-        const res = await fetch(`${apiUrl}/team/teams/${team_id}/add_member/`, {
-          method: "POST",
-          headers: {
-          ...getAuthHeaders(),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ member_email: member_email }),
-        });
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-        
+        try {
+          const res = await api.post(`/team/teams/${team_id}/add_member/`, { member_email });
+          return res.data;
+        } catch(error: any) {
+          const errorData = error.response?.data;
           const message =
             errorData?.member_email ||
             errorData?.detail ||
             errorData?.non_field_errors?.[0] ||
             "Unable to join team";
-  
           throw new Error(message);
         }
-
-        return res.json()
       }
     })
   }
 
   const acceptInvitation = useMutation({
     mutationFn: async (token: string) => {
-      const res = await fetch(`${apiUrl}/team/teams/accept_invitation/`, {
-        method: "POST",
-        headers: {
-          ...getAuthHeaders(),
-          "Content-Type": "application/json",
-          body: JSON.stringify({ token })
-        },
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Unable to accept invitation");
+      try {
+        const res = await api.post("/team/teams/accept_invitation/", { token });
+        return res.data;
+      } catch(error: any) {
+        throw new Error(error.response?.data?.message || "Unable to accept invitation");
       }
-
-      return res.json();
     },
   });
 

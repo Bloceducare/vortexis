@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import api from "@/lib/api";
 
 interface HackathonJudged {
   id: string;
@@ -27,34 +28,13 @@ export const useJudgedHackathons = (): UseJudgedHackathonsReturn => {
       setLoading(true);
       setError(null);
 
-      const bearerToken = localStorage.getItem("access_token");
-      if (!bearerToken) {
-        setError("No access token found");
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/judge/hackathons`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-          },
-        }
-      );
-
-      if (response.status === 403) {
-        // User is not authorized
+      const response = await api.get("/hackathon/judge/hackathons");
+      setHackathons(response.data);
+    } catch (err: any) {
+      if (err.response?.status === 403) {
         setUnauthorized(true);
       }
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setHackathons(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : err.response?.data?.detail || "An error occurred");
       console.error("Error fetching hackathons:", err);
     } finally {
       setLoading(false);
