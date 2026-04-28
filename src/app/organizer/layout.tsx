@@ -13,11 +13,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import Trophy from "@/public/assets/icon/game-icons_trophy-cup.svg";
-import Team from "@/public/assets/icon/team.svg";
-import Judges from "@/public/assets/icon/tabler_hammer.svg";
-import Submit from "@/public/assets/icon/Clock.svg";
 import Dash from "@/public/assets/icon/material-symbols_dashboard.svg";
+import { Trophy, Users, Upload, Gavel } from "lucide-react";
 import Header from "@/components/layouts/Header";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useHackathonStore } from "@/store/useHackathonStore";
@@ -31,12 +28,7 @@ interface OrganizerLayoutProps {
   children: React.ReactNode;
 }
 
-const navLinks = [
-  { label: "Manage", path: "hackathon", icon: Trophy },
-  { label: "Participants", path: "participants", icon: Team },
-  { label: "Submissions", path: "submission", icon: Submit },
-  { label: "Judges", path: "judges", icon: Judges },
-];
+
 
 export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const router = useRouter();
@@ -53,6 +45,13 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const OpenModal = () => {
     setLogout(true);
   };
+
+const navLinks = [
+  { label: "Manage", path: "hackathon", icon: Trophy },
+  { label: "Participants", path: "participants", icon: Users },
+  { label: "Submissions", path: "submission", icon: Upload },
+  { label: "Judges", path: "judges", icon: Gavel },
+];
 
   const confirmLogout = () => {
     clearToken();
@@ -244,6 +243,8 @@ const selectedHackathonSlug = useMemo(() => {
                 const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;
                 const isActive =
                   pathname === fullPath || pathname?.includes(link.path);
+                    const Icon = link.icon;
+
 
                 return (
                   <Link
@@ -255,12 +256,12 @@ const selectedHackathonSlug = useMemo(() => {
                         : "text-gray-600 dark:text-gray-300"
                     } transition-colors`}
                   >
-                    <Image
-                      src={link.icon}
-                      alt={link.label}
-                      width={24}
-                      height={24}
-                    />
+                    <Icon
+        size={20}
+        className={`transition-colors duration-200 ${
+          isDarkMode ? "text-white" : "text-gray-800"
+        }`}
+      />
                     <span
                       className={`${
                         sidebarExpanded || isMobile ? "inline" : "hidden"

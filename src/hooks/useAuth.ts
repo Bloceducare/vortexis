@@ -9,7 +9,6 @@ export const useAuth = () => {
   const getValidToken = () => {
     const currentToken = getToken();
     if (!currentToken) {
-      // If no token in store, try localStorage as fallback
       if (typeof window !== "undefined") {
         const storedToken = localStorage.getItem("access_token");
         if (storedToken) {

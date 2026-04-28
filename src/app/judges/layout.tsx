@@ -20,7 +20,13 @@ import Resourcess from "@/public/assets/icon/resource.svg";
 import Trophy from "@/public/assets/icon/Judges_NavLinks.svg";
 import Champ from "@/public/assets/icon/judges_trophy.svg";
 import Dashboard from "@/public/assets/icon/judgeDashboard.svg";
-import Bell from "@/public/assets/icon/iconoir_bell-notification-solid.svg";
+import {
+  LayoutDashboard,
+  ClipboardCheck,
+  ListChecks,
+  MessageSquare,
+  Bell,
+} from "lucide-react";
 import { useJudgedHackathons } from "@/hooks/useJudges";
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import { SignOutConfirmationModal } from "@/components/signOutModal";
@@ -40,26 +46,29 @@ interface SidebarItem {
   href: string;
 }
 
-// Dynamic sidebar items based on selected hackathon
 const getSidebarItems = (hackathonId: string) => [
-  { icon: Dashboard, text: "Dashboard", href: "/judges" },
+  { icon: LayoutDashboard, text: "Dashboard", href: "/judges" },
+
   {
-    icon: Champ,
+    icon: ClipboardCheck, // reviews / grading
     text: "My Reviews",
     href: `/judges/my-reviews/${hackathonId}`,
   },
+
   {
-    icon: Resourcess,
+    icon: ListChecks, // criteria / checklist
     text: "Evaluation Criteria",
     href: `/judges/evaluation-criteria/${hackathonId}`,
   },
+
   {
-    icon: Trophy,
+    icon: MessageSquare, // discussions / chat
     text: "Discussions",
     href: `/judges/collaboration/${hackathonId}`,
   },
+
   {
-    icon: Bell,
+    icon: Bell, // notifications (this one is already perfect)
     text: "Notifications",
     href: `/judges/notifications/${hackathonId}`,
   },
@@ -323,6 +332,7 @@ export default function JudgesLayout({
                 .slice(1)
                 .map((item, index) => {
                   const isActive = pathname === item.href;
+                  const Icon = item.icon;
 
                   return (
                     <Link
@@ -334,12 +344,12 @@ export default function JudgesLayout({
                           : "text-gray-600 dark:text-gray-300"
                       }`}
                     >
-                      <Image
-                        src={item.icon}
-                        alt={item.text}
-                        width={24}
-                        height={24}
-                      />
+                       <Icon
+        size={20}
+        className={`transition-colors duration-200 ${
+          isDarkMode ? "text-white" : "text-gray-800"
+        }`}
+      />
                       <span
                         className={`${
                           sidebarExpanded || isMobile ? "inline" : "hidden"

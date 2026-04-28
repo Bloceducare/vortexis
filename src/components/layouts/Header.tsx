@@ -181,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                             href="/organizer"
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
-                            Organization
+                            Organizations Dashboard
                           </Link>
                         </li>
                       )}
@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                             href="/dashboard"
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
-                            Hacker
+                            Hacker Dashboard
                           </Link>
                         </li>
                       )}
@@ -203,7 +203,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                             href="/judges"
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
-                            Judges
+                            Judge Dashboard
                           </Link>
                         </li>
                       )}

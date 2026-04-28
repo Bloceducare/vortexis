@@ -208,7 +208,7 @@ const DropdownLinks = ({ canAccessJudges, loading, onNavigate, onLogout }: any) 
   <ul className="list-none p-0 m-0">
     {[
       { label: "View Profile", href: "/profile/detail" },
-      { label: "Organization", href: "/organizer" },
+      { label: "Organization Dashboard", href: "/organizer" },
       { label: "Hacker Dashboard", href: "/dashboard" },
     ].map((link) => (
       <li key={link.href}>

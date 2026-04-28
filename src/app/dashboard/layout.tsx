@@ -13,10 +13,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import Trophy from "@/public/assets/icon/game-icons_trophy-cup.svg";
-import Team from "@/public/assets/icon/team.svg";
-import Submit from "@/public/assets/icon/Clock.svg";
+
 import Dash from "@/public/assets/icon/material-symbols_dashboard.svg";
+import { Trophy, Users, Folder, Trophy as TrophyAlt, Users as UsersAlt, Folder as FolderAlt } from "lucide-react";
 import Header from "@/components/layouts/Header";
 import useParticipants from "@/hooks/useParticipants";
 import { useHackathonStore } from "@/store/useHackathonStore";
@@ -29,11 +28,7 @@ interface OrganizerLayoutProps {
   children: React.ReactNode;
 }
 
-const navLinks = [
-  { label: "Manage", path: "hackathon", icon: Trophy },
-  { label: "Team", path: "team", icon: Team },
-  { label: "Projects", path: "project", icon: Submit },
-];
+
 
 export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const router = useRouter();
@@ -47,6 +42,27 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const { getHackathons } = useParticipants();
   const setHackathons = useHackathonStore((state) => state.setHackathons);
   const clearToken = useAuthStore((state) => state.clearToken);
+
+const navLinks = [
+  { 
+    label: "Manage", 
+    path: "hackathon", 
+    lightIcon: Trophy, 
+    darkIcon: TrophyAlt 
+  },
+  { 
+    label: "Team", 
+    path: "team", 
+    lightIcon: Users, 
+    darkIcon: UsersAlt 
+  },
+  { 
+    label: "Projects", 
+    path: "project", 
+    lightIcon: Folder, 
+    darkIcon: FolderAlt 
+  },
+];
 
   const { data } = getHackathons();
 
@@ -236,6 +252,8 @@ const selectedHackathonName = useMemo(() => {
                 const fullPath = `/dashboard/${selectedHackathonSlug}/${link.path}`;
                 const isActive =
                   pathname === fullPath || pathname?.includes(link.path);
+                    const Icon = isDarkMode ? link.darkIcon : link.lightIcon;
+
 
                 return (
                   <Link
@@ -247,12 +265,8 @@ const selectedHackathonName = useMemo(() => {
                         : "text-gray-600 dark:text-gray-300"
                     } transition-colors`}
                   >
-                    <Image
-                      src={link.icon}
-                      alt={link.label}
-                      width={24}
-                      height={24}
-                    />
+                         <Icon size={20} />
+
                     <span
                       className={`${
                         sidebarExpanded || isMobile ? "inline" : "hidden"
