@@ -128,8 +128,8 @@ export default function ProfileView() {
 
       {isFirstTimeUser && <FirstTime onClose={() => setIsFirstTimeUser(false)} isOpen={isFirstTimeUser} />}
 
-      <section className="flex gap-20 max-w-7xl mx-auto flex-wrap md:flex-nowrap">
-        <section className="space-y-5 w-full md:w-[60%]">        
+      <section className="flex gap-10 lg:gap-20 max-w-7xl mx-auto flex-col lg:flex-row">
+        <section className="space-y-5 w-full lg:w-[35%] shrink-0">        
         <section className="flex justify-between items-center md:items-end">
           <div className=" text-start">
            <div
@@ -255,7 +255,7 @@ export default function ProfileView() {
             </button>
           </div>   
         </section>
-        <section className="w-full">
+        <section className="w-full flex-1 min-w-0">
           <div className="flex justify-start">
           <div className="flex gap-2 md:gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-3 px-2 rounded-full transition-colors">
       {tabs.map((tab) => (

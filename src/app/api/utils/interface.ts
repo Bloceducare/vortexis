@@ -126,19 +126,19 @@ export interface User {
   username: string;
   email: string;
   first_name: string;
-  last_name: string;
-  profile: UserProfile;
-  is_participant: boolean;
-  is_organizer: boolean;
-  is_judge: boolean;
-  is_moderator: boolean;
-  is_admin: boolean;
-  is_verified: boolean;
-  is_active: boolean;
-  is_staff: boolean;
-  is_superuser: boolean;
-  date_joined: string;
-  last_login: string;
+  last_name?: string;
+  profile?: UserProfile;
+  is_participant?: boolean;
+  is_organizer?: boolean;
+  is_judge?: boolean;
+  is_moderator?: boolean;
+  is_admin?: boolean;
+  is_verified?: boolean;
+  is_active?: boolean;
+  is_staff?: boolean;
+  is_superuser?: boolean;
+  date_joined?: string;
+  last_login?: string;
 }
 
 

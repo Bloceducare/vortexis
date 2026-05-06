@@ -1,7 +1,9 @@
 import React from "react";
-import { Judge, ReactQueryState } from "@/app/api/utils/interface";
+import { Judge, ReactQueryState, User } from "@/app/api/utils/interface";
 import { useRouter } from "next/navigation";
 import { ExternalLink } from "lucide-react";
+import { useUserStore } from "@/store/useUserStore";
+import { slugify } from "@/lib/utils";
 
 interface JudgesListProps extends ReactQueryState {
   judges: Judge[] | undefined;
@@ -43,6 +45,7 @@ const getAvatarColor = (id: number) =>
     );
   }
   const router = useRouter();
+   const setclickedUser = useUserStore((state) => state.setclickedUser)
 
   if (isError) {
     return (
@@ -65,6 +68,12 @@ const getAvatarColor = (id: number) =>
       </div>
     );
   }
+
+    const viewProfiles = (user:any) => {
+      setclickedUser(user)
+      const slug = slugify(user.first_name)
+      router.push(`/profile/${slug}`)
+    }
 
   return (
    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -112,7 +121,7 @@ const getAvatarColor = (id: number) =>
 
       {/* Action */}
       <button
-        onClick={() => router.push(`/profile/${judge.id}`)}
+        onClick={() => viewProfiles(judge)}
         className="mt-4 inline-flex items-center gap-1 cursor-pointer
                    text-sm text-blue-600 hover:underline"
       >
