@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MenuIcon, ChevronDown } from "lucide-react";
+import { MenuIcon, ChevronDown, User, LayoutDashboard, Trophy, Award, LogOut, Building2 } from "lucide-react";
 import Link from "next/link";
 import { useUserStore } from "@/store/useUserStore";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
@@ -114,7 +114,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
           <div className="relative z-30">
             {/* Avatar & Name */}
             <div
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer hover:bg-gray-100/50 dark:hover:bg-white/5 p-1.5 rounded-xl transition-all"
               onClick={() => setShowDropdown((prev) => !prev)}
             >
               <div
@@ -163,14 +163,15 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border z-50 dark:bg-gray-800"
+                    className="absolute top-16 right-0 w-48 bg-white shadow-lg rounded-lg border dark:border-gray-700 z-50 dark:bg-gray-800"
                   >
                     <ul className="py-2 text-sm text-gray-700 list-none dark:text-white">
                       <li>
                         <Link
                           href="/profile/detail"
-                          className="block px-4 py-2 hover:bg-gray-100"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                         >
+                          <User size={16} className="text-gray-500" />
                           View Profile
                         </Link>
                       </li>
@@ -179,8 +180,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                         <li>
                           <Link
                             href="/organizer"
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           >
+                            <Building2 size={16} className="text-gray-500" />
                             Organizations Dashboard
                           </Link>
                         </li>
@@ -190,8 +192,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                         <li>
                           <Link
                             href="/dashboard"
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           >
+                            <LayoutDashboard size={16} className="text-gray-500" />
                             Hacker Dashboard
                           </Link>
                         </li>
@@ -201,17 +204,19 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                         <li>
                           <Link
                             href="/judges"
-                            className="block px-4 py-2 hover:bg-gray-100"
+                            className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           >
+                            <Award size={16} className="text-gray-500" />
                             Judge Dashboard
                           </Link>
                         </li>
                       )}
-                      <li>
+                      <li className="border-t dark:border-gray-700 mt-1 pt-1">
                         <p
                           onClick={() => setLogout(true)}
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                          className="flex items-center gap-2 px-4 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 cursor-pointer transition-colors"
                         >
+                          <LogOut size={16} />
                           LogOut
                         </p>
                       </li>

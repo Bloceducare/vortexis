@@ -37,6 +37,10 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
     error,
   } = getHackathonById(hackathon_id);
 
+  const isSubmissionDeadlinePassed = hackathonData?.submission_deadline
+    ? new Date() > new Date(hackathonData.submission_deadline)
+    : false;
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [modal, setModal] = useState<{
       open: boolean;
@@ -95,12 +99,16 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
           No Project Found
         </h2>
         <p className="mb-6 text-gray-500 dark:text-gray-400 max-w-md">
-          You haven’t created a project yet. Start by creating one now.
+          {isSubmissionDeadlinePassed 
+            ? "The submission deadline has passed. You can no longer create a project for this hackathon."
+            : "You haven’t created a project yet. Start by creating one now."}
         </p>
-        <CreateProject
-          hackathon_id={hackathon_id}
-          hackathon_name={hackathonData?.title}
-        />
+        {!isSubmissionDeadlinePassed && (
+          <CreateProject
+            hackathon_id={hackathon_id}
+            hackathon_name={hackathonData?.title}
+          />
+        )}
       </div>
     );
   }
@@ -154,15 +162,6 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
     return "deadline passed";
   };
 
-  const formatDeadline = (deadlineString: string) => {
-    const date = new Date(deadlineString);
-    return date.toLocaleDateString("en-US", {
-      weekday: "long", // Saturday
-      year: "numeric", // 2026
-      month: "long", // October
-      day: "numeric", // 10
-    });
-  };
 
   return (
     <div className="p-3 md:p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl transition-colors">
@@ -315,15 +314,19 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
 
       <div className="flex gap-4 mt-10 justify-end flex-wrap">
     {!project.is_submitted && (  <button
-          className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition cursor-pointer ${
-            submitProjectMutation.isPending
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-green-600 hover:bg-green-700"
+          className={`flex items-center gap-2 px-5 py-2 rounded-lg text-white font-medium shadow transition ${
+            submitProjectMutation.isPending || isSubmissionDeadlinePassed
+              ? "bg-gray-400 cursor-not-allowed opacity-70"
+              : "bg-green-600 hover:bg-green-700 cursor-pointer"
           }`}
-          onClick={() => handleSubmitProject(project.id)}
-          disabled={submitProjectMutation.isPending}
+          onClick={() => !isSubmissionDeadlinePassed && handleSubmitProject(project.id)}
+          disabled={submitProjectMutation.isPending || isSubmissionDeadlinePassed}
         >
-          {submitProjectMutation.isPending ? "Submitting..." : "Submit Project"}
+          {submitProjectMutation.isPending 
+            ? "Submitting..." 
+            : isSubmissionDeadlinePassed 
+            ? "Submission deadline passed" 
+            : "Submit Project"}
         </button>)}
 
       {new Date(hackathonData?.submission_deadline) > new Date() && (

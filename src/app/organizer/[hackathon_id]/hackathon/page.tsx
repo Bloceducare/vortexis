@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Hacks from "@/public/assets/hackathon.svg";
 import { Badge } from "@/components/ui/badge";
 import useOrganizer from "@/hooks/useOrganizers";
 import HtmlContent from "@/components/ui/HtMLContent";
@@ -18,6 +17,7 @@ import {
   FileText,
   Clock,
   ExternalLink,
+  Trophy,
 } from "lucide-react";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
@@ -164,13 +164,15 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                               </div>
 
 
-                  <button
-                onClick={() => setShowEditModal(true)}
-                className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
-              >
-                <Edit size={18} />
-                <span>Edit</span>
-              </button>
+                  {status.label !== "Finished" && (
+                    <button
+                      onClick={() => setShowEditModal(true)}
+                      className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
+                    >
+                      <Edit size={18} />
+                      <span>Edit</span>
+                    </button>
+                  )}
                 </div>
               
               </div>
@@ -352,13 +354,20 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
           >
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
               <div className="w-full aspect-square rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
-                <Image
-                  src={data?.banner_image || Hacks}
-                  width={200}
-                  height={200}
-                  alt="hackathon"
-                  className="w-full h-full object-cover"
-                />
+                {data?.banner_image ? (
+                  <Image
+                    src={data.banner_image}
+                    width={200}
+                    height={200}
+                    alt="hackathon"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800/50">
+                    <Trophy className="w-12 h-12 mb-2 opacity-20" />
+                    <span className="text-xs font-medium uppercase tracking-wider">No Image Found</span>
+                  </div>
+                )}
               </div>
               <h3 className="text-xl font-bold text-gray-800 dark:text-white text-center">
                 {data?.title}

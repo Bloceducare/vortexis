@@ -44,6 +44,7 @@ function Hack() {
   const hackathonId = activeHackathon?.id;
 
   const { data, isLoading, error } = getHackathonById(hackathonId as string);
+  const isDeadlinePassed = data?.start_date ? new Date(data.start_date) < new Date() : false;
 
 
   const { hackathons, addHackathon } = useUserHackathonsStore();
@@ -279,12 +280,14 @@ function Hack() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onRegister}
-                  disabled={registerMutation.isPending}
-                  className={`mt-6 w-full flex items-center justify-center cursor-pointer gap-2 py-4 rounded-xl font-semibold transition-all disabled:opacity-50 shadow-lg cursor-pointer ${
+                  disabled={registerMutation.isPending || (isDeadlinePassed && !isRegisteredState)}
+                  className={`mt-6 w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold transition-all shadow-lg ${
                     isRegisteredState
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90"
-                  }`}
+                      ? "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
+                      : isDeadlinePassed
+                      ? "bg-gray-400 dark:bg-gray-700 text-gray-100 cursor-not-allowed"
+                      : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 cursor-pointer"
+                  } ${registerMutation.isPending ? "opacity-50" : ""}`}
                 >
                   {registerMutation.isPending ? (
                     <>
@@ -303,6 +306,11 @@ function Hack() {
                     <>
                       <ArrowRight className="w-5 h-5" />
                       View Dashboard
+                    </>
+                  ) : isDeadlinePassed ? (
+                    <>
+                      <Clock className="w-5 h-5" />
+                      Registration deadline has passed
                     </>
                   ) : (
                     <>

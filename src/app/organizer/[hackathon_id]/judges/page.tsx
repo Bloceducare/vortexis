@@ -8,7 +8,7 @@ import useOrganizer from "@/hooks/useOrganizers";
 import { motion } from "framer-motion";
 import { useHackathonStore } from "@/store/useHackathonStore";
 
-const tab = ["Judges List", "Invite Judges"];
+const defaultTabs = ["Judges List", "Invite Judges"];
 
 function JudgesSkeleton() {
   return (
@@ -40,15 +40,24 @@ function Judges() {
   const { data, isLoading, isFetching, isError, refetch } =
     getHackathonJudges(hackathon_id);
 
+  const { getHackathonById } = useOrganizer();
+  const { data: hackathonData } = getHackathonById(hackathon_id);
+
+  const hasEnded = hackathonData?.end_date
+    ? new Date() > new Date(hackathonData.end_date)
+    : false;
+
+  const tabs = hasEnded ? ["Judges List"] : defaultTabs;
+
   useEffect(() => {
     if (data) {
-      if (data.length > 0) {
+      if (data.length > 0 || hasEnded) {
         setActiveTab("Judges List");
       } else {
         setActiveTab("Invite Judges");
       }
     }
-  }, [data]);
+  }, [data, hasEnded]);
 
   if (isLoading || isFetching) {
     return (
@@ -77,7 +86,7 @@ function Judges() {
     <section className="bg-white dark:bg-gray-800 px-10 rounded-2xl py-5 transition-colors">
       {/* Tabs */}
 <div className="flex gap-2 mb-6 bg-[#F4F3FE] dark:bg-gray-900 p-2 rounded-xl w-fit">
-  {tab.map((item) => {
+  {tabs.map((item) => {
     const isActive = activeTab === item;
 
     return (

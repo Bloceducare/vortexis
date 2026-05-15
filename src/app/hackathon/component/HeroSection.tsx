@@ -7,6 +7,8 @@ import useOrganizer from "@/hooks/useOrganizers";
 import { useAuthStore } from "@/store/useAuthStore";
 import Image from "next/image";
 import Plane from "@/public/assets/PlaneCircle.svg";
+import { slugify } from "@/lib/utils";
+import { useOrganizationStore } from "@/store/useOrganizationStore";
 
 interface HeroSectionProps {
   onCreateOrg: () => void;
@@ -22,10 +24,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
   const handleCreateHackathon = () => {
     setShowOrgModal(true);
   };
+  const setClickedOrganization = useOrganizationStore((state) => state.setOrganization)
 
-  const handleOrgSelect = (organizationId: string) => {
+
+
+  const handleOrgSelect = (organization: any) => {
     setShowOrgModal(false);
-    router.push(`/organizer/create-hackathon/${organizationId}`);
+    setClickedOrganization(organization)
+     const slug = slugify(organization.name)
+    router.push(`/organizer/create-hackathon/${slug}`);
   };
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -196,7 +203,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
                       key={org.id}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => handleOrgSelect(org.id)}
+                      onClick={() => handleOrgSelect(org)}
                       className="flex items-center gap-4 p-4 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-primary dark:hover:border-primary transition-all text-left"
                     >
                       {org.logo ? (

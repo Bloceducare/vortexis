@@ -34,6 +34,9 @@ function Home() {
     message: "",
   });
 
+  const [isNavigating, setIsNavigating] = useState(false);
+  const isAnyActionPending = registerMutation.isPending || isNavigating;
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
@@ -78,6 +81,7 @@ const handleRegister = (hackathon_id: string) => {
         const hackathon = hackathons.find((h: any) => h.id === hackathon_id);
         if (hackathon) {
           const slug = slugify(hackathon.title);
+          setIsNavigating(true);
           router.push(`/dashboard/${slug}/hackathon`);
         }
       }, 1200); 
@@ -136,10 +140,15 @@ const handleRegister = (hackathon_id: string) => {
           <HackathonGrid
             hackathons={paginatedHackathons}
             isLoading={isLoading}
-            onCardClick={(id) => router.push(`/hackathon/${id}`)}
+            onCardClick={(id) => {
+              setIsNavigating(true);
+              router.push(`/hackathon/${id}`);
+            }}
             onRegister={handleRegister}
             activeHackathon={activeHackathon}
             isRegistering={registerMutation.isPending}
+            isDisabled={isAnyActionPending}
+            onNavigate={() => setIsNavigating(true)}
           />
 
           {/* Pagination */}
