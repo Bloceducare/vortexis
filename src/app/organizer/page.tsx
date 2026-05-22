@@ -141,8 +141,9 @@ const paginatedData = filteredData.slice(
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Building2 className="w-12 h-12 text-indigo-300" />
+                        <div className="w-full h-full flex flex-col items-center justify-center text-indigo-300 dark:text-gray-500">
+                          <Building2 className="w-10 h-10 mb-1 opacity-40" />
+                          <span className="text-[10px] font-medium uppercase tracking-tighter">No Image Found</span>
                         </div>
                       )}
 

@@ -151,6 +151,10 @@ const Hackathons = () => {
 
   const daysLeft = calculateDaysLeft();
 
+  const isSubmissionDeadlinePassed = data?.submission_deadline
+    ? new Date() > new Date(data.submission_deadline)
+    : false;
+
     const viewProfiles = (user: User) => {
       setclickedUser(user)
       const slug = slugify(user.first_name)
@@ -399,27 +403,49 @@ const Hackathons = () => {
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={!isSubmissionDeadlinePassed ? { scale: 1.02 } : {}}
+                    whileTap={!isSubmissionDeadlinePassed ? { scale: 0.98 } : {}}
                     onClick={() =>
-                      router.push(`/dashboard/${slug}/team/create`)
+                      !isSubmissionDeadlinePassed && router.push(`/dashboard/${slug}/team/create`)
                     }
-                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25 cursor-pointer"
+                    disabled={isSubmissionDeadlinePassed}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold transition-all shadow-lg ${
+                      isSubmissionDeadlinePassed
+                        ? "bg-gray-400 cursor-not-allowed opacity-70"
+                        : "bg-indigo-600 text-white hover:opacity-90 shadow-primary/25 cursor-pointer"
+                    }`}
                   >
-                    <Plus className="w-4 h-4" />
-                    Create Team
+                    {isSubmissionDeadlinePassed ? (
+                      "Submission deadline passed"
+                    ) : (
+                      <>
+                        <Plus className="w-4 h-4" />
+                        Create Team
+                      </>
+                    )}
                   </motion.button>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={!isSubmissionDeadlinePassed ? { scale: 1.02 } : {}}
+                    whileTap={!isSubmissionDeadlinePassed ? { scale: 0.98 } : {}}
                     onClick={() =>
-                      router.push(`/dashboard/${slug}/team/join`)
+                      !isSubmissionDeadlinePassed && router.push(`/dashboard/${slug}/team/join`)
                     }
-                    className="w-full flex items-center justify-center gap-2 border-2 border-primary text-primary py-3 rounded-xl font-semibold hover:bg-primary/5 transition-all cursor-pointer"
+                    disabled={isSubmissionDeadlinePassed}
+                    className={`w-full flex items-center justify-center gap-2 border-2 py-3 rounded-xl font-semibold transition-all ${
+                      isSubmissionDeadlinePassed
+                        ? "border-gray-300 text-gray-400 cursor-not-allowed opacity-70"
+                        : "border-primary text-primary hover:bg-primary/5 cursor-pointer"
+                    }`}
                   >
-                    <UserPlus className="w-4 h-4" />
-                    Join Team
+                    {isSubmissionDeadlinePassed ? (
+                      "Join Team disabled"
+                    ) : (
+                      <>
+                        <UserPlus className="w-4 h-4" />
+                        Join Team
+                      </>
+                    )}
                   </motion.button>
                 </div>
               )}

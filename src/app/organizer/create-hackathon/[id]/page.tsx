@@ -9,11 +9,15 @@ import Prizes from "./component/Prizes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useParams } from "next/navigation";
+import { useOrganizationStore } from "@/store/useOrganizationStore";
 
 function Hackathon() {
   const [activeButton, setActiveButton] = useState("Hackathon Details");
   const params = useParams();
-  const orgid = params?.id ? Number(params.id) : 0; // Default to 0 if undefined
+ 
+
+  const setClickedOrganization = useOrganizationStore((state) => state.organization)
+  const orgid = setClickedOrganization?.id ?? 0;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({

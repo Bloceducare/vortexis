@@ -26,6 +26,8 @@ interface HackathonGridProps {
   onRegister: (id: string) => void;
   activeHackathon: string | null;
   isRegistering: boolean;
+  isDisabled?: boolean;
+  onNavigate?: () => void;
 }
 
 export const HackathonGrid: React.FC<HackathonGridProps> = React.memo(
@@ -36,6 +38,8 @@ export const HackathonGrid: React.FC<HackathonGridProps> = React.memo(
     onRegister,
     activeHackathon,
     isRegistering,
+    isDisabled,
+    onNavigate,
   }) => {
     const { getHackathons } = useParticipants();
     const {
@@ -108,6 +112,8 @@ const newIds = new Set(registeredHackathons.map((h: Hackathon) => h.id));
                 activeHackathon === hackathon.id && isRegistering
               }
               registered={registeredIds.has(hackathon.id)}
+              isDisabled={isDisabled}
+              onNavigate={onNavigate}
             />
           ))}
         </AnimatePresence>

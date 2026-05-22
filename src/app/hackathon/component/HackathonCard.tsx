@@ -28,10 +28,12 @@ interface HackathonCardProps {
   onRegister: (id: string) => void; 
   isRegistering: boolean;
   registered: boolean;
+  isDisabled?: boolean;
+  onNavigate?: () => void;
 }
 
 export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
-  ({ hackathon, index, onClick, onRegister, isRegistering, registered }) => {
+  ({ hackathon, index, onClick, onRegister, isRegistering, registered, isDisabled, onNavigate }) => {
     const router = useRouter();
     const { setActiveHackathon } = useHackathonStore();
     const queryClient = useQueryClient()
@@ -56,24 +58,29 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
 
 const handleRegister = async (e: React.MouseEvent) => {
   e.stopPropagation();
+  if (isDisabled) return;
   
     setActiveHackathon(hackathon);
     
-    await onRegister(hackathon.id);
+  onRegister(hackathon.id);
   
 };
 
   
     const handleViewDashboard = (e: React.MouseEvent) => {
       e.stopPropagation();
+      if (isDisabled) return;
         setActiveHackathon(hackathon);
          const slug = slugify(hackathon.title);
+         onNavigate?.();
       router.push(`/dashboard/${slug}/hackathon`);
     };
 
     const handleNavigation = (hackathon: any) => {
+      if (isDisabled) return;
   setActiveHackathon(hackathon);
  const slug = slugify(hackathon.title);
+  onNavigate?.();
   router.push(`/hackathon/${slug}`);
 };
 
@@ -85,7 +92,7 @@ const handleRegister = async (e: React.MouseEvent) => {
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ duration: 0.3, delay: index * 0.05 }}
         whileHover={{ y: -8 }}
-        className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 cursor-pointer"
+        className={`bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-gray-100 dark:border-gray-700 cursor-pointer ${isDisabled ? "opacity-75 pointer-events-none grayscale-[0.2]" : ""}`}
       >
         <div
           className="relative h-48 bg-linear-to-br from-primary/20 to-primary/5 cursor-pointer"

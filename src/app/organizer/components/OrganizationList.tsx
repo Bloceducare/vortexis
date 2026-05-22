@@ -11,6 +11,9 @@ import Time from '@/public/assets/Time Outline Icon 1.svg'
 import NewOrganization from './NewOrganization';
 import AddModerator from './AddModerator';
 import { motion } from 'framer-motion';
+import { slugify } from '@/lib/utils';
+import { useOrganizationStore } from '@/store/useOrganizationStore';
+import { useHackathonStore } from '@/store/useHackathonStore';
 
 
 interface OrgProps {
@@ -29,6 +32,21 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
 
   const { data: orgData, isLoading: orgLoading, isError: orgError } = getOrganizationById(id!);
   const { data: hackathons, isLoading, isError } = getOrganizationHackathon(id!);
+  const setClickedOrganization = useOrganizationStore((state) => state.setOrganization);
+  const setClickedHackathon = useHackathonStore((state) => state.setActiveHackathon);
+
+
+  const startHackathon = (organization: any) => {
+        setClickedOrganization(organization)
+        const slug = slugify(organization.name)
+        router.push(`/organizer/create-hackathon/${slug}`)
+      }
+
+      const viewHackathon = (hackathon: any) => {
+        setClickedHackathon(hackathon)
+        const slug = slugify(hackathon.title)
+        router.push(`/organizer/${slug}/hackathon`)
+      }
 
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -234,7 +252,7 @@ const filteredHackathons = !searchQuery.trim()
             <SearchInput onSearch={handleSearch} className="bg-white" />
           </div>
 
-          <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => router.push(`/organizer/create-hackathon/${organizationId}`)}>
+          <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => startHackathon(orgData)}>
             <b className="text-2xl mb-1">+</b> Start hackathon
           </button>
         </section>
@@ -288,7 +306,8 @@ const filteredHackathons = !searchQuery.trim()
             return (
               <div
                 key={hackathon.id}
-                onClick={() => router.push(`/organizer/${hackathon.id}/hackathon`)}
+                onClick={() => viewHackathon(hackathon)}
+               
                 className="p-4 border rounded-xl hover:shadow-lg transition bg-white cursor-pointer flex flex-col justify-between dark:bg-gray-800"
               >
                       <div
@@ -303,8 +322,9 @@ const filteredHackathons = !searchQuery.trim()
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Trophy className="w-16 h-16 text-primary/30" />
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800/50">
+            <Trophy className="w-12 h-12 mb-2 opacity-20" />
+            <span className="text-xs font-medium uppercase tracking-wider">No Image Found</span>
           </div>
         )}
         </div>
