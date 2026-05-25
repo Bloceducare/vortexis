@@ -9,7 +9,8 @@ import { Trophy } from "lucide-react";
 export default function ExploreActiveHackathons() {
   const router = useRouter();
   const { getAllHackathon } = useHackathon();
-  const { data: hackathons = [], isLoading } = getAllHackathon();
+  const { data: apiData = {}, isLoading } = getAllHackathon();
+  const hackathons = apiData.data || [];
 
   // ✅ Memoize filtering and limiting so it doesn’t recalc on every render
   const activeHackathons = useMemo(() => {

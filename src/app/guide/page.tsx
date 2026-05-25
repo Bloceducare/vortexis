@@ -17,26 +17,15 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useIsLoggedIn } from "@/lib/logged-In";
 
 export default function GuideCard() {
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
 
-   const [isLoggedIn, setIsLoggedIn] = useState(false);
-          const token = useAuthStore.getState().getToken();
-    
-            useEffect(() => {
-              const checkLoginStatus = () => {
-                setIsLoggedIn(!!token);
-              };
-          
-              checkLoginStatus();
-              window.addEventListener("storage", checkLoginStatus);
-          
-              return () => {
-                window.removeEventListener("storage", checkLoginStatus);
-              };
-            }, []);
+  const isLoggedIn = useIsLoggedIn();
+
+  
 
   
 
@@ -295,7 +284,7 @@ export default function GuideCard() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-            onClick={() => router.push(isLoggedIn ? "/organizer/create-hackathon" : "/auth/signup")}
+            onClick={() => router.push(isLoggedIn ? "/organizer" : "/auth/signup")}
                   className="flex items-center justify-center gap-2 bg-white text-purple-600 px-2 md:px-8 py-4 rounded-xl font-semibold md:text-lg shadow-lg hover:shadow-xl transition-all text-sm cursor-pointer"
                 >
                   <Building2 className="w-5 h-5" />
