@@ -13,7 +13,8 @@ export default function ExploreActiveHackathons() {
 
   // ✅ Memoize filtering and limiting so it doesn’t recalc on every render
   const activeHackathons = useMemo(() => {
-    return hackathons
+    const hackathonList = Array.isArray(hackathons) ? hackathons : [];
+    return hackathonList
       .filter((h: any) => !h.end_date || new Date(h.end_date) >= new Date())
       .slice(0, 6);
   }, [hackathons]);
