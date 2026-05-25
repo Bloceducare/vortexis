@@ -17,26 +17,22 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useIsLoggedIn } from "@/lib/logged-In";
 
 export default function GuideCard() {
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
 
-   const [isLoggedIn, setIsLoggedIn] = useState(false);
-          const token = useAuthStore.getState().getToken();
-    
-            useEffect(() => {
-              const checkLoginStatus = () => {
-                setIsLoggedIn(!!token);
-              };
-          
-              checkLoginStatus();
-              window.addEventListener("storage", checkLoginStatus);
-          
-              return () => {
-                window.removeEventListener("storage", checkLoginStatus);
-              };
-            }, []);
+  const isLoggedIn = useIsLoggedIn();
+
+  const handleCreateOrganization = () => {
+    const token = useAuthStore.getState().getToken();
+    if (token) {
+      router.push("/organizer");
+    } else {
+      router.push("/auth/signup");
+    }
+  };
 
   
 
