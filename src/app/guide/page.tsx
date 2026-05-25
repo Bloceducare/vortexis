@@ -25,14 +25,7 @@ export default function GuideCard() {
 
   const isLoggedIn = useIsLoggedIn();
 
-  const handleCreateOrganization = () => {
-    const token = useAuthStore.getState().getToken();
-    if (token) {
-      router.push("/organizer");
-    } else {
-      router.push("/auth/signup");
-    }
-  };
+  
 
   
 
@@ -291,7 +284,7 @@ export default function GuideCard() {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-            onClick={() => router.push(isLoggedIn ? "/organizer/create-hackathon" : "/auth/signup")}
+            onClick={() => router.push(isLoggedIn ? "/organizer" : "/auth/signup")}
                   className="flex items-center justify-center gap-2 bg-white text-purple-600 px-2 md:px-8 py-4 rounded-xl font-semibold md:text-lg shadow-lg hover:shadow-xl transition-all text-sm cursor-pointer"
                 >
                   <Building2 className="w-5 h-5" />
