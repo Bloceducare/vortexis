@@ -6,12 +6,15 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  totalItems?: number;
+  itemsPerPage?: number;
 }
-
-export const Pagination: React.FC<PaginationProps> = ({
+const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
   onPageChange,
+  totalItems = 0,
+  itemsPerPage = 10,
 }) => {
   const getPaginationNumbers = () => {
     const pages: (number | string)[] = [];
@@ -44,6 +47,9 @@ export const Pagination: React.FC<PaginationProps> = ({
     }
     return pages;
   };
+
+  // Determine if next page should be disabled
+  const isNextDisabled = currentPage >= totalPages;
 
   return (
     <motion.div
@@ -89,8 +95,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
-        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={isNextDisabled}
         className="p-2 rounded-xl border border-primary/20 dark:border-indigo-400/30 hover:bg-primary/5 dark:hover:bg-indigo-400/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all text-gray-700 dark:text-gray-300"
       >
         <ChevronRight className="w-5 h-5" />
@@ -98,3 +104,5 @@ export const Pagination: React.FC<PaginationProps> = ({
     </motion.div>
   );
 };
+
+export { Pagination };

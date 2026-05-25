@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import api from "@/lib/api";
@@ -13,13 +13,16 @@ export default function useHackathon() {
 
 
 
-  const getAllHackathon = () => {
+  const getAllHackathon = (page = 1, pageSize = 12, filters = {}) => {
     return useQuery({
-      queryKey: ["all_hackathon"],
+      queryKey: ["all_hackathon", page, pageSize, filters],
       queryFn: async () => {
-        const res = await api.get("/hackathon/");
-        return res.data;
+        // Build query params for pagination and filters
+        const params = { page, pageSize, ...filters };
+        const res = await api.get("/hackathon/", { params });
+        return res.data; // Contains { data, pagination }
       },
+      placeholderData: keepPreviousData,
     });
   };
 

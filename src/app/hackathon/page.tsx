@@ -16,13 +16,11 @@ import { slugify } from "@/lib/utils";
 
 function Home() {
   const router = useRouter();
+
   const { getAllHackathon, registerUserForHackathon } = useHackathon();
   const [countries, setCountries] = useState<Country[]>([]);
-  const { data: hackathons = [], isLoading } = getAllHackathon();
-  const registerMutation = registerUserForHackathon();
-  const queryClient = useQueryClient()
-  
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const [activeHackathon, setActiveHackathon] = useState<string | null>(null);
   const [modal, setModal] = useState<{
     open: boolean;
@@ -33,13 +31,11 @@ function Home() {
     type: "success",
     message: "",
   });
-
   const [isNavigating, setIsNavigating] = useState(false);
-  const isAnyActionPending = registerMutation.isPending || isNavigating;
+  const registerMutation = registerUserForHackathon();
+  const queryClient = useQueryClient();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
-
+  // Filters
   const {
     sortOption,
     setSortOption,
@@ -49,8 +45,21 @@ function Home() {
     setSelectedCountry,
     prizeFilter,
     setPrizeFilter,
-    filteredHackathons,
-  } = useHackathonFilters(hackathons);
+  } = useHackathonFilters([]); // Don't filter client-side
+
+  // Build filter params for API
+  const filterParams: Record<string, any> = {};
+  if (searchQuery) filterParams.search = searchQuery;
+  if (selectedCountry) filterParams.country = selectedCountry;
+  if (prizeFilter && prizeFilter !== "all") filterParams.prize = prizeFilter;
+  if (sortOption) filterParams.sort = sortOption;
+
+  // Fetch paginated hackathons from API
+  const { data: apiData = {}, isLoading } = getAllHackathon(currentPage, itemsPerPage, filterParams);
+  const { data: hackathons = [], pagination = { page: 1, totalPages: 1, totalItems: 0 } } = apiData as { data?: any[]; pagination?: { page: number; totalPages: number; totalItems: number } };
+
+  // Restore isAnyActionPending
+  const isAnyActionPending = registerMutation.isPending || isNavigating;
 
   useEffect(() => {
     getCountries().then(setCountries).catch(console.error);
@@ -96,11 +105,7 @@ const handleRegister = (hackathon_id: string) => {
     },
   });
 };
-  const totalPages = Math.ceil(filteredHackathons.length / itemsPerPage);
-  const paginatedHackathons = filteredHackathons.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = pagination.totalPages;
 
   const createOrganization = () => {
     localStorage.setItem("newOrganizer", "true");
@@ -133,12 +138,12 @@ const handleRegister = (hackathon_id: string) => {
             prizeFilter={prizeFilter}
             onPrizeFilterChange={setPrizeFilter}
             countries={countries}
-            resultsCount={filteredHackathons.length}
+            resultsCount={pagination.totalItems}
           />
 
      
           <HackathonGrid
-            hackathons={paginatedHackathons}
+            hackathons={hackathons}
             isLoading={isLoading}
             onCardClick={(id) => {
               setIsNavigating(true);
@@ -152,11 +157,13 @@ const handleRegister = (hackathon_id: string) => {
           />
 
           {/* Pagination */}
-          {filteredHackathons.length > 0 && (
+          {pagination.totalItems > 0 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               onPageChange={setCurrentPage}
+              totalItems={pagination.totalItems}
+              itemsPerPage={itemsPerPage}
             />
           )}
         </motion.div>
