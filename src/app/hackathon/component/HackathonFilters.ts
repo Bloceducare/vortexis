@@ -8,7 +8,8 @@ export const useHackathonFilters = (hackathons: any[]) => {
 
   const filteredHackathons = useMemo(() => {
     const now = new Date();
-    let filtered = hackathons.filter(
+    const hackathonList = Array.isArray(hackathons) ? hackathons : [];
+    let filtered = hackathonList.filter(
       (h: any) =>
         h.title.toLowerCase().includes(searchQuery) ||
         h.venue.toLowerCase().includes(searchQuery)
