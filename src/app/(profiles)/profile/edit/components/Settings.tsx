@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import useSkills from '@/hooks/useSkills';
 import { Skills } from "@/app/api/utils/interface";
 import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import StatusModal from "@/components/StatusModal";
 
@@ -203,6 +204,16 @@ const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>
   const file = e.target.files?.[0];
   if (!file || !file.type.startsWith("image/")) return;
 
+  const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
+  if (file.size > MAX_GENERIC_SIZE) {
+    toast.error("Profile picture must be 1.2MB or smaller", {
+      position: "top-right",
+      autoClose: 4000,
+      theme: "colored",
+    });
+    return;
+  }
+
   const previewUrl = URL.createObjectURL(file);
   setForm((prev) => ({ ...prev, profile_picture_preview: previewUrl }));
 
@@ -244,16 +255,16 @@ const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>
         </div>
 
         {/* Tabs */}
-        <section className=" flex justify-start w-full gap-2 py-1 md:px-5 md:py-3">
-        <div className="flex gap-3 md:gap-10 bg-[#F5F5F5] rounded-xl md:rounded-full px-2 md:px-4 py-2 border-b">
+        <section className=" flex justify-start w-full gap-2 py-1 md:px-5 md:py-3 ">
+        <div className="flex gap-3 md:gap-10 bg-[#F5F5F5] dark:bg-gray-800 rounded-xl md:rounded-full px-2 md:px-4 py-2 border-b">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-2 md:px-3 py-2 text-sm cursor-pointer font-semibold text-black ${
+              className={`px-3 md:px-4 py-2 text-sm cursor-pointer font-semibold rounded-xl transition-colors ${
                 activeTab === tab
-                  ? " bg-blue-600 text-white rounded-xl md:rounded-full "
-                  : ""
+                  ? "bg-blue-600 text-white"
+                  : "text-black hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
               }`}
             >
               {tab}
@@ -403,24 +414,20 @@ const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-4 border-t">
+        <div className="flex justify-end gap-3 p-6 border-t mt-6">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+            className="px-6 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 text-sm font-semibold dark:border-gray-600 dark:hover:bg-gray-700 cursor-pointer"
           >
             Cancel
           </button>
-       <button
-  onClick={handleSave}
-  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-  disabled={isUpdating || isUploadingImage} // disabled while uploading
->
-  {isUploadingImage
-    ? "Uploading image..."
-    : isUpdating
-    ? "Saving..."
-    : "Save Changes"}
-</button>
+          <button
+            onClick={handleSave}
+            className="px-6 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 text-sm cursor-pointer font-semibold disabled:bg-gray-400"
+            disabled={isUpdating || isUploadingImage} // disabled while uploading
+          >
+            {isUploadingImage ? "Uploading image..." : isUpdating ? "Saving..." : "Save Changes"}
+          </button>
 
         </div>
       </div>
@@ -437,7 +444,7 @@ const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>
             </p>
             <button
               onClick={() => setShowErrorModal(false)}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700"
             >
               Try Again
             </button>

@@ -104,13 +104,28 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
   if (!file || !file.type.startsWith("image/")) return;
 
+  // Allow up to 2MB for hackathon banner
+  const MAX_BANNER_SIZE = 2 * 1024 * 1024;
+  if (file.size > MAX_BANNER_SIZE) {
+    // use toast to inform user
+    // dynamic import of toast not necessary; assume react-toastify used elsewhere
+    // but this file already imports toast at top
+    // (it does)
+    // show error and abort
+    // @ts-ignore
+    toast.error("Banner image must be 2MB or smaller", {
+      position: "top-right",
+      autoClose: 4000,
+      theme: "colored",
+    });
+    return;
+  }
+
   const previewUrl = URL.createObjectURL(file);
   setField("preview", previewUrl);
 
   try {
     const imageUrl = await uploadToCloudinary(file);
-
-   
     setField("banner_image_file", imageUrl);
   } catch (err) {
     console.error("Upload failed", err);

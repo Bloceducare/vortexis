@@ -257,20 +257,20 @@ export default function ProfileView() {
         </section>
         <section className="w-full flex-1 min-w-0">
           <div className="flex justify-start">
-          <div className="flex gap-2 md:gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-3 px-2 rounded-full transition-colors">
-      {tabs.map((tab) => (
-        <button
-          key={tab}
-          onClick={() => setActiveTab(tab)}
-          className={` px-1 md:px-4 py-2 transition cursor-pointer text-sm md:text-lg ${
-            activeTab === tab
-              ? " font-semibold bg-[#605DEC] text-white rounded-full"
-              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-          }`}
-        >
-          {tab}
-        </button>
-      ))}
+          <div className="flex gap-2 md:gap-4 justify-start bg-[#F5F5F5] dark:bg-gray-800 py-2 px-3 rounded-full transition-colors">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-3 md:px-4 py-1 text-sm md:text-lg font-semibold rounded-full cursor-pointer transition-colors ${
+                    activeTab === tab
+                      ? "bg-[#605DEC] text-white"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
     </div>
           </div>
        
@@ -279,6 +279,18 @@ export default function ProfileView() {
         {activeTab === "Hackathons" && (
           <section className="mt-5"> 
             <Hackathons />
+          </section>
+        )}
+
+        {activeTab === "Activity" && (
+          <section className="mt-5 text-gray-600 dark:text-gray-400">
+            Activity coming soon...
+          </section>
+        )}
+
+        {activeTab === "Badges" && (
+          <section className="mt-5 text-gray-600 dark:text-gray-400">
+            Badges coming soon...
           </section>
         )}
 

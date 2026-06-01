@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { NavigationProps } from '@/components/Interface';
 import { useHackathonStore } from '@/store/useHackathonStore';
 import { useShallow } from 'zustand/shallow';
@@ -51,7 +51,6 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
 
   const { createHackathonMutation } = useOrganizer();
   const getHackathonData = useHackathonStore((state) => state.getHackathonData);
-  const hackathon = useMemo(() => getHackathonData(), [getHackathonData]);
   const { clearHackathon } = useHackathonStore();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -59,11 +58,12 @@ function Visibility({ onNext, onPrev, orgId }: VisibilityProps) {
     setErrorMessage('');
 
     try {
+      const hackathon = getHackathonData();
       const payload = {
         ...hackathon,
-         organization_id: orgId,
-         banner_image_file: hackathon.banner_image_file ?? null,
-      }
+        organization_id: orgId,
+        banner_image_file: hackathon.banner_image_file ?? null,
+      };
 
       await createHackathonMutation.mutateAsync(payload);
       setShowSuccessModal(true);
