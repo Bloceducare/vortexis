@@ -146,7 +146,7 @@ const selectedHackathonSlug = useMemo(() => {
           {sidebarExpanded || isMobile ? "Vortexis" : "V"}
         </div>
 
-        {!isMobile && (
+        {!isMobile && !pathname.includes("/organizer/create-hackathon") && (
           <button
             onClick={toggleSidebar}
             className="absolute right-0 top-8 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-full shadow-md w-10 h-10 flex items-center justify-center cursor-pointer transition-colors"
@@ -237,7 +237,7 @@ const selectedHackathonSlug = useMemo(() => {
           </div>
 
           {/* Nav links */}
-          {selectedHackathonSlug && (
+          {selectedHackathonSlug && !pathname.includes("/organizer/create-hackathon") && (
             <div>
               {navLinks.map((link, index) => {
                 const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;

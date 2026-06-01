@@ -77,6 +77,18 @@ function Team({ onNext, onPrev, setData }: NavigationProps) {
       return;
     }
 
+    const minSize = Number(min_team_size);
+    const maxSize = Number(max_team_size);
+
+    if (!Number.isNaN(minSize) && !Number.isNaN(maxSize) && minSize > maxSize) {
+      toast.error("Minimum team size cannot exceed maximum team size.", {
+        position: "top-right",
+        autoClose: 4000,
+        theme: "colored",
+      });
+      return;
+    }
+
     if (onNext) {
       onNext();
     }

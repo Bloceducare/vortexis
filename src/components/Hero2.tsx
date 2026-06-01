@@ -151,13 +151,12 @@ export default function HackathonCTA() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8"
+          className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8"
         >
           {[
             { value: "0", label: "Active Participants" },
             { value: "0", label: "Hackathons Hosted" },
             { value: "0", label: "Organizations" },
-            { value: "$0", label: "Prizes Awarded" },
           ].map((stat, index) => (
             <motion.div
               key={index}

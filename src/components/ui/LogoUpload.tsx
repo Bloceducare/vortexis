@@ -55,6 +55,12 @@ export default function LogoUploadField({
   };
 
   const handleFile = (file: File) => {
+    const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
+    if (file.size > MAX_GENERIC_SIZE) {
+      alert("File must be 1.2MB or smaller");
+      return;
+    }
+
     setSelectedFile(file);
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);

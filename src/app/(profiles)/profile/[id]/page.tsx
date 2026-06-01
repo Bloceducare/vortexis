@@ -219,9 +219,9 @@ function SingleProfile() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={` px-1 md:px-4 py-2 transition cursor-pointer text-sm md:text-lg  ${
+                  className={`px-3 md:px-4 py-2 text-sm md:text-lg font-semibold rounded-xl transition-colors ${
                     activeTab === tab
-                      ? "font-semibold bg-[#605DEC] text-white rounded-full"
+                      ? "bg-[#605DEC] text-white"
                       : "text-gray-500 hover:text-gray-700"
                   }`}
                 >

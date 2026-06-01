@@ -13,7 +13,8 @@ interface CreateOrgProps {
     name: string;
     description: string;
     website: string;
-    logo_file: string | null;
+    logo_file?: string | null;
+    logo?: string | null;
     custom_url: string;
     location: string;
     tagline: string;
@@ -32,13 +33,16 @@ function NewOrganization({ onClose, type, existingData }: CreateOrgProps) {
     about: existingData?.about || "",
   });
 
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-const [isUploading, setIsUploading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string | null>(
+    existingData?.logo_file || existingData?.logo || null
+  );
+  const [isUploading, setIsUploading] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(
-    existingData?.logo_file || null
+    existingData?.logo || existingData?.logo_file || null
   );
   const [fileError, setFileError] = useState<string>("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   
   const queryClient = useQueryClient();
   const { createOrganization, updateOrganization } = useOrganizer();
@@ -67,9 +71,9 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     return;
   }
 
-  const maxSize = 2 * 1024 * 1024;
-  if (file.size > maxSize) {
-    setFileError("File size must be less than 2MB");
+  const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
+  if (file.size > MAX_GENERIC_SIZE) {
+    setFileError("File size must be less than 1.2MB");
     return;
   }
 
@@ -107,36 +111,94 @@ const handleSubmit = async (e: React.FormEvent) => {
     location: formData.location,
     tagline: formData.tagline,
     about: formData.about,
-    logo_file: logoUrl, 
+    logo_file: logoUrl,
   };
 
-  try {
-    if (type === "new") {
-      await createOrganization.mutateAsync(payload);
-    } else if (type === "edit" && existingData?.id) {
-      await updateOrganization.mutate({
-  id: existingData?.id,
-  payload: {
-    name: formData.name,
-    description: formData.description,
-    website: formData.website,
-    // custom_url: formData.custom_url,
-    location: formData.location,
-    tagline: formData.tagline,
-    about: formData.about,
-    logo_file: logoUrl,
-  },
-});
+    try {
+      if (type === "new") {
+        const created = await createOrganization.mutateAsync(payload);
+
+        queryClient.setQueryData(["organizations"], (old: any) => {
+          if (!old) return [created];
+          // If old is an array of orgs
+          if (Array.isArray(old)) return [created, ...old];
+          // If old is a paginated response { results: [...] }
+          if (old && Array.isArray(old.results)) {
+            return { ...old, results: [created, ...old.results] };
+          }
+          // Fallback: return as-is or wrap into array
+          return [created, old] as any;
+        });
+
+        await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      }
+
+      if (type === "edit") {
+        if (!existingData?.id) {
+          const msg = "Missing organization id for update.";
+          console.error(msg);
+          setErrorMessage(msg);
+          setStatus("error");
+          return;
+        }
+        console.debug("Updating organization id:", existingData.id);
+
+        if (!existingData.id) {
+          const msg = "Invalid organization id.";
+          console.error(msg);
+          setErrorMessage(msg);
+          setStatus("error");
+          return;
+        }
+
+        // proceed with update when id present
+        
+        
+        
+      }
+
+      if (type === "edit" && existingData?.id) {
+        console.debug("Calling updateOrganization", { id: String(existingData.id), payload });
+        const updated = await updateOrganization.mutateAsync({
+          id: String(existingData.id),
+          payload: {
+            name: formData.name,
+            description: formData.description,
+            website: formData.website,
+            location: formData.location,
+            tagline: formData.tagline,
+            about: formData.about,
+            logo_file: logoUrl,
+          },
+        });
+        console.debug("updateOrganization response", updated);
+
+        queryClient.setQueryData(["organization_byId", existingData.id], updated);
+
+        queryClient.setQueryData(["organizations"], (old: any) => {
+          if (!old) return old;
+          if (Array.isArray(old)) return old.map((org: any) => (org.id === updated.id ? updated : org));
+          if (old && Array.isArray(old.results)) {
+            return { ...old, results: old.results.map((org: any) => (org.id === updated.id ? updated : org)) };
+          }
+          return old;
+        });
+
+        await queryClient.invalidateQueries({ queryKey: ["organization_byId", existingData.id] });
+        await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      }
+
+      setStatus("success");
+    } catch (err: any) {
+      console.error("Error submitting organization:", err);
+      const apiError =
+        err?.response?.data?.non_field_errors?.[0] ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to submit organization.";
+      setErrorMessage(apiError);
+      setStatus("error");
     }
-
-    queryClient.invalidateQueries({ queryKey:["organizations"]});
-    queryClient.invalidateQueries({ queryKey:["organization_byId", existingData?.id]});
-
-    setStatus("success");
-  } catch (err) {
-    console.error("Error submitting organization:", err);
-    setStatus("error");
-  }
 };
 
   const handleClose = () => {
@@ -428,11 +490,18 @@ const handleSubmit = async (e: React.FormEvent) => {
               Something went wrong
             </h3>
             <p className="text-gray-500 mt-2 max-w-sm">
-              We couldn't {type === "new" ? "create" : "update"} your
-              organization. Please try again later.
+              {errorMessage || (
+                <>
+                  We couldn't {type === "new" ? "create" : "update"} your
+                  organization. Please try again later.
+                </>
+              )}
             </p>
             <button
-              onClick={() => setStatus("idle")}
+              onClick={() => {
+                setErrorMessage("");
+                setStatus("idle");
+              }}
               className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all"
             >
               Try again
