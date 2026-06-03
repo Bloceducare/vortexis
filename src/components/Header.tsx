@@ -14,18 +14,19 @@ import { NotificationDropdown } from "./NotificationDropdown";
 import { useRoleAccess } from "@/hooks/useRoleAccess";
 import { useIsLoggedIn } from "@/lib/logged-In";
 import Image from "next/image";
+import Logo from "@/public/assets/logo-dark.svg";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [logout, setLogout] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-  
+
   const isLoggedIn = useIsLoggedIn();
   const clearToken = useAuthStore((state) => state.clearToken);
   const clearUser = useUserStore((state) => state.clearUser);
   const user = useUserStore((state) => state.user);
-  
+
   // Refs for closing on outside click
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -96,7 +97,7 @@ export const Header: React.FC = () => {
 
             <div className="flex items-center space-x-3">
               {isLoggedIn && <NotificationDropdown />}
-              
+
               <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
                 {isDarkMode ? <Sun className="w-5 h-5 text-yellow-500" /> : <Moon className="w-5 h-5" />}
               </button>
@@ -108,7 +109,7 @@ export const Header: React.FC = () => {
                 </div>
               ) : (
                 <div className=" md:block relative" ref={dropdownRef}>
-                  <button 
+                  <button
                     onClick={() => setShowDropdown(!showDropdown)}
                     className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-all  cursor-pointer"
                   >
@@ -138,8 +139,8 @@ export const Header: React.FC = () => {
               )}
 
               {/* Mobile Menu Toggle */}
-              <button 
-                onClick={() => setIsMenuOpen(!isMenuOpen)} 
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="md:hidden p-2 menu-toggle-btn text-gray-600 dark:text-gray-300"
               >
                 {isMenuOpen ? <X /> : <Menu />}
@@ -151,7 +152,7 @@ export const Header: React.FC = () => {
         {/* MOBILE MENU DRAWER */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
+            <motion.div
               ref={mobileMenuRef}
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
@@ -166,32 +167,32 @@ export const Header: React.FC = () => {
                     </Link>
                   ))}
                 </nav>
-                
+
                 <div className="pt-4 border-t dark:border-gray-700">
                   {!isLoggedIn ? (
-              <div className="flex items-center gap-3">
-                <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-[#605DEC]">Log in</Link>
-                <Link href="/auth/signup" className="px-4 py-2 bg-[#605DEC] text-white text-sm font-medium rounded-lg">Sign up</Link>
-              </div>
-            ) : (
-              <div className="relative flex items-center gap-2" ref={dropdownRef}>
-                <button 
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
-                >
-                  <div className={`h-9 w-9 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-xs`}>
-                    {user?.profile?.profile_picture ? (
-                      <Image src={user.profile.profile_picture} alt="Profile" width={36} height={36} className="object-cover w-full h-full" />
-                    ) : (
-                      initials
-                    )}
-                  </div>
+                    <div className="flex items-center gap-3">
+                      <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-[#605DEC]">Log in</Link>
+                      <Link href="/auth/signup" className="px-4 py-2 bg-[#605DEC] text-white text-sm font-medium rounded-lg">Sign up</Link>
+                    </div>
+                  ) : (
+                    <div className="relative flex items-center gap-2" ref={dropdownRef}>
+                      <button
+                        onClick={() => setShowDropdown(!showDropdown)}
+                        className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
+                      >
+                        <div className={`h-9 w-9 rounded-full overflow-hidden flex items-center justify-center text-white font-bold text-xs`}>
+                          {user?.profile?.profile_picture ? (
+                            <Image src={user.profile.profile_picture} alt="Profile" width={36} height={36} className="object-cover w-full h-full" />
+                          ) : (
+                            initials
+                          )}
+                        </div>
 
-                </button>
-                <p className="inline-block">{user?.first_name} {" "}   {user?.last_name}</p>
-                </div>
-            )}
-               
+                      </button>
+                      <p className="inline-block">{user?.first_name} {" "}   {user?.last_name}</p>
+                    </div>
+                  )}
+
                 </div>
               </div>
             </motion.div>
