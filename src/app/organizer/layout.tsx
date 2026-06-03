@@ -10,6 +10,8 @@ import {
   Settings,
   Moon,
   Sun,
+  Building2,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,6 +24,8 @@ import { SignOutConfirmationModal } from "@/components/signOutModal";
 import { useAuthStore } from "@/store/useAuthStore";
 import { slugify } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
+import { useOrganizationStore } from "@/store/useOrganizationStore";
+import NewOrganization from "./components/NewOrganization";
 
 
 interface OrganizerLayoutProps {
@@ -39,9 +43,17 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { isDarkMode, toggleDarkMode } = useThemeStore();
-  const { getHackathons } = useOrganizer();
+  const { getHackathons, getAllOrganization } = useOrganizer();
   const setHackathons = useHackathonStore((state) => state.setHackathons);
   const clearToken = useAuthStore((state) => state.clearToken);
+
+  const setClickedOrganization = useOrganizationStore((state) => state.setOrganization);
+
+  const [showOrgSelectModal, setShowOrgSelectModal] = useState(false);
+  const [showNoOrgModal, setShowNoOrgModal] = useState(false);
+  const [showNewOrgModal, setShowNewOrgModal] = useState(false);
+
+  const { data: orgsData, isLoading: orgsLoading } = getAllOrganization;
   const OpenModal = () => {
     setLogout(true);
   };
@@ -101,6 +113,25 @@ const selectedHackathonSlug = useMemo(() => {
     }
     setIsDropdownOpen(false);
     if (isMobile) setMobileMenuOpen(false);
+  };
+
+  const handleCreateHackathonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (orgsLoading) return;
+
+    const orgs = orgsData?.results || [];
+    if (orgs.length > 0) {
+      setShowOrgSelectModal(true);
+    } else {
+      setShowNoOrgModal(true);
+    }
+  };
+
+  const handleOrgSelect = (org: any) => {
+    setClickedOrganization(org);
+    setShowOrgSelectModal(false);
+    const slug = slugify(org.name);
+    router.push(`/organizer/create-hackathon/${slug}`);
   };
 
   useEffect(() => {
@@ -220,14 +251,14 @@ const selectedHackathonSlug = useMemo(() => {
       ) : (
         <div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
           <p className="text-[#a09393]">No hackathon created</p>
-          <a
-            href="/organizer/create-hackathon"
-            className="inline-block mt-3 px-1 py-2 
+          <button
+            onClick={handleCreateHackathonClick}
+            className="inline-block mt-3 px-3 py-2 
                        text-white bg-blue-600 hover:bg-blue-700 
-                       rounded text-sm"
+                       rounded text-sm font-medium transition cursor-pointer"
           >
             + Create new hackathon
-          </a>
+          </button>
         </div>
       )}
     </motion.ul>
@@ -314,6 +345,132 @@ const selectedHackathonSlug = useMemo(() => {
           isOpen
         />
       )}
+
+      {/* Organization Interception Modals */}
+      <AnimatePresence>
+        {showOrgSelectModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-2xl max-w-lg w-full overflow-hidden"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-gray-700">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Select Organization
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Choose under which organization to create the hackathon
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowOrgSelectModal(false)}
+                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="p-6 max-h-96 overflow-y-auto space-y-3">
+                {orgsData?.results?.map((org: any) => (
+                  <button
+                    key={org.id}
+                    onClick={() => handleOrgSelect(org)}
+                    className="w-full flex items-center gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/30 dark:hover:bg-gray-700/30 transition-all text-left group cursor-pointer"
+                  >
+                    {org.logo ? (
+                      <img
+                        src={org.logo}
+                        alt={org.name}
+                        className="w-12 h-12 rounded-lg object-cover border border-gray-100 dark:border-gray-700"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-blue-100/70 dark:bg-blue-900/40 flex items-center justify-center">
+                        <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                        {org.name}
+                      </h4>
+                      {org.tagline ? (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                          {org.tagline}
+                        </p>
+                      ) : org.description ? (
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-1">
+                          {org.description}
+                        </p>
+                      ) : null}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end gap-3 p-6 border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                <button
+                  onClick={() => setShowOrgSelectModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors border border-gray-200 dark:border-gray-600 cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showNoOrgModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-2xl max-w-sm w-full p-6 text-center"
+            >
+              <div className="mx-auto w-12 h-12 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4 animate-bounce">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                No Organization Found
+              </h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                You must have an organization before you can create a hackathon. Let's create your first organization now!
+              </p>
+              <div className="flex flex-col gap-2 mt-6">
+                <button
+                  onClick={() => {
+                    setShowNoOrgModal(false);
+                    setShowNewOrgModal(true);
+                  }}
+                  className="w-full py-2.5 px-4 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-md transition-all cursor-pointer"
+                >
+                  + Create Organization
+                </button>
+                <button
+                  onClick={() => setShowNoOrgModal(false)}
+                  className="w-full py-2.5 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-colors border border-gray-200 dark:border-gray-600 cursor-pointer"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showNewOrgModal && (
+          <NewOrganization
+            onClose={() => setShowNewOrgModal(false)}
+            type="new"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Main content */}
       <div

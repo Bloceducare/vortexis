@@ -233,7 +233,7 @@ const selectedHackathonName = useMemo(() => {
         <div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
           <p className="text-[#a09393]">No hackathon created</p>
           <a
-            href="/home"
+            href="/hackathon"
             className="inline-block mt-3 px-1 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded text-sm"
           >
             Join hackathon
