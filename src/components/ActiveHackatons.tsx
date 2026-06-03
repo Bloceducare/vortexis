@@ -22,7 +22,7 @@ export default function ExploreActiveHackathons() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-gray-900">
-      <h2 className="text-lg font-medium text-indigo-500 dark:text-indigo-400 mb-6">
+      <h2 className="text-xl sm:text-2xl font-bold text-center text-indigo-500 dark:text-indigo-400 mb-8">
         Explore Active Hackathons
       </h2>
 
@@ -41,6 +41,22 @@ export default function ExploreActiveHackathons() {
             </div>
           ))}
         </div>
+      ) : activeHackathons.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col items-center justify-center py-16 px-4 bg-gray-50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-800/80 max-w-xl mx-auto text-center"
+        >
+          <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4">
+            <Trophy className="w-8 h-8 text-indigo-500 dark:text-indigo-400" />
+          </div>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-2">
+            No Active Hackathons
+          </h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+            There are currently no active hackathons running. Check back soon or host your own to get started!
+          </p>
+        </motion.div>
       ) : (
         <>
           <motion.div

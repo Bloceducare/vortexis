@@ -1,4 +1,6 @@
 import axios from "axios";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useUserStore } from "@/store/useUserStore";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -13,19 +15,44 @@ const isTokenExpired = (token: string) => {
   }
 };
 
+const isPublicPath = (pathname: string) => {
+  const publicRoutes = [
+    "/",
+    "/guide",
+    "/hackathon",
+    "/auth",
+    "/forgot-password",
+    "/reset-password",
+    "/hackathons",
+    "/features",
+    "/about",
+    "/faqs",
+  ];
+  return publicRoutes.some(
+    (route) => pathname === route || pathname.startsWith(route + "/")
+  );
+};
+
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("access_token");
       if (token) {
         if (isTokenExpired(token)) {
-          const currentPath = window.location.pathname + window.location.search;
-          if (!currentPath.includes('/auth/login') && !currentPath.includes('/signin')) {
-            localStorage.setItem("redirectUrl", currentPath);
+          const pathname = window.location.pathname;
+          if (isPublicPath(pathname)) {
+            localStorage.removeItem("access_token");
+            useAuthStore.getState().clearToken();
+            useUserStore.getState().clearUser();
+          } else {
+            const currentPath = pathname + window.location.search;
+            if (!currentPath.includes('/auth/login') && !currentPath.includes('/signin')) {
+              localStorage.setItem("redirectUrl", currentPath);
+            }
+            const event = new CustomEvent("auth-session-expired");
+            window.dispatchEvent(event);
+            return Promise.reject(new axios.Cancel("Session expired"));
           }
-          const event = new CustomEvent("auth-session-expired");
-          window.dispatchEvent(event);
-          return Promise.reject(new axios.Cancel("Session expired"));
         } else {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -41,14 +68,20 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        const currentPath = window.location.pathname + window.location.search;
-        if (!currentPath.includes('/auth/login') && !currentPath.includes('/signin')) {
-          localStorage.setItem("redirectUrl", currentPath);
+        const pathname = window.location.pathname;
+        if (isPublicPath(pathname)) {
+          localStorage.removeItem("access_token");
+          useAuthStore.getState().clearToken();
+          useUserStore.getState().clearUser();
+        } else {
+          const currentPath = pathname + window.location.search;
+          if (!currentPath.includes('/auth/login') && !currentPath.includes('/signin')) {
+            localStorage.setItem("redirectUrl", currentPath);
+          }
+          const event = new CustomEvent("auth-session-expired");
+          window.dispatchEvent(event);
         }
-        const event = new CustomEvent("auth-session-expired");
-        window.dispatchEvent(event);
       }
-
     }
     return Promise.reject(error);
   }
