@@ -97,7 +97,7 @@ const Page = () => {
   const currentHackathons = filteredList.slice(startIndex, startIndex + itemsPerPage);
 
   const quickActions = [
-    { icon: HelpCircle, label: "Ask a Question" },
+    // { icon: HelpCircle, label: "Ask a Question" },
     {
       icon: Plus,
       label: "Join New Hackathon",
