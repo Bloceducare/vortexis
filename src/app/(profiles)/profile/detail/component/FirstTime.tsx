@@ -156,7 +156,7 @@ function FirstTime({ isOpen, onClose }: FirstTimeProps) {
 
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image Section */}
-            <div className="relative bg-gradient-to-br from-primary/5 to-blue-500/5 p-8 flex items-center justify-center min-h-[300px] md:min-h-[500px]">
+            <div className="relative bg-gradient-to-br from-primary/5 to-blue-500/5 dark:from-primary/10 dark:to-blue-500/10 dark:bg-gray-900/50 p-8 flex items-center justify-center min-h-[300px] md:min-h-[500px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={currentStep}
@@ -228,7 +228,7 @@ function FirstTime({ isOpen, onClose }: FirstTimeProps) {
                     }}
                   >
                     <motion.h2
-                      className="text-3xl md:text-4xl font-bold text-title mb-4"
+                      className="text-3xl md:text-4xl font-bold text-title dark:text-white mb-4"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
@@ -236,7 +236,7 @@ function FirstTime({ isOpen, onClose }: FirstTimeProps) {
                       {currentInfo.title}
                     </motion.h2>
                     <motion.p
-                      className="text-lg  opacity-70 leading-relaxed"
+                      className="text-lg opacity-70 dark:text-gray-300 dark:opacity-80 leading-relaxed"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
@@ -293,7 +293,7 @@ function FirstTime({ isOpen, onClose }: FirstTimeProps) {
                   whileTap={{ scale: 0.95 }}
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed border-2 border-primary text-primary hover:bg-primary/5"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed border-2 border-primary text-primary hover:bg-primary/5 dark:border-primary dark:text-indigo-400 dark:hover:bg-primary/10"
                 >
                   <ChevronLeft className="w-5 h-5" />
                   Previous
@@ -324,7 +324,7 @@ function FirstTime({ isOpen, onClose }: FirstTimeProps) {
               {/* Skip Button */}
               <button
                 onClick={onClose}
-                className="text-sm  opacity-50 hover:opacity-70 transition-opacity mt-4 text-center"
+                className="text-sm text-gray-600 dark:text-gray-400 opacity-50 hover:opacity-70 transition-opacity mt-4 text-center"
               >
                 Skip tutorial
               </button>
