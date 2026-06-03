@@ -5,10 +5,72 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
+    const error = url.searchParams.get("error");
+
+    if (error) {
+      return NextResponse.json(
+        { error: `GitHub OAuth error: ${error}` },
+        { status: 400 }
+      );
+    }
 
     if (!code) {
       return NextResponse.json(
         { error: "No authorization code received" },
+        { status: 400 }
+      );
+    }
+
+    const clientId = process.env.GITHUB_ID;
+    const clientSecret = process.env.GITHUB_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return NextResponse.json(
+        { error: "GitHub OAuth not properly configured" },
+        { status: 500 }
+      );
+    }
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://vortexis-dev.vercel.app";
+    const redirectUri = `${appUrl}/auth/callback`;
+
+    // Exchange authorization code for GitHub access token
+    const tokenResponse = await fetch("https://github.com/login/oauth/access_token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    if (!tokenResponse.ok) {
+      console.error("[GitHub Callback] Token exchange failed:", tokenResponse.status);
+      return NextResponse.json(
+        { error: "Failed to exchange authorization code" },
+        { status: 400 }
+      );
+    }
+
+    const tokenData = await tokenResponse.json();
+
+    if (tokenData.error) {
+      console.error("[GitHub Callback] GitHub token error:", tokenData.error, tokenData.error_description);
+      return NextResponse.json(
+        { error: tokenData.error_description || tokenData.error },
+        { status: 400 }
+      );
+    }
+
+    const githubAccessToken = tokenData.access_token;
+    if (!githubAccessToken) {
+      return NextResponse.json(
+        { error: "No access token in GitHub response" },
         { status: 400 }
       );
     }
@@ -21,24 +83,23 @@ export async function GET(request: Request) {
       );
     }
 
-    // Exchange code with backend
+    // Send GitHub access token to backend
     const res = await fetch(`${baseUrl}/auth/github`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ access_token: githubAccessToken }),
     });
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       console.error("[GitHub Callback] Backend error:", res.status, errorData);
       return NextResponse.json(
-        { error: "Failed to authenticate with backend" },
+        { error: errorData.detail || errorData.message || errorData.error || "Failed to authenticate with backend" },
         { status: res.status }
       );
     }
 
     const data = await res.json();
-    // Log the raw backend response so we can see the exact structure
     console.log("[GitHub Callback] Raw backend response:", JSON.stringify(data, null, 2));
 
     // Handle all possible token response structures from backend
@@ -46,19 +107,15 @@ export async function GET(request: Request) {
     let refreshToken: string | undefined;
 
     if (typeof data.access_token === "string") {
-      // Structure: { access_token: "...", refresh_token: "..." }
       accessToken = data.access_token;
       refreshToken = data.refresh_token;
     } else if (data.access_token?.access_token) {
-      // Structure: { access_token: { access_token: "...", refresh_token: "..." } }
       accessToken = data.access_token.access_token;
       refreshToken = data.access_token.refresh_token;
     } else if (data.tokens?.access) {
-      // Structure: { tokens: { access: "...", refresh: "..." } }
       accessToken = data.tokens.access;
       refreshToken = data.tokens.refresh;
     } else if (data.token) {
-      // Structure: { token: "...", refresh_token: "..." }
       accessToken = data.token;
       refreshToken = data.refresh_token;
     }
