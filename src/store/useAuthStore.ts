@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 interface AuthState {
   token: string | null;
-  expiresAt: number | null; 
+  expiresAt: number | null;
   setToken: (token: string, expiresInSeconds: number) => void;
   getToken: () => string | null;
   clearToken: () => void;
@@ -33,7 +33,12 @@ export const useAuthStore = create<AuthState>()(
         return token;
       },
 
-      clearToken: () => set({ token: null, expiresAt: null }),
+      clearToken: () => {
+        set({ token: null, expiresAt: null });
+        // Clear role access cache on logout
+        const { useRoleAccessStore } = require('@/store/useRoleAccessStore');
+        useRoleAccessStore.getState().clearAccess();
+      },
     }),
     {
       name: 'auth-storage',

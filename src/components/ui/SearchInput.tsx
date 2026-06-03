@@ -7,9 +7,10 @@ import { SearchCheckIcon } from "lucide-react";
 
 interface SearchInputProps {
   onSearch: (query: string) => void;
+  className?: string;
 }
 
-const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
+const SearchInput: React.FC<SearchInputProps> = ({ onSearch, className }) => {
   const [query, setQuery] = useState<string>("");
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +20,9 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center gap-2 bg-gray-100 px-2 py-1 rounded-md ">
+    <div
+      className={`flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-md ${className} w-full transition-colors`}
+    >
       {/* <Image 
         src={Search} 
         alt="Search Icon" 
@@ -28,14 +31,14 @@ const SearchInput: React.FC<SearchInputProps> = ({ onSearch }) => {
         className="text-gray-500" 
       /> */}
 
-      <SearchCheckIcon className="text-gray-500 w-[20px] h-[20px]" />
+      <SearchCheckIcon className="text-gray-500 dark:text-gray-400 w-[20px] h-[20px]" />
 
       <input
         type="text"
         placeholder="Search Hackathons"
         value={query}
         onChange={handleInputChange}
-        className="flex-1 p-2 bg-transparent outline-none text-gray-700"
+        className={`flex-1 p-2 bg-transparent outline-none text-gray-700 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400`}
       />
     </div>
   );

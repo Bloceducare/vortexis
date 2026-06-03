@@ -1,204 +1,204 @@
 "use client";
+import { useAuthStore } from "@/store/useAuthStore";
+
+const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
 export async function signInGithubAction() {
   try {
-    // Redirect to GitHub OAuth
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_ID;
-    // const redirectUri = encodeURIComponent(
-    //   `${window.location.origin}/auth/callback`
-    // );
-    const scope = encodeURIComponent("read:user user:email");
+    const res = await fetch("/api/auth/github/init");
 
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=http://localhost:3000/auth/callback&scope=${scope}`;
-    window.location.href = githubAuthUrl;
+    if (!res.ok) {
+      throw new Error("Failed to initialize GitHub OAuth");
+    }
+
+    const data = await res.json();
+    window.location.href = data.authUrl;
   } catch (error) {
-    console.error("GitHub sign in error:", error);
+    // console.error("GitHub sign in error:", error);
   }
 }
 
 export async function handleGithubCallback() {
   try {
-    // Get the code from the URL
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
 
-    if (!code) {
-      throw new Error("No authorization code received");
-    }
+    if (!code) throw new Error("No authorization code received");
 
-    console.log("Received code:", code);
-    // 7bae3f562e7ae7739a18
-
-    // Send the code to your backend
-    const res = await fetch("http://localhost:8000/api/v1/auth/github", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
+    const res = await fetch(`/api/auth/github/callback?code=${encodeURIComponent(code)}`);
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.error("Backend error:", errorData);
-      throw new Error("Failed to authenticate with backend");
+      throw new Error(errorData.error || "Failed to authenticate");
     }
 
     const data = await res.json();
-    console.log("Backend response:", data);
 
-    // Check if tokens exist in the response
     if (!data.access_token || !data.refresh_token) {
-      console.error("Tokens not found in response:", data);
-      throw new Error("Invalid response from backend");
+      throw new Error("Invalid response from server");
     }
 
-    // Store the tokens in localStorage
-    localStorage.setItem("accessToken", data.access_token.access_token);
-    localStorage.setItem("refreshToken", data.access_token.refresh_token);
+    const setToken = useAuthStore.getState().setToken;
+    setToken(data.access_token, threeDaysInSeconds);
 
-    // Verify tokens were stored
-    console.log("Stored access token:", localStorage.getItem("accessToken"));
-    console.log("Stored refresh token:", localStorage.getItem("refreshToken"));
+    // Store access token in localStorage
+    localStorage.setItem("access_token", data.access_token);
+
+    // Fetch and store user profile (same as Google OAuth flow)
+    try {
+      const { decodeJWTUserId } = await import("@/lib/communications");
+      const userId = decodeJWTUserId(data.access_token);
+
+      if (!userId) {
+        throw new Error("Could not decode user ID from token");
+      }
+
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+      const userRes = await fetch(`${baseUrl}/auth/users/${userId}/`, {
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!userRes.ok) {
+        throw new Error(`Failed to fetch user data: ${userRes.status}`);
+      }
+
+      const userData = await userRes.json();
+      const actualUserData = userData.user || userData;
+
+      const { useUserStore } = await import("@/store/useUserStore");
+      const setUser = useUserStore.getState().setUser;
+      setUser(actualUserData);
+    } catch (profileError) {
+      // Don't throw - allow login to proceed even if profile fetch fails
+      console.error("Failed to fetch/store GitHub user profile:", profileError);
+    }
 
     return true;
   } catch (error) {
-    console.error("GitHub callback error:", error);
     throw error;
   }
 }
 
-export async function signOutAction() {
-  // Clear tokens from localStorage
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  // Redirect to home page
-  window.location.href = "/";
-}
-
-// Generate a random state parameter to prevent CSRF attacks
-function generateRandomState() {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
-}
 
 export async function signInGoogleAction() {
   try {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_ID;
-    const redirectUri = encodeURIComponent(
-      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI
-    );
-    const scope = encodeURIComponent("email profile");
-    const responseType = "code";
-    const accessType = "offline";
-    const prompt = "consent";
-    const state = generateRandomState();
+    const res = await fetch("/api/auth/google/init");
 
-    localStorage.setItem("googleOAuthState", state);
+    if (!res.ok) {
+      throw new Error("Failed to initialize Google OAuth");
+    }
 
-    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=${responseType}&scope=${scope}&access_type=${accessType}&prompt=${prompt}&state=${state}`;
-
-    console.log("Redirecting to Google OAuth:", googleAuthUrl);
-    window.location.href = googleAuthUrl;
+    const data = await res.json();
+    window.location.href = data.authUrl;
   } catch (error) {
-    console.error("Google sign in error:", error);
+    // console.error("Google sign in error:", error);
   }
 }
 
 export async function handleGoogleCallback() {
   try {
-    console.log("Starting Google callback handler");
-    console.log("Full URL:", window.location.href);
-
     const urlParams = new URLSearchParams(window.location.search);
-
     const code = urlParams.get("code");
     const state = urlParams.get("state");
     const error = urlParams.get("error");
 
-    if (error) {
-      throw new Error(`Google OAuth error: ${error}`);
+    if (error) throw new Error(`Google OAuth error: ${error}`);
+
+    if (!code || !state) {
+      throw new Error("Missing authorization code or state");
     }
 
-    const savedState = localStorage.getItem("googleOAuthState");
-    if (!state || state !== savedState) {
-      console.error("State mismatch. Saved:", savedState, "Received:", state);
-      throw new Error("Invalid state parameter");
-    }
-
-    localStorage.removeItem("googleOAuthState");
-
-    if (!code) {
-      throw new Error("No authorization code received");
-    }
-
-    console.log("Received Google code:", code);
-
-    // Exchange the authorization code for tokens
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        code,
-        client_id: process.env.NEXT_PUBLIC_GOOGLE_ID,
-        client_secret: process.env.NEXT_PUBLIC_GOOGLE_SECRET,
-        redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
-        grant_type: "authorization_code",
-      }),
-    });
-
-    if (!tokenResponse.ok) {
-      const errorData = await tokenResponse.json();
-      console.error("Token exchange error:", errorData);
-      throw new Error("Failed to exchange authorization code for tokens");
-    }
-
-    const tokenData = await tokenResponse.json();
-    console.log("Token exchange response:", tokenData);
-
-    const idToken = tokenData.id_token;
-    if (!idToken) {
-      throw new Error("ID token not found in token exchange response");
-    }
-
-    // Send the ID token to your backend
-    const res = await fetch("http://localhost:8000/api/v1/auth/google", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ access_token: idToken }),
-    });
+    const res = await fetch(
+      `/api/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+    );
 
     if (!res.ok) {
       const errorData = await res.json();
-      console.error("Backend error:", errorData);
-      throw new Error("Failed to authenticate with backend");
+      throw new Error(errorData.error || "Failed to authenticate");
     }
 
     const data = await res.json();
-    console.log("Backend response:", data);
+
+    // Debug logging
+    // console.log("🔍 OAuth callback response:", data);
+    // console.log("🔍 User data received:", data.user);
 
     if (!data.access_token || !data.refresh_token) {
-      console.error("Tokens not found in response:", data);
-      throw new Error("Invalid response from backend");
+      throw new Error("Invalid response from server");
     }
 
-    // Store the tokens in localStorage
-    localStorage.setItem("accessToken", data.access_token);
-    localStorage.setItem("refreshToken", data.refresh_token);
+    const setToken = useAuthStore.getState().setToken;
+    setToken(data.access_token, threeDaysInSeconds);
 
-    // Verify tokens were stored
-    console.log("Stored access token:", localStorage.getItem("accessToken"));
-    console.log("Stored refresh token:", localStorage.getItem("refreshToken"));
+    // Store access token in localStorage
+    localStorage.setItem("access_token", data.access_token);
+
+    // Backend doesn't return user data in OAuth response, so we need to fetch it
+    if (!data.user) {
+      // console.log("⚠️ No user data in OAuth response, fetching from API...");
+
+      try {
+        // Decode JWT to get user_id
+        const { decodeJWTUserId } = await import("@/lib/communications");
+        const userId = decodeJWTUserId(data.access_token);
+
+        if (!userId) {
+          throw new Error("Could not decode user ID from token");
+        }
+
+        // console.log("🔍 Decoded user_id:", userId);
+
+        // Fetch user data from the API
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+        const userRes = await fetch(`${baseUrl}/auth/users/${userId}/`, {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!userRes.ok) {
+          throw new Error(`Failed to fetch user data: ${userRes.status}`);
+        }
+
+        const userData = await userRes.json();
+        // console.log("✅ User data fetched from API:", userData);
+
+        // API returns {user: {...}}, we need to unwrap it
+        const actualUserData = userData.user || userData;
+        // console.log("📦 Unwrapped user data:", actualUserData);
+
+        // Store user data
+        const { useUserStore } = await import("@/store/useUserStore");
+        const setUser = useUserStore.getState().setUser;
+        setUser(actualUserData);
+
+        // console.log("✅ User data stored successfully!");
+      } catch (error) {
+        // console.error("❌ Failed to fetch/store user data:", error);
+        // Don't throw - allow login to proceed even if user fetch fails
+      }
+    } else {
+      // If backend does return user data (unlikely), store it
+      const { useUserStore } = await import("@/store/useUserStore");
+      const setUser = useUserStore.getState().setUser;
+      setUser(data.user);
+      // console.log("✅ User data stored from OAuth response:", data.user);
+    }
 
     return true;
   } catch (error) {
-    console.error("Google callback error:", error);
+    // console.error("Google callback error:", error);
     throw error;
   }
+}
+
+export async function signOutAction() {
+  const clearToken = useAuthStore.getState().clearToken;
+  clearToken();
+
+  window.location.href = "/";
 }

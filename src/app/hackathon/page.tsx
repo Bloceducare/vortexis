@@ -1,160 +1,183 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import HackathonHeaders from "@/components/HackathonHeaders";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/Button";
-import HackathonCard from "@/components/HackathonCard";
-import FilterSection from "@/components/FilterSection"; // Import the new component
-import Img1 from "@/public/assets/sponsors/sponsor1.svg";
-import Img2 from "@/public/assets/sponsors/sponsor2.svg";
-import Img3 from "@/public/assets/sponsors/sponsor3.svg";
-import { Hackathons } from "./form/utils/utils";
+import React, { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
+import useHackathon from "@/hooks/useHackathon";
+import { useRouter } from "next/navigation";
+import { getCountries, Country } from "@/app/api/country/getCountries";
+import StatusModal from "@/components/StatusModal";
+import { HeroSection } from "./component/HeroSection";
+import { FilterSection } from "./component/FilterSection";
+import { HackathonGrid } from "./component/HackathonGrid";
+import { Pagination } from "@/components/Pagination";
+import { useHackathonFilters } from "./component/HackathonFilters";
+import { useQueryClient } from "@tanstack/react-query";
+import { slugify } from "@/lib/utils";
 
-interface Hackathon {
-  image: string;
-  name: string;
-  location: string;
-  participants: string;
-  prize: number;
-  date: string;
-  mode: string;
-  startTime: string;
-  organization: string;
-  entry: string;
-  type: string;
-}
+function Home() {
+  const router = useRouter();
 
-const hackathonsData: Hackathon[] = [
-  {
-    image: Img1,
-    name: "AI Innovation Challenge",
-    location: "Online",
-    participants: "500",
-    prize: 10000,
-    date: "2025-04-15 14:00:00",
-    mode: "Upcoming",
-    startTime: "2:00 PM",
-    organization: "Tech Innovators",
-    entry: "Free",
-    type: "Gaming",
-  },
-  {
-    image: Img2,
-    name: "Blockchain Hackathon",
-    location: "In-person",
-    participants: "300",
-    prize: 5000,
-    date: "2025-05-10 10:00:00",
-    mode: "Open",
-    startTime: "10:00 AM",
-    organization: "Crypto Labs",
-    entry: "Paid",
-    type: "Cybersecurity",
-  },
-  {
-    image: Img3,
-    name: "Cybersecurity Hackfest",
-    location: "Hybrid",
-    participants: "200",
-    prize: 8000,
-    date: "2025-06-20 09:30:00",
-    mode: "Ended",
-    startTime: "9:30 AM",
-    organization: "Security Experts",
-    entry: "Free",
-    type: "Lifehacks",
-  },
-];
+  const { getAllHackathon, registerUserForHackathon } = useHackathon();
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+  const [activeHackathon, setActiveHackathon] = useState<string | null>(null);
+  const [modal, setModal] = useState<{
+    open: boolean;
+    type: "success" | "error";
+    message: string;
+  }>({
+    open: false,
+    type: "success",
+    message: "",
+  });
+  const [isNavigating, setIsNavigating] = useState(false);
+  const registerMutation = registerUserForHackathon();
+  const queryClient = useQueryClient();
 
-const Page: React.FC = () => {
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [selectedLength, setSelectedLength] = useState<string>("");
-  const [selectedHackathons, setSelectedHackathons] = useState<string>("");
-  const [filteredHackathons, setFilteredHackathons] =
-    useState<Hackathon[]>(hackathonsData);
+  // Filters
+  const {
+    sortOption,
+    setSortOption,
+    searchQuery,
+    setSearchQuery,
+    selectedCountry,
+    setSelectedCountry,
+    prizeFilter,
+    setPrizeFilter,
+  } = useHackathonFilters([]); // Don't filter client-side
 
-  const locations = ["Online", "In-person", "Hybrid"];
-  const statuses = ["Upcoming", "Open", "Ended"];
-  const lengths = ["1-6 days", "1+ month"];
+  // Build filter params for API
+  const filterParams: Record<string, any> = {};
+  if (searchQuery) filterParams.search = searchQuery;
+  if (selectedCountry) filterParams.country = selectedCountry;
+  if (prizeFilter && prizeFilter !== "all") filterParams.prize = prizeFilter;
+  if (sortOption) filterParams.sort = sortOption;
+
+  // Fetch paginated hackathons from API
+  const { data: apiData = {}, isLoading } = getAllHackathon(currentPage, itemsPerPage, filterParams);
+  const { data: hackathons = [], pagination = { page: 1, totalPages: 1, totalItems: 0 } } = apiData as { data?: any[]; pagination?: { page: number; totalPages: number; totalItems: number } };
+
+  // Restore isAnyActionPending
+  const isAnyActionPending = registerMutation.isPending || isNavigating;
 
   useEffect(() => {
-    let filtered = hackathonsData;
+    getCountries().then(setCountries).catch(console.error);
+  }, []);
 
-    if (selectedLocation) {
-      filtered = filtered.filter((hack) => hack.location === selectedLocation);
-    }
+  const handleSearch = (query: string) => {
+    setSearchQuery(query.toLowerCase());
+    setCurrentPage(1);
+  };
 
-    if (selectedStatus) {
-      filtered = filtered.filter((hack) => hack.mode === selectedStatus);
-    }
+const handleRegister = (hackathon_id: string) => {
+  setActiveHackathon(hackathon_id);
+  
+  registerMutation.mutate(hackathon_id, {
+    onSuccess: async () => {
+      // 1. Show Success Modal
+      setModal({
+        open: true,
+        type: "success",
+        message: "Successfully registered!",
+      });
 
-    if (selectedHackathons) {
-      filtered = filtered.filter((hack) => hack.type === selectedHackathons);
-    }
+      await queryClient.invalidateQueries({
+        queryKey: ["participant_hackathon"],
+      });
 
-    setFilteredHackathons(filtered);
-  }, [selectedLocation, selectedStatus, selectedLength, selectedHackathons]);
+      setTimeout(() => {
+        const hackathon = hackathons.find((h: any) => h.id === hackathon_id);
+        if (hackathon) {
+          const slug = slugify(hackathon.title);
+          setIsNavigating(true);
+          router.push(`/dashboard/${slug}/hackathon`);
+        }
+      }, 1200); 
+    },
+    onError: (error: any) => {
+      setModal({
+        open: true,
+        type: "error",
+        message: error?.response?.data?.message || "Registration failed. Please try again.",
+      });
+    
+    },
+  });
+};
+  const totalPages = pagination.totalPages;
+
+  const createOrganization = () => {
+    localStorage.setItem("newOrganizer", "true");
+    setTimeout(() => {
+    router.push("/organizer");
+    }, 500);
+  }
 
   return (
-    <section>
-      <HackathonHeaders title="Join the world's best online and in-person hackathons" />
+    <main className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 transition-colors w-full">
+      <div className="w-full md:max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-24 pb-16">
+        {/* Hero Section */}
+        <HeroSection onCreateOrg={createOrganization} />
 
-      <div className="py-10 flex justify-center ">
-        <div className="flex gap-4 md:gap-10 w-full justify-center flex-wrap md:flex-nowrap ">
-          <Input
-            placeholder="Search by hackathon title or keywords"
-            className="md:w-[30%] h-[50%] md:h-full"
+        {/* Explore Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="mt-20"
+        >
+          {/* Filter Section */}
+          <FilterSection
+            searchQuery={searchQuery}
+            onSearch={handleSearch}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            selectedCountry={selectedCountry}
+            onCountryChange={setSelectedCountry}
+            prizeFilter={prizeFilter}
+            onPrizeFilterChange={setPrizeFilter}
+            countries={countries}
+            resultsCount={pagination.totalItems}
           />
-          <Button size="lg" className="px-6">
-            Search Hackathons
-          </Button>
-        </div>
+
+     
+          <HackathonGrid
+            hackathons={hackathons}
+            isLoading={isLoading}
+            onCardClick={(id) => {
+              setIsNavigating(true);
+              router.push(`/hackathon/${id}`);
+            }}
+            onRegister={handleRegister}
+            activeHackathon={activeHackathon}
+            isRegistering={registerMutation.isPending}
+            isDisabled={isAnyActionPending}
+            onNavigate={() => setIsNavigating(true)}
+          />
+
+          {/* Pagination */}
+          {pagination.totalItems > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              totalItems={pagination.totalItems}
+              itemsPerPage={itemsPerPage}
+            />
+          )}
+        </motion.div>
       </div>
 
-      <section className="flex justify-between px-5 lg:px-10 flex-wrap  lg:flex-nowrap gap-10 py-5 md:py-10">
-        {/* Filter Section */}
-        <section className="lg:w-[30%] lg:space-y-10 flex flex-wrap gap-2 lg:block md:gap-10">
-          <FilterSection
-            title="Location"
-            options={locations}
-            selectedOption={selectedLocation}
-            onChange={setSelectedLocation}
-          />
-          <FilterSection
-            title="Status"
-            options={statuses}
-            selectedOption={selectedStatus}
-            onChange={setSelectedStatus}
-          />
-          <FilterSection
-            title="Length"
-            options={lengths}
-            selectedOption={selectedLength}
-            onChange={setSelectedLength}
-          />
-          <FilterSection
-            title="Interest Type"
-            options={Hackathons}
-            selectedOption={selectedHackathons}
-            onChange={setSelectedHackathons}
-          />
-        </section>
-
-        {/* Hackathon Display Section */}
-        <section className="w-full  lg:w-[70%] 2xl:w-[50%] h-[120vh] overflow-auto hide-scrollbar">
-          {filteredHackathons.length > 0 ? (
-            filteredHackathons.map((hackathon, index) => (
-              <HackathonCard key={index} {...hackathon} />
-            ))
-          ) : (
-            <p className="text-center text-gray-500">No hackathons found.</p>
-          )}
-        </section>
-      </section>
-    </section>
+      {/* Status Modal */}
+      <StatusModal
+        isOpen={modal.open}
+        onClose={() => setModal((prev) => ({ ...prev, open: false }))}
+        type={modal.type}
+        message={modal.message}
+      />
+    </main>
   );
-};
+}
 
-export default Page;
+export default Home;

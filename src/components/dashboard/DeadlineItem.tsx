@@ -16,14 +16,14 @@ export function DeadlineItem({ title, subtitle, daysLeft, date, type }: Deadline
   };
 
   return (
-    <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+    <div className="flex items-start gap-1 md:gap-3  rounded-lg  transition-colors p-3 md:p-5">
       <div className="mt-1">
         <FileText className={`w-5 h-5 ${colorClasses[type]}`} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="space-y-1">
-          <h4 className={`text-sm font-medium ${colorClasses[type]}`}>{title}</h4>
-          <p className="text-sm text-red-600">{subtitle}</p>
+          <h4 className={`text-xs md:text-sm font-medium ${colorClasses[type]}`}>{title}</h4>
+          <p className="text-xs md:text-sm text-red-600">{subtitle}</p>
         </div>
       </div>
       <div className="text-right space-y-1">

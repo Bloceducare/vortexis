@@ -1,27 +1,23 @@
-// import { getServerSession } from "next-auth";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import AuthLogin from "@/components/ui/AuthLogin";
 
-export default async function Login() {
-  // const session = await getServerSession(options);
-  // console.log(session);
-  // const user = session?.user?.name;
-
-  const session = null;
-  const user = null;
-  if (!session) {
-    redirect("/auth/signup?callbackUrl=/auth/login");
-  }
+function page() {
   return (
     <div>
-      <p>
-        {session ? (
-          <Link href="/api/auth/signout?callbackUrl=/">Logout</Link>
-        ) : (
-          <Link href="/api/auth/signin">Login</Link>
-        )}
-      </p>
-      {`You're welcome ${user}`}
+      <div className="text-white mb-7">
+        <h1 className="text-3xl text-center text-white font-[700] ">
+          Welcome Back!{" "}
+        </h1>
+        <p className="text-xl mt-3 w-[98%] text-center">
+          Log in to find new hackathons, connect with your team, and continue
+          building amazing projects.
+        </p>
+      </div>
+      <div className="px-3 md:px-10">
+      <AuthLogin type="participants" />
+
+      </div>
     </div>
   );
 }
+
+export default page;

@@ -1,332 +1,272 @@
-'use client';
+"use client";
+import { useState, useMemo, useEffect } from "react";
+import useOrganizer from "@/hooks/useOrganizers";
+import EmptyState from "./components/EmptyState";
+import { Plus, Search, ArrowLeft, CheckCircle, Clock, Building2, MapPin } from "lucide-react";
+import NewOrganization from "./components/NewOrganization";
+import OrganizationList from "./components/OrganizationList";
 
-import React from "react";
-import { motion } from "framer-motion";
-import Button from "@/components/ui/AuthButton";
-import Image from "next/image";
-import People from '@/public/assets/icon/people.svg'
-import Document from '@/public/assets/icon/basil_document-outline.svg'
-import Hacks from '@/public/assets/hackathon.svg'
-import RegistrationTrend from "./components/RegistrationTrend";
-import { useRouter } from "next/navigation";
-import BlueTick from "@/public/assets/icon/blue_tick.svg"
-import Speaker from "@/public/assets/icon/speaker.svg"
-import New from "@/public/assets/icon/new.svg"
+const Index = () => {
+  const [search, setSearch] = useState("");
+  const [showNewOrg, setShowNewOrg] = useState(false);
+  const [selectedOrgId, setSelectedOrgId] = useState<number | null>(null);
 
+  const { getAllOrganization } = useOrganizer();
+  const { data, isLoading, isError } = getAllOrganization;
 
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+    return data.results.filter((org: any) =>
+      org.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [data, search]);
 
-function Page() {
-  const handleClick = () => {
-    console.log("clicks");
+  const handleOrgClick = (orgId: number) => {
+    setSelectedOrgId(orgId);
   };
-  const router = useRouter();
 
-  const createHackathon = () => {
-    router.push("/organizer/create-hackathon");
+  const handleBack = () => {
+    setSelectedOrgId(null);
+  };
+
+  const ITEMS_PER_PAGE = 6;
+
+const [currentPage, setCurrentPage] = useState(1);
+
+const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
+const paginatedData = filteredData.slice(
+  (currentPage - 1) * ITEMS_PER_PAGE,
+  currentPage * ITEMS_PER_PAGE
+);
+
+
+  if (isLoading) {
+    return (
+      <section>
+        <div className="flex justify-between items-center p-6 mb-8 sticky top-0 animate-pulse ">
+          <div className=" h-10 rounded-lg w-1/2 bg-gray-300 " />
+          <div className=" h-10 rounded-lg w-[35%] bg-gray-300 " />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 animate-pulse">
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-4 items-center justify-between bg-gray-100 rounded-xl p-4 shadow-sm"
+            >
+              <div className="w-full h-40 bg-gray-300 rounded-md" />
+              <div className="h-6 w-3/4 bg-gray-300 rounded-md" />
+              <div className="h-4 w-5/6 bg-gray-200 rounded-md" />
+              <div className="h-10 w-1/2 bg-gray-300 rounded-full mt-2" />
+            </div>
+          ))}
+        </div>
+      </section>
+    );
   }
 
-  const getIcon = (title: string) => {
-    switch (title) {
-      case 'New Registration':
-        return  Document
-      case 'Review Completed':
-        return BlueTick
-      case 'Announcement Posted':
-        return Speaker
-      case 'New Registration':
-        return New
-    }
-  };
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[80vh] text-center">
+        <p className="text-red-500 text-lg font-medium">
+          Failed to load organizations. Please try again.
+        </p>
+      </div>
+    );
+  }
 
-  const ActiveHackathons = [
-    {
-      id: 1,
-      number: '243',
-      word: '+42 from last month',
-      icon: People,
-      type: 'Participants'
-    },
-    {
-      id: 2,
-      number: '243',
-      word: '+42 from last month',
-      icon: People,
-      type: 'Participants'
-    },
-    {
-      id: 3,
-      number: '243',
-      word: '+42 from last month',
-      icon: Document,
-      type: 'Participants'
-    },
-    {
-      id: 4,
-      number: '243',
-      word: '+42 from last month',
-      icon: Document,
-      type: 'Participants'
-    },
+  if (selectedOrgId) {
+    return (
+      <div className="p-4  md:p-6">
+        <button
+          onClick={handleBack}
+          className="flex items-center gap-2 mb-6 text-indigo-600 hover:text-indigo-800"
+        >
+          <ArrowLeft size={18} />
+          <span>Back to Organizations</span>
+        </button>
 
-
-  ]
-
-  const Details = [
-      {
-        id: 1,
-        number: '127',
-        icon: People,
-        type: 'Participants'
-      }, 
-      {
-        id: 2,
-        number: '28',
-        icon: Document,
-        type: 'Submission'
-      }, 
-      {
-        id: 3,
-        number: '6',
-        icon: People,
-        type: 'Judges'
-      }, 
-  ]
-
-  const recentActivities = [
-    {
-      title: "New Registration",
-      description: "You joined the AI Global Hackathon",
-      icon: Document,
-    },
-    {
-      title: "Review Completed",
-      description: "Submitted a project to the Open Innovation Challenge",
-      icon:  Document,
-    },
-    {
-      title: "New Registration",
-      description: "Received a message from the event organizer",
-      icon:  Document,
-    },
-    {
-      title: "Announcement Posted",
-      description: "Global AI Agents League has concluded",
-      icon:  Document,
-    },
-  ];
-
-  
+        <OrganizationList organizationId={selectedOrgId} onClose={handleBack} />
+      </div>
+    );
+  }
 
   return (
     <>
-      <section className="bg-white px-10 rounded-2xl py-5 mb-5 shadow-xl">
-        <motion.div
-          className="flex justify-between items-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <div className="space-y-4">
-            <motion.h1
-              className="text-[#605DEC] font-bold text-3xl"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              Welcome back, Sharon!
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
-            >
-              Here’s what happening with your hackathons.
-            </motion.p>
+      {data && data.results.length > 0 ? (
+        <>
+          {/* Top bar */}
+          <div className="mb-8 sticky top-0 py-4 z-10 space-y-4 px-5 ">
+            <div className="flex justify-center md:justify-between items-center flex-wrap md:flex-nowrap gap-8 md:gap-0">
+              <div className="relative w-full md:w-1/2">
+                <Search
+                  className="absolute left-3 top-2.5 text-gray-400"
+                  size={18}
+                />
+                <input
+                  type="text"
+                  placeholder="Search organizations..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors"
+                />
+              </div>
+
+              <button
+                onClick={() => setShowNewOrg(true)}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow cursor-pointer"
+              >
+                <Plus size={18} /> Add New Organization
+              </button>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <button
-              onClick={createHackathon}
-              className="px-7 py-4 bg-[#605DEC] text-white rounded-lg text-[16px] font-normal cursor-pointer hover:bg-[#7a78e1]"
-            >
-              Create Hackathon
-            </button>
-          </motion.div>
-        </motion.div>
+       
+          <div className="p-6">
+            {filteredData.length > 0 ? (
+              <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               {paginatedData.map((org: any, i: number) => (
+                  <div
+                    key={i}
+                    onClick={() => handleOrgClick(org.id)}
+                    className="border rounded-xl hover:shadow-lg transition-all bg-white shadow-md h-[35vh] cursor-pointer flex flex-col dark:bg-gray-800"
+                  >
+                    <div className="relative h-32 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-t-xl overflow-hidden  dark:bg-gradient-to-br dark:from-primary/20 dark:to-primary/5">
+                      {org.logo ? (
+                        <img
+                          src={org.logo}
+                          alt={org.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-indigo-300 dark:text-gray-500">
+                          <Building2 className="w-10 h-10 mb-1 opacity-40" />
+                          <span className="text-[10px] font-medium uppercase tracking-tighter">No Image Found</span>
+                        </div>
+                      )}
+
+                      <div className="absolute top-2 right-2">
+                        {org.is_approved ? (
+                          <span className="flex items-center gap-1.5 bg-green-100/90 text-green-700 dark:bg-green-500/20 dark:text-green-400 dark:border dark:border-green-500/30 backdrop-blur-sm text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm transition-colors">
+                            <CheckCircle size={14} />
+                            Approved
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 bg-yellow-100/90 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border dark:border-yellow-500/30 backdrop-blur-sm text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm transition-colors">
+                            <Clock size={14} />
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <h3 className="font-bold text-xl">{org.name}</h3>
+                        {org.tagline && (
+                          <p className="text-xs text-indigo-600 font-medium line-clamp-1">
+                            {org.tagline}
+                          </p>
+                        )}
+                        <p className="text-sm text-gray-500">
+                          {org.description?.slice(0, 100) ||
+                            "No description provided."}
+                          {org.description?.length > 100 && "..."}
+                        </p>
+                      </div>
+
+                      {org.location && (
+                        <div className="flex items-center gap-1 text-gray-500 text-xs mt-2">
+                          <MapPin size={14} className="text-indigo-500" />
+                          <span>{org.location}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+         
+
+              </div>
+                     {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-10 ">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer
+                            bg-gray-100 dark:bg-gray-700
+                            disabled:opacity-40 disabled:cursor-not-allowed
+                            hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  Prev
+                </button>
+
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }).map((_, index) => {
+                  const page = index + 1;
+                  const isActive = page === currentPage;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition cursor-pointer
+                        ${
+                          isActive
+                            ? "bg-indigo-600 text-white shadow"
+                            : "bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg text-sm font-medium cursor-pointer
+                            bg-gray-100 dark:bg-gray-700
+                            disabled:opacity-40 disabled:cursor-not-allowed
+                            hover:bg-gray-200 dark:hover:bg-gray-600"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+            </div>
+            ) : (
+              <div className="text-center text-gray-500 dark:text-gray-400 mt-16">
+                <p className="text-lg font-medium">
+                  No organization found with the name{" "}
+                  <span className="text-indigo-600">"{search}"</span>.
+                </p>
+              </div>
+            )}
 
 
-        <motion.div
-            className="mt-10"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-          <motion.h1
-            className="text-[#00AC4F]"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
-          >
-            Your Active Hackathons
-          </motion.h1>
-
-          <motion.div
-          className="flex justify-between gap-2 mt-5"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.2,
-                },
-              },
-            }}
-          >
-    {ActiveHackathons.map((active, index) => (
-      <motion.div
-        key={index}
-        className="py-7 my-2 bg-white text-center border-2 border-[#E4E4E4]  space-y-5 rounded-2xl shadow-md w-[30%]"
-        variants={{
-          hidden: { opacity: 0, y: 20 },
-          visible: { opacity: 1, y: 0 },
-        }}
-        whileHover={{ scale: 1.02 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
-        <motion.h1
-          className="text-3xl font-semibold text-[#605DEC]"
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {active.number}
-        </motion.h1>
-        <motion.p
-          className="text-gray-600"
-          initial={{ opacity: 0, x: 10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          {active.word}
-        </motion.p>
-        <motion.div
-          className="flex justify-center items-center gap-2 mt-2"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-              <Image src={active.icon} alt="icon" className="w-8 h-8" />
-              <p className="text-gray-700">{active.type}</p>
-            </motion.div>
-          </motion.div>
-        ))}
-      </motion.div>
-        </motion.div>
-
-
-        <motion.section
-  className="flex justify-between gap-3 mt-10"
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.5, ease: "easeOut" }}
->
-  {/* Hackathon Details */}
-  <motion.div
-    className="w-1/2 bg-white border-2 border-[#E4E4E4] space-y-5 rounded-2xl shadow-md py-4 px-5 cursor-pointer"
-    initial={{ opacity: 0, x: -50 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-  >
-    <div className="space-y-5 w-[90%]  px-2 xl:px-5">
-
-    <div className="flex justify-start">
-      <Image src={Hacks} alt="hacks" />
-    </div>
-    <div className="flex gap-10 items-center">
-      <h1 className="font-semibold text-lg">Global AI Agents League</h1>
-      <p className="text-[#3083FF] bg-[#EDF5FE] py-2 px-5 rounded-2xl flex gap-3 items-center">
-        <span className="w-4 h-4 bg-[#3083FF] rounded-full"></span>
-        Active
-      </p>
-    </div>
-    <p>May 10, 2025 - May 31, 2025</p>
-    <div className="flex justify-around">
-      {Details.map((det, index) => (
-        <motion.div
-          key={index}
-          className="flex flex-col gap-3 items-center"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <h1 className="text-xl xl:text-2xl font-bold">{det.number}</h1>
-          <div className="flex gap-2 items-center flex-wrap xl:flex-nowrap justify-center">
-            <Image src={det.icon} alt="icon" className="w-8 h-8" />
-            <p>{det.type}</p>
           </div>
-        </motion.div>
-      ))}
-    </div>
 
-    </div>
-
-  </motion.div>
-
-  {/* Recent Activities */}
-  <motion.div
-    className="w-1/2 bg-white py-4 px-5 border-2 border-[#E4E4E4] space-y-5 rounded-2xl shadow-md "
-    initial={{ opacity: 0, x: 50 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-  >
-    <h1 className="text-lg font-semibold">Recent Activities</h1>
-    <p>Latest updates across all hackathons</p>
-    <div className="space-y-3">
-      {recentActivities.map((activity, index) => {
-        const  icon  = getIcon(activity.title)
-
-        return (
-        <motion.div
-          key={index}
-          className="flex gap-3 items-center p-3 rounded-md cursor-pointer "
-          whileHover={{ scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="bg-[#00AC4F38] p-3 rounded-full flex items-center justify-center">
-
-          <Image
-            src={icon}
-            alt="activity icon"
-            className="w-8 h-8"
-            width={30}
-            height={30}
-          />
-          </div>
-          <div className="space-y-1">
-            <h2 className="text-base font-bold text-[#212121]">{activity.title}</h2>
-            <p className="text-[#212121BD] text-sm">{activity.description}</p>
-            <p className="text-[#727272]">May 15, 2025 3:23 PM</p>
-          </div>
-        </motion.div>
-)})}
-    </div>
-  </motion.div>
-</motion.section>
-
-
-<RegistrationTrend />
-
-
-        
-
-      </section>
+          {showNewOrg && (
+            <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative transition-colors">
+                <NewOrganization
+                  onClose={() => setShowNewOrg(false)}
+                  type="new"
+                />
+              </div>
+            </div>
+          )}
+        </>
+      ) : (
+        <EmptyState />
+      )}
     </>
   );
-}
+};
 
-export default Page;
+export default Index;

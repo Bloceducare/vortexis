@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent, ChangeEvent } from 'react';
+import React, { useState, KeyboardEvent, ChangeEvent } from "react";
 
 interface EmailInputProps {
   emails: string[];
@@ -6,12 +6,16 @@ interface EmailInputProps {
   limit: number;
 }
 
-const EmailInput: React.FC<EmailInputProps> = ({ emails, setEmails, limit }) => {
-  const [input, setInput] = useState('');
-  const [error, setError] = useState('');
+const EmailInput: React.FC<EmailInputProps> = ({
+  emails,
+  setEmails,
+  limit,
+}) => {
+  const [input, setInput] = useState("");
+  const [error, setError] = useState("");
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === ',' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === "," || e.key === " ") {
       e.preventDefault();
       const trimmed = input.trim();
       if (trimmed) {
@@ -29,23 +33,23 @@ const EmailInput: React.FC<EmailInputProps> = ({ emails, setEmails, limit }) => 
     }
 
     if (!emailRegex.test(email)) {
-      setError('Invalid email address');
+      setError("Invalid email address");
       return;
     }
 
     if (emails.includes(email)) {
-      setError('Email already added');
+      setError("Email already added");
       return;
     }
 
     setEmails([...emails, email]);
-    setInput('');
-    setError('');
+    setInput("");
+    setError("");
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
-    if (error) setError('');
+    if (error) setError("");
   };
 
   const removeEmail = (index: number) => {
@@ -53,16 +57,14 @@ const EmailInput: React.FC<EmailInputProps> = ({ emails, setEmails, limit }) => 
     setEmails(updated);
   };
   const placeholderMessage = () => {
-    if(emails.length < limit) {
+    if (emails.length < limit) {
       return `You can input ${limit - emails.length} more email`;
     } else if (emails.length == limit) {
-     return `You have added the maximum amount of email to be sent`;
+      return `You have added the maximum amount of email to be sent`;
     } else {
-      return  `You can enter up to ${limit} emails`;
+      return `You can enter up to ${limit} emails`;
     }
-  }
-
-  console.log(emails.length)
+  };
 
   return (
     <div>
@@ -87,7 +89,11 @@ const EmailInput: React.FC<EmailInputProps> = ({ emails, setEmails, limit }) => 
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholderMessage()}
-          className={emails.length == limit ? "cursor-not-allowed flex-grow outline-none p-2 h-7":  "flex-grow outline-none p-2 h-7"}
+          className={
+            emails.length == limit
+              ? "cursor-not-allowed flex-grow outline-none p-2 h-7"
+              : "flex-grow outline-none p-2 h-7"
+          }
           disabled={emails.length == limit}
         />
       </div>
