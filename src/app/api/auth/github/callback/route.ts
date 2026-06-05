@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://vortexis-dev.vercel.app";
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://vortexis.web3bridgegarage.com";
     const redirectUri = `${appUrl}/auth/callback`;
 
     // Exchange authorization code for GitHub access token
