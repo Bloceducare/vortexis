@@ -178,13 +178,13 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   {status.label !== "Finished" && (
                     
                     <div className="flex gap-4">
-                 {data.visibility ?  "" :  <button
+                <button
                    className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
                    onClick={handleShare}
                     >
                       <Share2Icon size={18}/>
                       Share Link
-                    </button>}
+                    </button>
                     <button
                       onClick={() => setShowEditModal(true)}
                       className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
