@@ -111,7 +111,7 @@ function Page() {
 
    const handleShare = async () => {
   try {
-    await navigator.clipboard.writeText(`https://vortexis.web3garage.com/hackathon/${data?.title}`);
+    await navigator.clipboard.writeText(`https://vortexis.web3bridgegarage.com/hackathon/${data?.title}`);
     alert("Link copied to clipboard!"); // Or use a nice toast notification here
   } catch (err) {
     console.error("Failed to copy link: ", err);
