@@ -23,11 +23,12 @@ import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
+import { useParams } from "next/navigation";
 
 function Hack() {
   const router = useRouter();
   const queryClient = useQueryClient()
-  const { getHackathonById, registerUserForHackathon } = useHackathon();
+  const { getHackathonById, registerUserForHackathon, getHackathonByName } = useHackathon();
   const [countdown, setCountdown] = useState("");
   const registerMutation = registerUserForHackathon();
   const [modal, setModal] = useState<{
@@ -39,12 +40,23 @@ function Hack() {
     type: "success",
     message: "",
   });
+const params = useParams()
+
+const hackathonSlug = params.id 
+  ? decodeURIComponent(params.id as string).toLowerCase().replace(/\s+/g, '-')
+  : '';
+
+
+const { data: hackathonDet } = getHackathonByName(hackathonSlug);
+console.log(hackathonDet)
 
   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
   const hackathonId = activeHackathon?.id;
 
   const { data, isLoading, error } = getHackathonById(hackathonId as string);
   const isDeadlinePassed = data?.start_date ? new Date(data.start_date) < new Date() : false;
+
+  const hackathonDetail = data || hackathonDet?.hackathon
 
 
   const { hackathons, addHackathon } = useUserHackathonsStore();
@@ -143,7 +155,7 @@ function Hack() {
     );
   }
 
-  if (error || !data) {
+  if (!hackathonDetail) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div
@@ -165,10 +177,10 @@ function Hack() {
     <div className="min-h-screen bg-linear-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
       {/* Hero Banner */}
       <div className="relative w-full h-[70vh] overflow-hidden">
-        {data.banner_image ? (
+        {hackathonDetail.banner_image ? (
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${data.banner_image})` }}
+            style={{ backgroundImage: `url(${hackathonDetail.banner_image})` }}
           />
         ) : (
           <div className="absolute inset-0 bg-linear-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
@@ -184,19 +196,19 @@ function Hack() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4"
           >
-            {data.title}
+            {hackathonDetail.title}
           </motion.h1>
 
           <div className="flex flex-wrap gap-4 justify-center text-white/90 mb-6">
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
               <span>
-                {formatDate(data.start_date)} - {formatDate(data.end_date)}
+                {formatDate(hackathonDetail.start_date)} - {formatDate(hackathonDetail.end_date)}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
-              <span>{data.venue}</span>
+              <span>{hackathonDetail.venue}</span>
             </div>
           </div>
 
@@ -236,7 +248,7 @@ function Hack() {
                     <div>
                       <p className="text-xs opacity-60">Team Size</p>
                       <p className="font-semibold">
-                        {data.min_team_size} - {data.max_team_size} members
+                        {hackathonDetail.min_team_size} - {hackathonDetail.max_team_size} members
                       </p>
                     </div>
                   </div>
@@ -247,7 +259,7 @@ function Hack() {
                     <div>
                       <p className="text-xs opacity-60">Grand Prize</p>
                       <p className="font-semibold text-lg">
-                        ${data.grand_prize}
+                        ${hackathonDetail.grand_prize}
                       </p>
                     </div>
                   </div>
@@ -258,7 +270,7 @@ function Hack() {
                     <div>
                       <p className="text-xs opacity-60">Participants</p>
                       <p className="font-semibold">
-                        {data.participants_count || 0}
+                        {hackathonDetail.participants_count || 0}
                       </p>
                     </div>
                   </div>
@@ -342,7 +354,7 @@ function Hack() {
                 Overview
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={data.description} />
+                <HtmlContent html={hackathonDetail.description} />
               </div>
             </div>
 
@@ -353,7 +365,7 @@ function Hack() {
                 Rules & Guidelines
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={safeParseContent(data.rules)} />
+                <HtmlContent html={safeParseContent(hackathonDetail.rules)} />
               </div>
             </div>
 
@@ -364,7 +376,7 @@ function Hack() {
                 Prizes & Rewards
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={safeParseContent(data.prizes)} />
+                <HtmlContent html={safeParseContent(hackathonDetail.prizes)} />
               </div>
             </div>
           </motion.div>

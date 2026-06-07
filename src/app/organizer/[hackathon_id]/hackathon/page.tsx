@@ -18,11 +18,13 @@ import {
   Clock,
   ExternalLink,
   Trophy,
+  Share2Icon,
 } from "lucide-react";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
 import { User } from '@/app/api/utils/interface';
+import { Share } from "next/font/google";
 
 
 function Page() {
@@ -107,6 +109,15 @@ function Page() {
     router.push(`/profile/${slug}`)
   }
 
+   const handleShare = async () => {
+  try {
+    await navigator.clipboard.writeText(`https://vortexis.web3garage.com/hackathon/${data?.title}`);
+    alert("Link copied to clipboard!"); // Or use a nice toast notification here
+  } catch (err) {
+    console.error("Failed to copy link: ", err);
+  }
+};
+
   if (isLoading) {
     return (
       <section className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 p-6 transition-colors">
@@ -165,6 +176,15 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
 
 
                   {status.label !== "Finished" && (
+                    
+                    <div className="flex gap-4">
+                 {data.visibility ?  "" :  <button
+                   className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
+                   onClick={handleShare}
+                    >
+                      <Share2Icon size={18}/>
+                      Share Link
+                    </button>}
                     <button
                       onClick={() => setShowEditModal(true)}
                       className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
@@ -172,6 +192,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       <Edit size={18} />
                       <span>Edit</span>
                     </button>
+                    </div>
                   )}
                 </div>
               
