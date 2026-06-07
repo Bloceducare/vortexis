@@ -173,18 +173,18 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
               {data?.visibility ? "Public" : "Private"}
             </Badge>
                               </div>
+                                                  <div className="flex gap-4">
 
 
-                  {status.label !== "Finished" && (
-                    
-                    <div className="flex gap-4">
-                <button
+<button
                    className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
                    onClick={handleShare}
                     >
                       <Share2Icon size={18}/>
                       Share Link
                     </button>
+                  {status.label !== "Finished" && (
+                    
                     <button
                       onClick={() => setShowEditModal(true)}
                       className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
@@ -192,9 +192,10 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       <Edit size={18} />
                       <span>Edit</span>
                     </button>
-                    </div>
                   )}
                 </div>
+                    </div>
+
               
               </div>
           
@@ -316,7 +317,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       Grand Prize
                     </p>
                     <p className="text-gray-800 dark:text-white font-semibold">
-                      ₦{data?.grand_prize?.toLocaleString()}
+                      ${data?.grand_prize?.toLocaleString()}
                     </p>
                   </div>
                 </div>
