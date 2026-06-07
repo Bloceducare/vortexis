@@ -173,10 +173,10 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
               {data?.visibility ? "Public" : "Private"}
             </Badge>
                               </div>
-                                                  <div className="flex gap-4">
+                        <div className="flex gap-4">
 
 
-<button
+                   <button
                    className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
                    onClick={handleShare}
                     >
@@ -452,6 +452,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
           currentData={{
             title: data?.title,
             grand_prize: data?.grand_prize,
+            start_date: data?.start_date,
             venue: data?.venue,
             min_team_size: data?.min_team_size,
             max_team_size: data?.max_team_size,
