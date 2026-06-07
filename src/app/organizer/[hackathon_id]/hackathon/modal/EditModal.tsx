@@ -13,6 +13,7 @@ interface EditHackathonModalProps {
     title?: string;
     grand_prize?: number;
     venue?: string;
+    start_date: string;
     min_team_size?: number;
     max_team_size?: number;
     submission_deadline?: string;
@@ -32,6 +33,9 @@ function EditHackathonModal({
   const [formData, setFormData] = useState({
     title: currentData?.title || "",
     grand_prize: currentData?.grand_prize || 0,
+    start_date: currentData?.start_date 
+        ? new Date(currentData.start_date).toISOString().split("T")[0]
+      : "",
     venue: currentData?.venue || "",
     min_team_size: currentData?.min_team_size || 1,
     max_team_size: currentData?.max_team_size || 10,
@@ -100,6 +104,12 @@ function EditHackathonModal({
       : "";
     if (formData.end_date !== currentEndDate)
       changes.end_date = formData.end_date;
+
+    const currentStartDate= currentData.start_date
+      ? new Date(currentData.start_date).toISOString().split("T")[0]
+      : "";
+    if (formData.start_date !== currentEndDate)
+      changes.start_date = formData.start_date;
 
     if ((formData.visibility === "true") !== currentData.visibility)
       changes.visibility = formData.visibility;
@@ -293,6 +303,18 @@ function EditHackathonModal({
                 type="date"
                 name="submission_deadline"
                 value={formData.submission_deadline}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
+               <div>
+              <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
+                start date
+              </label>
+              <input
+                type="date"
+                name="start_date"
+                value={formData.start_date}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
