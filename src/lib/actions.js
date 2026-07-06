@@ -22,10 +22,15 @@ export async function handleGithubCallback() {
   try {
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get("code");
+    const state = urlParams.get("state");
+    const errorParam = urlParams.get("error");
 
-    if (!code) throw new Error("No authorization code received");
+    if (errorParam) throw new Error(`GitHub OAuth error: ${errorParam}`);
+    if (!code || !state) throw new Error("Missing authorization code or state");
 
-    const res = await fetch(`/api/auth/github/callback?code=${encodeURIComponent(code)}`);
+    const res = await fetch(
+      `/api/auth/github/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`
+    );
 
     if (!res.ok) {
       const errorData = await res.json();
@@ -97,15 +102,8 @@ export async function signInGoogleAction() {
   }
 }
 
-export async function handleGoogleCallback() {
+export async function handleGoogleCallback(code, state) {
   try {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
-    const error = urlParams.get("error");
-
-    if (error) throw new Error(`Google OAuth error: ${error}`);
-
     if (!code || !state) {
       throw new Error("Missing authorization code or state");
     }
