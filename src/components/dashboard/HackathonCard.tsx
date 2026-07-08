@@ -5,56 +5,55 @@ import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
 import Hackathon_details from "@/app/api/utils/interface";
 
-
-
 interface HackathonCardProps {
   hackathon: Hackathon_details;
 }
 
 export function HackathonCard({ hackathon }: HackathonCardProps) {
   const router = useRouter();
-        const { setActiveHackathon } = useHackathonStore();
+  const { setActiveHackathon } = useHackathonStore();
 
-          const handleNavigation = (hackathon: any) => {
-          setActiveHackathon(hackathon);
-         const slug = slugify(hackathon.title);
-          router.push(`/dashboard/${slug}/hackathon`);
-        };
+  const handleNavigation = (hackathon: any) => {
+    setActiveHackathon(hackathon);
+    const slug = slugify(hackathon.title);
+    router.push(`/dashboard/${slug}/hackathon`);
+  };
 
   const getDeadlineStatus = (dateString: string | undefined | null) => {
-  if (!dateString) return "No deadline";
+    if (!dateString) return "No deadline";
 
-  const target = new Date(dateString);
-  
-  if (isNaN(target.getTime())) {
-    return "Invalid Date"; 
-  }
+    const target = new Date(dateString);
 
-  const today = new Date();
-  const diffInMs = target.getTime() - today.getTime();
-  
-  if (diffInMs < 0) return "Submission Closed";
+    if (isNaN(target.getTime())) {
+      return "Invalid Date";
+    }
 
-  const daysLeft = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-  
-  if (daysLeft === 0) return "Closes Today!";
-  return `${daysLeft} days left`;
-};
+    const today = new Date();
+    const diffInMs = target.getTime() - today.getTime();
+
+    if (diffInMs < 0) return "Submission Closed";
+
+    const daysLeft = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (daysLeft === 0) return "Closes Today!";
+    return `${daysLeft} days left`;
+  };
 
   const status = getDeadlineStatus(hackathon?.submission_deadline ?? "");
-const isClosed = status === "Submission Closed";
-const isUrgent = status === "Closes Today!" || status === "1 day left";
-        
+  const isClosed = status === "Submission Closed";
+  const isUrgent = status === "Closes Today!" || status === "1 day left";
 
   return (
     <Card
       className="transition-all p-5 duration-200 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
-      onClick={() => handleNavigation(hackathon) }
+      onClick={() => handleNavigation(hackathon)}
     >
       {/* <CardContent className="p-6"> */}
       <div className="space-y-4">
         <div>
-          <h3 className="text-sm md:text-lg font-medium text-primary mb-2">{hackathon?.title} </h3>
+          <h3 className="text-sm md:text-lg font-medium text-primary mb-2">
+            {hackathon?.title}{" "}
+          </h3>
           <span className="inline-block px-2 md:px-3 md:py-1 text-xs font-medium dark:bg-blue-700 bg-blue-100 text-blue-700 rounded-full dark:text-white">
             {status}
           </span>
@@ -62,13 +61,18 @@ const isUrgent = status === "Closes Today!" || status === "1 day left";
 
         <div className="flex items-center gap-2 text-orange-600">
           <Clock className="w-4 h-4" />
-       
 
-<span className={`text-xs md:text-sm font-medium ${
-  isClosed ? "text-red-500" : isUrgent ? "text-orange-500" : "text-gray-600"
-}`}>
-  {status}
-</span>
+          <span
+            className={`text-xs md:text-sm font-medium ${
+              isClosed
+                ? "text-red-500"
+                : isUrgent
+                  ? "text-orange-500"
+                  : "text-gray-600"
+            }`}
+          >
+            {status}
+          </span>
         </div>
       </div>
     </Card>
