@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface Project {
   id: number;
@@ -99,7 +100,7 @@ export const useHackathon = (
       setLoading(true);
       setError(null);
 
-      const bearerToken = localStorage.getItem("access_token");
+      const bearerToken = useAuthStore.getState().getToken();
       if (!bearerToken) {
         setError("No access token found. Please log in again.");
         return;
@@ -118,7 +119,7 @@ export const useHackathon = (
       );
 
       if (response.status === 401) {
-        localStorage.removeItem("access_token");
+        useAuthStore.getState().clearToken();
         setError("Session expired. Please log in again.");
         return;
       }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface ReviewData {
   submission: number;
@@ -56,7 +57,7 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
     setIsSubmitting(true);
     setError(null);
 
-    const bearerToken = localStorage.getItem("access_token");
+    const bearerToken = useAuthStore.getState().getToken();
 
     try {
       const response = await fetch(
@@ -123,7 +124,7 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
     setIsSubmitting(true);
     setError(null);
 
-    const bearerToken = localStorage.getItem("access_token");
+    const bearerToken = useAuthStore.getState().getToken();
 
     try {
       const response = await fetch(

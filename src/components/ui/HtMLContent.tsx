@@ -1,4 +1,5 @@
 import React from 'react';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface HtmlContentProps {
   html: string;
@@ -22,7 +23,7 @@ const HtmlContent: React.FC<HtmlContentProps> = ({ html }) => {
           dark:[&_h1]:text-white dark:[&_h2]:text-white dark:[&_h3]:text-white 
           dark:[&_strong]:text-white dark:[&_a]:text-blue-400
         "
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
       />
     </div>
   );

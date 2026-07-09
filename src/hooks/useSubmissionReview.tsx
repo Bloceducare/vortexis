@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Hackathon, Submission } from "./useHackathonDetails";
 
 interface reviews {
@@ -24,7 +25,7 @@ export const useSubmissionReview = (id: string) => {
   );
   const [reviewsData, setReviewsData] = useState<reviews[] | null>(null);
 
-  const bearerToken = localStorage.getItem("access_token");
+  const bearerToken = useAuthStore.getState().getToken();
   async function hackathon(id: string) {
     try {
       setLoading(true);

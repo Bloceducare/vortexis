@@ -21,10 +21,10 @@ import {
   Share2Icon,
 } from "lucide-react";
 import { useHackathonStore } from "@/store/useHackathonStore";
-import { slugify } from "@/lib/utils";
+import { slugify, normalizeContent } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
 import { User } from '@/app/api/utils/interface';
-import { Share } from "next/font/google";
+
 
 
 function Page() {
@@ -33,22 +33,6 @@ function Page() {
       const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
-
-  function safeParseContent(content: string | null | undefined): string {
-    if (!content) return "";
-    try {
-      const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) {
-        return parsed.join("");
-      }
-      if (typeof parsed === "string") {
-        return parsed;
-      }
-      return "";
-    } catch {
-      return content;
-    }
-  }
 
   const { getHackathonById } = useOrganizer();
   const { data, isLoading, error } = getHackathonById(hackathon_id);
@@ -171,6 +155,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   </Badge>
                <Badge className=" bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20  dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
               {data?.visibility ? "Public" : "Private"}
+              
             </Badge>
                               </div>
                         <div className="flex gap-4">
@@ -349,7 +334,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   Other Prizes
                 </h2>
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-4 rounded-xl">
-                  <HtmlContent html={safeParseContent(data?.prizes)} />
+                  <HtmlContent html={normalizeContent(data?.prizes)} />
                 </div>
               </div>
             )}
@@ -363,7 +348,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                 Rules & Guidelines
               </h2>
               <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
-                <HtmlContent html={safeParseContent(data?.rules)} />
+                <HtmlContent html={normalizeContent(data?.rules)} />
               </div>
             </div>
           </motion.div>

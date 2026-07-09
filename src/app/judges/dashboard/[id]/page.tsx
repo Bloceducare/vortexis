@@ -130,7 +130,7 @@ export default function SubmissionsPage() {
                 {hackathonDetails.title}
               </h2>
               <div className="text-blue-700 dark:text-blue-300 text-sm break-words max-w-full overflow-hidden">
-                <HtmlContent html={hackathonDetails.description} />
+         <HtmlContent html={hackathonDetails.description || ""} />
               </div>
             </div>
           )}

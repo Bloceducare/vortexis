@@ -5,6 +5,7 @@ import type React from "react";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface EvaluationItem {
   section: string;
@@ -119,7 +120,7 @@ function Evaluation({
     const fetchExistingReview = async () => {
       setIsLoading(true);
       setFetchError(null);
-      const bearerToken = localStorage.getItem("access_token");
+      const bearerToken = useAuthStore.getState().getToken();
 
       try {
         const response = await fetch(

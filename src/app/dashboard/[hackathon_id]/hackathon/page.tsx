@@ -23,7 +23,7 @@ import { useEffect, useMemo } from "react";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { User } from "@/app/api/utils/interface";
 import { useUserStore } from "@/store/useUserStore";
-import { slugify } from "@/lib/utils";
+import { slugify, normalizeContent } from "@/lib/utils";
 
 const Hackathons = () => {
 
@@ -45,18 +45,6 @@ const Hackathons = () => {
   useEffect(() => {
     if (myTeam) addHackathon(myTeam);
   }, [myTeam, addHackathon]);
-
-  const safeParseContent = (content: string | null | undefined): string => {
-    if (!content) return "";
-    try {
-      const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) return parsed.join("");
-      if (typeof parsed === "string") return parsed;
-      return "";
-    } catch {
-      return content;
-    }
-  };
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("en-US", {
@@ -285,7 +273,7 @@ const Hackathons = () => {
                 <h2 className="text-xl md:text-2xl font-bold text-title">Rules</h2>
               </div>
               <div className="prose prose-lg max-w-none dark:prose-invert">
-                <HtmlContent html={safeParseContent(data?.rules)} />
+                <HtmlContent html={normalizeContent(data?.rules)} />
               </div>
             </motion.div>
 
@@ -305,7 +293,7 @@ const Hackathons = () => {
                 </h2>
               </div>
               <div className="prose prose-lg max-w-none dark:prose-invert">
-                <HtmlContent html={safeParseContent(data?.prizes)} />
+                <HtmlContent html={normalizeContent(data?.prizes)} />
               </div>
             </motion.div>
           </div>

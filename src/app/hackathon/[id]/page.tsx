@@ -22,13 +22,14 @@ import StatusModal from "@/components/StatusModal";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
-import { slugify } from "@/lib/utils";
+import { slugify, normalizeContent } from "@/lib/utils";
 import { useParams } from "next/navigation";
 
 function Hack() {
   const router = useRouter();
-  const queryClient = useQueryClient()
-  const { getHackathonById, registerUserForHackathon, getHackathonByName } = useHackathon();
+  const queryClient = useQueryClient();
+  const { getHackathonById, registerUserForHackathon, getHackathonByName } =
+    useHackathon();
   const [countdown, setCountdown] = useState("");
   const registerMutation = registerUserForHackathon();
   const [modal, setModal] = useState<{
@@ -40,27 +41,27 @@ function Hack() {
     type: "success",
     message: "",
   });
-const params = useParams()
+  const params = useParams();
 
-const hackathonSlug = params.id 
-  ? decodeURIComponent(params.id as string).toLowerCase().replace(/\s+/g, '-')
-  : '';
+  const hackathonSlug = params.id
+    ? decodeURIComponent(params.id as string)
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+    : "";
 
-
-const { data: hackathonDet } = getHackathonByName(hackathonSlug);
-console.log(hackathonDet)
+  const { data: hackathonDet } = getHackathonByName(hackathonSlug);
 
   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
   const hackathonId = activeHackathon?.id;
 
   const { data, isLoading, error } = getHackathonById(hackathonId as string);
-  const isDeadlinePassed = data?.start_date ? new Date(data.start_date) < new Date() : false;
+  const isDeadlinePassed = data?.start_date
+    ? new Date(data.start_date) < new Date()
+    : false;
 
-  const hackathonDetail = data || hackathonDet?.hackathon
-
+  const hackathonDetail = data || hackathonDet?.hackathon;
 
   const { hackathons, addHackathon } = useUserHackathonsStore();
-
 
   const [isRegisteredState, setIsRegisteredState] = useState(
   hackathons.some((h) => h?.id === Number(hackathonId))
@@ -101,7 +102,7 @@ console.log(hackathonDet)
       } else {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
-          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         );
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
@@ -112,33 +113,33 @@ console.log(hackathonDet)
   }, [data?.start_date]);
 
   const onRegister = () => {
-  if (isRegisteredState) {
-    const slug = slugify(data?.title)
-    router.push(`/dashboard/${slug}/hackathon`);
-    return;
-  }
+    if (isRegisteredState) {
+      const slug = slugify(data?.title);
+      router.push(`/dashboard/${slug}/hackathon`);
+      return;
+    }
 
-  registerMutation.mutate(hackathonId as string, {
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
-      setIsRegisteredState(true); 
-      addHackathon(data.hackathon);
-     
-      setModal({
-        open: true,
-        type: "success",
-        message: "You have successfully registered!",
-      });
-    },
-    onError: (error: any) => {
-      setModal({
-        open: true,
-        type: "error",
-        message: error?.message || "Something went wrong. Please try again.",
-      });
-    },
-  });
-};
+    registerMutation.mutate(hackathonId as string, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
+        setIsRegisteredState(true);
+        addHackathon(data.hackathon);
+
+        setModal({
+          open: true,
+          type: "success",
+          message: "You have successfully registered!",
+        });
+      },
+      onError: (error: any) => {
+        setModal({
+          open: true,
+          type: "error",
+          message: error?.message || "Something went wrong. Please try again.",
+        });
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -203,7 +204,8 @@ console.log(hackathonDet)
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
               <span>
-                {formatDate(hackathonDetail.start_date)} - {formatDate(hackathonDetail.end_date)}
+                {formatDate(hackathonDetail.start_date)} -{" "}
+                {formatDate(hackathonDetail.end_date)}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -248,7 +250,8 @@ console.log(hackathonDet)
                     <div>
                       <p className="text-xs opacity-60">Team Size</p>
                       <p className="font-semibold">
-                        {hackathonDetail.min_team_size} - {hackathonDetail.max_team_size} members
+                        {hackathonDetail.min_team_size} -{" "}
+                        {hackathonDetail.max_team_size} members
                       </p>
                     </div>
                   </div>
@@ -292,13 +295,16 @@ console.log(hackathonDet)
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onRegister}
-                  disabled={registerMutation.isPending || (isDeadlinePassed && !isRegisteredState)}
+                  disabled={
+                    registerMutation.isPending ||
+                    (isDeadlinePassed && !isRegisteredState)
+                  }
                   className={`mt-6 w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold transition-all shadow-lg ${
                     isRegisteredState
                       ? "bg-green-600 hover:bg-green-700 text-white cursor-pointer"
                       : isDeadlinePassed
-                      ? "bg-gray-400 dark:bg-gray-700 text-gray-100 cursor-not-allowed"
-                      : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 cursor-pointer"
+                        ? "bg-gray-400 dark:bg-gray-700 text-gray-100 cursor-not-allowed"
+                        : "bg-linear-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 cursor-pointer"
                   } ${registerMutation.isPending ? "opacity-50" : ""}`}
                 >
                   {registerMutation.isPending ? (
@@ -354,7 +360,7 @@ console.log(hackathonDet)
                 Overview
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={hackathonDetail.description} />
+                <HtmlContent html={hackathonDetail.description || ""} />
               </div>
             </div>
 
@@ -365,8 +371,8 @@ console.log(hackathonDet)
                 Rules & Guidelines
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={safeParseContent(hackathonDetail.rules)} />
-              </div>
+                  <HtmlContent html={normalizeContent(hackathonDetail.rules) || ""} />       
+                 </div>
             </div>
 
             {/* Prizes */}
@@ -376,8 +382,8 @@ console.log(hackathonDet)
                 Prizes & Rewards
               </h2>
               <div className="prose dark:prose-invert max-w-none">
-                <HtmlContent html={safeParseContent(hackathonDetail.prizes)} />
-              </div>
+               <HtmlContent html={normalizeContent(hackathonDetail.prizes) || ""} />        
+                     </div>
             </div>
           </motion.div>
         </div>

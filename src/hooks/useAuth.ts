@@ -9,12 +9,6 @@ export const useAuth = () => {
   const getValidToken = () => {
     const currentToken = getToken();
     if (!currentToken) {
-      if (typeof window !== "undefined") {
-        const storedToken = localStorage.getItem("access_token");
-        if (storedToken) {
-          return storedToken;
-        }
-      }
       return null;
     }
 

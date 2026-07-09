@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import crypto from "crypto";
 
 export async function GET() {
   try {
@@ -16,9 +17,22 @@ export async function GET() {
     const appUrl = "https://vortexis.web3bridgegarage.com";
     const redirectUri = encodeURIComponent(`${appUrl}/auth/callback`);
 
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+    // Generate secure random state
+    const state = crypto.randomBytes(32).toString("hex");
+    
+    // Store state in secure HTTP-only cookie
+    const cookieStore = await cookies();
+    cookieStore.set("githubOAuthState", state, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 600, // 10 minutes
+      path: "/",
+    });
 
-    return NextResponse.json({ authUrl: githubAuthUrl });
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+
+    return NextResponse.json({ authUrl: githubAuthUrl, state });
   } catch (error) {
     console.error("GitHub OAuth init error:", error);
     return NextResponse.json(
