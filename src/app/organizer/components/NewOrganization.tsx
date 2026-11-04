@@ -117,20 +117,29 @@ const handleSubmit = async (e: React.FormEvent) => {
     try {
       if (type === "new") {
         const created = await createOrganization.mutateAsync(payload);
+        const orgItem = created?.data || created?.organization || created;
 
         queryClient.setQueryData(["organizations"], (old: any) => {
-          if (!old) return [created];
-          // If old is an array of orgs
-          if (Array.isArray(old)) return [created, ...old];
-          // If old is a paginated response { results: [...] }
-          if (old && Array.isArray(old.results)) {
-            return { ...old, results: [created, ...old.results] };
+          if (!old) {
+            return { count: 1, next: null, previous: null, results: [orgItem] };
           }
-          // Fallback: return as-is or wrap into array
-          return [created, old] as any;
+          if (Array.isArray(old)) {
+            return { count: old.length + 1, next: null, previous: null, results: [orgItem, ...old] };
+          }
+          if (old && Array.isArray(old.results)) {
+            const exists = old.results.some((o: any) => o.id === orgItem.id);
+            if (exists) return old;
+            return {
+              ...old,
+              count: (old.count || old.results.length) + 1,
+              results: [orgItem, ...old.results],
+            };
+          }
+          return { count: 1, next: null, previous: null, results: [orgItem] };
         });
 
         await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+        await queryClient.refetchQueries({ queryKey: ["organizations"] });
       }
 
       if (type === "edit") {
@@ -462,20 +471,20 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Success */}
         {status === "success" && (
           <div className="flex flex-col items-center justify-center py-12 text-center animate-fadeIn">
-            <CheckCircle className="text-green-500 w-16 h-16 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-800">
+            <CheckCircle className="text-green-500 dark:text-green-400 w-16 h-16 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               {type === "new"
                 ? "Organization Created!"
                 : "Organization Updated!"}
             </h3>
-            <p className="text-gray-500 mt-2 max-w-sm">
+            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
               {type === "new"
                 ? "Your organization has been created successfully. Please wait for it to be approved by our team."
                 : "Your organization details have been updated successfully."}
             </p>
             <button
               onClick={handleClose}
-              className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all cursor-pointer"
+              className="mt-6 bg-[#605DEC] hover:bg-[#5046d8] dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md cursor-pointer"
             >
               Done
             </button>
@@ -485,11 +494,11 @@ const handleSubmit = async (e: React.FormEvent) => {
         {/* Error */}
         {status === "error" && (
           <div className="flex flex-col items-center justify-center py-12 text-center animate-fadeIn">
-            <AlertCircle className="text-red-500 w-16 h-16 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-800">
+            <AlertCircle className="text-red-500 dark:text-red-400 w-16 h-16 mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Something went wrong
             </h3>
-            <p className="text-gray-500 mt-2 max-w-sm">
+            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
               {errorMessage || (
                 <>
                   We couldn't {type === "new" ? "create" : "update"} your
@@ -502,7 +511,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 setErrorMessage("");
                 setStatus("idle");
               }}
-              className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium transition-all"
+              className="mt-6 bg-[#605DEC] hover:bg-[#5046d8] dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white px-6 py-3 rounded-xl font-medium transition-all shadow-md"
             >
               Try again
             </button>

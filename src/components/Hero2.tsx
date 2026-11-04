@@ -13,10 +13,28 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useAuthStore } from "@/store/useAuthStore";
+import CountUp from "@/components/CountUp";
+import useHackathon from "@/hooks/useHackathon";
+import { usePlatformStats } from "@/store/usePlatformStats";
+import { formatStat } from "@/lib/utils";
 
 export default function HackathonCTA() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const token = useAuthStore.getState().getToken();
+
+  const { getPlatformPublicStats } = useHackathon();
+  getPlatformPublicStats();
+  const platformStat = usePlatformStats((state) => state.platformStat);
+
+  const activeParticipants = platformStat?.active_participants ?? platformStat?.activeParticipants ?? 0;
+  const hackathonsHosted = platformStat?.hackathons_hosted ?? platformStat?.hackathonsHosted ?? 0;
+  const organizations = platformStat?.organizations ?? 0;
+
+  const stats = [
+    { value: formatStat(activeParticipants), label: "Active Participants" },
+    { value: formatStat(hackathonsHosted), label: "Hackathons Hosted" },
+    { value: formatStat(organizations), label: "Organizations" },
+  ];
 
     useEffect(() => {
       const checkLoginStatus = () => {
@@ -94,7 +112,7 @@ export default function HackathonCTA() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight"
+              className="text-2xl sm:text-5xl md:text-6xl font-bold mb-4 sm:mb-6 leading-tight"
             >
               Join or Host a Hackathon
             </motion.h2>
@@ -104,7 +122,7 @@ export default function HackathonCTA() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="text-sm sm:text-xl mb-10 leading-relaxed text-white/90 max-w-2xl mx-auto"
+              className="text-sm sm:text-xl mb-6 sm:mb-10 leading-relaxed text-white/90 max-w-2xl mx-auto px-2 sm:px-0"
             >
               Whether you're new to hackathons or ready to host one, we've got
               you covered. Connect with innovators, build amazing projects, or
@@ -151,25 +169,22 @@ export default function HackathonCTA() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-6 sm:mt-8"
         >
-          {[
-            { value: "0", label: "Active Participants" },
-            { value: "0", label: "Hackathons Hosted" },
-            { value: "0", label: "Organizations" },
-          ].map((stat, index) => (
+          {stats.map((stat, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 + index * 0.1 }}
               whileHover={{ y: -4 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-6 text-center shadow-lg border border-gray-100 dark:border-gray-700"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 text-center shadow-lg border border-gray-100 dark:border-gray-700"
             >
-              <div className="text-3xl font-bold text-[#605DEC] dark:text-indigo-400 mb-1">
-                {stat.value}
+              <div className="flex items-center justify-center text-2xl sm:text-3xl font-bold text-[#605DEC] dark:text-indigo-400 mb-1">
+                <CountUp end={stat.value} duration={2} />
+                <span>+</span>
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                 {stat.label}
               </div>
             </motion.div>
