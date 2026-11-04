@@ -35,3 +35,7 @@ export const slugify = (text: string) => {
     .replace(/[\s_-]+/g, '-')    
     .replace(/^-+|-+$/g, '');     
 };
+
+
+export const formatStat = (value: number) =>
+  value < 10 ? `${value}+` : `${Math.floor(value / 10) * 10}+`;
