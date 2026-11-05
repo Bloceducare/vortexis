@@ -46,7 +46,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const appUrl = "https://vortexis.web3bridgegarage.com";
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://vortexis.web3bridgegarage.com";
     const redirectUri = `${appUrl}/auth/callback`;
 
     // Exchange authorization code for GitHub access token
@@ -108,9 +109,6 @@ export async function GET(request: Request) {
       );
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://vortexis-dev.vercel.app";
-    const redirectUri = `${appUrl}/auth/callback`;
-
     // Send raw auth code + redirect_uri to backend — backend does the GitHub token exchange
     const res = await fetch(`${baseUrl}/auth/github`, {
       method: "POST",
@@ -164,7 +162,6 @@ export async function GET(request: Request) {
       );
     }
 
-    const cookieStore = await cookies();
     // Set secure HTTP-only cookies for tokens
     const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
