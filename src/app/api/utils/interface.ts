@@ -179,15 +179,25 @@ export interface UserTeam {
 
 
 export interface userProject {
-     id?: string;
-    title: string
-    description: string
-    github_url: string
+    id?: string;
+    title: string;
+    description: string;
+    github_url: string;
     live_link: string;
     demo_video_url: string;
     presentation_link: string;
+    video_url?: string;
+    presentation_url?: string;
+    deliverables?: {
+      github_url?: string;
+      live_link?: string;
+      demo_video_url?: string;
+      presentation_link?: string;
+      video_url?: string;
+      presentation_url?: string;
+    };
     team: number;
-    hackathon: string
+    hackathon: string;
 }
 
 export interface PlatformStats {
