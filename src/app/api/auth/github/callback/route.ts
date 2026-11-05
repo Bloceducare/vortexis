@@ -108,11 +108,14 @@ export async function GET(request: Request) {
       );
     }
 
-    // Send GitHub access token to backend
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://vortexis-dev.vercel.app";
+    const redirectUri = `${appUrl}/auth/callback`;
+
+    // Send raw auth code + redirect_uri to backend — backend does the GitHub token exchange
     const res = await fetch(`${baseUrl}/auth/github`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ access_token: githubAccessToken }),
+      body: JSON.stringify({ code, redirect_uri: redirectUri }),
     });
 
     if (!res.ok) {
@@ -161,6 +164,7 @@ export async function GET(request: Request) {
       );
     }
 
+    const cookieStore = await cookies();
     // Set secure HTTP-only cookies for tokens
     const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
