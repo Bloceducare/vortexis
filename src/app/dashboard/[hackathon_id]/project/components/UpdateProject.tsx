@@ -95,94 +95,104 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
   }
 
   return (
-    <div className="p-6 w-full relative">
-      <h1 className="text-[#605DEC] font-bold text-2xl md:text-[32px]">Update Your Project</h1>
+    <div className="p-2 md:p-6 w-full relative">
+      <h1 className="text-[#605DEC] dark:text-[#8b7ff0] font-bold text-2xl md:text-[32px]">Update Your Project</h1>
       <form onSubmit={handleSubmit} className="space-y-6 text-start">
     {/* Title */}
     <div className="space-y-2 mt-5">
-      <label className="block font-bold">Title *</label>
+      <label className="block font-semibold text-gray-800 dark:text-gray-200">Title *</label>
       <input
         type="text"
         name="title"
         value={formData.title}
         onChange={handleChange}
-        className="w-full border rounded-xl px-4 py-3 outline-none "
+        placeholder="Project Title"
+        className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
       />
       {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
     </div>
 
     {/* Description */}
     <div className="space-y-2">
-      <label className="block font-medium">Description *</label>
+      <label className="block font-semibold text-gray-800 dark:text-gray-200">Description *</label>
       <textarea
         name="description"
         value={formData.description}
         onChange={handleChange}
-        className="w-full border rounded-xl px-4 py-3 h-[40vh] resize-none outline-none "
+        placeholder="Project Description"
+        className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 h-[200px] resize-none outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
       />
       {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
     </div>
 
     {/* Links Section */}
-    <h2 className="text-lg font-semibold text-gray-700">Project Links</h2>
+    <h2 className="text-lg font-bold text-gray-900 dark:text-white">Project Links</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Github URL */}
       <div className="space-y-2">
-        <label className="block font-medium">Github URL *</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Github URL *</label>
         <input
           type="url"
           name="github_url"
           value={formData.github_url}
           onChange={handleChange}
-          className="w-full border rounded-xl px-4 py-3 outline-none"
+          placeholder="https://github.com/..."
+          className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
         />
         {errors.github_url && <p className="text-red-500 text-sm">{errors.github_url}</p>}
       </div>
 
       {/* Live Link */}
       <div className="space-y-2">
-        <label className="block font-medium">Live Link</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Live Link</label>
         <input
           type="url"
           name="live_link"
           value={formData.live_link}
           onChange={handleChange}
-          className="w-full border rounded-xl px-4 py-3 outline-none"
+          placeholder="https://yourproject.com"
+          className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
         />
         {errors.live_link && <p className="text-red-500 text-sm">{errors.live_link}</p>}
       </div>
 
       {/* Demo Video URL */}
       <div className="space-y-2">
-        <label className="block font-medium">Demo Video URL</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Demo Video URL</label>
         <input
           type="url"
           name="demo_video_url"
           value={formData.demo_video_url}
           onChange={handleChange}
-          className="w-full border rounded-xl px-4 py-3 outline-none"
+          placeholder="https://youtube.com/..."
+          className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
         />
         {errors.demo_video_url && <p className="text-red-500 text-sm">{errors.demo_video_url}</p>}
       </div>
 
       {/* Presentation Link */}
       <div className="space-y-2">
-        <label className="block font-medium">Presentation Link</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Presentation Link</label>
         <input
           type="url"
           name="presentation_link"
           value={formData.presentation_link}
           onChange={handleChange}
-          className="w-full border rounded-xl px-4 py-3 outline-none"
+          placeholder="https://slides.com/..."
+          className="w-full border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors"
         />
         {errors.presentation_link && <p className="text-red-500 text-sm">{errors.presentation_link}</p>}
       </div>
     </div>
 
     {/* Submit */}
-    <div className="flex justify-end items-center gap-8">
+    <div className="flex justify-end items-center gap-4 pt-4">
 
-      <button onClick={() => onClose()} className="bg-gray-300 px-6 py-3 rounded-xl font-medium mt-5 cursor-pointer transition text-[#2d2828]">
+      <button
+        type="button"
+        onClick={() => onClose()}
+        className="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-6 py-3 rounded-xl font-medium cursor-pointer transition text-gray-800 dark:text-gray-200"
+      >
         Cancel
       </button>
 
@@ -190,13 +200,13 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
       <button
         type="submit"
         disabled={updateProjectMutation.isPending}
-        className={`px-6 py-3 rounded-xl font-medium mt-5 cursor-pointer transition ${
+        className={`px-6 py-3 rounded-xl font-medium cursor-pointer transition shadow-md ${
           updateProjectMutation.isPending
-            ? "bg-gray-400 cursor-not-allowed"
+            ? "bg-gray-400 cursor-not-allowed text-white"
             : "bg-blue-600 text-white hover:bg-blue-700"
         }`}
       >
-        {updateProjectMutation.isPending ? "Updating..." : "Submit"}
+        {updateProjectMutation.isPending ? "Updating..." : "Save Changes"}
       </button>
     </div>
   </form>
@@ -206,16 +216,16 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
   {/* ✅ Success Modal */}
   {successMessage && (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center w-[90%] max-w-md">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-6 rounded-2xl shadow-xl text-center w-[90%] max-w-md border border-gray-200 dark:border-gray-700">
         <h2 className="text-xl font-bold mb-4">Success</h2>
-        <p className="mb-6">{successMessage}</p>
+        <p className="mb-6 text-gray-600 dark:text-gray-300">{successMessage}</p>
         <button
           onClick={() => {
             setSuccessMessage(null)
             onClose()
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 cursor-pointer"
         >
           Done
         </button>

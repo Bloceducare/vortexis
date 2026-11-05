@@ -236,16 +236,19 @@ const selectedHackathonSlug = useMemo(() => {
           </button>
         )}
 
-        <nav className="flex flex-col gap-2 mt-4 px-6">
+        <nav className={`flex flex-col gap-2 mt-4 ${sidebarExpanded || isMobile ? "px-6" : "px-2"}`}>
           <Link
             href="/organizer"
-            className={`mb-2 flex gap-4 items-center py-4 pl-2 pr-4 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 ${
+            title="Dashboard"
+            className={`mb-2 flex gap-4 items-center py-4 ${
+              sidebarExpanded || isMobile ? "pl-2 pr-4 justify-start" : "px-2 justify-center"
+            } hover:text-gray-900 dark:hover:text-gray-100 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 ${
               pathname === "/organizer"
                 ? "text-gray-900 dark:text-gray-100 border-r-4 border-[#605DEC] bg-[#F7F7FB] dark:bg-gray-700"
                 : "text-gray-600 dark:text-gray-300"
             } transition-colors`}
           >
-            <Image src={Dash} alt="dash" width={24} height={24} />
+            <Image src={Dash} alt="dash" width={24} height={24} className="shrink-0" />
             <span
               className={`${sidebarExpanded || isMobile ? "inline" : "hidden"}`}
             >
@@ -255,15 +258,20 @@ const selectedHackathonSlug = useMemo(() => {
 
           {/* Hackathon selector */}
           <div className="relative mb-6 z-50">
-            <label className="block text-sm font-medium mb-1 text-gray-500 dark:text-gray-400">
+            <label className={`text-xs font-medium mb-1 text-gray-500 dark:text-gray-400 ${sidebarExpanded || isMobile ? "block" : "hidden"}`}>
               Select Hackathon
             </label>
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="w-full p-2 border border-gray-200 cursor-pointer dark:border-gray-700 rounded flex justify-between items-center text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 transition-colors"
+              title={selectedHackathonName}
+              className={`w-full p-2 border border-gray-200 cursor-pointer dark:border-gray-700 rounded flex items-center text-sm text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 transition-colors ${
+                sidebarExpanded || isMobile ? "justify-between" : "justify-center"
+              }`}
             >
-              {selectedHackathonName}
-              <ChevronsUpDown className="w-4 h-4 text-gray-600 dark:text-gray-400 ml-2" />
+              <span className={`truncate text-left ${sidebarExpanded || isMobile ? "block" : "hidden"}`}>
+                {selectedHackathonName}
+              </span>
+              <ChevronsUpDown className="w-4 h-4 text-gray-600 dark:text-gray-400 shrink-0" />
             </button>
 
       <AnimatePresence>
@@ -317,16 +325,22 @@ const selectedHackathonSlug = useMemo(() => {
             <div>
               {navLinks.map((link, index) => {
                 const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;
+                const currentSection = pathname.split("/")[3];
                 const isActive =
-                  pathname === fullPath || pathname?.includes(link.path);
-                    const Icon = link.icon;
+                  currentSection === link.path ||
+                  pathname === fullPath ||
+                  pathname.startsWith(`${fullPath}/`);
+                const Icon = link.icon;
 
 
                 return (
                   <Link
                     key={index}
                     href={fullPath}
-                    className={`flex items-center py-4 pl-2 pr-4 gap-4 rounded hover:bg-[#F7F7FB] dark:hover:bg-gray-700 ${
+                    title={link.label}
+                    className={`flex items-center py-4 gap-4 rounded hover:bg-[#F7F7FB] dark:hover:bg-gray-700 ${
+                      sidebarExpanded || isMobile ? "pl-2 pr-4 justify-start" : "px-2 justify-center"
+                    } ${
                       isActive
                         ? "text-gray-900 dark:text-gray-100 border-r-4 border-[#605DEC] bg-[#F7F7FB] dark:bg-gray-700"
                         : "text-gray-600 dark:text-gray-300"
@@ -334,14 +348,14 @@ const selectedHackathonSlug = useMemo(() => {
                   >
                     <Icon
         size={20}
-        className={`transition-colors duration-200 ${
+        className={`shrink-0 transition-colors duration-200 ${
           isDarkMode ? "text-white" : "text-gray-800"
         }`}
       />
                     <span
                       className={`${
                         sidebarExpanded || isMobile ? "inline" : "hidden"
-                      } transition-all duration-200`}
+                      } truncate transition-all duration-200`}
                     >
                       {link.label}
                     </span>
@@ -353,32 +367,47 @@ const selectedHackathonSlug = useMemo(() => {
         </nav>
 
         {/* Footer */}
-        <div className="mt-auto py-6 flex flex-col gap-4 px-6">
+        <div className={`mt-auto py-6 flex flex-col gap-4 ${sidebarExpanded || isMobile ? "px-6" : "px-2 items-center"}`}>
           <button
             onClick={toggleDarkMode}
-            className="flex items-center gap-3 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 py-2 px-2 rounded text-gray-600 dark:text-gray-300 transition-colors"
+            title={isDarkMode ? "Light Mode" : "Dark Mode"}
+            className={`flex items-center gap-3 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 py-2 px-2 rounded text-gray-600 dark:text-gray-300 transition-colors cursor-pointer ${
+              sidebarExpanded || isMobile ? "w-full justify-start" : "w-full justify-center"
+            }`}
             aria-label="Toggle dark mode"
           >
             {isDarkMode ? (
-              <Sun size={20} className="text-yellow-500" />
+              <Sun size={20} className="text-yellow-500 shrink-0" />
             ) : (
-              <Moon size={20} />
+              <Moon size={20} className="shrink-0" />
             )}
-            <span>{isDarkMode ? "Light Mode" : "Dark Mode"}</span>
+            <span className={sidebarExpanded || isMobile ? "inline" : "hidden"}>
+              {isDarkMode ? "Light Mode" : "Dark Mode"}
+            </span>
           </button>
           <Link
             href="/profile/detail"
-            className="flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 py-2 px-2 rounded transition-colors"
+            title="Settings"
+            className={`flex items-center gap-3 text-gray-600 dark:text-gray-300 hover:bg-[#F7F7FB] dark:hover:bg-gray-700 py-2 px-2 rounded transition-colors ${
+              sidebarExpanded || isMobile ? "w-full justify-start" : "w-full justify-center"
+            }`}
           >
-            <Settings size={20} />
-            <span>Settings</span>
+            <Settings size={20} className="shrink-0" />
+            <span className={sidebarExpanded || isMobile ? "inline" : "hidden"}>
+              Settings
+            </span>
           </Link>
           <button
-            className="flex items-center gap-3 text-red-500"
+            title="Sign Out"
+            className={`flex items-center gap-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 py-2 px-2 rounded transition-colors cursor-pointer ${
+              sidebarExpanded || isMobile ? "w-full justify-start" : "w-full justify-center"
+            }`}
             onClick={OpenModal}
           >
-            <LogOutIcon size={20} />
-            <span>Sign Out</span>
+            <LogOutIcon size={20} className="shrink-0" />
+            <span className={sidebarExpanded || isMobile ? "inline" : "hidden"}>
+              Sign Out
+            </span>
           </button>
         </div>
       </motion.aside>

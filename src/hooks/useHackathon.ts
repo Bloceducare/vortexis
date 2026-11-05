@@ -83,6 +83,9 @@ export default function useHackathon() {
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
+        queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
+        queryClient.invalidateQueries({ queryKey: ["hackathon_byId"] });
+        queryClient.invalidateQueries({ queryKey: ["available-hackathons"] });
 
         // Optimistically update user's participant flag (safe approach)
         const currentUser = useUserStore.getState().user;

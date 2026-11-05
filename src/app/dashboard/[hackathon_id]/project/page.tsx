@@ -93,29 +93,30 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
   }
 
   if (!project || project.length === 0) {
+    if (isSubmissionDeadlinePassed) {
+      return (
+        <div className="p-3 md:p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">
+            No Project Found
+          </h2>
+          <p className="mb-6 text-gray-500 dark:text-gray-400 max-w-md">
+            The submission deadline has passed. You can no longer create a project for this hackathon.
+          </p>
+        </div>
+      );
+    }
+
     return (
-      <div className="p-3 md:p-6 flex flex-col items-center justify-center min-h-[60vh] text-center bg-white dark:bg-gray-800 rounded-2xl shadow-md transition-colors">
-        <h2 className="text-2xl font-bold mb-4 dark:text-white">
-          No Project Found
-        </h2>
-        <p className="mb-6 text-gray-500 dark:text-gray-400 max-w-md">
-          {isSubmissionDeadlinePassed 
-            ? "The submission deadline has passed. You can no longer create a project for this hackathon."
-            : "You haven’t created a project yet. Start by creating one now."}
-        </p>
-        {!isSubmissionDeadlinePassed && (
-          <CreateProject
-            hackathon_id={hackathon_id}
-            hackathon_name={hackathonData?.title}
-          />
-        )}
-      </div>
+      <CreateProject
+        hackathon_id={hackathon_id}
+        hackathon_name={hackathonData?.title}
+      />
     );
   }
 
   if (update) {
     return (
-      <div className="p-3 md:p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-colors">
+      <div className="p-3 md:p-8 min-h-[60vh] bg-white dark:bg-gray-800 rounded-2xl shadow-lg transition-colors border border-gray-200 dark:border-gray-700">
         <UpdateProject
           onClose={() => setUpdate(false)}
           hackathon_id={hackathon_id}
@@ -193,13 +194,13 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
             />
 
             <div>
-              {project?.demo_video_url && (
+              {(project?.demo_video_url || project?.demo_url) && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Demo Video
                   </h3>
                   <LinkPreview
-                    url={project?.demo_video_url}
+                    url={project?.demo_video_url || project?.demo_url}
                     width="100%"
                     descriptionLength={80}
                     className="rounded-lg shadow"
@@ -209,13 +210,13 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
             </div>
 
             <div className="mt-3 flex justify-center gap-3 flex-col flex-wrap">
-              {project?.github_url && (
+              {(project?.github_url || project?.github) && (
                 <div className="">
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     GitHub
                   </h3>
                   <LinkPreview
-                    url={project?.github_url}
+                    url={project?.github_url || project?.github}
                     width="100%"
                     descriptionLength={80}
                     className="rounded-lg shadow"
@@ -223,13 +224,13 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
                 </div>
               )}
 
-              {project?.live_link && (
+              {(project?.live_link || project?.live_url) && (
                 <div className="">
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     Live Link
                   </h3>
                   <LinkPreview
-                    url={project?.live_link}
+                    url={project?.live_link || project?.live_url}
                     width="100%"
                     descriptionLength={80}
                     className="rounded-lg shadow"
@@ -237,13 +238,13 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
                 </div>
               )}
 
-              {project?.presentation_link && (
+              {(project?.presentation_link || project?.presentation_url) && (
                 <div>
                   <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-2 ">
                     Presentation
                   </h3>
                   <LinkPreview
-                    url={project?.presentation_link}
+                    url={project?.presentation_link || project?.presentation_url}
                     width="100%"
                     descriptionLength={80}
                     className="rounded-lg shadow"

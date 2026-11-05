@@ -39,8 +39,8 @@ const activeHackathon = useHackathonStore((state) => state.activeHackathon);
     setJoiningTeamId(teamId);
     try {
       await joinTeam({ teamId, hackathon_id, teamName });
-      const slug = slugify(teamName)
-      window.location.href = `/dashboard/${slug}/team`;
+      const hackathonSlug = activeHackathon?.title ? slugify(activeHackathon.title) : hackathon_id;
+      window.location.href = `/dashboard/${hackathonSlug}/team`;
     } catch (err: any) {
       console.error("Error joining team:", err);
       setError(err.message || "Something went wrong. Please try again.");

@@ -45,7 +45,7 @@ export default function useSkills() {
             }
           },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['projects'] });
+          queryClient.invalidateQueries({ queryKey: ['skills'] });
         },
       });
 

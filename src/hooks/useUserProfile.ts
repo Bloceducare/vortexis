@@ -79,7 +79,10 @@ export default function useUser() {
         }
       },
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['userDetail'] });
+        queryClient.invalidateQueries({ queryKey: ['userProfile'] });
         queryClient.invalidateQueries({ queryKey: ['detail'] });
+        queryClient.invalidateQueries({ queryKey: ['publicUser'] });
       },
     });
   };
@@ -95,7 +98,10 @@ export default function useUser() {
         }
       },
       onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['userProfile'] });
+        queryClient.invalidateQueries({ queryKey: ['userDetail'] });
         queryClient.invalidateQueries({ queryKey: ['profile'] });
+        queryClient.invalidateQueries({ queryKey: ['publicUser'] });
       },
     });
   };
