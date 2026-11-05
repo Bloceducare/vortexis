@@ -21,8 +21,8 @@ export default function ExploreActiveHackathons() {
   }, [hackathons]);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-white dark:bg-gray-900">
-      <h2 className="text-xl sm:text-2xl font-bold text-center text-indigo-500 dark:text-indigo-400 mb-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12 bg-white dark:bg-gray-900">
+      <h2 className="text-xl sm:text-2xl font-bold text-center text-indigo-500 dark:text-indigo-400 mb-6 sm:mb-8">
         Explore Active Hackathons
       </h2>
 

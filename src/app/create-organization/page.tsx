@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formFields = [
   {
@@ -70,6 +71,7 @@ const formFields = [
 
 export default function Page() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
   const clearToken = useAuthStore((state) => state.clearToken);
 
@@ -162,6 +164,8 @@ export default function Page() {
 
       if (result.success !== false) {
         toast.success("Organization created successfully!");
+        await queryClient.invalidateQueries({ queryKey: ["organizations"] });
+        await queryClient.refetchQueries({ queryKey: ["organizations"] });
         reset();
       } else {
         toast.error(

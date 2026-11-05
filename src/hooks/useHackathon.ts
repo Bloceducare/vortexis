@@ -3,12 +3,14 @@
 import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
+import { usePlatformStats, UsePlatformStatistics } from "@/store/usePlatformStats";
 import api from "@/lib/api";
 
 
 export default function useHackathon() {
   const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
+  const { set } = UsePlatformStatistics();
 
 
 
@@ -23,6 +25,21 @@ export default function useHackathon() {
         return res.data; // Contains { data, pagination }
       },
       placeholderData: keepPreviousData,
+    });
+  };
+
+  const getPlatformPublicStats = () => {
+    return useQuery({
+      queryKey: ["platform_stats"],
+      queryFn: async () => {
+        const res = await api.get("/hackathon/stats/");
+        const statsData = res.data?.data || res.data;
+        if (statsData) {
+          usePlatformStats.getState().set(statsData);
+        }
+        return statsData;
+      },
+      staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes 
     });
   };
 
@@ -83,10 +100,14 @@ export default function useHackathon() {
     });
   };
 
+
+
+
   return {
     getAllHackathon,
     getHackathonById,
     registerUserForHackathon,
-    getHackathonByName
+    getHackathonByName,
+    getPlatformPublicStats
   };
 }

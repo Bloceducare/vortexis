@@ -10,7 +10,7 @@ import api from '@/lib/api';
 
 
 export default function useOrganizer() {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   const token = useAuthStore.getState().getToken();
   const { banner_image_file, venue } = useHackathonStore();
 
@@ -38,6 +38,29 @@ const createOrganization = useMutation({
         "Failed to create organization";
       throw new Error(errorMessage);
     }
+  },
+  onSuccess: (data) => {
+    const orgItem = data?.data || data?.organization || data;
+    queryClient.setQueryData(["organizations"], (old: any) => {
+      if (!old) {
+        return { count: 1, next: null, previous: null, results: [orgItem] };
+      }
+      if (Array.isArray(old)) {
+        return { count: old.length + 1, next: null, previous: null, results: [orgItem, ...old] };
+      }
+      if (old && Array.isArray(old.results)) {
+        const exists = old.results.some((o: any) => o.id === orgItem.id);
+        if (exists) return old;
+        return {
+          ...old,
+          count: (old.count || old.results.length) + 1,
+          results: [orgItem, ...old.results],
+        };
+      }
+      return { count: 1, next: null, previous: null, results: [orgItem] };
+    });
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    queryClient.refetchQueries({ queryKey: ["organizations"] });
   },
 });
 
@@ -71,6 +94,26 @@ const createOrganization = useMutation({
       throw new Error(errorMessage);
     }
   },
+  onSuccess: (updated) => {
+    const orgItem = updated?.data || updated?.organization || updated;
+    queryClient.setQueryData(["organizations"], (old: any) => {
+      if (!old) return old;
+      if (Array.isArray(old)) {
+        return old.map((org: any) => (org.id === orgItem.id ? { ...org, ...orgItem } : org));
+      }
+      if (old && Array.isArray(old.results)) {
+        return {
+          ...old,
+          results: old.results.map((org: any) =>
+            org.id === orgItem.id ? { ...org, ...orgItem } : org
+          ),
+        };
+      }
+      return old;
+    });
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    queryClient.refetchQueries({ queryKey: ["organizations"] });
+  },
 });
 
 
@@ -84,7 +127,7 @@ const createOrganization = useMutation({
         throw new Error("Unable to fetch organizations");
       }
     },
-    staleTime: Infinity,
+    staleTime: 1000 * 30, // 30 seconds
   });
 
 
@@ -101,6 +144,26 @@ const createOrganization = useMutation({
           "Failed to delete organization";
         throw new Error(errorMessage);
       }
+    },
+    onSuccess: (_, id) => {
+      queryClient.setQueryData(["organizations"], (old: any) => {
+        if (!old) return old;
+        if (Array.isArray(old)) {
+          return old.filter((org: any) => org.id !== id && String(org.id) !== String(id));
+        }
+        if (old && Array.isArray(old.results)) {
+          return {
+            ...old,
+            count: Math.max(0, (old.count || old.results.length) - 1),
+            results: old.results.filter(
+              (org: any) => org.id !== id && String(org.id) !== String(id)
+            ),
+          };
+        }
+        return old;
+      });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.refetchQueries({ queryKey: ["organizations"] });
     },
   });
   

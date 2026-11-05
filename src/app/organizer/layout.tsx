@@ -54,6 +54,14 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
   const [showNewOrgModal, setShowNewOrgModal] = useState(false);
 
   const { data: orgsData, isLoading: orgsLoading } = getAllOrganization;
+
+  const availableOrgs = useMemo(() => {
+    if (!orgsData) return [];
+    if (Array.isArray(orgsData)) return orgsData;
+    if (Array.isArray(orgsData.results)) return orgsData.results;
+    return [];
+  }, [orgsData]);
+
   const OpenModal = () => {
     setLogout(true);
   };
@@ -119,8 +127,7 @@ const selectedHackathonSlug = useMemo(() => {
     e.preventDefault();
     if (orgsLoading) return;
 
-    const orgs = orgsData?.results || [];
-    if (orgs.length > 0) {
+    if (availableOrgs.length > 0) {
       setShowOrgSelectModal(true);
     } else {
       setShowNoOrgModal(true);
@@ -377,7 +384,7 @@ const selectedHackathonSlug = useMemo(() => {
 
               {/* Body */}
               <div className="p-6 max-h-96 overflow-y-auto space-y-3">
-                {orgsData?.results?.map((org: any) => (
+                {availableOrgs.map((org: any) => (
                   <button
                     key={org.id}
                     onClick={() => handleOrgSelect(org)}

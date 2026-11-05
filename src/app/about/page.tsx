@@ -6,16 +6,34 @@ import { Target, Users, Zap, Heart, Award, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CountUp from "@/components/CountUp";
 import { useIsLoggedIn } from "@/lib/logged-In";
+import { UsePlatformStatistics } from "@/store/usePlatformStats";
+import useHackathon from "@/hooks/useHackathon";
+import { formatStat } from "@/lib/utils";
 
 export default function AboutPage() {
-  const stats = [
-    { value: 1000, label: "Active Users" },
-    { value: 500, label: "Hackathons" },
-    { value: 100, label: "Organizations" },
-    { value: 2000000, label: "Prizes Awarded" },
-  ];
   const router = useRouter();
-    const isLoggedIn = useIsLoggedIn();
+  const isLoggedIn = useIsLoggedIn();
+  const { getPlatformPublicStats } = useHackathon();
+  getPlatformPublicStats();
+  const { platformStat } = UsePlatformStatistics();
+
+  const activeParticipants = platformStat
+    ? (platformStat.active_participants ?? platformStat.activeParticipants ?? 0)
+    : 1000;
+  const hackathonsHosted = platformStat
+    ? (platformStat.hackathons_hosted ?? platformStat.hackathonsHosted ?? 0)
+    : 500;
+  const organizations = platformStat
+    ? (platformStat.organizations ?? 0)
+    : 100;
+
+  const stats = [
+    { value: formatStat(activeParticipants), label: "Active Users" },
+    { value: formatStat(hackathonsHosted), label: "Hackathons" },
+    { value: formatStat(organizations), label: "Organizations" },
+    // { value: 2000000, label: "Prizes Awarded" },
+  ];
+
   
   const values = [
     {
@@ -39,6 +57,10 @@ export default function AboutPage() {
       description: "We love technology and the amazing things it enables.",
     },
   ];
+
+
+   
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50 to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 px-4 sm:px-6 lg:px-8 mt-10">
@@ -70,7 +92,7 @@ export default function AboutPage() {
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
   transition={{ delay: 0.2 }}
-  className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20"
+  className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-20"
 >
   {stats.map((stat, index) => (
     <motion.div

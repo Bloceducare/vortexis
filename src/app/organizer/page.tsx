@@ -14,12 +14,18 @@ const Index = () => {
   const { getAllOrganization } = useOrganizer();
   const { data, isLoading, isError } = getAllOrganization;
 
-  const filteredData = useMemo(() => {
+  const orgList = useMemo(() => {
     if (!data) return [];
-    return data.results.filter((org: any) =>
-      org.name.toLowerCase().includes(search.toLowerCase())
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.results)) return data.results;
+    return [];
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    return orgList.filter((org: any) =>
+      org?.name?.toLowerCase().includes(search.toLowerCase())
     );
-  }, [data, search]);
+  }, [orgList, search]);
 
   const handleOrgClick = (orgId: number) => {
     setSelectedOrgId(orgId);
@@ -94,7 +100,7 @@ const paginatedData = filteredData.slice(
 
   return (
     <>
-      {data && data.results.length > 0 ? (
+      {orgList.length > 0 ? (
         <>
           {/* Top bar */}
           <div className="mb-8 sticky top-0 py-4 z-10 space-y-4 px-5 ">

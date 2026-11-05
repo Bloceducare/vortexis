@@ -189,3 +189,11 @@ export interface userProject {
     team: number;
     hackathon: string
 }
+
+export interface PlatformStats {
+    active_participants?: number;
+    hackathons_hosted?: number;
+    organizations?: number;
+    activeParticipants?: number;
+    hackathonsHosted?: number;
+}

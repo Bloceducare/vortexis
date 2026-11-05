@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Sparkles, Rocket, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useAuthStore } from "@/store/useAuthStore";
 import Image from "next/image";
@@ -20,6 +20,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
 
   const { getAllOrganization } = useOrganizer();
   const { data, isLoading, isError } = getAllOrganization;
+
+  const orgsList = useMemo(() => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.results)) return data.results;
+    return [];
+  }, [data]);
 
   const handleCreateHackathon = () => {
     setShowOrgModal(true);
@@ -165,7 +172,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
                     Failed to load organizations
                   </p>
                 </div>
-              ) : !data || data.results.length === 0 ? (
+              ) : orgsList.length === 0 ? (
                 <div className="text-center py-12">
 
                     <motion.div
@@ -198,7 +205,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateOrg }) => {
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {data.results.map((org: any) => (
+                  {orgsList.map((org: any) => (
                     <motion.button
                       key={org.id}
                       whileHover={{ scale: 1.02 }}
