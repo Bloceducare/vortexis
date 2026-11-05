@@ -65,7 +65,6 @@ function AuthLogin({ type }: AuthLoginProps) {
       const result = response.data;
 
       toast.success("Login successful! Redirecting...");
-      localStorage.setItem("access_token", result.access_token);
 
       if (result.access_token) {
         setToken(result.access_token, daysInSeconds);

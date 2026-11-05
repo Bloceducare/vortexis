@@ -5,19 +5,98 @@ export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const code = url.searchParams.get("code");
+    const state = url.searchParams.get("state");
     const error = url.searchParams.get("error");
 
     if (error) {
       return NextResponse.json(
         { error: `GitHub OAuth error: ${error}` },
+        { status: 400 },
+      );
+    }
+
+    // Verify state from cookie
+    const cookieStore = await cookies();
+    const savedState = cookieStore.get("githubOAuthState")?.value;
+
+    if (!state || !savedState || state !== savedState) {
+      return NextResponse.json(
+        { error: "Invalid state parameter" },
         { status: 400 }
       );
     }
 
+    // Remove state cookie
+    cookieStore.delete("githubOAuthState");
+
     if (!code) {
       return NextResponse.json(
         { error: "No authorization code received" },
-        { status: 400 }
+        { status: 400 },
+      );
+    }
+
+    const clientId = process.env.GITHUB_ID;
+    const clientSecret = process.env.GITHUB_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return NextResponse.json(
+        { error: "GitHub OAuth not properly configured" },
+        { status: 500 },
+      );
+    }
+
+    const appUrl = "https://vortexis.web3bridgegarage.com";
+    const redirectUri = `${appUrl}/auth/callback`;
+
+    // Exchange authorization code for GitHub access token
+    const tokenResponse = await fetch(
+      "https://github.com/login/oauth/access_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          redirect_uri: redirectUri,
+        }),
+      },
+    );
+
+    if (!tokenResponse.ok) {
+      console.error(
+        "[GitHub Callback] Token exchange failed:",
+        tokenResponse.status,
+      );
+      return NextResponse.json(
+        { error: "Failed to exchange authorization code" },
+        { status: 400 },
+      );
+    }
+
+    const tokenData = await tokenResponse.json();
+
+    if (tokenData.error) {
+      console.error(
+        "[GitHub Callback] GitHub token error:",
+        tokenData.error,
+        tokenData.error_description,
+      );
+      return NextResponse.json(
+        { error: tokenData.error_description || tokenData.error },
+        { status: 400 },
+      );
+    }
+
+    const githubAccessToken = tokenData.access_token;
+    if (!githubAccessToken) {
+      return NextResponse.json(
+        { error: "No access token in GitHub response" },
+        { status: 400 },
       );
     }
 
@@ -25,7 +104,7 @@ export async function GET(request: Request) {
     if (!baseUrl) {
       return NextResponse.json(
         { error: "Base URL not configured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -43,13 +122,18 @@ export async function GET(request: Request) {
       const errorData = await res.json().catch(() => ({}));
       console.error("[GitHub Callback] Backend error:", res.status, errorData);
       return NextResponse.json(
-        { error: errorData.detail || errorData.message || errorData.error || "Failed to authenticate with backend" },
-        { status: res.status }
+        {
+          error:
+            errorData.detail ||
+            errorData.message ||
+            errorData.error ||
+            "Failed to authenticate with backend",
+        },
+        { status: res.status },
       );
     }
 
     const data = await res.json();
-    console.log("[GitHub Callback] Raw backend response:", JSON.stringify(data, null, 2));
 
     // Handle all possible token response structures from backend
     let accessToken: string | undefined;
@@ -70,14 +154,18 @@ export async function GET(request: Request) {
     }
 
     if (!accessToken || !refreshToken) {
-      console.error("[GitHub Callback] Could not extract tokens. Response was:", JSON.stringify(data));
+      console.error(
+        "[GitHub Callback] Could not extract tokens. Response was:",
+        JSON.stringify(data),
+      );
       return NextResponse.json(
         { error: "Invalid response from backend" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const cookieStore = await cookies();
+    // Set secure HTTP-only cookies for tokens
     const threeDaysInSeconds = 3 * 24 * 60 * 60;
 
     cookieStore.set("access_token", accessToken, {
@@ -105,7 +193,7 @@ export async function GET(request: Request) {
     console.error("[GitHub Callback] Error:", error);
     return NextResponse.json(
       { error: "Authentication failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -28,11 +28,6 @@ interface UseNotificationsOptions {
 
 export const useNotifications = (options: UseNotificationsOptions = {}) => {
   const { token, userId, isAuthenticated } = useAuth();
-  const baseUrl =
-    options.baseUrl ||
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://spicy-cheri-web3bridge-bc3db9dc.koyeb.app/api/v1";
-
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [stats, setStats] = useState<NotificationStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,7 +69,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
     } finally {
       setIsLoading(false);
     }
-  }, [baseUrl, token, isAuthenticated]);
+  }, [token, isAuthenticated]);
 
   // Fetch notification statistics
   const fetchStats = useCallback(async () => {
@@ -95,7 +90,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
       console.error("Error fetching notification stats:", err);
       return null;
     }
-  }, [baseUrl, token, isAuthenticated]);
+  }, [token, isAuthenticated]);
 
   // Fetch a single notification by ID
   const fetchNotification = useCallback(
@@ -117,7 +112,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
         return null;
       }
     },
-    [baseUrl, token, isAuthenticated]
+    [token, isAuthenticated],
   );
 
   // Mark a specific notification as read
@@ -134,8 +129,8 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
         // Optimistically update local state
         setNotifications((prev) =>
           prev.map((notif) =>
-            notif.id === id ? { ...notif, is_read: true } : notif
-          )
+            notif.id === id ? { ...notif, is_read: true } : notif,
+          ),
         );
 
         // Update stats if available
@@ -157,7 +152,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
         return false;
       }
     },
-    [baseUrl, token, isAuthenticated, stats]
+    [token, isAuthenticated, stats],
   );
 
   // Mark all notifications as read
@@ -174,7 +169,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
 
         // Optimistically update local state
         setNotifications((prev) =>
-          prev.map((notif) => ({ ...notif, is_read: true }))
+          prev.map((notif) => ({ ...notif, is_read: true })),
         );
 
         // Update stats
@@ -194,7 +189,7 @@ export const useNotifications = (options: UseNotificationsOptions = {}) => {
         return false;
       }
     },
-    [baseUrl, token, isAuthenticated, stats]
+    [token, isAuthenticated, stats],
   );
 
   // Auto-fetch on mount if enabled

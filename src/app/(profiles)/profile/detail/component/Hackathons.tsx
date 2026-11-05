@@ -9,6 +9,7 @@ import useParticipants from "@/hooks/useParticipants"
 import HtmlContent from "@/components/ui/HtMLContent"
 import { useHackathonStore } from "@/store/useHackathonStore"
 import { slugify } from "@/lib/utils"
+import { stripHtml } from "@/lib/utils"
 
 
 const FilterOption = [

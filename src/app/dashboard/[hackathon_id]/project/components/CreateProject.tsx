@@ -157,7 +157,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-whiterounded-3xl shadow-xl p-3 md:p-8 border border-gray-100 dark:border-gray-700 w-full"
+          className="bg-white rounded-3xl shadow-xl p-3 md:p-8 border border-gray-100 dark:border-gray-700 w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Title */}
@@ -509,7 +509,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   setSuccessMessage(null);
-                  window.location.reload();
+                  router.refresh()
                 }}
                 className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all w-full"
               >

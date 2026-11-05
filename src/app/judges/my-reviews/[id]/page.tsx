@@ -4,6 +4,7 @@ import { useSubmissionReview } from "@/hooks/useSubmissionReview";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface ApiReview {
   id: number;
@@ -55,7 +56,7 @@ async function fetchSubmissionDetails(
   submissionId: number
 ): Promise<string> {
   try {
-    const bearerToken = localStorage.getItem("access_token");
+    const bearerToken = useAuthStore.getState().getToken();
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/submissions/${submissionId}/`,
       {
@@ -82,7 +83,7 @@ async function fetchSubmissionDetails(
 // Function to fetch hackathon details
 async function fetchHackathonDetails(hackathonId: number): Promise<string> {
   try {
-    const bearerToken = localStorage.getItem("access_token");
+    const bearerToken = useAuthStore.getState().getToken();
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/`,
       {

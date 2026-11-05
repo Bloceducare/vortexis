@@ -2,6 +2,7 @@
 
 import type React from "react";
 import Link from "next/link";
+import { useAuthStore } from "@/store/useAuthStore";
 import { motion } from "framer-motion";
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useJudgedHackathons } from "@/hooks/useJudges";
@@ -106,7 +107,7 @@ function Page() {
 
       setSubmissionsLoading(true);
       try {
-        const bearerToken = localStorage.getItem("access_token");
+        const bearerToken = useAuthStore.getState().getToken();
         if (!bearerToken) return;
 
         // Fetch submissions for each hackathon

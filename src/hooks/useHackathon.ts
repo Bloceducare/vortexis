@@ -26,6 +26,18 @@ export default function useHackathon() {
     });
   };
 
+ const getHackathonByName = (hackathon_name: string) => {
+  return useQuery({
+    queryKey: ["hackathon_by_name", hackathon_name], 
+    queryFn: async () => {
+      const params = { hackathon_name };
+      const res = await api.get("/hackathon", { params });
+      return res.data;
+    },
+    enabled: !!hackathon_name, 
+  });
+};
+
   const getHackathonById = (hackathon_id: string) => {
     return useQuery({
       queryKey: ["hackathon_byId", hackathon_id],
@@ -75,5 +87,6 @@ export default function useHackathon() {
     getAllHackathon,
     getHackathonById,
     registerUserForHackathon,
+    getHackathonByName
   };
 }

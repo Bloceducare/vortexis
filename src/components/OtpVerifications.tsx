@@ -109,11 +109,11 @@ export default function OtpVerificationForm({
       }
 
       toast.success(
-        "Account verified successfully! Redirecting to dashboard..."
+        "Account verified successfully! Redirecting to sign in..."
       );
       reset();
       localStorage.setItem("isFirstTime", "false");
-      router.push("/profile/detail");
+      router.push("/auth/login");
     } catch (error) {
       if (error instanceof TypeError && error.message.includes("fetch")) {
         toast.error(

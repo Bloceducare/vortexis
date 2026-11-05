@@ -24,7 +24,7 @@ export default function SessionHandler({ children }: { children: React.ReactNode
     setIsExpired(false);
     useAuthStore.getState().clearToken();
     if (typeof window !== "undefined") {
-      localStorage.removeItem("access_token");
+      // Intentionally left blank, used to clear access_token from localStorage
     }
     router.push("/auth/login");
   };

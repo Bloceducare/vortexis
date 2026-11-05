@@ -18,11 +18,13 @@ import {
   Clock,
   ExternalLink,
   Trophy,
+  Share2Icon,
 } from "lucide-react";
 import { useHackathonStore } from "@/store/useHackathonStore";
-import { slugify } from "@/lib/utils";
+import { slugify, normalizeContent } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
 import { User } from '@/app/api/utils/interface';
+
 
 
 function Page() {
@@ -31,22 +33,6 @@ function Page() {
       const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
-
-  function safeParseContent(content: string | null | undefined): string {
-    if (!content) return "";
-    try {
-      const parsed = JSON.parse(content);
-      if (Array.isArray(parsed)) {
-        return parsed.join("");
-      }
-      if (typeof parsed === "string") {
-        return parsed;
-      }
-      return "";
-    } catch {
-      return content;
-    }
-  }
 
   const { getHackathonById } = useOrganizer();
   const { data, isLoading, error } = getHackathonById(hackathon_id);
@@ -107,6 +93,15 @@ function Page() {
     router.push(`/profile/${slug}`)
   }
 
+   const handleShare = async () => {
+  try {
+    await navigator.clipboard.writeText(`https://vortexis.web3bridgegarage.com/hackathon/${data?.title}`);
+    alert("Link copied to clipboard!"); // Or use a nice toast notification here
+  } catch (err) {
+    console.error("Failed to copy link: ", err);
+  }
+};
+
   if (isLoading) {
     return (
       <section className="w-full min-h-screen bg-gray-50 dark:bg-gray-900 p-6 transition-colors">
@@ -160,11 +155,21 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   </Badge>
                <Badge className=" bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20  dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
               {data?.visibility ? "Public" : "Private"}
+              
             </Badge>
                               </div>
+                        <div className="flex gap-4">
 
 
+                   <button
+                   className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
+                   onClick={handleShare}
+                    >
+                      <Share2Icon size={18}/>
+                      Share Link
+                    </button>
                   {status.label !== "Finished" && (
+                    
                     <button
                       onClick={() => setShowEditModal(true)}
                       className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
@@ -174,6 +179,8 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                     </button>
                   )}
                 </div>
+                    </div>
+
               
               </div>
           
@@ -295,7 +302,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       Grand Prize
                     </p>
                     <p className="text-gray-800 dark:text-white font-semibold">
-                      ₦{data?.grand_prize?.toLocaleString()}
+                      ${data?.grand_prize?.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -327,7 +334,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   Other Prizes
                 </h2>
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-4 rounded-xl">
-                  <HtmlContent html={safeParseContent(data?.prizes)} />
+                  <HtmlContent html={normalizeContent(data?.prizes)} />
                 </div>
               </div>
             )}
@@ -341,7 +348,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                 Rules & Guidelines
               </h2>
               <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
-                <HtmlContent html={safeParseContent(data?.rules)} />
+                <HtmlContent html={normalizeContent(data?.rules)} />
               </div>
             </div>
           </motion.div>
@@ -430,6 +437,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
           currentData={{
             title: data?.title,
             grand_prize: data?.grand_prize,
+            start_date: data?.start_date,
             venue: data?.venue,
             min_team_size: data?.min_team_size,
             max_team_size: data?.max_team_size,

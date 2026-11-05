@@ -36,12 +36,11 @@ const isPublicPath = (pathname: string) => {
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("access_token");
+      const token = useAuthStore.getState().getToken();
       if (token) {
         if (isTokenExpired(token)) {
           const pathname = window.location.pathname;
           if (isPublicPath(pathname)) {
-            localStorage.removeItem("access_token");
             useAuthStore.getState().clearToken();
             useUserStore.getState().clearUser();
           } else {
@@ -70,7 +69,6 @@ api.interceptors.response.use(
       if (typeof window !== "undefined") {
         const pathname = window.location.pathname;
         if (isPublicPath(pathname)) {
-          localStorage.removeItem("access_token");
           useAuthStore.getState().clearToken();
           useUserStore.getState().clearUser();
         } else {

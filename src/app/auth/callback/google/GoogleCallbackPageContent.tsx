@@ -51,7 +51,7 @@ export default function GoogleCallbackPageContent() {
     async function processCallback() {
       try {
         if (code) {
-          const success = await handleGoogleCallback();
+          const success = await handleGoogleCallback(code, state ?? "");
           if (success) {
             setStatus("success");
             window.location.href = "/hackathon";
@@ -69,7 +69,7 @@ export default function GoogleCallbackPageContent() {
     }
 
     processCallback();
-  }, [router, searchParams]);
+  }, [searchParams]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -105,14 +105,14 @@ export default function GoogleCallbackPageContent() {
           </div>
         )}
 
-        {/* {status === "error" && (
+        {status === "error" && (
           <div className="mt-6 border-t pt-4 text-xs text-gray-500">
             <p className="font-semibold">Debug Information:</p>
             <pre className="mt-2 overflow-auto bg-gray-100 p-2">
               {JSON.stringify(debugInfo, null, 2)}
             </pre>
           </div>
-        )} */}
+        )}
       </div>
     </div>
   );

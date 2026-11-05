@@ -1,6 +1,7 @@
 import { Submission } from "@/hooks/useHackathonDetails";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface TeamMember {
   id: number;
@@ -35,7 +36,7 @@ function Members({ items }: { items: Submission }) {
         setLoading(true);
         setError(null);
 
-        const bearerToken = localStorage.getItem("access_token");
+        const bearerToken = useAuthStore.getState().getToken();
         if (!bearerToken) {
           setError("No access token found");
           setLoading(false);

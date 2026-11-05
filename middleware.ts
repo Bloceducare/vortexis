@@ -28,7 +28,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // For protected routes, let client-side handle the auth check
+  // Check if user is authenticated via cookie
+  const isAuthenticated = request.cookies.has("access_token") || request.cookies.has("refresh_token");
+
+  if (!isAuthenticated) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // Allow access to protected routes if authenticated
   return NextResponse.next();
 }
 

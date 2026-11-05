@@ -1,4 +1,5 @@
 // Communications API configuration and utilities
+import { useAuthStore } from "@/store/useAuthStore";
 
 export interface CommunicationsConfig {
   baseUrl: string;
@@ -67,19 +68,9 @@ export class CommunicationsAPI {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
   ): Promise<T> {
     const url = `${this.config.baseUrl.replace(/\/$/, "")}${endpoint}`;
-
-    // Debug logging (disabled to reduce console spam)
-    // console.log("API Request Debug:", {
-    //   endpoint,
-    //   baseUrl: this.config.baseUrl,
-    //   token: this.config.token
-    //     ? `${this.config.token.substring(0, 20)}...`
-    //     : "NO TOKEN",
-    //   fullUrl: url,
-    // });
 
     const response = await fetch(url, {
       ...options,
@@ -92,15 +83,7 @@ export class CommunicationsAPI {
 
     if (!response.ok) {
       const errorText = await response.text();
-      // console.error("API Error:", { // Disabled to reduce console spam
-      //   status: response.status,
-      //   statusText: response.statusText,
-      //   errorText,
-      //   endpoint,
-      //   token: this.config.token
-      //     ? `${this.config.token.substring(0, 20)}...`
-      //     : "NO TOKEN",
-      // });
+
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
 
@@ -115,14 +98,14 @@ export class CommunicationsAPI {
   // Get a specific conversation
   async getConversation(conversationId: string): Promise<Conversation> {
     return this.request<Conversation>(
-      `/communications/conversations/${conversationId}/`
+      `/communications/conversations/${conversationId}/`,
     );
   }
 
   // Get messages for a conversation
   async getMessages(conversationId: string): Promise<Message[]> {
     return this.request<Message[]>(
-      `/communications/conversations/${conversationId}/messages/`
+      `/communications/conversations/${conversationId}/messages/`,
     );
   }
 
@@ -133,7 +116,7 @@ export class CommunicationsAPI {
       {
         method: "POST",
         body: JSON.stringify({ content }),
-      }
+      },
     );
   }
 
@@ -149,7 +132,7 @@ export class CommunicationsAPI {
   async createOrFindJudgesConversation(
     hackathonId: number,
     includeOrganizers = true,
-    includeOrgMembers = true
+    includeOrgMembers = true,
   ): Promise<Conversation> {
     return this.request<Conversation>("/communications/conversations/judges/", {
       method: "POST",
@@ -173,14 +156,14 @@ export class CommunicationsAPI {
   // Update conversation
   async updateConversation(
     conversationId: string,
-    updates: Partial<Conversation>
+    updates: Partial<Conversation>,
   ): Promise<Conversation> {
     return this.request<Conversation>(
       `/api/v1/communications/conversations/${conversationId}/`,
       {
         method: "PATCH",
         body: JSON.stringify(updates),
-      }
+      },
     );
   }
 
@@ -190,7 +173,7 @@ export class CommunicationsAPI {
       `/api/v1/communications/conversations/${conversationId}/`,
       {
         method: "DELETE",
-      }
+      },
     );
   }
 }
@@ -199,12 +182,12 @@ export class CommunicationsAPI {
 export const getWebSocketUrl = (
   baseUrl: string,
   conversationId: string,
-  token: string
+  token: string,
 ): string => {
   const wsProtocol = baseUrl.startsWith("https") ? "wss" : "ws";
   const host = baseUrl.replace(/^https?:\/\//, "");
   return `${wsProtocol}://${host}/communications/conversations/${conversationId}/?token=${encodeURIComponent(
-    token
+    token,
   )}`;
 };
 
@@ -247,7 +230,7 @@ export const getDefaultConfig = (): CommunicationsConfig => {
     // Try auth store first
     try {
       const authStore = JSON.parse(
-        localStorage.getItem("auth-storage") || "{}"
+        localStorage.getItem("auth-storage") || "{}",
       );
       if (authStore?.state?.token) {
         token = authStore.state.token;
@@ -259,7 +242,7 @@ export const getDefaultConfig = (): CommunicationsConfig => {
 
     // Fallback to localStorage
     if (!token) {
-      token = localStorage.getItem("access_token") || "";
+      token = useAuthStore.getState().getToken() || "";
       userId = parseInt(localStorage.getItem("user_id") || "0", 10);
     }
   }

@@ -44,21 +44,13 @@ function CollaborationPageContent() {
     process.env.NEXT_PUBLIC_BASE_URL ||
     "https://spicy-cheri-web3bridge-bc3db9dc.koyeb.app/api/v1";
 
-  // Debug token (disabled to reduce console spam)
-  // console.log("Collaboration Page Debug:", {
-  //   token: token ? `${token.substring(0, 20)}...` : "NO TOKEN",
-  //   userId,
-  //   baseUrl,
-  //   isAuthenticated,
-  // });
-
   // Ensure we have a valid token before creating API instance - memoized to prevent recreation
   const api = useMemo(
     () =>
       token && userId && isAuthenticated
         ? new CommunicationsAPI({ baseUrl, token, userId })
         : null,
-    [token, userId, isAuthenticated, baseUrl]
+    [token, userId, isAuthenticated, baseUrl],
   );
 
   const handleTabChange = (tabNo: number) => {
@@ -87,7 +79,7 @@ function CollaborationPageContent() {
       // Look for any existing conversation (judges, team, or dm)
       const existingConv = existingConversations.find(
         (conv) =>
-          conv.type === "judges" || conv.type === "team" || conv.type === "dm"
+          conv.type === "judges" || conv.type === "team" || conv.type === "dm",
       );
 
       if (existingConv) {
@@ -107,7 +99,7 @@ function CollaborationPageContent() {
       // Check if it's a permission error
       if (err instanceof Error && err.message.includes("Not authorized")) {
         setError(
-          "You don't have permission to create judges conversations. Please contact an administrator or try joining an existing conversation."
+          "You don't have permission to create judges conversations. Please contact an administrator or try joining an existing conversation.",
         );
 
         // Try to create a regular conversation as fallback
@@ -121,14 +113,14 @@ function CollaborationPageContent() {
         } catch (fallbackErr) {
           console.error(
             "Fallback conversation creation also failed:",
-            fallbackErr
+            fallbackErr,
           );
         }
       } else {
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to initialize conversations"
+            : "Failed to initialize conversations",
         );
       }
     } finally {

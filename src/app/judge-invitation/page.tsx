@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function JudgeInvitationPage() {
   const searchParams = useSearchParams();
@@ -25,7 +26,7 @@ export default function JudgeInvitationPage() {
     setIsLoading(true);
     setStatus("idle");
 
-    const bearerToken = localStorage.getItem("access_token");
+    const bearerToken = useAuthStore.getState().getToken();
 
     try {
       const response = await fetch(
