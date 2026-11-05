@@ -234,8 +234,46 @@ export default function JudgesLayout({
         className="flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 fixed h-screen z-50"
       >
         {/* Logo */}
-        <div className="text-blue-700 text-3xl font-bold text-center py-6">
-          {sidebarExpanded || isMobile ? "Vortexis" : "V"}
+        <div className="cursor-pointer flex items-center justify-center py-6 px-4">
+          {sidebarExpanded || isMobile ? (
+            <>
+              <Image
+                src="/logos/vortexis-logo-color.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-8 w-auto dark:hidden"
+              />
+              <Image
+                src="/logos/vortexis-logo-reversed.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-8 w-auto hidden dark:block"
+              />
+            </>
+          ) : (
+            <>
+              <Image
+                src="/logos/vortexis-mark-color.svg"
+                alt="Vortexis"
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8 dark:hidden"
+              />
+              <Image
+                src="/logos/vortexis-mark-reversed.svg"
+                alt="Vortexis"
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8 hidden dark:block"
+              />
+            </>
+          )}
         </div>
 
         {/* Desktop toggle button */}

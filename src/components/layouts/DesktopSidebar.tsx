@@ -90,10 +90,30 @@ const DesktopSidebar: FC<DesktopSidebarProps> = ({
       </button>
       <div className="flex h-full flex-col gap-y-2 cursor-pointer">
         <div
-          className={`flex text-3xl font-semibold text-blue-700 items-center cursor-pointer justify-center px-2 py-4 ${sidebarExpanded ? "py-2" : ""
-            }`}
+          className={`flex items-center cursor-pointer justify-center px-4 py-6 ${
+            sidebarExpanded ? "py-4" : ""
+          }`}
+          onClick={() => router.push("/hackathon")}
         >
-          Vortexis
+          {sidebarExpanded ? (
+            <Image
+              src="/logos/vortexis-logo-color.svg"
+              alt="Vortexis"
+              width={138}
+              height={32}
+              priority
+              className="h-8 w-auto"
+            />
+          ) : (
+            <Image
+              src="/logos/vortexis-mark-color.svg"
+              alt="Vortexis"
+              width={32}
+              height={32}
+              priority
+              className="h-8 w-8"
+            />
+          )}
         </div>
         <div
           className="flex w-full flex-col overflow-y-auto gap-y-2"

@@ -36,6 +36,71 @@ export async function GET(request: Request) {
       );
     }
 
+    const clientId = process.env.GITHUB_ID;
+    const clientSecret = process.env.GITHUB_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return NextResponse.json(
+        { error: "GitHub OAuth not properly configured" },
+        { status: 500 },
+      );
+    }
+
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL || "https://vortexis.web3bridgegarage.com";
+    const redirectUri = `${appUrl}/auth/callback`;
+
+    // Exchange authorization code for GitHub access token
+    const tokenResponse = await fetch(
+      "https://github.com/login/oauth/access_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+          redirect_uri: redirectUri,
+        }),
+      },
+    );
+
+    if (!tokenResponse.ok) {
+      console.error(
+        "[GitHub Callback] Token exchange failed:",
+        tokenResponse.status,
+      );
+      return NextResponse.json(
+        { error: "Failed to exchange authorization code" },
+        { status: 400 },
+      );
+    }
+
+    const tokenData = await tokenResponse.json();
+
+    if (tokenData.error) {
+      console.error(
+        "[GitHub Callback] GitHub token error:",
+        tokenData.error,
+        tokenData.error_description,
+      );
+      return NextResponse.json(
+        { error: tokenData.error_description || tokenData.error },
+        { status: 400 },
+      );
+    }
+
+    const githubAccessToken = tokenData.access_token;
+    if (!githubAccessToken) {
+      return NextResponse.json(
+        { error: "No access token in GitHub response" },
+        { status: 400 },
+      );
+    }
+
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     if (!baseUrl) {
       return NextResponse.json(
@@ -43,12 +108,6 @@ export async function GET(request: Request) {
         { status: 500 },
       );
     }
-
-    // Must match the redirect_uri used in /api/auth/github/init
-    const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      "https://vortexis.web3bridgegarage.com";
-    const redirectUri = `${appUrl}/auth/callback`;
 
     // Send raw auth code + redirect_uri to backend — backend does the GitHub token exchange
     const res = await fetch(`${baseUrl}/auth/github`, {

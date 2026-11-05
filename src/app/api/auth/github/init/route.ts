@@ -15,8 +15,7 @@ export async function GET() {
 
     const scope = encodeURIComponent("read:user user:email");
     const appUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      "https://vortexis.web3bridgegarage.com";
+      process.env.NEXT_PUBLIC_APP_URL || "https://vortexis.web3bridgegarage.com";
     const redirectUri = encodeURIComponent(`${appUrl}/auth/callback`);
 
     // Generate secure random state

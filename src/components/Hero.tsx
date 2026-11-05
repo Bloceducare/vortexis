@@ -77,18 +77,14 @@ export const Hero: React.FC = () => {
           Vortexis makes it easy to{" "}
           <span className="text-gray-900 dark:text-white font-medium">host hackathons</span>,{" "}
           <span className="text-gray-900 dark:text-white font-medium">collaborate with teammates</span>, and{" "}
-          <span className="text-gray-900 dark:text-white font-medium">build innovative projects</span> —
+          <span className="text-gray-900 dark:text-white font-medium">build innovative projects</span>  {" "}
           whether you&apos;re an{" "}
           <span className="inline-block px-2.5 py-0.5 rounded-md bg-indigo-100/70 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 text-xs sm:text-sm font-semibold">
             organizer
           </span>
           ,{" "}
           <span className="inline-block px-2.5 py-0.5 rounded-md bg-purple-100/70 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 text-xs sm:text-sm font-semibold">
-            participant
-          </span>
-          , or{" "}
-          <span className="inline-block px-2.5 py-0.5 rounded-md bg-pink-100/70 dark:bg-pink-950/70 text-pink-700 dark:text-pink-300 text-xs sm:text-sm font-semibold">
-            judge
+            hacker
           </span>
           .
         </motion.p>
