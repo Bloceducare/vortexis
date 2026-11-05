@@ -75,7 +75,7 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
       );
 
       setTimeout(() => {
-        router.push("/judges");
+        router.push(`/judges/dashboard/${hackathonId}`);
       }, 1500);
 
       return result;
@@ -113,10 +113,13 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
             ? data.results
             : [];
 
-          const existing =
-            reviewsList.find(
-              (r: any) => Number(r.submission) === Number(reviewData.submission)
-            ) || reviewsList[0];
+          const existing = reviewsList.find((r: any) => {
+            const subId =
+              typeof r.submission === "object" && r.submission !== null
+                ? r.submission.id
+                : r.submission ?? r.submission_id;
+            return Number(subId) === Number(reviewData.submission);
+          });
 
           if (existing?.id) {
             return await updateReview(hackathonId, existing.id, reviewData);
@@ -171,7 +174,7 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
       );
 
       setTimeout(() => {
-        router.push("/judges");
+        router.push(`/judges/dashboard/${hackathonId}`);
       }, 1500);
 
       return result;

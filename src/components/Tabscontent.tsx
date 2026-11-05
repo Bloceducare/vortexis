@@ -37,7 +37,9 @@ function Tabscontent({
   const handleTabChange = (tabNo: number) => {
     setActiveTab(tabNo);
     setIsDropdownOpen(false);
-    router.replace(`?tab=${tabNo}`, { scroll: false });
+    const subParam = searchParams.get("submission");
+    const subQuery = subParam ? `&submission=${subParam}` : "";
+    router.replace(`?tab=${tabNo}${subQuery}`, { scroll: false });
   };
 
   useEffect(() => {

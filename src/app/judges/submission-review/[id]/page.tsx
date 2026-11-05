@@ -15,20 +15,23 @@ export default function SubmissionReviewPage() {
   const hackathonRouteId = params.id as string;
   const targetSubmissionQuery = searchParams.get("submission");
 
-  const { hackathons, loading, error, selectedHackathon, selectHackathon } =
-    useHackathon(hackathonRouteId);
+  const {
+    hackathons,
+    loading,
+    error,
+    selectedHackathon,
+    selectHackathon,
+    selectSubmissionById,
+  } = useHackathon(hackathonRouteId);
 
   // Automatically select the targeted submission if passed in query param
   useEffect(() => {
     if (targetSubmissionQuery && hackathons.length > 0) {
-      const idx = hackathons.findIndex(
-        (s) => String(s.id) === String(targetSubmissionQuery)
-      );
-      if (idx !== -1 && (!selectedHackathon || selectedHackathon.id !== hackathons[idx].id)) {
-        selectHackathon(idx);
+      if (!selectedHackathon || String(selectedHackathon.id) !== String(targetSubmissionQuery)) {
+        selectSubmissionById(targetSubmissionQuery);
       }
     }
-  }, [targetSubmissionQuery, hackathons, selectedHackathon, selectHackathon]);
+  }, [targetSubmissionQuery, hackathons, selectedHackathon, selectSubmissionById]);
 
   const handleSelectSubmission = (index: number) => {
     selectHackathon(index);
@@ -38,6 +41,15 @@ export default function SubmissionReviewPage() {
       router.replace(`?submission=${sub.id}&tab=${currentTab}`, { scroll: false });
     }
   };
+
+  const currentIndex = selectedHackathon
+    ? hackathons.findIndex((s) => s.id === selectedHackathon.id)
+    : -1;
+  const prevSubmission = currentIndex > 0 ? hackathons[currentIndex - 1] : null;
+  const nextSubmission =
+    currentIndex !== -1 && currentIndex < hackathons.length - 1
+      ? hackathons[currentIndex + 1]
+      : null;
 
   if (loading) {
     return (
@@ -102,21 +114,37 @@ export default function SubmissionReviewPage() {
 
         {/* Multi-submission switcher if hackathon has multiple submissions */}
         {hackathons.length > 1 && (
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
-              Switch Project:
-            </label>
-            <select
-              value={hackathons.findIndex((s) => s.id === selectedHackathon.id)}
-              onChange={(e) => handleSelectSubmission(Number(e.target.value))}
-              className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-xs rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-indigo-500"
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => prevSubmission && handleSelectSubmission(currentIndex - 1)}
+              disabled={!prevSubmission}
+              className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
             >
-              {hackathons.map((sub, index) => (
-                <option key={sub.id} value={index}>
-                  #{sub.id} - {sub.project?.title || `Submission ${sub.id}`} ({sub.team?.name || "Team"})
-                </option>
-              ))}
-            </select>
+              ← Prev
+            </button>
+            <div className="flex items-center gap-2">
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                Project:
+              </label>
+              <select
+                value={currentIndex}
+                onChange={(e) => handleSelectSubmission(Number(e.target.value))}
+                className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-xs rounded-lg px-3 py-2 text-gray-800 dark:text-gray-200 outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                {hackathons.map((sub, index) => (
+                  <option key={sub.id} value={index}>
+                    #{sub.id} - {sub.project?.title || `Submission ${sub.id}`} ({sub.team?.name || "Team"})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={() => nextSubmission && handleSelectSubmission(currentIndex + 1)}
+              disabled={!nextSubmission}
+              className="px-2.5 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition"
+            >
+              Next →
+            </button>
           </div>
         )}
       </div>
@@ -124,6 +152,7 @@ export default function SubmissionReviewPage() {
       <div className="max-w-full overflow-x-auto my-5 shadow-md rounded-md border border-[#E4E4E4] dark:border-gray-700 bg-white dark:bg-gray-800 transition-colors scrollbar-hide">
         <div className="lg:w-[1114px] max overflow-x-scroll px-3 py-8 scrollbar-hide">
           <Tabscontent
+            key={selectedHackathon.id}
             submission={selectedHackathon}
             hackathonId={currentHackathonId}
           />

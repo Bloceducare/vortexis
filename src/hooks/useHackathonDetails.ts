@@ -103,6 +103,7 @@ interface UseHackathonReturn {
   error: string | null;
   refetch: () => void;
   selectHackathon: (index: number) => void;
+  selectSubmissionById: (id: number | string) => void;
 }
 
 export const useHackathon = (
@@ -162,12 +163,31 @@ export const useHackathon = (
 
       const data = await response.json();
 
-      // Since the API returns an array of hackathons
-      setHackathons(data);
+      // Submissions array for the hackathon
+      const submissionsList: Submission[] = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.results)
+        ? data.results
+        : Array.isArray(data?.data)
+        ? data.data
+        : [];
 
-      // Automatically select the first hackathon if available
-      if (data.length > 0) {
-        setSelectedHackathon(data[0]);
+      setHackathons(submissionsList);
+
+      // Automatically select the targeted submission if specified in query, otherwise the first
+      if (submissionsList.length > 0) {
+        let initialSelected = submissionsList[0];
+        if (typeof window !== "undefined") {
+          const urlParams = new URLSearchParams(window.location.search);
+          const targetSub = urlParams.get("submission");
+          if (targetSub) {
+            const found = submissionsList.find(
+              (s: any) => String(s.id) === String(targetSub)
+            );
+            if (found) initialSelected = found;
+          }
+        }
+        setSelectedHackathon(initialSelected);
       }
     } catch (err) {
       const errorMessage =
@@ -182,16 +202,29 @@ export const useHackathon = (
   };
 
   const selectHackathon = (index: number) => {
-    if (hackathons[index]) {
-      setSelectedHackathon(hackathons[index]);
-    }
+    setHackathons((current) => {
+      if (current[index]) {
+        setSelectedHackathon(current[index]);
+      }
+      return current;
+    });
+  };
+
+  const selectSubmissionById = (subId: number | string) => {
+    setHackathons((current) => {
+      const found = current.find((s) => String(s.id) === String(subId));
+      if (found) {
+        setSelectedHackathon(found);
+      }
+      return current;
+    });
   };
 
   useEffect(() => {
-    if (enabled) {
+    if (enabled && hackathonID) {
       fetchData();
     }
-  }, [enabled]);
+  }, [enabled, hackathonID]);
 
   return {
     hackathons,
@@ -200,5 +233,6 @@ export const useHackathon = (
     error,
     refetch: fetchData,
     selectHackathon,
+    selectSubmissionById,
   };
 };
