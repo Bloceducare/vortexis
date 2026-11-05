@@ -381,6 +381,73 @@ const createHackathonMutation = useMutation({
     },
   });
 
+  const approveSubmissionMutation = useMutation({
+    mutationFn: async ({
+      hackathonId,
+      submissionId,
+    }: {
+      hackathonId: string | number;
+      submissionId: number | string;
+    }) => {
+      try {
+        const res = await api.post(
+          `/hackathon/${hackathonId}/submissions/${submissionId}/approve/`
+        );
+        return res.data;
+      } catch (error: any) {
+        const errorData = error.response?.data;
+        throw new Error(
+          errorData?.error ||
+            errorData?.detail ||
+            errorData?.message ||
+            "Failed to approve submission"
+        );
+      }
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["submission", String(variables.hackathonId)],
+      });
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["live-reviews"] });
+    },
+  });
+
+  const rejectSubmissionMutation = useMutation({
+    mutationFn: async ({
+      hackathonId,
+      submissionId,
+      reason,
+    }: {
+      hackathonId: string | number;
+      submissionId: number | string;
+      reason?: string;
+    }) => {
+      try {
+        const res = await api.post(
+          `/hackathon/${hackathonId}/submissions/${submissionId}/reject/`,
+          { reason: reason || "Submission does not meet criteria." }
+        );
+        return res.data;
+      } catch (error: any) {
+        const errorData = error.response?.data;
+        throw new Error(
+          errorData?.error ||
+            errorData?.detail ||
+            errorData?.message ||
+            "Failed to reject submission"
+        );
+      }
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["submission", String(variables.hackathonId)],
+      });
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["live-reviews"] });
+    },
+  });
+
   // const updateHackathonMutation = useMutation({
   //   mutationFn: async ({ id, data }: { id: string; data: Hackathon_details }) => {
   //     const formData = new FormData();
@@ -469,5 +536,7 @@ const createHackathonMutation = useMutation({
     getOrganizationHackathon,
     getOrganizationById,
     inviteModeratorsMutation,
+    approveSubmissionMutation,
+    rejectSubmissionMutation,
   };
 }

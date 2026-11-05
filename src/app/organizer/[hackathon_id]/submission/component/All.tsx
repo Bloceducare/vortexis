@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SubmissionProps } from "@/app/api/utils/interface";
 import TableSkeleton from "@/components/TableSkeleton";
 import LinkPreview from "@/components/LinkPreview";
+import { useParams } from "next/navigation";
+import useOrganizer from "@/hooks/useOrganizers";
+import { useHackathonStore } from "@/store/useHackathonStore";
+import { toast } from "react-toastify";
+import { Check, X } from "lucide-react";
 
 const All: React.FC<SubmissionProps> = ({
   submissions,
@@ -19,6 +24,62 @@ const All: React.FC<SubmissionProps> = ({
   const [filteredSubmissions, setFilteredSubmissions] = useState<any[]>([]);
   const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
   const [showFull, setShowFull] = useState(false);
+  const [processingId, setProcessingId] = useState<number | null>(null);
+
+  const params = useParams();
+  const routeHackathonId = params?.hackathon_id as string;
+  const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+  const currentHackathonId = routeHackathonId || (activeHackathon?.id ? String(activeHackathon.id) : "");
+
+  const { approveSubmissionMutation, rejectSubmissionMutation } = useOrganizer();
+
+  const handleApprove = async (sub: any) => {
+    setProcessingId(sub.id);
+    try {
+      const hId = sub.hackathon || currentHackathonId;
+      await approveSubmissionMutation.mutateAsync({
+        hackathonId: hId,
+        submissionId: sub.id,
+      });
+      toast.success(`Submission "${sub.project?.title || 'Project'}" approved!`);
+      if (selectedSubmission?.id === sub.id) {
+        setSelectedSubmission((prev: any) => prev ? {
+          ...prev,
+          approved: true,
+          status: prev.status === 'pending' ? 'reviewed' : prev.status,
+        } : null);
+      }
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to approve submission");
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleReject = async (sub: any) => {
+    setProcessingId(sub.id);
+    try {
+      const hId = sub.hackathon || currentHackathonId;
+      await rejectSubmissionMutation.mutateAsync({
+        hackathonId: hId,
+        submissionId: sub.id,
+      });
+      toast.info(`Submission "${sub.project?.title || 'Project'}" rejected.`);
+      if (selectedSubmission?.id === sub.id) {
+        setSelectedSubmission((prev: any) => prev ? {
+          ...prev,
+          approved: false,
+          status: 'rejected',
+        } : null);
+      }
+      refetch();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reject submission");
+    } finally {
+      setProcessingId(null);
+    }
+  };
 
   const totalPages = Math.ceil(
     (submissions?.filter((sub) => {
@@ -230,13 +291,34 @@ const All: React.FC<SubmissionProps> = ({
                       {sub.approved ? "Approved" : "Not Approved"}
                     </span>
                   </td>
-                  <td className="px-4 py-4">
-                    <button
-                      onClick={() => setSelectedSubmission(sub)}
-                      className="text-sm text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-800 dark:hover:text-blue-300 transition-colors whitespace-nowrap"
-                    >
-                      View
-                    </button>
+                  <td className="px-4 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setSelectedSubmission(sub)}
+                        className="text-xs font-semibold px-2.5 py-1.5 rounded-md text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition cursor-pointer"
+                      >
+                        View
+                      </button>
+                      {!sub.approved ? (
+                        <button
+                          onClick={() => handleApprove(sub)}
+                          disabled={processingId === sub.id}
+                          className="text-xs font-semibold px-3 py-1.5 rounded-md text-white bg-green-600 hover:bg-green-700 transition disabled:opacity-50 cursor-pointer flex items-center gap-1 shadow-xs"
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                          {processingId === sub.id ? "..." : "Approve"}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleReject(sub)}
+                          disabled={processingId === sub.id}
+                          className="text-xs font-semibold px-2.5 py-1.5 rounded-md text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition disabled:opacity-50 cursor-pointer flex items-center gap-1"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          {processingId === sub.id ? "..." : "Reject"}
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -299,12 +381,32 @@ const All: React.FC<SubmissionProps> = ({
                     {sub.approved ? "Approved" : "Not Approved"}
                   </span>
                 </div>
-                <button
-                  onClick={() => setSelectedSubmission(sub)}
-                  className="text-sm text-blue-600 dark:text-blue-400 font-medium cursor-pointer hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                >
-                  View Details →
-                </button>
+                <div className="flex items-center gap-2">
+                  {!sub.approved ? (
+                    <button
+                      onClick={() => handleApprove(sub)}
+                      disabled={processingId === sub.id}
+                      className="text-xs font-semibold px-2.5 py-1 rounded-md text-white bg-green-600 hover:bg-green-700 transition disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <Check className="w-3 h-3" />
+                      {processingId === sub.id ? "..." : "Approve"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleReject(sub)}
+                      disabled={processingId === sub.id}
+                      className="text-xs font-semibold px-2.5 py-1 rounded-md text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
+                    >
+                      Reject
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setSelectedSubmission(sub)}
+                    className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
+                  >
+                    View →
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))
@@ -583,7 +685,52 @@ const All: React.FC<SubmissionProps> = ({
                     )}
                   </div>
                 </div>
-            </div>
+              </div>
+
+              {/* Modal Footer / Approval Actions */}
+              <div className="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-xs text-gray-500 dark:text-gray-400">
+                  {selectedSubmission.approved ? (
+                    <span className="text-green-600 dark:text-green-400 font-medium">
+                      ✓ This project is approved and will show on the leaderboard.
+                    </span>
+                  ) : (
+                    <span>
+                      ⊗ This project is currently not approved. Approve it to include on the leaderboard.
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                  {!selectedSubmission.approved ? (
+                    <button
+                      onClick={() => handleApprove(selectedSubmission)}
+                      disabled={processingId === selectedSubmission.id}
+                      className="px-5 py-2.5 rounded-xl font-semibold text-sm bg-green-600 text-white hover:bg-green-700 transition shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      <Check className="w-4 h-4" />
+                      {processingId === selectedSubmission.id ? "Approving..." : "Approve Project"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleReject(selectedSubmission)}
+                      disabled={processingId === selectedSubmission.id}
+                      className="px-5 py-2.5 rounded-xl font-semibold text-sm bg-red-600 text-white hover:bg-red-700 transition shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      <X className="w-4 h-4" />
+                      {processingId === selectedSubmission.id ? "Rejecting..." : "Reject Project"}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setSelectedSubmission(null);
+                      setShowFull(false);
+                    }}
+                    className="px-4 py-2.5 rounded-xl font-medium text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
           </motion.div>
           
         </motion.div>
