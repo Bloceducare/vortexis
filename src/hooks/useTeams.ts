@@ -64,6 +64,11 @@ export default function useTeams() {
           throw new Error(errorMessage);
         }
       },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team"] });
+        queryClient.invalidateQueries({ queryKey: ["available-hackathons"] });
+        queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
+      },
     });
 
 
@@ -98,6 +103,11 @@ const joinTeamMutation = () => {
           "Unable to join team";
         throw new Error(message);
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-join-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["team-join-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["available-hackathons"] });
     },
   });
 };
@@ -140,10 +150,15 @@ const getmyJoinRequests = () => {
             errorData?.non_field_errors?.[0] ||
             errorData?.detail ||
             errorData?.message ||
-            "Unable to create team";
+            "Unable to approve join request";
           throw new Error(errorMessage);
         }
-      }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team-join-requests"] });
+        queryClient.invalidateQueries({ queryKey: ["team"] });
+        queryClient.invalidateQueries({ queryKey: ["my-join-requests"] });
+      },
     })
 
   const rejectTeamJoinRequest = useMutation({
@@ -157,10 +172,14 @@ const getmyJoinRequests = () => {
             errorData?.non_field_errors?.[0] ||
             errorData?.detail ||
             errorData?.message ||
-            "Unable to create team";
+            "Unable to reject join request";
           throw new Error(errorMessage);
         }
-      }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team-join-requests"] });
+        queryClient.invalidateQueries({ queryKey: ["my-join-requests"] });
+      },
     })
    
 
@@ -174,6 +193,10 @@ const getmyJoinRequests = () => {
         } catch(error: any) {
           throw new Error(error.response?.data?.message || "Unable to delete team");
         }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team"] });
+        queryClient.invalidateQueries({ queryKey: ["available-hackathons"] });
       },
     });
   };
@@ -193,6 +216,11 @@ const getmyJoinRequests = () => {
           );
         }
       },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team"] });
+        queryClient.invalidateQueries({ queryKey: ["available-hackathons"] });
+        queryClient.invalidateQueries({ queryKey: ["my-join-requests"] });
+      },
     });
   };
 
@@ -211,7 +239,10 @@ const getmyJoinRequests = () => {
             "Unable to join team";
           throw new Error(message);
         }
-      }
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["team"] });
+      },
     })
   }
 
@@ -223,6 +254,10 @@ const getmyJoinRequests = () => {
       } catch(error: any) {
         throw new Error(error.response?.data?.message || "Unable to accept invitation");
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team"] });
+      queryClient.invalidateQueries({ queryKey: ["my-join-requests"] });
     },
   });
 

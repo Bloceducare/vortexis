@@ -44,6 +44,8 @@ export default function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['hackathon_byId'] });
     },
   });
 
@@ -64,6 +66,8 @@ export default function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['hackathon_byId'] });
     },
   });
 
@@ -84,6 +88,8 @@ export default function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['hackathon_byId'] });
     },
   });
   
@@ -100,6 +106,8 @@ export default function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['hackathon_byId'] });
     },
   });
 

@@ -187,6 +187,13 @@ const createHackathonMutation = useMutation({
       );
     }
   },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["organizer_hackathon"] });
+    queryClient.invalidateQueries({ queryKey: ["hackathon"] });
+    queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
+    queryClient.invalidateQueries({ queryKey: ["participant_hackathon"] });
+    queryClient.invalidateQueries({ queryKey: ["organizations"] });
+  },
 });
 
 
@@ -204,6 +211,13 @@ const createHackathonMutation = useMutation({
       } catch (error: any) {
         throw new Error("Failed to update hackathon");
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["organizer_hackathon"] });
+      queryClient.invalidateQueries({ queryKey: ["hackathon"] });
+      queryClient.invalidateQueries({ queryKey: ["hackathon_overview"] });
+      queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
+      queryClient.invalidateQueries({ queryKey: ["hackathon_byId"] });
     },
   });
 
@@ -224,6 +238,10 @@ const createHackathonMutation = useMutation({
         (newError as any).response = errorData;
         throw newError;
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["judges"] });
+      queryClient.invalidateQueries({ queryKey: ["hackathon_overview"] });
     },
   });
 
@@ -356,6 +374,10 @@ const createHackathonMutation = useMutation({
         (newError as any).response = errorData;
         throw newError;
       }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["moderators"] });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
   });
 

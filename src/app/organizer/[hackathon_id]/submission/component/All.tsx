@@ -77,6 +77,8 @@ const All: React.FC<SubmissionProps> = ({
       </div>
     );
 
+    console.log("Selected Submission", selectedSubmission)
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -529,6 +531,54 @@ const All: React.FC<SubmissionProps> = ({
                     ) : (
                       <div className="p-6 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
                         <p className="text-sm text-gray-500 dark:text-gray-400">No live demo URL provided</p>
+                      </div>
+                    )}
+
+
+                      {/* Demo Video URL */}
+                    {selectedSubmission.project.demo_video_url ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-700 dark:text-gray-300">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                          </svg>
+                          <h4 className="font-semibold text-gray-800 dark:text-white">Live Demo Video</h4>
+                        </div>
+                        <LinkPreview
+                          url={selectedSubmission.project.demo_video_url}
+                          width="100%"
+                          descriptionLength={80}
+                          className="rounded-xl shadow-md border dark:border-gray-600 hover:shadow-lg transition-shadow"
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-6 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">No live demo URL provided</p>
+                      </div>
+                    )}
+
+                         {selectedSubmission.project.presentation_link ? (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-700 dark:text-gray-300">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                          </svg>
+                          <h4 className="font-semibold text-gray-800 dark:text-white">Presentation Url</h4>
+                        </div>
+                        <LinkPreview
+                          url={selectedSubmission.project.presentation_link}
+                          width="100%"
+                          descriptionLength={80}
+                          className="rounded-xl shadow-md border dark:border-gray-600 hover:shadow-lg transition-shadow"
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-6 rounded-xl bg-gray-50 dark:bg-gray-700/50 border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">No presntation url provided</p>
                       </div>
                     )}
                   </div>

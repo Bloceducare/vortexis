@@ -120,13 +120,13 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
   const hasPreviewContent = formData.title && formData.description;
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-blue-900/10 dark:to-indigo-900/10 py-8 px-4 md:px-6 lg:px-8">
+    <div className="w-full py-4 px-2 md:px-4">
       <div className="space-y-6 max-w-none">
    
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-3xl p-3 md:p-8 shadow-xl text-white relative overflow-hidden"
+          className="bg-gradient-to-r from-indigo-500 to-blue-500 rounded-3xl p-4 md:p-8 shadow-xl text-white relative overflow-hidden"
         >
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
           <div className="relative">
@@ -157,12 +157,12 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-3xl shadow-xl p-3 md:p-8 border border-gray-100 dark:border-gray-700 w-full"
+          className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-4 md:p-8 border border-gray-200 dark:border-gray-700 w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Project Title */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 font-semibold text-title">
+              <label className="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
                 <FileText className="w-4 h-4 text-indigo-500" />
                 Project Title *
               </label>
@@ -172,7 +172,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter an awesome project name..."
-                className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-base text-base"
+                className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
               />
               <AnimatePresence>
                 {errors.title && (
@@ -191,7 +191,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 font-semibold text-title">
+              <label className="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
                 <FileText className="w-4 h-4 text-indigo-500" />
                 Description *
               </label>
@@ -200,7 +200,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Describe your project, its features, and what makes it unique..."
-                className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 h-[200px] resize-none outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-base text-base"
+                className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 h-[200px] resize-none outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
               />
               <div className="flex justify-between items-center">
                 <AnimatePresence>
@@ -216,7 +216,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                     </motion.p>
                   )}
                 </AnimatePresence>
-                <span className="text-sm  opacity-50">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
                   {formData.description.length} characters
                 </span>
               </div>
@@ -224,7 +224,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
             {/* Project Links Section */}
             <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-bold text-title mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <Globe className="w-5 h-5 text-indigo-500" />
                 Project Links
               </h3>
@@ -232,7 +232,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
               <div className="grid md:grid-cols-2 gap-6">
                 {/* GitHub URL */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-base opacity-80">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
                     <Github className="w-4 h-4" />
                     GitHub Repository *
                   </label>
@@ -242,7 +242,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                     value={formData.github_url}
                     onChange={handleChange}
                     placeholder="https://github.com/username/repo"
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 transition-colors bg-base text-base"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
                   />
                   <AnimatePresence>
                     {errors.github_url && (
@@ -261,7 +261,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Live Link */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-base opacity-80">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
                     <Globe className="w-4 h-4" />
                     Live Demo
                   </label>
@@ -271,7 +271,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                     value={formData.live_link}
                     onChange={handleChange}
                     placeholder="https://yourproject.com"
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 transition-colors bg-base text-base"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
                   />
                   <AnimatePresence>
                     {errors.live_link && (
@@ -290,7 +290,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Demo Video */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-base opacity-80">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
                     <Video className="w-4 h-4" />
                     Demo Video
                   </label>
@@ -300,7 +300,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                     value={formData.demo_video_url}
                     onChange={handleChange}
                     placeholder="https://youtube.com/watch?v=..."
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 transition-colors bg-base text-base"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
                   />
                   <AnimatePresence>
                     {errors.demo_video_url && (
@@ -319,7 +319,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Presentation */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-base opacity-80">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
                     <FileText className="w-4 h-4" />
                     Presentation
                   </label>
@@ -329,7 +329,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                     value={formData.presentation_link}
                     onChange={handleChange}
                     placeholder="https://slides.com/..."
-                    className="w-full border-2 border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 transition-colors bg-base text-base"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 text-base"
                   />
                   <AnimatePresence>
                     {errors.presentation_link && (
@@ -400,31 +400,31 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
             >
               <div className="flex items-center gap-2 mb-6">
                 <Eye className="w-5 h-5 text-indigo-500" />
-                <h2 className="text-2xl font-bold text-title">Preview</h2>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Preview</h2>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <p className="text-sm font-semibold  opacity-60 mb-2">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
                     Project Title
                   </p>
-                  <p className="text-xl font-bold text-title">
+                  <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {formData.title}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold  opacity-60 mb-2">
+                  <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2">
                     Description
                   </p>
-                  <p className=" opacity-80 leading-relaxed">
+                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                     {formData.description}
                   </p>
                 </div>
 
                 {formData.demo_video_url && (
                   <div>
-                    <p className="text-sm font-semibold  opacity-60 mb-3">
+                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
                       Demo Video
                     </p>
                     <LinkPreview
@@ -440,7 +440,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
                   formData.live_link ||
                   formData.presentation_link) && (
                   <div>
-                    <p className="text-sm font-semibold  opacity-60 mb-3">
+                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-3">
                       Project Links
                     </p>
                     <div className="grid md:grid-cols-3 gap-4">
@@ -502,8 +502,8 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
               >
                 <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
               </motion.div>
-              <h2 className="text-2xl font-bold text-title mb-2">Success!</h2>
-              <p className="text-base opacity-70 mb-6">{successMessage}</p>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Success!</h2>
+              <p className="text-base text-gray-600 dark:text-gray-300 mb-6">{successMessage}</p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

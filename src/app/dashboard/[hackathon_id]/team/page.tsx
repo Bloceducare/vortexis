@@ -198,9 +198,12 @@ export default function TeamManagement() {
   const isCreator      = currentMember?.is_creator;
 
   const filteredRequests = requestData?.join_requests?.filter(
-    (req: any) => Number(req.team.hackathon.id) === Number(hackathon_id)
+    (req: any) => Number(req.team?.hackathon?.id) === Number(hackathon_id)
   ) || [];
-  const requestCount = filteredRequests.length;
+  const pendingRequests = filteredRequests.filter(
+    (req: any) => (req.status || "pending").toLowerCase() === "pending"
+  );
+  const requestCount = pendingRequests.length;
 
   // ── Key logic: does this user have ANY join request for the active hackathon? ──
   const myHackathonRequests: any[] = (myJoinRequest?.join_requests ?? []).filter(
@@ -246,7 +249,11 @@ export default function TeamManagement() {
     try {
       await approveTeamJoinRequest.mutateAsync({ team_id: teamId, user_id: userId, join_requests_id: requestId });
       setShowRequestModal(false);
-      queryClient.invalidateQueries({ queryKey: ["team-join-requests"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["team-join-requests"] }),
+        queryClient.invalidateQueries({ queryKey: ["team"] }),
+        queryClient.invalidateQueries({ queryKey: ["my-join-requests"] }),
+      ]);
       setModal({ open: true, type: "success", message: "Request approved successfully! User has been added to the team." });
     } catch (err: any) {
       setShowRequestModal(false);
@@ -258,7 +265,10 @@ export default function TeamManagement() {
     try {
       await rejectTeamJoinRequest.mutateAsync({ team_id: teamId, user_id: userId, join_requests_id: requestId });
       setShowRequestModal(false);
-      queryClient.invalidateQueries({ queryKey: ["team-join-requests"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["team-join-requests"] }),
+        queryClient.invalidateQueries({ queryKey: ["my-join-requests"] }),
+      ]);
       setModal({ open: true, type: "success", message: "Request rejected successfully." });
     } catch (err: any) {
       setShowRequestModal(false);
