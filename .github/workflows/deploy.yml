@@ -1,0 +1,98 @@
+# Next.js standalone SSR for vortexis.
+#
+# Repository secrets:
+#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY
+#   DOPPLER_TOKEN — DOPPLER_VORTEXIS_PRODUCTION (project vortexis, config prd)
+#
+# Production: push to master/main → vortexis.web3bridgegarage.com :3008
+# Staging is provisioned as nginx/dirs only (disabled on the VPS for now).
+
+name: Deploy SSR vortexis
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+
+env:
+  APP_NAME: vortexis
+  BUILD_ROOT: .
+  NODE_VERSION: "20"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Map branch to environment
+        id: env
+        run: |
+          REF="${GITHUB_REF_NAME}"
+          case "$REF" in
+            master|main)
+              echo "deploy_env=production" >> "$GITHUB_OUTPUT"
+              echo "doppler_config=prd" >> "$GITHUB_OUTPUT"
+              ;;
+            develop|development|staging)
+              echo "deploy_env=staging" >> "$GITHUB_OUTPUT"
+              echo "doppler_config=stg" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported branch: $REF"
+              exit 1
+              ;;
+          esac
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+
+      - name: Install & build standalone
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: |
+          npm ci
+          if [ -z "${DOPPLER_TOKEN:-}" ]; then
+            echo "Missing repository secret DOPPLER_TOKEN"
+            exit 1
+          fi
+          doppler run --config "${{ steps.env.outputs.doppler_config }}" -- npm run build
+          mkdir -p .next/standalone/.next
+          cp -a .next/static .next/standalone/.next/static
+          if [ -d public ]; then
+            cp -a public .next/standalone/public
+          fi
+          tar -czf "${GITHUB_WORKSPACE}/artifact.tar.gz" -C .next/standalone .
+
+      - name: Upload artifact to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          source: artifact.tar.gz
+          target: /tmp/
+          overwrite: true
+
+      - name: Activate release
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          script_stop: true
+          script: |
+            deploy-ssr "${{ env.APP_NAME }}" "${{ steps.env.outputs.deploy_env }}" /tmp/artifact.tar.gz
+            rm -f /tmp/artifact.tar.gz
