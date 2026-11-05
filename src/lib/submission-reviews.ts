@@ -4,8 +4,9 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
+import api from "@/lib/api";
 
-interface ReviewData {
+export interface ReviewData {
   submission: number;
   innovation_score: number;
   technical_score: number;
@@ -19,7 +20,7 @@ interface ReviewData {
 export interface ReviewResponse {
   id: number;
   submission: number;
-  judge: string;
+  judge: string | any;
   innovation_score: number;
   technical_score: number;
   user_experience_score: number;
@@ -33,11 +34,11 @@ export interface ReviewResponse {
 
 interface UseReviewSubmissionReturn {
   submitReview: (
-    hackathonId: string,
+    hackathonId: string | number,
     reviewData: ReviewData
   ) => Promise<ReviewResponse | null>;
   updateReview: (
-    hackathonId: string,
+    hackathonId: string | number,
     reviewId: number,
     reviewData: ReviewData
   ) => Promise<ReviewResponse | null>;
@@ -51,65 +52,78 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
   const router = useRouter();
 
   const submitReview = async (
-    hackathonId: string,
+    hackathonId: string | number,
     reviewData: ReviewData
   ): Promise<ReviewResponse | null> => {
     setIsSubmitting(true);
     setError(null);
 
-    const bearerToken = useAuthStore.getState().getToken();
-
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(reviewData),
-        }
-      );
-
-      if (response.status === 400) {
-        setError("Reviewed has been made");
-        toast.error(
-          "You have already submitted a review for this submission.",
-          {
-            autoClose: 5000,
-          }
-        );
-        setTimeout(() => {
-          router.push("/judges");
-        }, 5000);
-        return null;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || `HTTP error! status: ${response.status}`
-        );
-      }
-
-      const result: ReviewResponse = await response.json();
+      // 1. Attempt POST to submit a new review
+      const res = await api.post(`/hackathon/${hackathonId}/reviews/`, reviewData);
+      const result: ReviewResponse = res.data;
 
       toast.success(
         "Review submitted successfully! Your evaluation has been saved.",
-        { autoClose: 5000 }
+        { autoClose: 3000 }
       );
 
       setTimeout(() => {
         router.push("/judges");
-      }, 5000);
+      }, 1500);
 
       return result;
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to submit review";
-      setError(errorMessage);
-      toast.error(`Submission failed: ${errorMessage}`);
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const errorData = err?.response?.data;
+      const errorMsg =
+        errorData?.non_field_errors?.[0] ||
+        errorData?.detail ||
+        errorData?.message ||
+        errorData?.error ||
+        err?.message ||
+        "";
+
+      // If review already exists, attempt to update it automatically
+      const isAlreadyReviewed =
+        status === 400 &&
+        (typeof errorMsg === "string" &&
+          (errorMsg.toLowerCase().includes("already") ||
+            errorMsg.toLowerCase().includes("reviewed") ||
+            errorMsg.toLowerCase().includes("exist")));
+
+      if (isAlreadyReviewed) {
+        try {
+          // Fetch existing reviews to locate the review ID
+          const existingRes = await api.get(
+            `/hackathon/${hackathonId}/reviews/?submission=${reviewData.submission}`
+          );
+          const data = existingRes.data;
+          const reviewsList = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.reviews)
+            ? data.reviews
+            : Array.isArray(data?.results)
+            ? data.results
+            : [];
+
+          const existing =
+            reviewsList.find(
+              (r: any) => Number(r.submission) === Number(reviewData.submission)
+            ) || reviewsList[0];
+
+          if (existing?.id) {
+            return await updateReview(hackathonId, existing.id, reviewData);
+          }
+        } catch (fetchErr) {
+          console.warn("Could not auto-fetch existing review for update:", fetchErr);
+        }
+      }
+
+      const finalErrorMessage =
+        errorMsg || "Failed to submit review. Please try again.";
+      setError(finalErrorMessage);
+      toast.error(`Submission failed: ${finalErrorMessage}`);
       return null;
     } finally {
       setIsSubmitting(false);
@@ -117,51 +131,52 @@ export function useReviewSubmission(): UseReviewSubmissionReturn {
   };
 
   const updateReview = async (
-    hackathonId: string,
+    hackathonId: string | number,
     reviewId: number,
     reviewData: ReviewData
   ): Promise<ReviewResponse | null> => {
     setIsSubmitting(true);
     setError(null);
 
-    const bearerToken = useAuthStore.getState().getToken();
-
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/${reviewId}/`,
-        {
-          // method: "PUT",
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${bearerToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(reviewData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || `HTTP error! status: ${response.status}`
+      let res;
+      try {
+        res = await api.patch(
+          `/hackathon/${hackathonId}/reviews/${reviewId}/`,
+          reviewData
         );
+      } catch (patchErr: any) {
+        // If PATCH fails with 405 or method not allowed, try PUT
+        if (patchErr?.response?.status === 405) {
+          res = await api.put(
+            `/hackathon/${hackathonId}/reviews/${reviewId}/`,
+            reviewData
+          );
+        } else {
+          throw patchErr;
+        }
       }
 
-      const result: ReviewResponse = await response.json();
+      const result: ReviewResponse = res.data;
 
       toast.success(
         "Review updated successfully! Your evaluation has been saved.",
-        { autoClose: 5000 }
+        { autoClose: 3000 }
       );
 
       setTimeout(() => {
         router.push("/judges");
-      }, 5000);
+      }, 1500);
 
       return result;
-    } catch (err) {
+    } catch (err: any) {
+      const errorData = err?.response?.data;
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to update review";
+        errorData?.non_field_errors?.[0] ||
+        errorData?.detail ||
+        errorData?.message ||
+        err?.message ||
+        "Failed to update review";
       setError(errorMessage);
       toast.error(`Update failed: ${errorMessage}`);
       return null;

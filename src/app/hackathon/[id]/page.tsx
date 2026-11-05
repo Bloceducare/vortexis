@@ -33,8 +33,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify, normalizeContent } from "@/lib/utils";
 import HackathonContentRenderer from "@/app/hackathon/component/HackathonContentRenderer";
+import HackathonLeaderboard from "@/components/HackathonLeaderboard";
+import LiveJudgeReviews from "@/components/LiveJudgeReviews";
+import Link from "next/link";
 
-type TabType = "overview" | "prizes" | "rules" | "schedule";
+type TabType = "overview" | "prizes" | "rules" | "schedule" | "leaderboard";
 
 function Hack() {
   const router = useRouter();
@@ -500,6 +503,11 @@ function Hack() {
                 label: "Timeline & Schedule",
                 icon: Clock,
               },
+              {
+                id: "leaderboard" as TabType,
+                label: "Leaderboard & Reviews",
+                icon: Trophy,
+              },
             ].map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -740,6 +748,25 @@ function Hack() {
                       </div>
                     </div>
                   </div>
+                </motion.div>
+              )}
+
+              {activeTab === "leaderboard" && (
+                <motion.div
+                  key="leaderboard"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-8"
+                >
+                  <HackathonLeaderboard
+                    hackathonId={hackathonDetail?.id || storeHackathonId || ""}
+                    approvedOnly={true}
+                  />
+                  <LiveJudgeReviews
+                    hackathonId={hackathonDetail?.id || storeHackathonId || ""}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>

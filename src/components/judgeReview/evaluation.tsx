@@ -2,6 +2,8 @@
 
 import { ReviewResponse, useReviewSubmission } from "@/lib/submission-reviews";
 import type React from "react";
+import api from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -107,6 +109,7 @@ function Evaluation({
   submissionId,
   onSubmissionComplete,
 }: EvaluationProps) {
+  const queryClient = useQueryClient();
   const [evaluations, setEvaluations] =
     useState<EvaluationItem[]>(initialEvaluations);
   const [comments, setComments] = useState("");
@@ -120,52 +123,56 @@ function Evaluation({
     const fetchExistingReview = async () => {
       setIsLoading(true);
       setFetchError(null);
-      const bearerToken = useAuthStore.getState().getToken();
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/hackathon/${hackathonId}/reviews/?submission=${submissionId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${bearerToken}`,
-              "Content-Type": "application/json",
-            },
-          }
+        const response = await api.get(
+          `/hackathon/${hackathonId}/reviews/?submission=${submissionId}`
         );
+        const data = response.data;
+        const reviewsList: ReviewResponse[] = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.reviews)
+          ? data.reviews
+          : Array.isArray(data?.results)
+          ? data.results
+          : Array.isArray(data?.data)
+          ? data.data
+          : [];
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const existingReview =
+          reviewsList.find(
+            (r: any) => Number(r.submission) === Number(submissionId)
+          ) || reviewsList[0];
 
-        const reviews: ReviewResponse[] = await response.json();
-        if (reviews.length > 0) {
-          const existingReview = reviews[0];
+        if (existingReview) {
           setExistingReviewId(existingReview.id);
           setEvaluations([
             {
               ...initialEvaluations[0],
-              grade: existingReview.innovation_score,
+              grade: existingReview.innovation_score || 0,
             },
-            { ...initialEvaluations[1], grade: existingReview.technical_score },
+            {
+              ...initialEvaluations[1],
+              grade: existingReview.technical_score || 0,
+            },
             {
               ...initialEvaluations[2],
-              grade: existingReview.user_experience_score,
+              grade: existingReview.user_experience_score || 0,
             },
-            { ...initialEvaluations[3], grade: existingReview.impact_score },
+            {
+              ...initialEvaluations[3],
+              grade: existingReview.impact_score || 0,
+            },
             {
               ...initialEvaluations[4],
-              grade: existingReview.presentation_score,
+              grade: existingReview.presentation_score || 0,
             },
           ]);
           setComments(existingReview.review || "");
         }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to fetch existing review";
-        setFetchError(errorMessage);
+      } catch (err: any) {
+        // If 404 or no reviews found, it just means this is a fresh review - do not block
+        console.warn("Notice: No existing review found or could not fetch:", err?.message);
       } finally {
         setIsLoading(false);
       }
@@ -192,14 +199,24 @@ function Evaluation({
   };
 
   const handleSaveAndNext = async () => {
+    // Ensure all scores are integers between 1 and 10 per standard evaluation rubrics
+    const clampScore = (grade: number) =>
+      Math.max(1, Math.min(10, Math.round(grade) || 1));
+
+    const totalCalculated = evaluations.reduce(
+      (sum, item) => sum + clampScore(item.grade),
+      0
+    );
+    const overallCalculated = Math.round(totalCalculated / evaluations.length);
+
     const reviewData = {
-      submission: submissionId,
-      innovation_score: Math.round(evaluations[0].grade),
-      technical_score: Math.round(evaluations[1].grade),
-      user_experience_score: Math.round(evaluations[2].grade),
-      impact_score: Math.round(evaluations[3].grade),
-      presentation_score: Math.round(evaluations[4].grade),
-      overall_score: Math.round(getTotalScore() / evaluations.length),
+      submission: Number(submissionId),
+      innovation_score: clampScore(evaluations[0].grade),
+      technical_score: clampScore(evaluations[1].grade),
+      user_experience_score: clampScore(evaluations[2].grade),
+      impact_score: clampScore(evaluations[3].grade),
+      presentation_score: clampScore(evaluations[4].grade),
+      overall_score: Math.max(1, Math.min(10, overallCalculated)),
       review: comments.trim() || undefined,
     };
 
@@ -211,8 +228,14 @@ function Evaluation({
       result = await submitReview(hackathonId, reviewData);
     }
 
-    if (result && onSubmissionComplete) {
-      onSubmissionComplete();
+    if (result) {
+      queryClient.invalidateQueries({ queryKey: ["submission"] });
+      queryClient.invalidateQueries({ queryKey: ["live-reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
+      queryClient.invalidateQueries({ queryKey: ["reviews"] });
+      if (onSubmissionComplete) {
+        onSubmissionComplete();
+      }
     }
   };
 
