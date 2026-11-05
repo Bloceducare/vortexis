@@ -36,7 +36,6 @@ export const HackathonCard: React.FC<HackathonCardProps> = React.memo(
   ({ hackathon, index, onClick, onRegister, isRegistering, registered, isDisabled, onNavigate }) => {
     const router = useRouter();
     const { setActiveHackathon } = useHackathonStore();
-    const queryClient = useQueryClient()
 
     const now = new Date();
     const start = new Date(hackathon.start_date);

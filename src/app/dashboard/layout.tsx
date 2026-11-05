@@ -158,8 +158,46 @@ const selectedHackathonName = useMemo(() => {
         transition={{ duration: 0.3, ease: "easeInOut" }}
         className="flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 fixed h-screen z-50 transition-colors"
       >
-        <div className="text-blue-700 dark:text-blue-400 text-3xl cursor-pointer font-bold text-center py-6" onClick={goToHome}>
-          {sidebarExpanded || isMobile ? "Vortexis" : "V"}
+        <div className="cursor-pointer flex items-center justify-center py-6 px-4" onClick={goToHome}>
+          {sidebarExpanded || isMobile ? (
+            <>
+              <Image
+                src="/logos/vortexis-logo-color.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-8 w-auto dark:hidden"
+              />
+              <Image
+                src="/logos/vortexis-logo-reversed.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-8 w-auto hidden dark:block"
+              />
+            </>
+          ) : (
+            <>
+              <Image
+                src="/logos/vortexis-mark-color.svg"
+                alt="Vortexis"
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8 dark:hidden"
+              />
+              <Image
+                src="/logos/vortexis-mark-reversed.svg"
+                alt="Vortexis"
+                width={32}
+                height={32}
+                priority
+                className="h-8 w-8 hidden dark:block"
+              />
+            </>
+          )}
         </div>
 
         {!isMobile && (

@@ -108,8 +108,14 @@ const MobileSidebar: FC<MobileSidebarProps> = ({
           >
             <div className="flex h-full flex-col">
               <div className="flex h-16 items-center justify-between px-4">
-                <div className="h-8 w-full">
-                  <span className="text-lg font-bold">Vortexis</span>
+                <div className="flex items-center h-8">
+                  <Image
+                    src="/logos/vortexis-logo-color.svg"
+                    alt="Vortexis"
+                    width={120}
+                    height={28}
+                    className="h-7 w-auto"
+                  />
                 </div>
                 <button
                   onClick={() => setMobileMenuOpen(false)}

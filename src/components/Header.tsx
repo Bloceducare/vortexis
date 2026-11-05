@@ -110,13 +110,25 @@ export const Header: React.FC = () => {
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center gap-2.5 group cursor-pointer"
+              className="flex items-center gap-2 group cursor-pointer"
               onClick={closeAll}
             >
-            
-              <span className="text-lg sm:text-xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-                VORTEXIS
-              </span>
+              <Image
+                src="/logos/vortexis-logo-color.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-7 sm:h-8 w-auto dark:hidden"
+              />
+              <Image
+                src="/logos/vortexis-logo-reversed.svg"
+                alt="Vortexis"
+                width={138}
+                height={32}
+                priority
+                className="h-7 sm:h-8 w-auto hidden dark:block"
+              />
             </Link>
 
             {/* Desktop Center Nav Pill */}

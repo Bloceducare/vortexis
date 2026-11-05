@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import Error from "@/public/page-error.svg";
 
 export default function AuthErrorPage() {
@@ -33,7 +35,15 @@ export default function AuthErrorPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white shadow-sm px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="text-2xl font-bold text-blue-600">VORTEXIS</div>
+          <Link href="/" className="inline-block">
+            <Image
+              src="/logos/vortexis-logo-color.svg"
+              alt="Vortexis"
+              width={130}
+              height={30}
+              className="h-7 w-auto"
+            />
+          </Link>
 
           <div className="flex items-center space-x-4">
             <button

@@ -5,20 +5,28 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import useHackathon from "@/hooks/useHackathon";
 import { Trophy } from "lucide-react";
+import { useHackathonStore } from "@/store/useHackathonStore";
+import { slugify } from "@/lib/utils";
 
 export default function ExploreActiveHackathons() {
   const router = useRouter();
   const { getAllHackathon } = useHackathon();
+    const { setActiveHackathon } = useHackathonStore();
   const { data: apiData = {}, isLoading } = getAllHackathon();
   const hackathons = apiData.data || [];
 
-  // ✅ Memoize filtering and limiting so it doesn’t recalc on every render
   const activeHackathons = useMemo(() => {
     const hackathonList = Array.isArray(hackathons) ? hackathons : [];
     return hackathonList
       .filter((h: any) => !h.end_date || new Date(h.end_date) >= new Date())
       .slice(0, 6);
   }, [hackathons]);
+
+  const handleNavigation = (hackathon: any) => {
+    setActiveHackathon(hackathon);
+   const slug = slugify(hackathon.title);
+    router.push(`/hackathon/${slug}`);
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 sm:py-12 bg-white dark:bg-gray-900">
@@ -82,7 +90,7 @@ export default function ExploreActiveHackathons() {
                 }}
                 whileInView="show"
                 viewport={{ once: true, amount: 0.2 }}
-                onClick={() => router.push(`/hackathon/${hackathon.id}`)}
+                onClick={() => handleNavigation(hackathon)}
               >
                 {/* Image */}
                 <div className="relative h-40 w-full mb-4">
