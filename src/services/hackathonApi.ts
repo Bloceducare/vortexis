@@ -11,6 +11,16 @@ export interface LeaderboardItem {
     github_url?: string;
     demo_video_url?: string;
     presentation_link?: string;
+    video_url?: string;
+    presentation_url?: string;
+    deliverables?: {
+      github_url?: string;
+      live_link?: string;
+      demo_video_url?: string;
+      presentation_link?: string;
+      video_url?: string;
+      presentation_url?: string;
+    };
   };
   team: {
     id: number;
@@ -66,6 +76,18 @@ export interface LiveReviewItem {
     title: string;
     github_url?: string;
     live_link?: string;
+    demo_video_url?: string;
+    presentation_link?: string;
+    video_url?: string;
+    presentation_url?: string;
+    deliverables?: {
+      github_url?: string;
+      live_link?: string;
+      demo_video_url?: string;
+      presentation_link?: string;
+      video_url?: string;
+      presentation_url?: string;
+    };
   };
   team: {
     id: number;
@@ -85,6 +107,54 @@ export interface LiveReviewItem {
   presentation_score?: number;
   review: string;
   created_at: string;
+}
+
+export interface ReviewPayload {
+  submission: number;
+  innovation_score: number;
+  technical_score: number;
+  user_experience_score: number;
+  impact_score: number;
+  presentation_score: number;
+  overall_score?: number;
+  review?: string;
+}
+
+// 9. Judge review endpoints per backend specs
+export async function submitJudgeReview(
+  hackathonId: number | string,
+  data: ReviewPayload
+) {
+  const res = await api.post(`/hackathon/${hackathonId}/reviews/`, data);
+  return res.data;
+}
+
+export async function updateJudgeReview(
+  hackathonId: number | string,
+  reviewId: number | string,
+  data: Partial<ReviewPayload>
+) {
+  let res;
+  try {
+    res = await api.patch(`/hackathon/${hackathonId}/reviews/${reviewId}/`, data);
+  } catch (err: any) {
+    if (err?.response?.status === 405) {
+      res = await api.put(`/hackathon/${hackathonId}/reviews/${reviewId}/`, data);
+    } else {
+      throw err;
+    }
+  }
+  return res.data;
+}
+
+export async function getJudgeReviews(
+  hackathonId: number | string,
+  submissionId?: number | string
+) {
+  const params: Record<string, any> = {};
+  if (submissionId) params.submission = submissionId;
+  const res = await api.get(`/hackathon/${hackathonId}/reviews/`, { params });
+  return res.data;
 }
 
 export interface LiveReviewsResponse {

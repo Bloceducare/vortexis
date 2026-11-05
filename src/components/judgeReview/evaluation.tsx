@@ -199,9 +199,9 @@ function Evaluation({
   };
 
   const handleSaveAndNext = async () => {
-    // Ensure all scores are integers between 1 and 10 per standard evaluation rubrics
+    // Ensure all scores are integers between 0 and 10 per standard evaluation rubrics
     const clampScore = (grade: number) =>
-      Math.max(1, Math.min(10, Math.round(grade) || 1));
+      Math.max(0, Math.min(10, Math.round(Number(grade)) || 0));
 
     const totalCalculated = evaluations.reduce(
       (sum, item) => sum + clampScore(item.grade),
@@ -216,7 +216,7 @@ function Evaluation({
       user_experience_score: clampScore(evaluations[2].grade),
       impact_score: clampScore(evaluations[3].grade),
       presentation_score: clampScore(evaluations[4].grade),
-      overall_score: Math.max(1, Math.min(10, overallCalculated)),
+      overall_score: Math.max(0, Math.min(10, overallCalculated)),
       review: comments.trim() || undefined,
     };
 
@@ -233,6 +233,7 @@ function Evaluation({
       queryClient.invalidateQueries({ queryKey: ["live-reviews"] });
       queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
       queryClient.invalidateQueries({ queryKey: ["reviews"] });
+      queryClient.invalidateQueries({ queryKey: ["hackathon_byId"] });
       if (onSubmissionComplete) {
         onSubmissionComplete();
       }
@@ -368,7 +369,11 @@ function Evaluation({
             disabled={isSubmitting}
             className="bg-[#605DEC] px-8 py-3 text-white rounded-md hover:bg-[#504ad1] transition-all duration-200 cursor-pointer font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            {isSubmitting ? "Submitting..." : "Save & Next →"}
+            {isSubmitting
+              ? "Submitting..."
+              : existingReviewId
+              ? "Update Evaluation →"
+              : "Submit Evaluation →"}
           </button>
         </div>
       </div>

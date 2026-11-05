@@ -29,21 +29,51 @@ export default function SubmissionsPage() {
   // Get submissions from the selected hackathon
   const submissions = selectedHackathon || [];
 
-  const transformedSubmissions = hackathons.map((submission) => ({
-    id: submission.id,
-    hackathonid: submission.hackathon,
-    projectName: submission.project.title,
-    teamName: submission.team.name,
-    // category: "General",
-    submissionDate: submission.created_at.split("T")[0],
-    status: submission.status,
-    teamSize: submission.team.members?.length || 0,
-    description: submission.project.description,
-    hackathon: hackathonDetails?.title || "",
-    githubUrl: submission.project.github_url,
-    liveLink: submission.project.live_link,
-    presentationUrl: submission.project.presentation_url,
-  }));
+  const transformedSubmissions = hackathons.map((submission) => {
+    const proj = submission.project as any;
+    const githubUrl =
+      proj?.github_url ||
+      proj?.deliverables?.github_url ||
+      proj?.github ||
+      proj?.github_link ||
+      "";
+    const liveLink =
+      proj?.live_link ||
+      proj?.deliverables?.live_link ||
+      proj?.live_url ||
+      proj?.demo_link ||
+      "";
+    const demoVideoUrl =
+      proj?.demo_video_url ||
+      proj?.video_url ||
+      proj?.deliverables?.demo_video_url ||
+      proj?.deliverables?.video_url ||
+      proj?.demo_url ||
+      "";
+    const presentationUrl =
+      proj?.presentation_link ||
+      proj?.presentation_url ||
+      proj?.deliverables?.presentation_link ||
+      proj?.deliverables?.presentation_url ||
+      proj?.slides_url ||
+      "";
+
+    return {
+      id: submission.id,
+      hackathonid: submission.hackathon,
+      projectName: proj?.title || "Untitled Project",
+      teamName: submission.team?.name || "Team",
+      submissionDate: submission.created_at ? submission.created_at.split("T")[0] : "",
+      status: submission.status,
+      teamSize: submission.team?.members?.length || 0,
+      description: proj?.description || "",
+      hackathon: hackathonDetails?.title || "",
+      githubUrl,
+      liveLink,
+      demoVideoUrl,
+      presentationUrl,
+    };
+  });
 
   const filteredSubmissions = transformedSubmissions.filter((submission) => {
     const matchesSearch =
@@ -267,7 +297,7 @@ export default function SubmissionsPage() {
                         </div>
                       </div>
 
-                      {/* Project Links */}
+                      {/* Project Deliverable Links */}
                       <div className="flex flex-wrap gap-2 mt-3">
                         {submission.githubUrl && (
                           <a
@@ -275,7 +305,7 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                            className="text-xs px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-medium"
                           >
                             GitHub
                           </a>
@@ -286,9 +316,20 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                            className="text-xs px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors font-medium"
                           >
-                            Demo
+                            Live Demo
+                          </a>
+                        )}
+                        {submission.demoVideoUrl && (
+                          <a
+                            href={submission.demoVideoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-xs px-2.5 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-md hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors font-medium"
+                          >
+                            Demo Video
                           </a>
                         )}
                         {submission.presentationUrl && (
@@ -297,7 +338,7 @@ export default function SubmissionsPage() {
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+                            className="text-xs px-2.5 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors font-medium"
                           >
                             Presentation
                           </a>
@@ -312,17 +353,8 @@ export default function SubmissionsPage() {
                     </div>
 
                     <div className="flex gap-2">
-                      {/* <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          // Handle view details
-                        }}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
-                        View Details
-                      </button> */}
                       <Link
-                        href={`/judges/submission-review/${submission.hackathonid}`}
+                        href={`/judges/submission-review/${submission.hackathonid}?submission=${submission.id}&tab=4`}
                       >
                         <button
                           onClick={(e) => e.stopPropagation()}

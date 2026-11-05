@@ -20,7 +20,13 @@ export interface ReviewData {
 export interface ReviewResponse {
   id: number;
   submission: number;
-  judge: string | any;
+  judge: {
+    id: number;
+    username: string;
+    first_name?: string;
+    last_name?: string;
+  } | string | any;
+  hackathon_id?: number;
   innovation_score: number;
   technical_score: number;
   user_experience_score: number;

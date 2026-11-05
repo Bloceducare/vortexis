@@ -1,13 +1,26 @@
 import { useState, useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 
-interface Project {
+export interface DeliverablesObj {
+  github_url?: string;
+  live_link?: string;
+  demo_video_url?: string;
+  presentation_link?: string;
+  video_url?: string;
+  presentation_url?: string;
+}
+
+export interface Project {
   id: number;
   name: string;
   description: string;
   github_url: string;
   live_link: string;
-  presentation_url: string;
+  presentation_url?: string;
+  presentation_link?: string;
+  demo_video_url?: string;
+  video_url?: string;
+  deliverables?: DeliverablesObj;
   title: string;
 }
 
@@ -18,15 +31,24 @@ interface Team {
 }
 
 export interface Review {
-  judge: any;
+  id: number;
+  judge: {
+    id: number;
+    username: string;
+    first_name?: string;
+    last_name?: string;
+  } | any;
+  submission?: number;
+  hackathon_id?: number;
   presentation_score: number;
   overall_score: number;
-  review: string;
-  id: number;
+  review?: string;
   innovation_score: number;
   technical_score: number;
   user_experience_score: number;
   impact_score: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Submission {
