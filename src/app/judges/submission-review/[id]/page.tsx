@@ -58,7 +58,7 @@ export default function SubmissionReviewPage() {
           {
             <Tabscontent
               submission={selectedHackathon}
-              hackathonId={selectedHackathon?.hackathon?.toString() ?? ""}
+              hackathonId={String(selectedHackathon?.hackathon || submissionId || "")}
             />
             // <Tabscontent
             //   submission={currentSubmission}

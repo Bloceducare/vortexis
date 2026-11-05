@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,8 @@ import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify, normalizeContent } from "@/lib/utils";
 import { useUserStore } from "@/store/useUserStore";
 import { User } from '@/app/api/utils/interface';
+import { ReleaseResultsButton } from "@/components/ReleaseResultsButton";
+import { getReleaseStatus, ReleaseStatusResponse } from "@/services/hackathonApi";
 
 
 
@@ -36,6 +38,22 @@ function Page() {
 
   const { getHackathonById } = useOrganizer();
   const { data, isLoading, error } = getHackathonById(hackathon_id);
+  const [releaseStatus, setReleaseStatus] = useState<ReleaseStatusResponse | null>(null);
+
+  const fetchReleaseStatus = useCallback(async () => {
+    const targetId = data?.id || hackathon_id;
+    if (!targetId) return;
+    try {
+      const res = await getReleaseStatus(targetId);
+      setReleaseStatus(res);
+    } catch (err) {
+      console.error("Failed to fetch release status:", err);
+    }
+  }, [data?.id, hackathon_id]);
+
+  useEffect(() => {
+    fetchReleaseStatus();
+  }, [fetchReleaseStatus]);
 
   const getHackathonStatus = (startDate: string, endDate: string) => {
     const now = new Date();
@@ -48,7 +66,7 @@ function Page() {
   };
 
   const status = getHackathonStatus(data?.start_date, data?.end_date);
-  const title = slugify(activeHackathon?.title ?? "")
+  const title = slugify(activeHackathon?.title ?? "");
 
   const ActiveHackathons = [
     {
@@ -74,6 +92,16 @@ function Page() {
       link: `/organizer/${title}/judges`,
       type: "Judges",
       color: "bg-green-50 text-green-600",
+    },
+    {
+      id: 4,
+      number: releaseStatus?.results_released ? "Live" : "Preview",
+      icon: Trophy,
+      link: `/hackathon/${data?.id || hackathon_id}/leaderboard`,
+      type: "Results & Leaderboard",
+      color: releaseStatus?.results_released
+        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400"
+        : "bg-amber-50 text-amber-600 dark:bg-amber-950/40 dark:text-amber-400",
     },
   ];
 
@@ -146,58 +174,71 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             <div className="flex justify-between items-start">
               <div className="md:flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
+                    <Badge
+                      className={`${status.color} text-white px-3 py-1 text-xs font-semibold`}
+                    >
+                      {status.label}
+                    </Badge>
+                    <Badge className="bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20 dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
+                      {data?.visibility ? "Public" : "Private"}
+                    </Badge>
+                    {releaseStatus && (
+                      <Badge
+                        className={`${
+                          releaseStatus.results_released
+                            ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border-emerald-500/40"
+                            : "bg-amber-500/20 text-amber-800 dark:text-amber-200 border-amber-500/40"
+                        } px-3 py-1 text-xs font-semibold border rounded-full`}
+                      >
+                        {releaseStatus.results_released
+                          ? "Official Results Published"
+                          : "Results Unpublished"}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    {releaseStatus && (
+                      <ReleaseResultsButton
+                        hackathonId={data?.id || hackathon_id}
+                        isReleased={releaseStatus.results_released}
+                        canRelease={releaseStatus.can_release}
+                        onUpdate={fetchReleaseStatus}
+                      />
+                    )}
 
-                  <Badge
-                    className={`${status.color} text-white px-3 py-1 text-xs font-semibold`}
-                  >
-                    {status.label}
-                  </Badge>
-               <Badge className=" bg-[#605DEC]/10 text-[#605DEC] border border-[#605DEC]/20  dark:bg-white/20 dark:text-white dark:border-transparent px-3 py-1 text-xs font-medium rounded-full">
-              {data?.visibility ? "Public" : "Private"}
-              
-            </Badge>
-                              </div>
-                        <div className="flex gap-4">
-
-
-                   <button
-                   className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
-                   onClick={handleShare}
+                    <button
+                      className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30 text-sm font-semibold"
+                      onClick={handleShare}
                     >
                       <Share2Icon size={18}/>
                       Share Link
                     </button>
-                  {status.label !== "Finished" && (
-                    
-                    <button
-                      onClick={() => setShowEditModal(true)}
-                      className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30"
-                    >
-                      <Edit size={18} />
-                      <span>Edit</span>
-                    </button>
-                  )}
+                    {status.label !== "Finished" && (
+                      <button
+                        onClick={() => setShowEditModal(true)}
+                        className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30 text-sm font-semibold"
+                      >
+                        <Edit size={18} />
+                        <span>Edit</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
-                    </div>
-
-              
               </div>
-          
-     
             </div>
-                <div className="mt-5">
-     <h1 className="text-2xl md:text-4xl font-bold mb-3">{data?.title}</h1>
-                <div className=" ">
-                  <HtmlContent html={data?.description}  />
-                </div>
+            <div className="mt-5">
+              <h1 className="text-2xl md:text-4xl font-bold mb-3">{data?.title}</h1>
+              <div>
+                <HtmlContent html={data?.description} />
               </div>
+            </div>
           </div>
         </motion.div>
 
         {/* Stats Overview */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
