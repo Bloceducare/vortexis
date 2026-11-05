@@ -5,7 +5,7 @@ import HtmlContent from "@/components/ui/HtMLContent";
 
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import { useSubmissionReview } from "@/hooks/useSubmissionReview";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useUserStore } from "@/store/useUserStore";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,7 +14,7 @@ export default function SubmissionsPage() {
   const params = useParams();
   const router = useRouter();
   const submissionId = params.id as string;
-  const currentUser = useAuthStore((state) => state.user);
+  const currentUser = useUserStore((state) => state.user);
 
   const { hackathons, selectedHackathon, loading, error, selectHackathon } =
     useHackathon(submissionId);
