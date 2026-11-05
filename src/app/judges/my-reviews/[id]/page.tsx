@@ -240,9 +240,10 @@ export default function MyReviewsPage() {
       setTransforming(true);
 
       // Filter reviews to only include those for the current hackathon
-      const hackathonReviews = (reviewsData as ApiReview[]).filter(
-        (review) => review.hackathon_id === parseInt(hackathonId)
-      );
+      const hackathonReviews = (reviewsData as any[]).filter((review) => {
+        const hId = review.hackathon_id ?? review.hackathon ?? review.hackathonId;
+        return !hId || !hackathonId || Number(hId) === parseInt(hackathonId);
+      });
 
       // Transform all reviews in parallel
       Promise.all(hackathonReviews.map(transformApiReviewToSummary))

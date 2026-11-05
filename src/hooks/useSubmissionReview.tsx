@@ -102,7 +102,16 @@ export const useSubmissionReview = (id: string) => {
       );
 
       const teamData = await submissionResponse.json();
-      setReviewsData(teamData);
+      const list = Array.isArray(teamData)
+        ? teamData
+        : Array.isArray(teamData?.reviews)
+        ? teamData.reviews
+        : Array.isArray(teamData?.results)
+        ? teamData.results
+        : Array.isArray(teamData?.data)
+        ? teamData.data
+        : [];
+      setReviewsData(list);
     } catch (err) {
       const errorMessage =
         err instanceof Error

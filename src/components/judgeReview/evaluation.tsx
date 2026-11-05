@@ -139,10 +139,13 @@ function Evaluation({
           ? data.data
           : [];
 
-        const existingReview =
-          reviewsList.find(
-            (r: any) => Number(r.submission) === Number(submissionId)
-          ) || reviewsList[0];
+        const existingReview = reviewsList.find((r: any) => {
+          const subId =
+            typeof r.submission === "object" && r.submission !== null
+              ? r.submission.id
+              : r.submission ?? r.submission_id;
+          return Number(subId) === Number(submissionId);
+        });
 
         if (existingReview) {
           setExistingReviewId(existingReview.id);
@@ -169,6 +172,11 @@ function Evaluation({
             },
           ]);
           setComments(existingReview.review || "");
+        } else {
+          // Fresh review for this project
+          setExistingReviewId(null);
+          setEvaluations(initialEvaluations);
+          setComments("");
         }
       } catch (err: any) {
         // If 404 or no reviews found, it just means this is a fresh review - do not block

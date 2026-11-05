@@ -5,13 +5,16 @@ import HtmlContent from "@/components/ui/HtMLContent";
 
 import { useHackathon } from "@/hooks/useHackathonDetails";
 import { useSubmissionReview } from "@/hooks/useSubmissionReview";
+import { useAuthStore } from "@/store/useAuthStore";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SubmissionsPage() {
   const params = useParams();
+  const router = useRouter();
   const submissionId = params.id as string;
+  const currentUser = useAuthStore((state) => state.user);
 
   const { hackathons, selectedHackathon, loading, error, selectHackathon } =
     useHackathon(submissionId);
@@ -58,13 +61,29 @@ export default function SubmissionsPage() {
       proj?.slides_url ||
       "";
 
+    const isReviewedByMe =
+      Array.isArray(submission.reviews) &&
+      submission.reviews.some((r: any) => {
+        const judgeId = r.judge?.id ?? r.judge;
+        const judgeUsername = r.judge?.username;
+        return (
+          (currentUser?.id && judgeId === currentUser.id) ||
+          (currentUser?.username && judgeUsername === currentUser.username)
+        );
+      });
+
+    const isReviewed =
+      isReviewedByMe ||
+      submission.status === "reviewed" ||
+      (submission.reviews && submission.reviews.length > 0);
+
     return {
       id: submission.id,
-      hackathonid: submission.hackathon,
+      hackathonid: submission.hackathon || submissionId,
       projectName: proj?.title || "Untitled Project",
       teamName: submission.team?.name || "Team",
       submissionDate: submission.created_at ? submission.created_at.split("T")[0] : "",
-      status: submission.status,
+      status: isReviewed ? "reviewed" : "pending",
       teamSize: submission.team?.members?.length || 0,
       description: proj?.description || "",
       hackathon: hackathonDetails?.title || "",
@@ -98,8 +117,10 @@ export default function SubmissionsPage() {
     (s) => s.status === "reviewed"
   ).length;
 
-  const handleReviewClick = (submissionId: number) => {
-    // Example: router.push(`/submissions/${submissionId}/review`)
+  const handleReviewClick = (subId: number) => {
+    router.push(
+      `/judges/submission-review/${submissionId}?submission=${subId}&tab=4`
+    );
   };
 
   if (loading || loadingReview) {
@@ -362,7 +383,7 @@ export default function SubmissionsPage() {
                         >
                           {submission.status === "pending"
                             ? "Start Review"
-                            : "View Review"}
+                            : "View / Edit Review"}
                         </button>
                       </Link>
                     </div>
