@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     if (!state || !savedState || state !== savedState) {
       return NextResponse.json(
         { error: "Invalid state parameter" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
