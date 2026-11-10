@@ -95,7 +95,12 @@ export function HackathonLeaderboard({
       }
     } catch (err: any) {
       console.error("Error loading leaderboard:", err);
-      setError(err?.message || "Failed to load leaderboard.");
+      const status = err?.response?.status;
+      if (status === 401) {
+setError("Sign in to your account to see the leaderboard and track the rankings.");
+      } else {
+        setError(err?.message || "Failed to load leaderboard.");
+      }
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -259,12 +264,14 @@ export function HackathonLeaderboard({
       {error ? (
         <div className="p-6 text-center text-red-500 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-900/30">
           <p className="text-sm font-medium">{error}</p>
-          <button
-            onClick={handleFullRefresh}
-            className="mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 underline cursor-pointer"
-          >
-            Try Again
-          </button>
+          {!error.includes("Sign in to your account to see the leaderboard and track the rankings.") && (
+            <button
+              onClick={handleFullRefresh}
+              className="mt-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 underline cursor-pointer"
+            >
+              Try Again
+            </button>
+          )}
         </div>
       ) : resultsReleased === false && !isOrganizerPreview ? (
         <div className="py-12 px-4 text-center">

@@ -105,14 +105,6 @@ export default function HackathonLeaderboardPage() {
                 approvedOnly={true}
               />
             </div>
-
-            {/* Live Reviews Feed (1 col) */}
-            <div className="lg:col-span-1">
-              <LiveJudgeReviews
-                hackathonId={numericHackathonId}
-                pollIntervalMs={15000}
-              />
-            </div>
           </div>
         ) : (
           <div className="p-10 text-center bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
