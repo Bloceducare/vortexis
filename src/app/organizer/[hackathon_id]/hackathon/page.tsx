@@ -485,6 +485,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
           currentData={{
             title: data?.title,
             grand_prize: data?.grand_prize,
+            currency: data?.currency,
             start_date: data?.start_date,
             venue: data?.venue,
             min_team_size: data?.min_team_size,

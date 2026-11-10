@@ -5,7 +5,7 @@ import { X, Save } from "lucide-react";
 import StatusModal from "@/components/StatusModal";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useQueryClient } from "@tanstack/react-query";
-import { formatCurrency } from "@/lib/utils";
+import { CURRENCY_OPTIONS } from "@/lib/utils";
 
 interface EditHackathonModalProps {
   onClose: () => void;
@@ -13,6 +13,7 @@ interface EditHackathonModalProps {
   currentData: {
     title?: string;
     grand_prize?: number;
+    currency?: string;
     venue?: string;
     start_date: string;
     min_team_size?: number;
@@ -34,6 +35,7 @@ function EditHackathonModal({
   const [formData, setFormData] = useState({
     title: currentData?.title || "",
     grand_prize: currentData?.grand_prize || 0,
+    currency: currentData?.currency || "USD",
     start_date: currentData?.start_date 
         ? new Date(currentData.start_date).toISOString().split("T")[0]
       : "",
@@ -75,7 +77,7 @@ function EditHackathonModal({
       ...prev,
       [name]:
         name === "visibility"
-          ? value === "true" // ✅ Convert string back to boolean
+          ? value === "true"
           : type === "number"
           ? Number(value)
           : value,
@@ -88,6 +90,8 @@ function EditHackathonModal({
     if (formData.title !== currentData.title) changes.title = formData.title;
     if (formData.grand_prize !== currentData.grand_prize)
       changes.grand_prize = formData.grand_prize;
+    if (formData.currency !== currentData.currency)
+      changes.currency = formData.currency;
     if (formData.venue !== currentData.venue) changes.venue = formData.venue;
     if (formData.min_team_size !== currentData.min_team_size)
       changes.min_team_size = formData.min_team_size;
@@ -219,7 +223,7 @@ function EditHackathonModal({
           {/* Grand Prize */}
           <div>
             <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
-              Grand Prize ()
+              Grand Prize
             </label>
             <input
               type="number"
@@ -231,18 +235,22 @@ function EditHackathonModal({
             />
           </div>
 
-             <div>
+          <div>
             <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
-              Currency ()
+              Currency
             </label>
-            <input
-              type="number"
-              name="grand_prize"
-              value={formData.grand_prize}
+            <select
+              name="currency"
+              value={formData.currency}
               onChange={handleChange}
-              min="0"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
+            >
+              {CURRENCY_OPTIONS.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Venue */}
