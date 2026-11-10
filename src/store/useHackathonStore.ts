@@ -3,8 +3,12 @@ import { persist } from "zustand/middleware";
 import Hackathon_details from "@/app/api/utils/interface";
 
 interface HackathonState extends Omit<Hackathon_details, "banner_image_file"> {
-  banner_image_file: string | null; 
-  
+  banner_image_file: string | null;
+  /** Local object URL used to preview the banner while it uploads (not persisted). */
+  preview: string | null;
+  /** True while the banner is being uploaded to Cloudinary (not persisted). */
+  banner_uploading: boolean;
+
   setField: <K extends keyof HackathonState>(key: K, value: HackathonState[K]) => void;
   clearHackathon: () => void;
   getHackathonData: () => Partial<Hackathon_details>;
@@ -36,6 +40,10 @@ export const useHackathonStore = create<HackathonState>()(
       rules: "",
       visibility: true,
       evaluation_criteria: "",
+      min_team_size: 1,
+      max_team_size: 5,
+      preview: null,
+      banner_uploading: false,
       banner_image_file: null,
       participants_count: 0,
       banner_image: null,
@@ -62,6 +70,10 @@ export const useHackathonStore = create<HackathonState>()(
           rules: "",
           visibility: true,
           evaluation_criteria: "",
+          min_team_size: 1,
+          max_team_size: 5,
+          preview: null,
+          banner_uploading: false,
           banner_image: null,
           banner_image_file: null,
           participants_count: 0,
@@ -69,7 +81,12 @@ export const useHackathonStore = create<HackathonState>()(
         }),
 
       getHackathonData: () => {
-        const { hackathons, selectedHackathonId, setField, clearHackathon, getHackathonData, setHackathons, setSelectedHackathonId, ...data } = get();
+        const {
+          hackathons, selectedHackathonId, setField, clearHackathon, getHackathonData,
+          setHackathons, setSelectedHackathonId, activeHackathon, setActiveHackathon,
+          preview, banner_uploading,
+          ...data
+        } = get();
         return data;
       },
 
@@ -82,8 +99,10 @@ export const useHackathonStore = create<HackathonState>()(
     {
       name: "hackathon-storage",
       partialize: (state) => {
-        const { banner_image_file, ...persistable } = state;
-        return persistable; 
+        // Object URLs and the upload flag don't survive a reload; the uploaded
+        // banner URL does, so the user doesn't silently lose their banner.
+        const { preview, banner_uploading, ...persistable } = state;
+        return persistable;
       },
     }
   )
