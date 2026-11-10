@@ -9,6 +9,7 @@ export default interface Hackathon_details {
   details?: string | null;
   status?: "upcoming" | "just-created" | "active" | "finished";
   grand_prize?: number;
+  currency?: string;
   prizes?: string;
   submission_deadline?: string | undefined;
   start_date?: string | undefined;
