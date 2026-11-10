@@ -45,7 +45,7 @@ function Home() {
     setSelectedCountry,
     prizeFilter,
     setPrizeFilter,
-  } = useHackathonFilters([]); // Don't filter client-side
+  } = useHackathonFilters([]); 
 
   // Build filter params for API
   const filterParams: Record<string, any> = {};

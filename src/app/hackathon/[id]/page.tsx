@@ -31,11 +31,10 @@ import StatusModal from "@/components/StatusModal";
 import { useUserHackathonsStore } from "@/store/useUserHackathons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useHackathonStore } from "@/store/useHackathonStore";
-import { slugify, normalizeContent } from "@/lib/utils";
+import { slugify, normalizeContent, formatCurrency } from "@/lib/utils";
 import HackathonContentRenderer from "@/app/hackathon/component/HackathonContentRenderer";
 import HackathonLeaderboard from "@/components/HackathonLeaderboard";
 import LiveJudgeReviews from "@/components/LiveJudgeReviews";
-import Link from "next/link";
 
 type TabType = "overview" | "prizes" | "rules" | "schedule" | "leaderboard";
 
@@ -257,6 +256,12 @@ function Hack() {
     );
   }
 
+  const userCurrency = hackathonDetail.currency
+  const amount = formatCurrency(
+    hackathonDetail.grand_prize ?? 0,
+    userCurrency
+  );
+
   return (
     <div className="min-h-screen bg-[#FBFBFE] dark:bg-[#0B0F17] transition-colors pb-24">
       {/* 1. HERO COVER BANNER (DoraHacks Style) */}
@@ -433,7 +438,7 @@ function Hack() {
                   Total Prize Pool
                 </p>
                 <p className="text-lg sm:text-xl font-extrabold text-gray-900 dark:text-white truncate">
-                  ${Number(hackathonDetail.grand_prize || 0).toLocaleString()}
+                 {amount}
                 </p>
               </div>
             </div>
@@ -607,7 +612,7 @@ function Hack() {
                           🏆 GRAND PRIZE POOL
                         </span>
                         <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-600 via-yellow-500 to-orange-500 dark:from-amber-400 dark:via-yellow-300 dark:to-orange-400">
-                          ${Number(hackathonDetail.grand_prize || 0).toLocaleString()}
+                        {amount}
                         </h2>
                         <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 max-w-md">
                           Awarded to top projects across innovation, technical execution, and ecosystem impact.
@@ -850,7 +855,7 @@ function Hack() {
                       Grand Prize
                     </span>
                     <span className="font-bold text-gray-900 dark:text-white">
-                      ${Number(hackathonDetail.grand_prize || 0).toLocaleString()}
+                    {amount}
                     </span>
                   </div>
 

@@ -6,7 +6,7 @@ import { Calendar, MapPin, Trophy, Users, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { slugify } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
+import { formatCurrency } from "@/lib/utils";
 
 interface Hackathon {
   id: string;
@@ -19,6 +19,7 @@ interface Hackathon {
   banner_image_file: string
   grand_prize?: number;
   participants_count?: number;
+  currency?: string;
 }
 
 interface HackathonCardProps {
@@ -83,6 +84,11 @@ const handleRegister = async (e: React.MouseEvent) => {
   router.push(`/hackathon/${slug}`);
 };
 
+const userCurrency = hackathon.currency
+const amount = formatCurrency(
+  hackathon.grand_prize ?? 0,
+  userCurrency
+);
     return (
       <motion.div
         layout
@@ -156,7 +162,7 @@ const handleRegister = async (e: React.MouseEvent) => {
             <div className="flex items-center gap-1">
               <Trophy className="w-4 h-4 text-yellow-500" />
               <span className="text-lg font-bold">
-                ${hackathon.grand_prize?.toLocaleString()}
+                {amount}
               </span>
             </div>
 

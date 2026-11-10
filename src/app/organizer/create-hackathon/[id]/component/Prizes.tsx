@@ -6,20 +6,34 @@ import { useShallow } from 'zustand/react/shallow';
 import { NavigationProps } from '@/components/Interface';
 import { toast } from 'react-toastify';
 import dynamic from "next/dynamic";
-import { ArrowLeftIcon, TrophyIcon } from 'lucide-react';
+import { ArrowLeftIcon, TrophyIcon, ChevronDownIcon } from 'lucide-react';
+import { CURRENCY_OPTIONS } from '@/lib/utils';
 
 const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
   ssr: false,
 });
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString('en-NG'); // You can change 'en-NG' based on currency
+function getCurrencySymbol(code: string): string {
+  return CURRENCY_OPTIONS.find((c) => c.code === code)?.symbol ?? code;
+}
+
+function formatCurrency(value: number, currencyCode: string): string {
+  try {
+    return value.toLocaleString(undefined, {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  } catch {
+    return value.toLocaleString();
+  }
 }
 
 function Prizes({ onNext, onPrev }: NavigationProps) {
-  const { grand_prize, prizes, setField } = useHackathonStore(
+  const { grand_prize, currency, prizes, setField } = useHackathonStore(
     useShallow((state) => ({
       grand_prize: state.grand_prize,
+      currency: state.currency ?? 'USD',
       prizes: state.prizes,
       setField: state.setField,
     }))
@@ -34,9 +48,9 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
     }
 
     if (grand_prize) {
-      setDisplayGrandPrize(formatCurrency(grand_prize));
+      setDisplayGrandPrize(formatCurrency(grand_prize, currency));
     }
-  }, [prizes, grand_prize]);
+  }, [prizes, grand_prize, currency]);
 
   const handleGrandPrizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, '');
@@ -44,10 +58,18 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
 
     if (!isNaN(numeric)) {
       setField('grand_prize', numeric);
-      setDisplayGrandPrize(formatCurrency(numeric));
+      setDisplayGrandPrize(formatCurrency(numeric, currency));
     } else {
       setField('grand_prize', 0);
       setDisplayGrandPrize('');
+    }
+  };
+
+  const handleCurrencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setField('currency', e.target.value);
+    // Reformat the displayed prize value with the new currency
+    if (grand_prize) {
+      setDisplayGrandPrize(formatCurrency(grand_prize, e.target.value));
     }
   };
 
@@ -84,17 +106,39 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
         </span>
         Total Prize Pool
       </label>
+
+      {/* Currency selector */}
+      <div className="mb-4">
+        <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+          Currency
+        </label>
+        <div className="relative inline-flex items-center">
+          <select
+            value={currency}
+            onChange={handleCurrencyChange}
+            className="appearance-none pl-4 pr-10 py-2.5 text-sm font-semibold bg-white dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-xl focus:border-[#0B40EE] focus:ring-2 focus:ring-[#0B40EE]/20 outline-none transition-all cursor-pointer text-gray-700 dark:text-gray-200"
+          >
+            {CURRENCY_OPTIONS.map((opt) => (
+              <option key={opt.code} value={opt.code}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDownIcon className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        </div>
+      </div>
       
+      {/* Grand prize input with dynamic currency symbol */}
       <div className="relative group">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400 group-focus-within:text-[#0B40EE] transition-colors">
-          $
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-bold text-gray-400 group-focus-within:text-[#0B40EE] transition-colors select-none">
+          {getCurrencySymbol(currency)}
         </span>
         <input
           type="text"
           value={displayGrandPrize}
           onChange={handleGrandPrizeChange}
-          className="w-full pl-10 pr-4 py-4 text-3xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0B40EE] outline-none transition-all placeholder:text-gray-300"
-          placeholder="0.00"
+          className="w-full pl-12 ml-10 pr-4 py-4 text-3xl font-bold bg-transparent border-b-2 border-gray-200 dark:border-gray-700 focus:border-[#0B40EE] outline-none transition-all placeholder:text-gray-300"
+          placeholder="0"
         />
       </div>
       <p className="mt-3 text-xs text-blue-600/70 dark:text-gray-400 italic">
@@ -143,9 +187,3 @@ function Prizes({ onNext, onPrev }: NavigationProps) {
 }
 
 export default Prizes;
-
-
-
-
-
-

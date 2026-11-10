@@ -5,6 +5,7 @@ import { X, Save } from "lucide-react";
 import StatusModal from "@/components/StatusModal";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatCurrency } from "@/lib/utils";
 
 interface EditHackathonModalProps {
   onClose: () => void;
@@ -218,7 +219,21 @@ function EditHackathonModal({
           {/* Grand Prize */}
           <div>
             <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
-              Grand Prize (₦)
+              Grand Prize ()
+            </label>
+            <input
+              type="number"
+              name="grand_prize"
+              value={formData.grand_prize}
+              onChange={handleChange}
+              min="0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+             <div>
+            <label className="block text-gray-700 dark:text-white text-sm font-medium mb-2">
+              Currency ()
             </label>
             <input
               type="number"

@@ -26,6 +26,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { User } from '@/app/api/utils/interface';
 import { ReleaseResultsButton } from "@/components/ReleaseResultsButton";
 import { getReleaseStatus, ReleaseStatusResponse } from "@/services/hackathonApi";
+import { formatCurrency } from "@/lib/utils";
 
 
 
@@ -153,6 +154,12 @@ function Page() {
       </section>
     );
   }
+
+  const userCurrency = data?.currency
+  const amount = formatCurrency(
+    data?.grand_prize ?? 0,
+    userCurrency
+  );
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-6 transition-colors">
@@ -343,7 +350,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       Grand Prize
                     </p>
                     <p className="text-gray-800 dark:text-white font-semibold">
-                      ${data?.grand_prize?.toLocaleString()}
+                     {amount}
                     </p>
                   </div>
                 </div>
