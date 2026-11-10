@@ -8,8 +8,10 @@ import useOrganizer from "@/hooks/useOrganizers";
 import HtmlContent from "@/components/ui/HtMLContent";
 import { useRouter } from "next/navigation";
 import EditHackathonModal from "./modal/EditModal";
+import RichTextEditModal, { type EditableRichField } from "./modal/RichTextEditModal";
 import {
   Edit,
+  Pencil,
   Calendar,
   MapPin,
   Award,
@@ -36,6 +38,7 @@ function Page() {
       const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [richEditField, setRichEditField] = useState<EditableRichField | null>(null);
 
   const { getHackathonById } = useOrganizer();
   const { data, isLoading, error } = getHackathonById(hackathon_id);
@@ -236,8 +239,19 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             </div>
             <div className="mt-5">
               <h1 className="text-2xl md:text-4xl font-bold mb-3">{data?.title}</h1>
-              <div>
-                <HtmlContent html={data?.description} />
+              <div className="flex items-start gap-2 group">
+                <div className="flex-1">
+                  <HtmlContent html={data?.description} />
+                </div>
+                {status.label !== "Finished" && (
+                  <button
+                    onClick={() => setRichEditField("description")}
+                    title="Edit description"
+                    className="mt-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg bg-white/20 hover:bg-white/40 cursor-pointer"
+                  >
+                    <Pencil size={14} />
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -374,13 +388,24 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             {/* Prizes Card */}
             {data?.prizes && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                  <Award
-                    className="text-[#605DEC] dark:text-indigo-400"
-                    size={24}
-                  />
-                  Other Prizes
-                </h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <Award
+                      className="text-[#605DEC] dark:text-indigo-400"
+                      size={24}
+                    />
+                    Other Prizes
+                  </h2>
+                  {status.label !== "Finished" && (
+                    <button
+                      onClick={() => setRichEditField("prizes")}
+                      title="Edit prizes"
+                      className="p-2 rounded-xl text-gray-400 hover:text-[#605DEC] hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all cursor-pointer"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                  )}
+                </div>
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-4 rounded-xl">
                   <HtmlContent html={normalizeContent(data?.prizes)} />
                 </div>
@@ -388,13 +413,24 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             )}
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
-                <FileText
-                  className="text-[#605DEC] dark:text-indigo-400"
-                  size={24}
-                />
-                Rules & Guidelines
-              </h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                  <FileText
+                    className="text-[#605DEC] dark:text-indigo-400"
+                    size={24}
+                  />
+                  Rules &amp; Guidelines
+                </h2>
+                {status.label !== "Finished" && (
+                  <button
+                    onClick={() => setRichEditField("rules")}
+                    title="Edit rules"
+                    className="p-2 rounded-xl text-gray-400 hover:text-[#605DEC] hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all cursor-pointer"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                )}
+              </div>
               <div className="prose prose-sm max-w-none text-gray-700 dark:text-gray-300">
                 <HtmlContent html={normalizeContent(data?.rules)} />
               </div>
@@ -493,6 +529,21 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             submission_deadline: data?.submission_deadline,
             end_date: data?.end_date,
           }}
+        />
+      )}
+
+      {richEditField && (
+        <RichTextEditModal
+          field={richEditField}
+          currentValue={
+            richEditField === "description"
+              ? data?.description
+              : richEditField === "prizes"
+              ? data?.prizes
+              : data?.rules
+          }
+          hackathonId={hackathon_id}
+          onClose={() => setRichEditField(null)}
         />
       )}
     </section>
