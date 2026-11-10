@@ -39,6 +39,7 @@ function Page() {
   const router = useRouter();
   const [showEditModal, setShowEditModal] = useState(false);
   const [richEditField, setRichEditField] = useState<EditableRichField | null>(null);
+  const [now] = useState<Date>(() => new Date());
 
   const { getHackathonById } = useOrganizer();
   const { data, isLoading, error } = getHackathonById(hackathon_id);
@@ -60,7 +61,6 @@ function Page() {
   }, [fetchReleaseStatus]);
 
   const getHackathonStatus = (startDate: string, endDate: string) => {
-    const now = new Date();
     const start = new Date(startDate);
     const end = new Date(endDate);
     if (now < start) return { label: "Upcoming", color: "bg-blue-500" };
