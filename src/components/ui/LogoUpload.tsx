@@ -6,6 +6,10 @@ import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, X } from "lucide-react";
 import type { UseFormRegister, FieldError } from "react-hook-form";
 import type { OrganizationFormData } from "@/lib/validator";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  MAX_IMAGE_UPLOAD_LABEL,
+} from "@/lib/uploadToCloudinary";
 
 interface LogoUploadFieldProps {
   placeholder: string;
@@ -55,9 +59,8 @@ export default function LogoUploadField({
   };
 
   const handleFile = (file: File) => {
-    const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
-    if (file.size > MAX_GENERIC_SIZE) {
-      alert("File must be 1.2MB or smaller");
+    if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+      alert(`File must be ${MAX_IMAGE_UPLOAD_LABEL} or smaller`);
       return;
     }
 

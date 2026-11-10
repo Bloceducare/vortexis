@@ -32,7 +32,7 @@ const formFields = [
     placeholder: "Upload the logo of your organization",
     type: "file",
     description:
-      "The image file should be JPEG or PNG, and less than 2 MB. A size of 480 x 480 px is recommended.",
+      "The image file should be JPEG or PNG, and less than 10 MB. A size of 480 x 480 px is recommended.",
     key: "logo" as keyof OrganizationFormData,
   },
   {

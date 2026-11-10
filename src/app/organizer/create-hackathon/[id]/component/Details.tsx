@@ -8,7 +8,11 @@ import { useHackathonStore } from "@/store/useHackathonStore";
 import { useShallow } from "zustand/shallow";
 import RuleInput from "./RuleInput";
 import dynamic from "next/dynamic";
-import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  MAX_IMAGE_UPLOAD_LABEL,
+  uploadToCloudinary,
+} from "@/lib/uploadToCloudinary";
 
 const TiptapEditor = dynamic(() => import("@/components/ui/TipTapEditor"), {
   ssr: false,
@@ -104,16 +108,8 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   const file = e.target.files?.[0];
   if (!file || !file.type.startsWith("image/")) return;
 
-  // Allow up to 2MB for hackathon banner
-  const MAX_BANNER_SIZE = 2 * 1024 * 1024;
-  if (file.size > MAX_BANNER_SIZE) {
-    // use toast to inform user
-    // dynamic import of toast not necessary; assume react-toastify used elsewhere
-    // but this file already imports toast at top
-    // (it does)
-    // show error and abort
-    // @ts-ignore
-    toast.error("Banner image must be 2MB or smaller", {
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    toast.error(`Banner image must be ${MAX_IMAGE_UPLOAD_LABEL} or smaller`, {
       position: "top-right",
       autoClose: 4000,
       theme: "colored",

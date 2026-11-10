@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  MAX_IMAGE_UPLOAD_LABEL,
+} from "@/lib/uploadToCloudinary";
 
 export const organizationSchema = z.object({
   organizationName: z
@@ -15,8 +19,8 @@ export const organizationSchema = z.object({
   logo: z
     .instanceof(File, { message: "Please upload a logo file" })
     .refine(
-      (file) => file.size <= 2 * 1024 * 1024,
-      "File size must be less than 2MB"
+      (file) => file.size <= MAX_IMAGE_UPLOAD_BYTES,
+      `File size must be less than ${MAX_IMAGE_UPLOAD_LABEL}`
     )
     .refine(
       (file) => ["image/jpeg", "image/png"].includes(file.type),
