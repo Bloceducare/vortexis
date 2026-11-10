@@ -6,6 +6,49 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useHackathonStore } from "@/store/useHackathonStore";
 
 import api from '@/lib/api';
+import { parseApiError } from "@/lib/apiError";
+
+const toIntOrUndefined = (v: unknown) => {
+  if (v === "" || v === null || v === undefined) return undefined;
+  const n = Number(v);
+  return Number.isFinite(n) ? Math.trunc(n) : undefined;
+};
+
+/**
+ * Sends only the fields the create endpoint accepts, with the types it expects.
+ * (Previously the whole store was posted and `banner_image_file: null` was always
+ * sent, which the backend rejected when no banner was uploaded.)
+ */
+export function buildCreateHackathonPayload(data: Hackathon_details) {
+  const payload: Record<string, unknown> = {
+    organization_id: data.organization_id,
+    title: data.title?.trim(),
+    description: data.description,
+    venue: data.venue?.trim(),
+    visibility: data.visibility ?? true,
+    // Empty date strings are omitted so the backend reports "X is required"
+    // rather than a cryptic date-format error.
+    start_date: data.start_date || undefined,
+    end_date: data.end_date || undefined,
+    // The UI promises "before 11:59 PM on this date"; dates are sent without an
+    // offset so they're interpreted in the same timezone as start/end dates.
+    submission_deadline: data.submission_deadline
+      ? `${data.submission_deadline}T23:59:59`
+      : undefined,
+    min_team_size: toIntOrUndefined(data.min_team_size),
+    max_team_size: toIntOrUndefined(data.max_team_size),
+    grand_prize: toIntOrUndefined(data.grand_prize) ?? 0,
+    currency: data.currency || "USD",
+    prizes: data.prizes ?? "",
+    rules: data.rules ?? "",
+    evaluation_criteria: data.evaluation_criteria ?? "",
+    skills: Array.isArray(data.skills) ? data.skills : [],
+  };
+  if (data.banner_image_file) payload.banner_image_file = data.banner_image_file;
+  // Drop undefined so the backend applies its own defaults/"required" messages.
+  Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
+  return payload;
+}
 
 
 
@@ -169,22 +212,18 @@ const createOrganization = useMutation({
   
 const createHackathonMutation = useMutation({
   mutationFn: async (data: Hackathon_details) => {
-   
-    const payload: Hackathon_details = {
-      ...data,
-      banner_image_file: data.banner_image_file ?? null,
-    };
-
+    const payload = buildCreateHackathonPayload(data);
     try {
       const res = await api.post("/hackathon/create/", payload);
       return res.data;
-    } catch (error: any) {
-      const errorData = error.response?.data;
-      throw new Error(
-        errorData?.non_field_errors?.[0] ||
-          errorData?.message ||
-          "Failed to create hackathon"
-      );
+    } catch (error) {
+      const apiError = parseApiError(error, "Failed to create hackathon. Please try again.");
+      console.error("[createHackathon] request failed", {
+        status: apiError.status,
+        message: apiError.message,
+        fieldErrors: apiError.fieldErrors,
+      });
+      throw apiError;
     }
   },
   onSuccess: () => {
