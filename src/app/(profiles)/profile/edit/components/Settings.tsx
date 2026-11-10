@@ -4,7 +4,11 @@ import useUser from "@/hooks/useUserProfile";
 import { useRouter } from "next/navigation";
 import useSkills from '@/hooks/useSkills';
 import { Skills } from "@/app/api/utils/interface";
-import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  MAX_IMAGE_UPLOAD_LABEL,
+  uploadToCloudinary,
+} from "@/lib/uploadToCloudinary";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import StatusModal from "@/components/StatusModal";
@@ -204,9 +208,8 @@ const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>
   const file = e.target.files?.[0];
   if (!file || !file.type.startsWith("image/")) return;
 
-  const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
-  if (file.size > MAX_GENERIC_SIZE) {
-    toast.error("Profile picture must be 1.2MB or smaller", {
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    toast.error(`Profile picture must be ${MAX_IMAGE_UPLOAD_LABEL} or smaller`, {
       position: "top-right",
       autoClose: 4000,
       theme: "colored",

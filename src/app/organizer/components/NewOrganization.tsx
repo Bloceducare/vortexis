@@ -3,7 +3,11 @@ import React, { useState } from "react";
 import { X, CheckCircle, AlertCircle, Upload } from "lucide-react";
 import useOrganizer from "@/hooks/useOrganizers";
 import { useQueryClient } from "@tanstack/react-query";
-import { uploadToCloudinary } from "@/lib/uploadToCloudinary";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  MAX_IMAGE_UPLOAD_LABEL,
+  uploadToCloudinary,
+} from "@/lib/uploadToCloudinary";
 
 interface CreateOrgProps {
   onClose: () => void;
@@ -71,9 +75,8 @@ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     return;
   }
 
-  const MAX_GENERIC_SIZE = 1.2 * 1024 * 1024; // 1.2MB
-  if (file.size > MAX_GENERIC_SIZE) {
-    setFileError("File size must be less than 1.2MB");
+  if (file.size > MAX_IMAGE_UPLOAD_BYTES) {
+    setFileError(`File size must be less than ${MAX_IMAGE_UPLOAD_LABEL}`);
     return;
   }
 
@@ -259,7 +262,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           Click to upload logo
         </span>
         <span className="text-xs text-gray-400 mt-1">
-          PNG, JPG up to 2MB
+          PNG, JPG up to 10MB
         </span>
       </label>
     </div>
