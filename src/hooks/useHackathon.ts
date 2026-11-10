@@ -25,6 +25,9 @@ export default function useHackathon() {
         return res.data; // Contains { data, pagination }
       },
       placeholderData: keepPreviousData,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -39,7 +42,9 @@ export default function useHackathon() {
         }
         return statsData;
       },
-      staleTime: 1000 * 60 * 5, // Data stays fresh for 5 minutes 
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -52,6 +57,9 @@ export default function useHackathon() {
       return res.data;
     },
     enabled: !!hackathon_name, 
+    staleTime: 1000 * 60 * 10, // 10 minutes stale time
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -63,6 +71,9 @@ export default function useHackathon() {
         return res.data;
       },
       enabled: !!hackathon_id,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
