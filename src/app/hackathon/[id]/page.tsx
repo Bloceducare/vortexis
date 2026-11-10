@@ -769,9 +769,7 @@ function Hack() {
                     hackathonId={hackathonDetail?.id || storeHackathonId || ""}
                     approvedOnly={true}
                   />
-                  <LiveJudgeReviews
-                    hackathonId={hackathonDetail?.id || storeHackathonId || ""}
-                  />
+                
                 </motion.div>
               )}
             </AnimatePresence>
