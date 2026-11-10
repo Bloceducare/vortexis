@@ -32,8 +32,8 @@ export default function AuthErrorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow-sm px-6 py-4">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors">
+      <header className="bg-white dark:bg-gray-800 shadow-sm px-6 py-4 border-b dark:border-gray-700 transition-colors">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="inline-block">
             <Image
@@ -48,7 +48,7 @@ export default function AuthErrorPage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleTryAgain}
-              className="px-4 py-2 cursor-pointer border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+              className="px-4 py-2 cursor-pointer border border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-colors"
             >
               Login
             </button>
@@ -77,22 +77,22 @@ export default function AuthErrorPage() {
 
           {/* Error Message */}
           <div className="mb-8">
-            <h3 className="text-2xl font-bold text-blue-600 mb-4">
+            <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-4">
               Authentication Required!
             </h3>
-            <p className="text-gray-600 text-lg mb-4">
+            <p className="text-gray-600 dark:text-gray-300 text-lg mb-4">
               {"You need to log in to access this page."}
             </p>
-            <p className="text-gray-500">
+            <p className="text-gray-500 dark:text-gray-400">
               Redirecting to sign up in{" "}
-              <span className="font-semibold text-blue-600">{countdown}</span>{" "}
+              <span className="font-semibold text-blue-600 dark:text-blue-400">{countdown}</span>{" "}
               seconds...
             </p>
           </div>
 
           <button
             onClick={handleTryAgain}
-            className="px-8 py-3 cursor-pointer bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg"
+            className="px-8 py-3 cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
           >
             Login{" "}
           </button>

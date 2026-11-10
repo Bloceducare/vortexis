@@ -38,6 +38,7 @@ export function buildCreateHackathonPayload(data: Hackathon_details) {
     min_team_size: toIntOrUndefined(data.min_team_size),
     max_team_size: toIntOrUndefined(data.max_team_size),
     grand_prize: toIntOrUndefined(data.grand_prize) ?? 0,
+    currency: data.currency || "USD",
     prizes: data.prizes ?? "",
     rules: data.rules ?? "",
     evaluation_criteria: data.evaluation_criteria ?? "",
@@ -310,6 +311,9 @@ const createHackathonMutation = useMutation({
         }
       },
       enabled: !!hackathon_id,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -355,6 +359,9 @@ const createHackathonMutation = useMutation({
         }
       },
       enabled: !!hackathon_id,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -370,6 +377,9 @@ const createHackathonMutation = useMutation({
         }
       },
       enabled: !!hackathon_id,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
@@ -385,6 +395,9 @@ const createHackathonMutation = useMutation({
         }
       },
       enabled: !!hackathon_id,
+      staleTime: 1000 * 60 * 10, // 10 minutes stale time
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
     });
   };
 
