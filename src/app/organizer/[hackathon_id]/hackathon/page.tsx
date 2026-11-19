@@ -386,31 +386,43 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
             </div>
 
             {/* Prizes Card */}
-            {data?.prizes && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                    <Award
-                      className="text-[#605DEC] dark:text-indigo-400"
-                      size={24}
-                    />
-                    Other Prizes
-                  </h2>
-                  {status.label !== "Finished" && (
-                    <button
-                      onClick={() => setRichEditField("prizes")}
-                      title="Edit prizes"
-                      className="p-2 rounded-xl text-gray-400 hover:text-[#605DEC] hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all cursor-pointer"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                  )}
-                </div>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                  <Award
+                    className="text-[#605DEC] dark:text-indigo-400"
+                    size={24}
+                  />
+                  Other Prizes
+                </h2>
+                {status.label !== "Finished" && (
+                  <button
+                    onClick={() => setRichEditField("prizes")}
+                    title={data?.prizes ? "Edit prizes" : "Add prizes"}
+                    className="p-2 rounded-xl text-gray-400 hover:text-[#605DEC] hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all cursor-pointer"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                )}
+              </div>
+              {data?.prizes ? (
                 <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-4 rounded-xl">
                   <HtmlContent html={normalizeContent(data?.prizes)} />
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className="p-6 text-center rounded-xl border border-dashed border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
+                  <p className="text-sm mb-3">No additional prize details specified yet.</p>
+                  {status.label !== "Finished" && (
+                    <button
+                      onClick={() => setRichEditField("prizes")}
+                      className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#605DEC] text-white hover:bg-[#504bc9] transition cursor-pointer"
+                    >
+                      Add Prizes & Breakdown
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-md transition-colors">
               <div className="flex items-center justify-between mb-4">
@@ -517,7 +529,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
       {showEditModal && (
         <EditHackathonModal
           onClose={() => setShowEditModal(false)}
-          hackathonId={hackathon_id}
+          hackathonId={String(data?.id || hackathon_id)}
           currentData={{
             title: data?.title,
             grand_prize: data?.grand_prize,
@@ -542,7 +554,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
               ? data?.prizes
               : data?.rules
           }
-          hackathonId={hackathon_id}
+          hackathonId={String(data?.id || hackathon_id)}
           onClose={() => setRichEditField(null)}
         />
       )}

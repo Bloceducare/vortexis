@@ -27,6 +27,9 @@ const isPublicPath = (pathname: string) => {
     "/features",
     "/about",
     "/faqs",
+    "/invitations",
+    "/judge-invitation",
+    "/team-invitation",
   ];
   return publicRoutes.some(
     (route) => pathname === route || pathname.startsWith(route + "/")

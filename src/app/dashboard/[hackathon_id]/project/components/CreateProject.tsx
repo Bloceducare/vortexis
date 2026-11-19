@@ -160,9 +160,16 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
           className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-4 md:p-8 border border-gray-200 dark:border-gray-700 w-full"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
             {/* Project Title */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
+              <label className="flex items-center gap-2 font-semibold text-gray-900 dark:text-gray-100">
                 <FileText className="w-4 h-4 text-indigo-500" />
                 Project Title *
               </label>
@@ -191,7 +198,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="flex items-center gap-2 font-semibold text-gray-800 dark:text-gray-200">
+              <label className="flex items-center gap-2 font-semibold text-gray-900 dark:text-gray-100">
                 <FileText className="w-4 h-4 text-indigo-500" />
                 Description *
               </label>
@@ -232,7 +239,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
               <div className="grid md:grid-cols-2 gap-6">
                 {/* GitHub URL */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-200">
                     <Github className="w-4 h-4" />
                     GitHub Repository *
                   </label>
@@ -261,7 +268,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Live Link */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-200">
                     <Globe className="w-4 h-4" />
                     Live Demo
                   </label>
@@ -290,7 +297,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Demo Video */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-200">
                     <Video className="w-4 h-4" />
                     Demo Video
                   </label>
@@ -319,7 +326,7 @@ function CreateProject({ hackathon_id, hackathon_name }: createProps) {
 
                 {/* Presentation */}
                 <div className="space-y-2">
-                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-300">
+                  <label className="flex items-center gap-2 font-medium text-sm text-gray-700 dark:text-gray-200">
                     <FileText className="w-4 h-4" />
                     Presentation
                   </label>

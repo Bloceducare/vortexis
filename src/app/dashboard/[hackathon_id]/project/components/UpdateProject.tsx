@@ -6,6 +6,7 @@ import { userProject } from "@/app/api/utils/interface"
 import useProjects from "@/hooks/useProject"
 import { useTeamStore } from "@/store/useTeamStore"
 import { useUserProjectStore } from "@/store/useProjectStore"
+import { AlertCircle } from "lucide-react"
 
 interface UpdateProps {
   onClose: () => void;
@@ -98,9 +99,16 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
     <div className="p-2 md:p-6 w-full relative">
       <h1 className="text-[#605DEC] dark:text-[#8b7ff0] font-bold text-2xl md:text-[32px]">Update Your Project</h1>
       <form onSubmit={handleSubmit} className="space-y-6 text-start">
+    {error && (
+      <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+        <AlertCircle className="w-5 h-5 shrink-0" />
+        <span>{error}</span>
+      </div>
+    )}
+
     {/* Title */}
     <div className="space-y-2 mt-5">
-      <label className="block font-semibold text-gray-800 dark:text-gray-200">Title *</label>
+      <label className="block font-semibold text-gray-900 dark:text-gray-100">Title *</label>
       <input
         type="text"
         name="title"
@@ -114,7 +122,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
     {/* Description */}
     <div className="space-y-2">
-      <label className="block font-semibold text-gray-800 dark:text-gray-200">Description *</label>
+      <label className="block font-semibold text-gray-900 dark:text-gray-100">Description *</label>
       <textarea
         name="description"
         value={formData.description}
@@ -130,7 +138,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {/* Github URL */}
       <div className="space-y-2">
-        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Github URL *</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-200">Github URL *</label>
         <input
           type="url"
           name="github_url"
@@ -144,7 +152,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
       {/* Live Link */}
       <div className="space-y-2">
-        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Live Link</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-200">Live Link</label>
         <input
           type="url"
           name="live_link"
@@ -158,7 +166,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
       {/* Demo Video URL */}
       <div className="space-y-2">
-        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Demo Video URL</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-200">Demo Video URL</label>
         <input
           type="url"
           name="demo_video_url"
@@ -172,7 +180,7 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
       {/* Presentation Link */}
       <div className="space-y-2">
-        <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">Presentation Link</label>
+        <label className="block font-medium text-sm text-gray-700 dark:text-gray-200">Presentation Link</label>
         <input
           type="url"
           name="presentation_link"
@@ -187,7 +195,6 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
 
     {/* Submit */}
     <div className="flex justify-end items-center gap-4 pt-4">
-
       <button
         type="button"
         onClick={() => onClose()}
@@ -195,7 +202,6 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
       >
         Cancel
       </button>
-
 
       <button
         type="submit"
@@ -210,9 +216,6 @@ function  UpdateProject({ onClose, hackathon_id }: UpdateProps){
       </button>
     </div>
   </form>
-
-  {/* ✅ Error */}
-  {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
 
   {/* ✅ Success Modal */}
   {successMessage && (

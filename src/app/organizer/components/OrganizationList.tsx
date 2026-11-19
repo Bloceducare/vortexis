@@ -174,7 +174,7 @@ const filteredHackathons = !searchQuery.trim()
         <div className='flex gap-5 items-center'>
           <a
             className="cursor-pointer"
-            title="Add new moderator"
+            title="Manage moderators"
             onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
           >
             <PlusSquareIcon />
@@ -222,8 +222,14 @@ const filteredHackathons = !searchQuery.trim()
           )}
         </div>
 
-        <p className="text-sm text-gray-600">
-          Moderators: <span className="font-medium">{orgData?.moderators?.length ?? 0}</span>
+        <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+          <span>Moderators: <b className="font-semibold text-gray-800 dark:text-gray-200">{orgData?.moderators?.length ?? 0}</b></span>
+          <button
+            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
+            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md"
+          >
+            Manage
+          </button>
         </p>
       </div>
 
@@ -410,15 +416,12 @@ const filteredHackathons = !searchQuery.trim()
       )}
 
       {showOptionsOrg.addModerator && (
-        <div className="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-[90%] max-w-lg relative">
-            <AddModerator
-              onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
-              orgName={orgData?.name}
-              orgId={id}
-            />
-          </div>
-        </div>
+        <AddModerator
+          onClose={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: false })}
+          orgName={orgData?.name}
+          orgId={id}
+          existingModerators={orgData?.moderators}
+        />
       )}
     </div>
   );
