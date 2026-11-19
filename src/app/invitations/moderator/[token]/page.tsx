@@ -25,6 +25,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { useRoleAccessStore } from "@/store/useRoleAccessStore";
 import { useOrganizationModerators } from "@/hooks/useOrganizationModerators";
+import { permissionLabel } from "@/lib/moderatorAccess";
 
 export default function ModeratorInvitationPage() {
   const params = useParams();
@@ -410,9 +411,20 @@ export default function ModeratorInvitationPage() {
                 </span>
               </div>
 
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                Accepting this invitation grants you moderator access to manage hackathons, approve submissions, and invite judges for {invitation.organization_name}.
-              </p>
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-3 text-xs text-gray-600 dark:text-gray-300 space-y-1">
+                <p className="font-semibold text-gray-800 dark:text-gray-100">Access you will receive</p>
+                <p>
+                  {invitation.hackathon_scope === "selected"
+                    ? `Selected hackathons${invitation.granted_hackathons?.length ? `: ${invitation.granted_hackathons.map((item) => item.title).join(", ")}` : ""}`
+                    : "All hackathons in this organization"}
+                </p>
+                <p>
+                  {(invitation.permissions && invitation.permissions.length > 0
+                    ? invitation.permissions.map(permissionLabel)
+                    : ["Hackathon management"]
+                  ).join(" · ")}
+                </p>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button

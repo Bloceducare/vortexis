@@ -26,6 +26,7 @@ import { slugify } from "@/lib/utils";
 import { useThemeStore } from "@/store/useThemeStore";
 import { useOrganizationStore } from "@/store/useOrganizationStore";
 import NewOrganization from "./components/NewOrganization";
+import { allows, orgAllows, permissionsOnHackathon } from "@/lib/moderatorAccess";
 
 
 interface OrganizerLayoutProps {
@@ -62,6 +63,11 @@ export default function OrganizerLayout({ children }: OrganizerLayoutProps) {
     return [];
   }, [orgsData]);
 
+  const creatableOrgs = useMemo(
+    () => availableOrgs.filter((org: any) => orgAllows(org, "create_hackathon")),
+    [availableOrgs]
+  );
+
   const OpenModal = () => {
     setLogout(true);
   };
@@ -83,10 +89,26 @@ const navLinks = [
   useEffect(() => {
     if (data) {
       setHackathons(data);
+      const current = useHackathonStore.getState().activeHackathon;
+      if (current?.id) {
+        const fresh = data.find((item: any) => String(item.id) === String(current.id));
+        if (fresh) useHackathonStore.getState().setActiveHackathon(fresh);
+      }
     }
   }, [data, setHackathons]);
 
   const hackathons = useHackathonStore((state) => state.hackathons);
+  const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+  const hackathonPermissions = permissionsOnHackathon(activeHackathon, hackathons);
+  const visibleNavLinks = navLinks.filter((link) => {
+    if (link.path === "hackathon") {
+      return allows(hackathonPermissions, "edit_hackathon") || allows(hackathonPermissions, "release_results");
+    }
+    if (link.path === "participants") return allows(hackathonPermissions, "manage_participants");
+    if (link.path === "submission") return allows(hackathonPermissions, "manage_submissions");
+    if (link.path === "judges") return allows(hackathonPermissions, "manage_judges");
+    return true;
+  });
   const { setActiveHackathon } = useHackathonStore();
 
 const selectedHackathonSlug = useMemo(() => {
@@ -127,8 +149,11 @@ const selectedHackathonSlug = useMemo(() => {
     e.preventDefault();
     if (orgsLoading) return;
 
-    if (availableOrgs.length > 0) {
+    if (creatableOrgs.length > 0) {
       setShowOrgSelectModal(true);
+    } else if (availableOrgs.length > 0) {
+      setShowOrgSelectModal(false);
+      return;
     } else {
       setShowNoOrgModal(true);
     }
@@ -304,6 +329,7 @@ const selectedHackathonSlug = useMemo(() => {
       ) : (
         <div className="p-4 text-center text-sm text-gray-600 dark:text-gray-400">
           <p className="text-[#a09393]">No hackathon created</p>
+          {(creatableOrgs.length > 0 || availableOrgs.length === 0) && (
           <button
             onClick={handleCreateHackathonClick}
             className="inline-block mt-3 px-3 py-2 
@@ -312,6 +338,7 @@ const selectedHackathonSlug = useMemo(() => {
           >
             + Create new hackathon
           </button>
+          )}
         </div>
       )}
     </motion.ul>
@@ -323,7 +350,7 @@ const selectedHackathonSlug = useMemo(() => {
           {/* Nav links */}
           {selectedHackathonSlug && !pathname.includes("/organizer/create-hackathon") && (
             <div>
-              {navLinks.map((link, index) => {
+              {visibleNavLinks.map((link, index) => {
                 const fullPath = `/organizer/${selectedHackathonSlug}/${link.path}`;
                 const currentSection = pathname.split("/")[3];
                 const isActive =
@@ -451,7 +478,7 @@ const selectedHackathonSlug = useMemo(() => {
 
               {/* Body */}
               <div className="p-6 max-h-96 overflow-y-auto space-y-3">
-                {availableOrgs.map((org: any) => (
+                {creatableOrgs.map((org: any) => (
                   <button
                     key={org.id}
                     onClick={() => handleOrgSelect(org)}

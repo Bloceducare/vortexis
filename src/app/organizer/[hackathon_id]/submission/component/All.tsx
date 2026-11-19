@@ -8,6 +8,7 @@ import useOrganizer from "@/hooks/useOrganizers";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { toast } from "react-toastify";
 import { Check, X } from "lucide-react";
+import { allows, permissionsOnHackathon } from "@/lib/moderatorAccess";
 
 const All: React.FC<SubmissionProps> = ({
   submissions,
@@ -29,6 +30,8 @@ const All: React.FC<SubmissionProps> = ({
   const params = useParams();
   const routeHackathonId = params?.hackathon_id as string;
   const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+  const hackathons = useHackathonStore((state) => state.hackathons);
+  const canReview = allows(permissionsOnHackathon(activeHackathon, hackathons), "manage_submissions");
   const currentHackathonId = routeHackathonId || (activeHackathon?.id ? String(activeHackathon.id) : "");
 
   const { approveSubmissionMutation, rejectSubmissionMutation } = useOrganizer();
@@ -299,7 +302,7 @@ const All: React.FC<SubmissionProps> = ({
                       >
                         View
                       </button>
-                      {!sub.approved ? (
+                      {canReview && !sub.approved ? (
                         <button
                           onClick={() => handleApprove(sub)}
                           disabled={processingId === sub.id}
@@ -308,7 +311,7 @@ const All: React.FC<SubmissionProps> = ({
                           <Check className="w-3.5 h-3.5" />
                           {processingId === sub.id ? "..." : "Approve"}
                         </button>
-                      ) : (
+                      ) : canReview ? (
                         <button
                           onClick={() => handleReject(sub)}
                           disabled={processingId === sub.id}
@@ -317,7 +320,7 @@ const All: React.FC<SubmissionProps> = ({
                           <X className="w-3.5 h-3.5" />
                           {processingId === sub.id ? "..." : "Reject"}
                         </button>
-                      )}
+                      ) : null}
                     </div>
                   </td>
                 </tr>
@@ -382,7 +385,7 @@ const All: React.FC<SubmissionProps> = ({
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  {!sub.approved ? (
+                  {canReview && !sub.approved ? (
                     <button
                       onClick={() => handleApprove(sub)}
                       disabled={processingId === sub.id}
@@ -391,7 +394,7 @@ const All: React.FC<SubmissionProps> = ({
                       <Check className="w-3 h-3" />
                       {processingId === sub.id ? "..." : "Approve"}
                     </button>
-                  ) : (
+                  ) : canReview ? (
                     <button
                       onClick={() => handleReject(sub)}
                       disabled={processingId === sub.id}
@@ -399,7 +402,7 @@ const All: React.FC<SubmissionProps> = ({
                     >
                       Reject
                     </button>
-                  )}
+                  ) : null}
                   <button
                     onClick={() => setSelectedSubmission(sub)}
                     className="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline"
@@ -701,7 +704,7 @@ const All: React.FC<SubmissionProps> = ({
                   )}
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-                  {!selectedSubmission.approved ? (
+                  {canReview && !selectedSubmission.approved ? (
                     <button
                       onClick={() => handleApprove(selectedSubmission)}
                       disabled={processingId === selectedSubmission.id}
@@ -710,7 +713,7 @@ const All: React.FC<SubmissionProps> = ({
                       <Check className="w-4 h-4" />
                       {processingId === selectedSubmission.id ? "Approving..." : "Approve Project"}
                     </button>
-                  ) : (
+                  ) : canReview ? (
                     <button
                       onClick={() => handleReject(selectedSubmission)}
                       disabled={processingId === selectedSubmission.id}
@@ -719,7 +722,7 @@ const All: React.FC<SubmissionProps> = ({
                       <X className="w-4 h-4" />
                       {processingId === selectedSubmission.id ? "Rejecting..." : "Reject Project"}
                     </button>
-                  )}
+                  ) : null}
                   <button
                     onClick={() => {
                       setSelectedSubmission(null);

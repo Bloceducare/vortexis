@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { slugify } from '@/lib/utils';
 import { useOrganizationStore } from '@/store/useOrganizationStore';
 import { useHackathonStore } from '@/store/useHackathonStore';
+import { canSeeManagedHackathon, isOrgOwner, orgAllows } from '@/lib/moderatorAccess';
 
 
 interface OrgProps {
@@ -110,8 +111,13 @@ function OrganizationList({ onClose, organizationId }: OrgProps) {
 
     );
   }
-    const allHackathons = hackathons?.hackathons || [];
-  const totalHackathons = hackathons?.hackathons_count || 0;
+    const allHackathons = (hackathons?.hackathons || []).filter((hackathon: any) =>
+    canSeeManagedHackathon(orgData, hackathon.id)
+  );
+  const totalHackathons = allHackathons.length;
+  const canManageModerators = isOrgOwner(orgData);
+  const canEditOrganization = orgAllows(orgData, "edit_organization");
+  const canCreateHackathon = orgAllows(orgData, "create_hackathon");
 
 
 const filteredHackathons = !searchQuery.trim()
@@ -172,21 +178,25 @@ const filteredHackathons = !searchQuery.trim()
         </div>
 
         <div className='flex gap-5 items-center'>
-          <a
-            className="cursor-pointer"
-            title="Manage moderators"
-            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
-          >
-            <PlusSquareIcon />
-          </a>
+          {canManageModerators && (
+            <a
+              className="cursor-pointer"
+              title="Manage moderators"
+              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
+            >
+              <PlusSquareIcon />
+            </a>
+          )}
 
-          <a
-            className="cursor-pointer"
-            title="Edit organization details"
-            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, edit: true })}
-          >
-            <Edit />
-          </a>
+          {canEditOrganization && (
+            <a
+              className="cursor-pointer"
+              title="Edit organization details"
+              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, edit: true })}
+            >
+              <Edit />
+            </a>
+          )}
         </div>
       </div>
 
@@ -224,12 +234,19 @@ const filteredHackathons = !searchQuery.trim()
 
         <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
           <span>Moderators: <b className="font-semibold text-gray-800 dark:text-gray-200">{orgData?.moderators?.length ?? 0}</b></span>
-          <button
-            onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
-            className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md"
-          >
-            Manage
-          </button>
+          {canManageModerators && (
+            <button
+              onClick={() => setShowOptionsOrg({ ...showOptionsOrg, addModerator: true })}
+              className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md"
+            >
+              Manage
+            </button>
+          )}
+          {!canManageModerators && (
+            <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md">
+              Moderator
+            </span>
+          )}
         </p>
       </div>
 
@@ -258,9 +275,11 @@ const filteredHackathons = !searchQuery.trim()
             <SearchInput onSearch={handleSearch} className="bg-white" />
           </div>
 
-          <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => startHackathon(orgData)}>
-            <b className="text-2xl mb-1">+</b> Start hackathon
-          </button>
+          {canCreateHackathon && (
+            <button className="border rounded-full px-3 py-1 bg-[#605DEC] text-white text-sm font-semibold cursor-pointer hover:bg-[#4e48c9] transition flex items-center gap-2" onClick={() => startHackathon(orgData)}>
+              <b className="text-2xl mb-1">+</b> Start hackathon
+            </button>
+          )}
         </section>
       )}
 

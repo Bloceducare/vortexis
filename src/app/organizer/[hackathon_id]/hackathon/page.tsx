@@ -29,11 +29,14 @@ import { User } from '@/app/api/utils/interface';
 import { ReleaseResultsButton } from "@/components/ReleaseResultsButton";
 import { getReleaseStatus, ReleaseStatusResponse } from "@/services/hackathonApi";
 import { formatCurrency } from "@/lib/utils";
+import { allows, permissionsOnHackathon } from "@/lib/moderatorAccess";
 
 
 
 function Page() {
    const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+   const hackathons = useHackathonStore((state) => state.hackathons);
+   const canEdit = allows(permissionsOnHackathon(activeHackathon, hackathons), "edit_hackathon");
    const setclickedUser = useUserStore((state) => state.setclickedUser)
       const hackathon_id = activeHackathon?.id as string;
   const router = useRouter();
@@ -224,7 +227,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                       <Share2Icon size={18}/>
                       Share Link
                     </button>
-                    {status.label !== "Finished" && (
+                    {canEdit && status.label !== "Finished" && (
                       <button
                         onClick={() => setShowEditModal(true)}
                         className="flex items-center cursor-pointer gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg transition-all duration-200 border border-white/30 text-sm font-semibold"
@@ -243,7 +246,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                 <div className="flex-1">
                   <HtmlContent html={data?.description} />
                 </div>
-                {status.label !== "Finished" && (
+                {canEdit && status.label !== "Finished" && (
                   <button
                     onClick={() => setRichEditField("description")}
                     title="Edit description"
@@ -395,7 +398,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   />
                   Other Prizes
                 </h2>
-                {status.label !== "Finished" && (
+                {canEdit && status.label !== "Finished" && (
                   <button
                     onClick={() => setRichEditField("prizes")}
                     title={data?.prizes ? "Edit prizes" : "Add prizes"}
@@ -412,7 +415,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
               ) : (
                 <div className="p-6 text-center rounded-xl border border-dashed border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <p className="text-sm mb-3">No additional prize details specified yet.</p>
-                  {status.label !== "Finished" && (
+                  {canEdit && status.label !== "Finished" && (
                     <button
                       onClick={() => setRichEditField("prizes")}
                       className="px-4 py-2 text-xs font-semibold rounded-lg bg-[#605DEC] text-white hover:bg-[#504bc9] transition cursor-pointer"
@@ -433,7 +436,7 @@ bg-[#EFEDFF] text-[#1A1C1E]    dark:bg-gradient-to-r dark:from-[#605DEC] dark:to
                   />
                   Rules &amp; Guidelines
                 </h2>
-                {status.label !== "Finished" && (
+                {canEdit && status.label !== "Finished" && (
                   <button
                     onClick={() => setRichEditField("rules")}
                     title="Edit rules"

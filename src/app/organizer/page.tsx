@@ -170,7 +170,14 @@ const paginatedData = filteredData.slice(
 
                     <div className="p-4 flex-1 flex flex-col justify-between">
                       <div className="space-y-2">
-                        <h3 className="font-bold text-xl">{org.name}</h3>
+                        <h3 className="font-bold text-xl flex items-center gap-2">
+                          <span className="truncate">{org.name}</span>
+                          {org.user_role === "moderator" && (
+                            <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-full">
+                              Moderator
+                            </span>
+                          )}
+                        </h3>
                         {org.tagline && (
                           <p className="text-xs text-indigo-600 font-medium line-clamp-1">
                             {org.tagline}

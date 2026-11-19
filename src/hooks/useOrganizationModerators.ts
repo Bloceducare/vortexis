@@ -16,6 +16,10 @@ export interface OrganizationInvitation {
   message?: string;
   created_at: string;
   expires_at?: string;
+  permissions?: string[];
+  hackathon_scope?: "all" | "selected" | string;
+  hackathon_ids?: number[];
+  granted_hackathons?: { id: number; title: string }[];
 }
 
 export interface SentInvitation {
@@ -168,10 +172,16 @@ export function useOrganizationModerators() {
       organizationId,
       email,
       message,
+      permissions,
+      hackathon_scope,
+      hackathon_ids,
     }: {
       organizationId: string | number;
       email: string;
       message?: string;
+      permissions?: string[];
+      hackathon_scope?: "all" | "selected";
+      hackathon_ids?: number[];
     }) => {
       try {
         const res = await api.post(
@@ -179,6 +189,9 @@ export function useOrganizationModerators() {
           {
             email: email.trim(),
             message: message?.trim() || "Join as moderator",
+            permissions,
+            hackathon_scope,
+            hackathon_ids,
           }
         );
         return res.data;

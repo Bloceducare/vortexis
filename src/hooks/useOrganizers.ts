@@ -412,10 +412,16 @@ const createHackathonMutation = useMutation({
       organizationId,
       email,
       message,
+      permissions,
+      hackathon_scope,
+      hackathon_ids,
     }: {
       organizationId: string | number;
       email: string[] | string;
       message: string;
+      permissions?: string[];
+      hackathon_scope?: "all" | "selected";
+      hackathon_ids?: number[];
     }) => {
       try {
         const emailValue = Array.isArray(email) ? email[0] : email;
@@ -424,6 +430,9 @@ const createHackathonMutation = useMutation({
           {
             email: emailValue,
             message: message,
+            permissions,
+            hackathon_scope,
+            hackathon_ids,
           }
         );
         return res.data;
@@ -431,6 +440,8 @@ const createHackathonMutation = useMutation({
         const errorData = error.response?.data;
         const newError = new Error(
           errorData?.email?.[0] ||
+            errorData?.permissions?.[0] ||
+            errorData?.hackathon_ids?.[0] ||
             errorData?.detail ||
             errorData?.message ||
             errorData?.error ||
@@ -480,6 +491,51 @@ const createHackathonMutation = useMutation({
         queryKey: ["organization_byId", String(variables.organizationId)],
       });
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    },
+  });
+
+  const updateModeratorAccessMutation = useMutation({
+    mutationFn: async ({
+      organizationId,
+      username,
+      permissions,
+      hackathon_scope,
+      hackathon_ids,
+    }: {
+      organizationId: string | number;
+      username: string;
+      permissions: string[];
+      hackathon_scope: "all" | "selected";
+      hackathon_ids: number[];
+    }) => {
+      try {
+        const res = await api.post(`/organization/moderator-access/${organizationId}/`, {
+          username,
+          permissions,
+          hackathon_scope,
+          hackathon_ids,
+        });
+        return res.data;
+      } catch (error: any) {
+        const errorData = error.response?.data;
+        const message =
+          errorData?.permissions?.[0] ||
+          errorData?.hackathon_ids?.[0] ||
+          errorData?.username?.[0] ||
+          errorData?.detail ||
+          errorData?.message ||
+          errorData?.error ||
+          (Array.isArray(errorData?.non_field_errors) ? errorData.non_field_errors[0] : null) ||
+          "Failed to update moderator access";
+        throw new Error(typeof message === "string" ? message : "Failed to update moderator access");
+      }
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organization_byId", String(variables.organizationId)],
+      });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+      queryClient.invalidateQueries({ queryKey: ["organizer_hackathon"] });
     },
   });
 
@@ -659,6 +715,7 @@ const createHackathonMutation = useMutation({
     getOrganizationHackathon,
     getOrganizationById,
     inviteModeratorsMutation,
+    updateModeratorAccessMutation,
     removeModeratorMutation,
     getSentInvitations,
     approveSubmissionMutation,

@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import useOrganizer from "@/hooks/useOrganizers";
 import { motion } from "framer-motion";
 import { useHackathonStore } from "@/store/useHackathonStore";
+import { allows, permissionsOnHackathon } from "@/lib/moderatorAccess";
 
 const defaultTabs = ["Judges List", "Invite Judges"];
 
@@ -35,6 +36,8 @@ function Judges() {
   const { getHackathonJudges } = useOrganizer();
 
     const activeHackathon = useHackathonStore((state) => state.activeHackathon);
+    const hackathons = useHackathonStore((state) => state.hackathons);
+    const canInviteJudges = allows(permissionsOnHackathon(activeHackathon, hackathons), "manage_judges");
        const hackathon_id = activeHackathon?.id as string;
 
   const { data, isLoading, isFetching, isError, refetch } =
@@ -47,9 +50,13 @@ function Judges() {
     ? new Date() > new Date(hackathonData.end_date)
     : false;
 
-  const tabs = hasEnded ? ["Judges List"] : defaultTabs;
+  const tabs = hasEnded || !canInviteJudges ? ["Judges List"] : defaultTabs;
 
   useEffect(() => {
+    if (!canInviteJudges) {
+      setActiveTab("Judges List");
+      return;
+    }
     if (data) {
       if (data.length > 0 || hasEnded) {
         setActiveTab("Judges List");
@@ -57,7 +64,7 @@ function Judges() {
         setActiveTab("Invite Judges");
       }
     }
-  }, [data, hasEnded]);
+  }, [data, hasEnded, canInviteJudges]);
 
   if (isLoading || isFetching) {
     return (

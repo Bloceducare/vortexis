@@ -28,6 +28,7 @@ export default interface Hackathon_details {
   participants_count?: number;
   submissions_count?: number;
   evaluation_criteria?: string;
+  my_permissions?: string[];
 }
 // export interface Prize {
 //   name: string;
