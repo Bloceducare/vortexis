@@ -16,6 +16,9 @@ export function middleware(request: NextRequest) {
     "/features",
     "/about",
     "/faqs",
+    "/invitations",
+    "/judge-invitation",
+    "/team-invitation",
   ];
 
   // Check if current path is public

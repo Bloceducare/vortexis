@@ -248,11 +248,17 @@ const createHackathonMutation = useMutation({
         const res = await api.patch(`/hackathon/${hackathonId}/`, data);
         return res.data;
       } catch (error: any) {
-        throw new Error("Failed to update hackathon");
+        const message =
+          error?.response?.data?.message ||
+          (typeof error?.response?.data === "string" ? error.response.data : null) ||
+          (error?.response?.data ? JSON.stringify(error.response.data) : null) ||
+          "Failed to update hackathon";
+        throw new Error(message);
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["organizer_hackathon"] });
+      queryClient.invalidateQueries({ queryKey: ["organizer_hackathon_byId"] });
       queryClient.invalidateQueries({ queryKey: ["hackathon"] });
       queryClient.invalidateQueries({ queryKey: ["hackathon_overview"] });
       queryClient.invalidateQueries({ queryKey: ["all_hackathon"] });
@@ -407,30 +413,96 @@ const createHackathonMutation = useMutation({
       email,
       message,
     }: {
-      organizationId: string;
-      email: string[];
+      organizationId: string | number;
+      email: string[] | string;
       message: string;
     }) => {
       try {
-        const res = await api.post(`/organization/invite-moderator/${organizationId}/`, {
-          email: email,
-          mesage: message,
-        });
+        const emailValue = Array.isArray(email) ? email[0] : email;
+        const res = await api.post(
+          `/organization/invite-moderator/${organizationId}/`,
+          {
+            email: emailValue,
+            message: message,
+          }
+        );
         return res.data;
       } catch (error: any) {
         const errorData = error.response?.data;
         const newError = new Error(
-          errorData?.email?.[0] || "Failed to invite moderators"
+          errorData?.email?.[0] ||
+            errorData?.detail ||
+            errorData?.message ||
+            errorData?.error ||
+            "Failed to invite moderators"
         );
         (newError as any).response = errorData;
         throw newError;
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organization_sent_invitations", String(variables.organizationId)],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["organization_byId", String(variables.organizationId)],
+      });
       queryClient.invalidateQueries({ queryKey: ["moderators"] });
       queryClient.invalidateQueries({ queryKey: ["organizations"] });
     },
   });
+
+  const removeModeratorMutation = useMutation({
+    mutationFn: async ({
+      organizationId,
+      username,
+    }: {
+      organizationId: string | number;
+      username: string;
+    }) => {
+      try {
+        const res = await api.post(
+          `/organization/remove-moderator/${organizationId}/`,
+          {
+            moderators: [username],
+          }
+        );
+        return res.data;
+      } catch (error: any) {
+        const errorData = error.response?.data;
+        throw new Error(
+          errorData?.detail || errorData?.message || errorData?.error || "Failed to remove moderator"
+        );
+      }
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["organization_byId", String(variables.organizationId)],
+      });
+      queryClient.invalidateQueries({ queryKey: ["organizations"] });
+    },
+  });
+
+  const getSentInvitations = (organizationId: string | number) => {
+    return useQuery({
+      queryKey: ["organization_sent_invitations", String(organizationId)],
+      queryFn: async () => {
+        try {
+          const res = await api.get(
+            `/organization/invitations/sent/${organizationId}/`
+          );
+          if (Array.isArray(res.data)) return res.data;
+          if (Array.isArray(res.data?.results)) return res.data.results;
+          if (Array.isArray(res.data?.invitations)) return res.data.invitations;
+          return [];
+        } catch (error: any) {
+          throw new Error("Unable to fetch sent invitations");
+        }
+      },
+      enabled: !!organizationId,
+      staleTime: 1000 * 30,
+    });
+  };
 
   const approveSubmissionMutation = useMutation({
     mutationFn: async ({
@@ -587,6 +659,8 @@ const createHackathonMutation = useMutation({
     getOrganizationHackathon,
     getOrganizationById,
     inviteModeratorsMutation,
+    removeModeratorMutation,
+    getSentInvitations,
     approveSubmissionMutation,
     rejectSubmissionMutation,
   };
