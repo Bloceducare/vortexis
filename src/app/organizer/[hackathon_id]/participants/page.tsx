@@ -13,12 +13,14 @@ import {
   Trophy,
   Calendar,
   Filter,
+  Download,
 } from "lucide-react";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useHackathonStore } from "@/store/useHackathonStore";
 import { useUserStore } from "@/store/useUserStore";
 import { slugify } from "@/lib/utils";
 import { User } from "@/app/api/utils/interface";
+import ExportParticipantsModal from "./components/ExportParticipantsModal";
 
 interface Member {
   id: number;
@@ -62,6 +64,7 @@ function Participants() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedTeams, setExpandedTeams] = useState<Set<number>>(new Set());
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   const { useParticipants } = useOrganizer();
     const activeHackathon = useHackathonStore((state) => state.activeHackathon);
@@ -139,14 +142,26 @@ function Participants() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
-          <h1 className="text-4xl dark:text-indigo-400 font-bold text-title mb-2">
-            Participant Management
-          </h1>
-          <p className=" opacity-60">
-            View and manage hackathon participants by teams
-          </p>
+          <div>
+            <h1 className="text-4xl dark:text-indigo-400 font-bold text-title mb-2">
+              Participant Management
+            </h1>
+            <p className="opacity-60">
+              View and manage hackathon participants by teams
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsExportModalOpen(true)}
+            className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white rounded-xl font-medium shadow-md shadow-indigo-600/20 hover:shadow-lg hover:shadow-indigo-600/30 transition-all self-start sm:self-auto cursor-pointer"
+            title="Export participants to CSV, Excel, or PDF"
+          >
+            <Download className="w-4 h-4" />
+            <span>Export Participants</span>
+          </button>
         </motion.div>
 
         {/* Stats Cards */}
@@ -452,6 +467,23 @@ function Participants() {
           </motion.div>
         )}
       </div>
+
+      {/* Export Participants Modal */}
+      <ExportParticipantsModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        hackathon={{
+          id: hackathon_id,
+          title:
+            activeHackathon?.title ||
+            (teams[0]?.hackathon?.title ?? "Hackathon"),
+          start_date:
+            activeHackathon?.start_date || teams[0]?.hackathon?.start_date,
+          end_date:
+            activeHackathon?.end_date || teams[0]?.hackathon?.end_date,
+        }}
+        existingTeams={teams}
+      />
     </section>
   );
 }
