@@ -46,6 +46,37 @@ export function generateExportFilename(
 }
 
 /**
+ * Helper to resolve participant email and clean username handle
+ */
+function resolveParticipantEmailAndUsername(userObj: any): { email: string; username: string } {
+  const rawEmail = (userObj?.email || "").trim();
+  const rawUsername = (userObj?.username || "").trim();
+
+  // If user signed in with Google or social auth, username is often set to their email address
+  let email = rawEmail;
+  if (!email || email === "N/A") {
+    if (rawUsername.includes("@")) {
+      email = rawUsername;
+    }
+  }
+
+  let username = "N/A";
+  if (rawUsername) {
+    if (rawUsername.includes("@")) {
+      const prefix = rawUsername.split("@")[0];
+      username = `@${prefix}`;
+    } else {
+      username = rawUsername.startsWith("@") ? rawUsername : `@${rawUsername}`;
+    }
+  }
+
+  return {
+    email: email || "N/A",
+    username,
+  };
+}
+
+/**
  * Normalizes raw participant and team API data into a flat array of participant records
  */
 export function normalizeParticipantData(rawData: any): {
@@ -91,14 +122,17 @@ export function normalizeParticipantData(rawData: any): {
           item.creator.username ||
           "Unknown";
 
+        const { email: creatorEmail, username: creatorHandle } =
+          resolveParticipantEmailAndUsername(item.creator);
+
         const key = `creator_${item.creator.id || item.creator.username}_${teamId}`;
         if (!seenKeys.has(key)) {
           seenKeys.add(key);
           leaderCount++;
           records.push({
             fullName: creatorFullName,
-            email: item.creator.email || "N/A",
-            username: item.creator.username ? `@${item.creator.username}` : "N/A",
+            email: creatorEmail,
+            username: creatorHandle,
             teamName,
             teamId,
             role: "Team Leader",
@@ -125,13 +159,16 @@ export function normalizeParticipantData(rawData: any): {
           member.username ||
           "Unknown";
 
+        const { email: memberEmail, username: memberHandle } =
+          resolveParticipantEmailAndUsername(member);
+
         const key = `member_${member.id || member.username || member.email}_${teamId}`;
         if (!seenKeys.has(key)) {
           seenKeys.add(key);
           records.push({
             fullName,
-            email: member.email || "N/A",
-            username: member.username ? `@${member.username}` : "N/A",
+            email: memberEmail,
+            username: memberHandle,
             teamName,
             teamId,
             role: isLeader ? "Team Leader" : "Member",
@@ -149,13 +186,16 @@ export function normalizeParticipantData(rawData: any): {
         item.username ||
         "Unknown";
 
+      const { email: itemEmail, username: itemHandle } =
+        resolveParticipantEmailAndUsername(item);
+
       const key = `individual_${item.id || item.username || item.email}`;
       if (!seenKeys.has(key)) {
         seenKeys.add(key);
         records.push({
           fullName,
-          email: item.email || "N/A",
-          username: item.username ? `@${item.username}` : "N/A",
+          email: itemEmail,
+          username: itemHandle,
           teamName: "Not assigned",
           teamId: "N/A",
           role: "Individual participant",
@@ -181,13 +221,16 @@ export function normalizeParticipantData(rawData: any): {
         p.username ||
         "Unknown";
 
+      const { email: pEmail, username: pHandle } =
+        resolveParticipantEmailAndUsername(p);
+
       const key = `unassigned_${p.id || p.username || p.email}`;
       if (!seenKeys.has(key)) {
         seenKeys.add(key);
         records.push({
           fullName,
-          email: p.email || "N/A",
-          username: p.username ? `@${p.username}` : "N/A",
+          email: pEmail,
+          username: pHandle,
           teamName: "Not assigned",
           teamId: "N/A",
           role: "Individual participant",
