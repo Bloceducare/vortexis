@@ -119,6 +119,39 @@ function getHeadingIcon(title: string) {
   return <Compass className="w-5 h-5 text-indigo-500" />;
 }
 
+/**
+ * Sanitizes rich HTML content while neutralizing hardcoded colors or backgrounds
+ * that conflict with the app's dark / light theme.
+ */
+function sanitizeRichHtml(html: string): string {
+  if (!html) return "";
+
+  // Strip hardcoded dark colors and light backgrounds from inline styles
+  // so content dynamically and cleanly conforms to the active light/dark theme
+  const cleaned = html
+    .replace(/style\s*=\s*(["'])((?:(?!\1).)*?)\1/gi, (_, quote, styleContent) => {
+      const filteredStyle = styleContent
+        // Remove color styles that force black / near-black text
+        .replace(
+          /(?:^|;)\s*color\s*:\s*(?:#000(?:000)?|#1[0-9a-f]{5}|black|rgb\s*\(\s*(?:[0-4]?[0-9]|50)\s*,\s*(?:[0-4]?[0-9]|50)\s*,\s*(?:[0-4]?[0-9]|50)\s*\)|rgba\s*\(\s*(?:[0-4]?[0-9]|50)\s*,\s*(?:[0-4]?[0-9]|50)\s*,\s*(?:[0-4]?[0-9]|50)\s*[^)]*\))\s*(?=;|$)/gi,
+          ''
+        )
+        // Remove background styles that force white / bright backgrounds
+        .replace(
+          /(?:^|;)\s*background(?:-color)?\s*:\s*(?:#fff(?:fff)?|white|rgb\s*\(\s*25[0-5]\s*,\s*25[0-5]\s*,\s*25[0-5]\s*\)|rgba\s*\(\s*25[0-5]\s*,\s*25[0-5]\s*,\s*25[0-5]\s*[^)]*\))\s*(?=;|$)/gi,
+          ''
+        )
+        .replace(/^;+|;+$/g, '')
+        .trim();
+
+      return filteredStyle ? `style=${quote}${filteredStyle}${quote}` : '';
+    });
+
+  return DOMPurify.sanitize(cleaned, {
+    ADD_ATTR: ['target'],
+  });
+}
+
 export const HackathonContentRenderer: React.FC<HackathonContentRendererProps> = ({
   content,
   fallbackText = "No information provided.",
@@ -138,19 +171,32 @@ export const HackathonContentRenderer: React.FC<HackathonContentRendererProps> =
   if (isHtml) {
     return (
       <div
-        className={`prose prose-gray dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed
-          prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-gray-900 dark:prose-headings:text-white
-          prose-h2:text-xl sm:prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-          prose-h3:text-lg sm:prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-          prose-p:my-3 prose-p:leading-relaxed
-          prose-ul:my-4 prose-li:my-1.5
-          prose-a:text-[#605DEC] hover:prose-a:underline
-          prose-strong:text-gray-900 dark:prose-strong:text-white
-          [&_table]:w-full [&_table]:border [&_table]:border-gray-200 dark:[&_table]:border-gray-700
-          [&_th]:bg-gray-100 dark:[&_th]:bg-gray-800 [&_th]:p-3 [&_th]:text-left
-          [&_td]:p-3 [&_td]:border-t [&_td]:border-gray-200 dark:[&_td]:border-gray-700
+        className={`w-full max-w-none text-gray-800 dark:text-gray-200 leading-relaxed space-y-4
+          [&_h1]:text-2xl sm:[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:tracking-tight [&_h1]:text-gray-900 dark:[&_h1]:!text-white [&_h1]:mt-6 [&_h1]:mb-3
+          [&_h2]:text-xl sm:[&_h2]:text-2xl [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-gray-900 dark:[&_h2]:!text-white [&_h2]:mt-6 [&_h2]:mb-3
+          [&_h3]:text-lg sm:[&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-gray-900 dark:[&_h3]:!text-white [&_h3]:mt-5 [&_h3]:mb-2
+          [&_h4]:text-base sm:[&_h4]:text-lg [&_h4]:font-semibold [&_h4]:text-gray-900 dark:[&_h4]:!text-white [&_h4]:mt-4 [&_h4]:mb-2
+          [&_p]:my-3 [&_p]:leading-relaxed [&_p]:text-gray-700 dark:[&_p]:!text-gray-200
+          [&_span]:text-inherit dark:[&_span]:!text-inherit
+          [&_strong]:font-semibold [&_strong]:text-gray-900 dark:[&_strong]:!text-white
+          [&_b]:font-semibold [&_b]:text-gray-900 dark:[&_b]:!text-white
+          [&_em]:text-inherit dark:[&_em]:!text-inherit
+          [&_i]:text-inherit dark:[&_i]:!text-inherit
+          [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:my-3 [&_ul]:space-y-1.5
+          [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:my-3 [&_ol]:space-y-1.5
+          [&_li]:text-gray-700 dark:[&_li]:!text-gray-200 [&_li]:leading-relaxed
+          [&_a]:text-[#605DEC] dark:[&_a]:!text-indigo-400 [&_a]:underline hover:[&_a]:text-indigo-600
+          [&_blockquote]:border-l-4 [&_blockquote]:border-indigo-500 [&_blockquote]:pl-4 [&_blockquote]:my-3 [&_blockquote]:italic [&_blockquote]:text-gray-600 dark:[&_blockquote]:!text-gray-400
+          [&_code]:bg-gray-100 dark:[&_code]:bg-gray-800 [&_code]:text-indigo-600 dark:[&_code]:!text-indigo-400 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm
+          [&_pre]:bg-gray-900 [&_pre]:text-gray-100 [&_pre]:p-4 [&_pre]:rounded-xl [&_pre]:overflow-x-auto
+          [&_table]:w-full [&_table]:my-6 [&_table]:border-collapse [&_table]:rounded-xl [&_table]:overflow-hidden [&_table]:border [&_table]:border-gray-200 dark:[&_table]:border-gray-700/80
+          [&_th]:p-3 sm:[&_th]:p-3.5 [&_th]:border [&_th]:border-gray-200 dark:[&_th]:border-gray-700/80 [&_th]:bg-gray-100 dark:[&_th]:bg-gray-800/90 [&_th]:text-gray-900 dark:[&_th]:!text-white [&_th]:text-left [&_th]:font-bold [&_th]:text-sm
+          [&_td]:p-3 sm:[&_td]:p-3.5 [&_td]:border [&_td]:border-gray-200 dark:[&_td]:border-gray-700/80 [&_td]:text-gray-700 dark:[&_td]:!text-gray-200 [&_td]:text-sm
+          [&_tr:nth-child(even)]:bg-gray-50/50 dark:[&_tr:nth-child(even)]:bg-gray-800/30
+          [&_tr:hover]:bg-gray-50 dark:[&_tr:hover]:bg-gray-800/50
+          [&_hr]:my-6 [&_hr]:border-gray-200 dark:[&_hr]:border-gray-800
           ${className}`}
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(content) }}
       />
     );
   }
